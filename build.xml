@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="EduHub" default="war" basedir=".">
+    <description>Build WAR file for EduHub</description>
+    
+    <!-- Properties -->
+    <property name="src.dir" value="src/main/java"/>
+    <property name="web.dir" value="src/main/webapp"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="war.file" value="EduHub.war"/>
+    
+    <!-- Create build directory -->
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+    </target>
+    
+    <!-- Compile Java classes -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" 
+               destdir="${classes.dir}" 
+               includeantruntime="false"
+               encoding="UTF-8">
+            <classpath>
+                <fileset dir="${web.dir}/WEB-INF/lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+    
+    <!-- Create WAR file -->
+    <target name="war" depends="compile">
+        <war destfile="${war.file}" webxml="${web.dir}/WEB-INF/web.xml">
+            <classes dir="${classes.dir}"/>
+            <fileset dir="${web.dir}">
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+        </war>
+        <echo message="WAR file created: ${war.file}"/>
+    </target>
+    
+    <!-- Clean build directory -->
+    <target name="clean">
+        <delete dir="${classes.dir}"/>
+        <delete file="${war.file}"/>
+    </target>
+</project>
