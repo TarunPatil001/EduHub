@@ -1,13 +1,97 @@
 @charset "UTF-8";
 
+:root{
+	  --bs-body-font-family: "Inter", sans-serif !important;
+	  
+}
+
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+	font-family: var(--bs-body-font-family);
 }
 
-body{
-	background-color: rgb(0, 0, 0);
-	color: white;
+@font-face {
+	font-family: 'RomaFont';
+    src: url('../assets/fonts/RomaFont/ROMA.ttf') format('truetype'),
+         url('../assets/fonts/RomaFont/ROMA.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
 }
+
+body,html {
+	font-family: var(--bs-body-font-family);
+	scroll-behavior: smooth;
+}
+
+.nav-link.active{
+	font-weight: 500;
+}
+
+.navbar-brand.logo{
+	font-family: RomaFont;
+	font-weight: 900;
+	font-size: 28px;
+	text-transform: uppercase;
+	color: grey;
+}
+
+.navbar {
+	position: sticky;
+	top: 0;
+	z-index: 1030;
+	background-color: #fff !important;
+}
+
+.navbar-collapse {
+	transition: all 0.3s ease-in-out;
+}
+
+.featured {
+	min-height: calc(100vh - 70px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.featured .alert {
+	min-height: 70vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+
+/* Fix mobile navbar collapse - prevent content movement */
+@media (max-width: 991.98px) {
+	.navbar-collapse {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		background-color: #fff;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		padding: 1rem;
+		z-index: 1029;
+	}
+	
+	.navbar-collapse.collapsing {
+		transition: height 0.35s ease;
+	}
+	
+	.navbar {
+		position: relative;
+	}
+	
+	.navbar-nav {
+		padding: 0.5rem 0;
+	}
+	
+	.nav-item {
+		padding: 0.25rem 0;
+	}
+}
+
 
