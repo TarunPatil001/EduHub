@@ -2,7 +2,7 @@
 .project
 .settings/
 build/classes/
-src/
+src/main/java/
 *.md
 .git
 .gitignore
