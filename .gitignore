@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /build/
 =======
+=======
+>>>>>>> 6f5efad49684dedd1f68a533784e0771b1b4fc76
 # Compiled class file
 *.class
 
@@ -25,4 +28,7 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+<<<<<<< HEAD
+>>>>>>> 6f5efad49684dedd1f68a533784e0771b1b4fc76
+=======
 >>>>>>> 6f5efad49684dedd1f68a533784e0771b1b4fc76
