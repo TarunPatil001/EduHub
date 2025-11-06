@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # EduHub - Deployment Guide
 
 ## Deploy to Render
@@ -55,6 +56,10 @@ docker run -p 8080:8080 eduhub
 - The application runs on port 8080 inside the container
 - Render automatically maps this to HTTPS (port 443)
 - Free tier services may sleep after inactivity
+=======
+# EduHub
+A complete solution to manage students, faculty, attendance, courses, and communication — all in one hub.
+>>>>>>> 6f5efad49684dedd1f68a533784e0771b1b4fc76
 =======
 # EduHub
 A complete solution to manage students, faculty, attendance, courses, and communication — all in one hub.
