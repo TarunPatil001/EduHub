@@ -72,8 +72,7 @@ body {
     flex-direction: column;
     transition: all 0.3s ease;
     z-index: 1000;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 /* Collapsed sidebar on desktop */
@@ -182,6 +181,7 @@ body {
     padding: 1rem 0;
     overflow-y: auto;
     overflow-x: hidden;
+    min-height: 0;
 }
 
 .sidebar-nav::-webkit-scrollbar {
@@ -195,6 +195,11 @@ body {
 .sidebar-nav::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 3px;
+}
+
+/* Enable smooth scrolling on mobile */
+.sidebar-nav {
+    -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-nav .nav-link {
@@ -308,6 +313,15 @@ body {
     max-height: 100vh;
     transition: margin-left 0.3s ease;
     overflow: hidden;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--light-color);
 }
 
 /* Expanded main when sidebar is collapsed */
@@ -865,6 +879,9 @@ body {
     
     .dashboard-content {
         padding: 1.5rem;
+        height: calc(100vh - var(--header-height));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .header-search {
@@ -891,6 +908,8 @@ body {
     .dashboard-content {
         padding: 1rem;
         height: calc(100vh - 60px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .header-left h5 {
