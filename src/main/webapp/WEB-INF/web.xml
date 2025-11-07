@@ -8,7 +8,7 @@
   <!-- Servlet Mappings for Clean URLs -->
   <servlet>
     <servlet-name>PlacementRecords</servlet-name>
-    <jsp-file>/placement_records.jsp</jsp-file>
+    <jsp-file>/public/placement_records.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>PlacementRecords</servlet-name>
@@ -17,7 +17,7 @@
   
   <servlet>
     <servlet-name>AboutUs</servlet-name>
-    <jsp-file>/about_us.jsp</jsp-file>
+    <jsp-file>/public/about_us.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>AboutUs</servlet-name>
@@ -26,7 +26,7 @@
   
   <servlet>
     <servlet-name>Login</servlet-name>
-    <jsp-file>/login.jsp</jsp-file>
+    <jsp-file>/public/login.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>Login</servlet-name>
@@ -35,10 +35,19 @@
   
   <servlet>
     <servlet-name>Register</servlet-name>
-    <jsp-file>/register.jsp</jsp-file>
+    <jsp-file>/public/register.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>Register</servlet-name>
     <url-pattern>/register</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>Dashboard</servlet-name>
+    <jsp-file>/dashboard.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Dashboard</servlet-name>
+    <url-pattern>/dashboard</url-pattern>
   </servlet-mapping>
 </web-app>

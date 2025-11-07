@@ -21,8 +21,8 @@
 				<h6 class="fw-bold mb-3">Quick Links</h6>
 				<ul class="list-unstyled">
 					<li><a href="${pageContext.request.contextPath}/" class="text-white text-decoration-none small">Home</a></li>
-					<li><a href="${pageContext.request.contextPath}/about_us" class="text-white text-decoration-none small">About Us</a></li>
-					<li><a href="${pageContext.request.contextPath}/placement_records" class="text-white text-decoration-none small">Placement Records</a></li>
+					<li><a href="${pageContext.request.contextPath}/public/about_us.jsp" class="text-white text-decoration-none small">About Us</a></li>
+					<li><a href="${pageContext.request.contextPath}/public/placement_records.jsp" class="text-white text-decoration-none small">Placement Records</a></li>
 				</ul>
 			</div>
 			<div class="col-md-4">
