@@ -6,7 +6,6 @@
 body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
 
 :root {
@@ -310,15 +309,14 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    max-height: 100vh;
     transition: margin-left 0.3s ease;
-    overflow: hidden;
 }
 
 /* Dashboard Content */
 .dashboard-content {
     flex: 1;
     padding: 2rem;
+    padding-bottom: 3rem;
     overflow-y: auto;
     overflow-x: hidden;
     background-color: var(--light-color);
@@ -704,6 +702,7 @@ body {
 .dashboard-content {
     flex: 1;
     padding: 2rem;
+    padding-bottom: 3rem;
     overflow-y: auto;
     overflow-x: hidden;
     height: calc(100vh - var(--header-height));
@@ -879,7 +878,8 @@ body {
     
     .dashboard-content {
         padding: 1.5rem;
-        height: calc(100vh - var(--header-height));
+        padding-bottom: 3rem;
+        min-height: calc(100vh - var(--header-height));
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -907,7 +907,8 @@ body {
     
     .dashboard-content {
         padding: 1rem;
-        height: calc(100vh - 60px);
+        padding-bottom: 2.5rem;
+        min-height: calc(100vh - 60px);
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
