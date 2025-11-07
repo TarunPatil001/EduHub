@@ -4,53 +4,25 @@
   Reusable Navbar Component
   
   Purpose: 
-    - Provides consistent navigation across all pages
-    - Highlights active page automatically
+    - Simple navbar with logo and action buttons
     - Responsive mobile menu
     - Context-aware links (works on localhost and production)
   
-  Parameters:
-    - activePage: Which page is currently active ("home", "placement", "about")
-                  This will add the 'active' class to the corresponding nav link
-  
   Usage Example:
-    <jsp:include page="components/navbar.jsp">
-        <jsp:param name="activePage" value="home"/>
-    </jsp:include>
+    <jsp:include page="components/navbar.jsp"/>
 --%>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+<nav class="navbar fixed-top border-bottom shadow-sm" style="position: fixed !important; top: 0 !important; z-index: 1030 !important; background: #ffffff !important;">
 	<div class="container">
 		<a class="navbar-brand logo"
 			href="${pageContext.request.contextPath}/">EduHub</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-			data-bs-target="#navbarSupportedContent"
-			aria-controls="navbarSupportedContent" aria-expanded="false"
-			aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			<ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-				<li class="nav-item"><a
-					class="nav-link ${param.activePage == 'home' ? 'active' : ''}"
-					aria-current="page" href="${pageContext.request.contextPath}/">Home</a>
-				</li>
-				<li class="nav-item"><a
-					class="nav-link ${param.activePage == 'placement' ? 'active' : ''}"
-					href="${pageContext.request.contextPath}/public/placement_records.jsp">Placement
-						Records</a></li>
-				<li class="nav-item"><a
-					class="nav-link ${param.activePage == 'about' ? 'active' : ''}"
-					href="${pageContext.request.contextPath}/public/about_us.jsp">About Us</a></li>
-			</ul>
-			<div class="d-flex" role="search">
-				<a class="btn btn-outline-dark me-2"
-					href="${pageContext.request.contextPath}/public/login.jsp">Login</a> <a
-					class="btn btn-dark me-2"
-					href="${pageContext.request.contextPath}/public/register.jsp">Register</a> <a
-					class="btn btn-primary"
-					href="${pageContext.request.contextPath}/dashboard.jsp">Dashboard</a>
-			</div>
+		<div class="d-flex gap-2">
+			<a class="btn btn-outline-dark btn-sm"
+				href="${pageContext.request.contextPath}/public/login.jsp">Login</a>
+			<a class="btn btn-dark btn-sm"
+				href="${pageContext.request.contextPath}/public/register_institute.jsp">Register</a>
+			<a class="btn btn-primary btn-sm d-none d-md-inline-block"
+				href="${pageContext.request.contextPath}/dashboard.jsp">Dashboard</a>
 		</div>
 	</div>
 </nav>
