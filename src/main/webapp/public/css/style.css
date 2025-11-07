@@ -31,7 +31,7 @@ body,html {
 .navbar-brand.logo{
 	font-family: RomaFont;
 	font-weight: 900;
-	font-size: 32px;
+	font-size: 42px;
 	text-transform: uppercase;
 	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 	-webkit-background-clip: text;
@@ -51,7 +51,7 @@ body,html {
 	}
 	
 	.navbar-brand.logo {
-		font-size: 20px;
+		font-size: 28px;
 	}
 	
 	.navbar {
@@ -59,9 +59,10 @@ body,html {
 	}
 	
 	.navbar .btn {
-		font-size: 0.7rem;
-		padding: 0.25rem 0.5rem;
+		font-size: 0.85rem;
+		padding: 0.4rem 0.8rem;
 		font-weight: 500;
+		min-width: 80px;
 	}
 	
 	.navbar .d-flex {
@@ -80,7 +81,7 @@ body,html {
 	}
 	
 	.navbar-brand.logo {
-		font-size: 18px;
+		font-size: 24px;
 	}
 	
 	.navbar {
@@ -88,8 +89,9 @@ body,html {
 	}
 	
 	.navbar .btn {
-		font-size: 0.65rem;
-		padding: 0.2rem 0.4rem;
+		font-size: 0.75rem;
+		padding: 0.35rem 0.6rem;
+		min-width: 70px;
 	}
 	
 	.navbar .d-flex {
@@ -132,6 +134,9 @@ body,html {
 .navbar .btn {
 	transition: all 0.3s ease;
 	font-weight: 600;
+	padding: 0.6rem 1.5rem;
+	font-size: 1rem;
+	min-width: 100px;
 }
 
 .navbar .btn-outline-dark {
