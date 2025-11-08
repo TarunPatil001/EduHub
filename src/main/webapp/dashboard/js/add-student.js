@@ -9,10 +9,7 @@ document.getElementById('studentPhoto').addEventListener('change', function(e) {
     if (!file) return;
     
     if (file.size > 2 * 1024 * 1024) {
-        showErrorModal({
-            title: 'File Size Error',
-            message: 'Photo size should not exceed 2MB. Please select a smaller file.'
-        });
+        Toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
         this.value = '';
         return;
     }
@@ -38,10 +35,7 @@ function handleFileUpload(input, boxId, fileNameId) {
     if (!file) return;
     
     if (file.size > 5 * 1024 * 1024) {
-        showErrorModal({
-            title: 'File Size Error',
-            message: 'File size should not exceed 5MB. Please select a smaller file.'
-        });
+        Toast.error('File size should not exceed 5MB. Please select a smaller file.');
         input.value = '';
         return;
     }
@@ -94,18 +88,55 @@ function resetForm() {
         icon: 'bi-exclamation-triangle-fill text-danger',
         onConfirm: function() {
             const form = document.getElementById('addStudentForm');
+            
+            // Reset the form
             form.reset();
             form.classList.remove('was-validated');
             
-            document.getElementById('photoPlaceholder').style.display = 'block';
-            document.getElementById('photoPreview').style.display = 'none';
+            // Reset photo preview
+            const photoPlaceholder = document.getElementById('photoPlaceholder');
+            const photoPreview = document.getElementById('photoPreview');
+            if (photoPlaceholder) photoPlaceholder.style.display = 'block';
+            if (photoPreview) {
+                photoPreview.style.display = 'none';
+                photoPreview.src = '';
+            }
             
-            document.querySelectorAll('.file-upload-box').forEach(box => box.classList.remove('has-file'));
-            document.querySelectorAll('.file-name').forEach(name => name.textContent = '');
+            // Reset all file upload boxes and clear file names
+            document.querySelectorAll('.file-upload-box').forEach(box => {
+                box.classList.remove('has-file');
+            });
+            document.querySelectorAll('.file-name').forEach(name => {
+                name.textContent = '';
+            });
             
-            document.getElementById('medicalDetailsSection').style.display = 'none';
+            // Clear all file inputs
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.value = '';
+            });
             
-            showToast('The form has been reset successfully.', 'info');
+            // Reset medical details section
+            const medicalSection = document.getElementById('medicalDetailsSection');
+            if (medicalSection) {
+                medicalSection.style.display = 'none';
+            }
+            
+            // Uncheck "same as mobile" checkbox if exists
+            const sameAsMobileCheckbox = document.getElementById('sameAsMobile');
+            if (sameAsMobileCheckbox) {
+                sameAsMobileCheckbox.checked = false;
+            }
+            
+            // Reset terms and conditions checkbox
+            const termsCheckbox = document.getElementById('termsConditions');
+            if (termsCheckbox) {
+                termsCheckbox.checked = false;
+            }
+            
+            // Scroll to top of form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            Toast.success('The form has been reset successfully.');
         }
     });
 }
@@ -116,7 +147,7 @@ document.getElementById('addStudentForm').addEventListener('submit', function(e)
     
     if (!this.checkValidity()) {
         this.classList.add('was-validated');
-        showToast('Please fill in all required fields correctly.', 'warning');
+        Toast.warning('Please fill in all required fields correctly.');
         
         const firstError = this.querySelector(':invalid');
         if (firstError) {
@@ -134,7 +165,7 @@ document.getElementById('addStudentForm').addEventListener('submit', function(e)
         confirmClass: 'btn-success',
         icon: 'bi-check-circle-fill text-success',
         onConfirm: function() {
-            showToast('✓ Student registration has been submitted successfully!', 'success');
+            Toast.success('Student registration has been submitted successfully!');
             // document.getElementById('addStudentForm').submit(); // Uncomment when backend is ready
         }
     });
@@ -145,10 +176,7 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
     const age = new Date().getFullYear() - new Date(this.value).getFullYear();
     
     if (age < 15) {
-        showErrorModal({
-            title: 'Age Validation Error',
-            message: 'Student must be at least 15 years old to register.<br><br>Please enter a valid date of birth.'
-        });
+        Toast.error('Student must be at least 15 years old to register. Please enter a valid date of birth.');
         this.value = '';
     }
 });

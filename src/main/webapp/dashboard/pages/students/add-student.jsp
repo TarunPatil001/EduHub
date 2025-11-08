@@ -413,6 +413,9 @@
     <!-- Include Reusable Confirmation Modal Component -->
     <jsp:include page="/dashboard/components/confirmation-modal.jsp"/>
     
+    <!-- Include Toast Notification Component -->
+    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    
     <!-- Add Student Page Scripts -->
     <script src="${pageContext.request.contextPath}/dashboard/js/add-student.js"></script>
 </body>
