@@ -1,15 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%--
-  Reusable Confirmation Modal Component
+  Reusable Modal Component
   
   Purpose: 
-    - Provides a Bootstrap modal for confirmation dialogs
+    - Provides Bootstrap modals for confirmation dialogs, success, and error messages
     - Can be used across all dashboard pages
   
   Usage:
-    Include this component in your page and call showConfirmationModal() function
+    Include this component in your page and call modal functions
     
-    Example:
+    Example - Confirmation Modal:
     showConfirmationModal({
         title: 'Confirm Action',
         message: 'Are you sure you want to proceed?',
@@ -19,6 +19,18 @@
         onConfirm: function() {
             // Your confirmation logic here
         }
+    });
+    
+    Example - Success Modal:
+    showSuccessModal({
+        title: 'Success',
+        message: 'Operation completed successfully!'
+    });
+    
+    Example - Error Modal:
+    showErrorModal({
+        title: 'Error',
+        message: 'An error occurred. Please try again.'
     });
 --%>
 

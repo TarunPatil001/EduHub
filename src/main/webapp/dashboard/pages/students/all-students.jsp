@@ -324,8 +324,8 @@ pageContext.setAttribute("students", students);
 		</div>
 	</div>
 	
-	<!-- Include Reusable Confirmation Modal Component -->
-	<jsp:include page="/dashboard/components/confirmation-modal.jsp"/>
+	<!-- Include Reusable Modal Component -->
+	<jsp:include page="/dashboard/components/modal.jsp"/>
 	
 	<!-- Include Toast Notification Component -->
 	<jsp:include page="/dashboard/components/toast-notification.jsp"/>

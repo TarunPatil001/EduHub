@@ -410,8 +410,8 @@
     <jsp:include page="/public/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     
-    <!-- Include Reusable Confirmation Modal Component -->
-    <jsp:include page="/dashboard/components/confirmation-modal.jsp"/>
+    <!-- Include Reusable Modal Component -->
+    <jsp:include page="/dashboard/components/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
     <jsp:include page="/dashboard/components/toast-notification.jsp"/>

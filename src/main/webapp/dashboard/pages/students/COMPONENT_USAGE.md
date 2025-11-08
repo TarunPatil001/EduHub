@@ -4,9 +4,9 @@
 
 This page uses two reusable components:
 
-### 1. Confirmation Modal Component
-- **Location**: `/dashboard/components/confirmation-modal.jsp`
-- **Purpose**: Display confirmation dialogs before destructive actions
+### 1. Modal Component
+- **Location**: `/dashboard/components/modal.jsp`
+- **Purpose**: Display confirmation dialogs, success messages, and error messages
 
 ### 2. Toast Notification Component
 - **Location**: `/dashboard/components/toast-notification.jsp`

@@ -5,7 +5,7 @@
 ### 1. Updated add-student.jsp
 - ✅ Added toast notification component include
 - ✅ Now includes both reusable components:
-  - Confirmation Modal Component
+  - Modal Component
   - Toast Notification Component
 
 ### 2. Updated add-student.js
@@ -36,7 +36,7 @@ Toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
 
 ### 3. Confirmation Modal Usage (Already Implemented)
 
-The add-student page was already using the confirmation modal component correctly:
+The add-student page was already using the modal component correctly:
 
 - ✅ Reset Form Confirmation
 - ✅ Submit Registration Confirmation
@@ -149,7 +149,7 @@ showConfirmationModal({ ... });
 ## Next Steps
 
 Both the **All Students** page and **Add Student** page now use the reusable components:
-- ✅ Confirmation Modal Component
+- ✅ Modal Component
 - ✅ Toast Notification Component
 
 You can now apply these same components to other pages in your application for consistency.
