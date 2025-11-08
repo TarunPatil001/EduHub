@@ -368,7 +368,7 @@
                     
                     <!-- Sidebar -->
                     <div class="col-lg-3">
-                        <div class="card-custom mb-3 sticky-top" style="top: 20px;">
+                        <div class="card-custom mb-3 sticky-bottom-sidebar">
                             <h6><i class="bi bi-info-circle"></i> Registration Guidelines</h6>
                             <ul class="small text-muted mb-0">
                                 <li>Fill all required fields marked with <span class="required-star">*</span></li>

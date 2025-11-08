@@ -102,6 +102,16 @@
     text-decoration: underline;
 }
 
+/* Sticky Bottom Sidebar for Registration Guidelines */
+.sticky-bottom-sidebar {
+    position: sticky;
+    bottom: 20px;
+    align-self: flex-end;
+    z-index: 10;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
 /* Year Picker Styling */
 .sticky-top {
     z-index: 10;

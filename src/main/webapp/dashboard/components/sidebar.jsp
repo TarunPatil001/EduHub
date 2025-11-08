@@ -31,15 +31,16 @@
             
             <!-- Students -->
             <li class="nav-item">
-                <a href="#" class="nav-link has-submenu ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'student-attendance' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#studentsMenu">
+                <a href="#" class="nav-link has-submenu ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'record-payment' || param.activePage == 'student-attendance' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#studentsMenu">
                     <i class="bi bi-mortarboard"></i>
                     <span>Students</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <ul class="submenu collapse ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'student-attendance' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'show' : ''}" id="studentsMenu">
+                <ul class="submenu collapse ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'record-payment' || param.activePage == 'student-attendance' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'show' : ''}" id="studentsMenu">
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/add-student.jsp" class="nav-link ${param.activePage == 'add-student' ? 'active' : ''}"><i class="bi bi-plus-circle"></i><span>Add Student</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp" class="nav-link ${param.activePage == 'all-students' ? 'active' : ''}"><i class="bi bi-people"></i><span>All Students</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp" class="nav-link ${param.activePage == 'fees-management' ? 'active' : ''}"><i class="bi bi-currency-dollar"></i><span>Fees Management</span></a></li>
+                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/record-payment.jsp" class="nav-link ${param.activePage == 'record-payment' ? 'active' : ''}"><i class="bi bi-credit-card"></i><span>Record Payment</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/attendance.jsp" class="nav-link ${param.activePage == 'student-attendance' ? 'active' : ''}"><i class="bi bi-clock-history"></i><span>Attendance</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/performance-reports.jsp" class="nav-link ${param.activePage == 'performance-reports' ? 'active' : ''}"><i class="bi bi-graph-up"></i><span>Performance Reports</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/id-certificates.jsp" class="nav-link ${param.activePage == 'id-certificates' ? 'active' : ''}"><i class="bi bi-card-heading"></i><span>ID Card / Certificates</span></a></li>

@@ -117,8 +117,8 @@
         // Set modal content
         document.getElementById('modalTitle').textContent = settings.title;
         document.getElementById('modalMessage').innerHTML = settings.message;
-        document.getElementById('modalCancelBtn').textContent = settings.cancelText;
-        document.getElementById('modalConfirmBtn').textContent = settings.confirmText;
+        document.getElementById('modalCancelBtn').innerHTML = settings.cancelText;
+        document.getElementById('modalConfirmBtn').innerHTML = settings.confirmText;
         
         // Update icon
         const iconElement = document.querySelector('#confirmationModalLabel i');
@@ -137,8 +137,14 @@
         
         // Add new event listeners
         newConfirmBtn.addEventListener('click', function() {
-            settings.onConfirm();
-            bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+            const result = settings.onConfirm();
+            // Only close modal if onConfirm doesn't return false
+            if (result !== false) {
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
         });
         
         newCancelBtn.addEventListener('click', function() {

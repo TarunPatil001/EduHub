@@ -419,10 +419,8 @@
     }
 
     // Delete Student
-    function handleDeleteStudent(studentId) {
-        console.log('Deleting student:', studentId);
-        
-        // Show confirmation modal using existing component
+    function deleteStudent(studentId) {
+        showConfirmationModal({
         showConfirmationModal({
             title: 'Delete Student',
             message: 'Are you sure you want to delete this student? This action cannot be undone.',
