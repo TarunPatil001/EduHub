@@ -182,3 +182,90 @@
     border: 2px solid #198754;
     font-weight: 600;
 }
+
+/* Responsive Styles for Mobile */
+@media (max-width: 768px) {
+    /* Fix page header - stack heading and back button vertically */
+    .page-header .d-flex {
+        flex-direction: column-reverse !important;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .page-header .d-flex > div {
+        width: 100%;
+    }
+    
+    .page-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .page-header .text-muted {
+        font-size: 0.875rem;
+    }
+    
+    .page-header .btn {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Make form action buttons stack vertically on mobile */
+    .d-flex.gap-2.mb-4 {
+        flex-direction: column !important;
+    }
+    
+    .d-flex.gap-2.mb-4 .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Adjust button text for mobile */
+    .btn-lg {
+        font-size: 0.95rem;
+        padding: 0.65rem 1rem;
+    }
+    
+    /* Photo upload container */
+    .photo-preview {
+        width: 120px;
+        height: 120px;
+    }
+    
+    /* File upload boxes - adjust height for mobile */
+    .file-upload-box {
+        height: 110px;
+        padding: 15px;
+    }
+    
+    /* Reduce form padding on mobile */
+    .card-custom {
+        padding: 1rem;
+    }
+    
+    /* Adjust sticky sidebar on mobile */
+    .sticky-top {
+        position: relative !important;
+        top: 0 !important;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Extra small devices - further adjustments */
+    .btn-lg {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.875rem;
+    }
+    
+    /* Stack all form columns */
+    .row.mb-3 > [class*="col-"] {
+        margin-bottom: 1rem;
+    }
+    
+    /* Adjust photo size for very small screens */
+    .photo-preview {
+        width: 100px;
+        height: 100px;
+    }
+}
