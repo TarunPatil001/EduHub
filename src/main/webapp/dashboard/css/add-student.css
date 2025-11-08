@@ -1,0 +1,184 @@
+/**
+ * Add Student Page - Custom Styles
+ * Separate CSS file for better organization and maintainability
+ */
+
+/* Photo Upload Styling */
+.photo-upload-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.photo-preview {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.photo-preview:hover {
+    border-color: #0d6efd;
+    background: #e7f1ff;
+}
+
+.photo-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+.photo-placeholder {
+    color: #6c757d;
+    text-align: center;
+}
+
+/* File Upload Box Styling */
+.file-upload-box {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-upload-box:hover {
+    border-color: #0d6efd;
+    background: #e7f1ff;
+}
+
+.file-upload-box.has-file {
+    border-color: #198754;
+    background: #d1e7dd;
+}
+
+.file-name {
+    font-size: 0.85rem;
+    color: #198754;
+    margin-top: 8px;
+    font-weight: 500;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    min-height: 20px;
+    text-align: center;
+}
+
+/* Form Styling */
+.section-divider {
+    border-top: 2px solid #e9ecef;
+    margin: 30px 0 20px 0;
+    padding-top: 20px;
+}
+
+.required-star {
+    color: #dc3545;
+}
+
+.same-as-permanent {
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.same-as-permanent:hover {
+    text-decoration: underline;
+}
+
+/* Year Picker Styling */
+.sticky-top {
+    z-index: 10;
+}
+
+.year-picker {
+    cursor: pointer;
+    background-color: white;
+}
+
+.year-picker-dropdown {
+    position: absolute;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 15px;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    width: 280px;
+}
+
+.year-picker-dropdown.show {
+    display: block;
+}
+
+.year-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.year-picker-nav {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #0d6efd;
+    padding: 0 5px;
+}
+
+.year-picker-nav:hover {
+    color: #0b5ed7;
+}
+
+.year-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.year-picker-item {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.year-picker-item:hover {
+    background: #e7f1ff;
+    border-color: #0d6efd;
+}
+
+.year-picker-item.selected {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+.year-picker-item.current {
+    border: 2px solid #198754;
+    font-weight: 600;
+}

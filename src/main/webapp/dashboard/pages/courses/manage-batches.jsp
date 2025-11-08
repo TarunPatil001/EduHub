@@ -20,9 +20,16 @@
             </jsp:include>
             
             <div class="dashboard-content">
-                <div class="page-header">
-                    <h2>Manage Course Batches</h2>
-                    <p>Create and manage course batches and schedules</p>
+                <div class="page-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2>Manage Course Batches</h2>
+                            <p class="text-muted">Create and manage course batches and schedules</p>
+                        </div>
+                        <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-batch.jsp" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Create New Batch
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="card-custom">
