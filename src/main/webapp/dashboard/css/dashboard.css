@@ -2,6 +2,25 @@
    Dashboard Layout Styles
    =================================== */
 
+/* Roma Font - Local Font Declaration */
+@font-face {
+    font-family: 'Roma';
+    src: url('../../public/assets/fonts/RomaFont/ROMA.ttf') format('truetype'),
+         url('../../public/assets/fonts/RomaFont/ROMA.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'RomaFont';
+    src: url('../../public/assets/fonts/RomaFont/ROMA.ttf') format('truetype'),
+         url('../../public/assets/fonts/RomaFont/ROMA.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Reset for dashboard pages */
 body {
     margin: 0;
