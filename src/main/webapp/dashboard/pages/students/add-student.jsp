@@ -7,7 +7,7 @@
         <jsp:param name="description" value="Add new student to EduHub"/>
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/add-student.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/students/css/add-student.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -417,6 +417,6 @@
     <jsp:include page="/dashboard/components/toast-notification.jsp"/>
     
     <!-- Add Student Page Scripts -->
-    <script src="${pageContext.request.contextPath}/dashboard/js/add-student.js"></script>
+    <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/add-student.js"></script>
 </body>
 </html>
