@@ -30,8 +30,36 @@
                 </div>
                 
                 <div class="card-custom">
-                    <h5>All Courses</h5>
-                    <p class="text-muted">Course management functionality coming soon...</p>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>All Courses</h5>
+                        <button class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add Course
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Course Name</th>
+                                    <th>Category</th>
+                                    <th>Instructor</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                                        <p class="text-muted mt-2">No courses found. Add your first course!</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

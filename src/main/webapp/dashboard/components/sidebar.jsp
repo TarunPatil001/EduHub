@@ -72,9 +72,9 @@
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
                 <ul class="submenu collapse ${param.activePage == 'attendance' || param.activePage == 'student-attendance-mark' || param.activePage == 'staff-attendance' || param.activePage == 'attendance-reports' ? 'show' : ''}" id="attendanceMenu">
-                    <li><span class="nav-link disabled"><i class="bi bi-person-check"></i><span>Student Attendance (removed)</span></span></li>
-                    <li><span class="nav-link disabled"><i class="bi bi-person-workspace"></i><span>Staff Attendance (removed)</span></span></li>
-                    <li><span class="nav-link disabled"><i class="bi bi-file-earmark-bar-graph"></i><span>Attendance Reports (removed)</span></span></li>
+                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/attendance/student-attendance.jsp" class="nav-link ${param.activePage == 'student-attendance-mark' ? 'active' : ''}"><i class="bi bi-person-check"></i><span>Student Attendance</span></a></li>
+                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/attendance/staff-attendance.jsp" class="nav-link ${param.activePage == 'staff-attendance' ? 'active' : ''}"><i class="bi bi-person-workspace"></i><span>Staff Attendance</span></a></li>
+                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/attendance/attendance-reports.jsp" class="nav-link ${param.activePage == 'attendance-reports' ? 'active' : ''}"><i class="bi bi-file-earmark-bar-graph"></i><span>Attendance Reports</span></a></li>
                 </ul>
             </li>
             

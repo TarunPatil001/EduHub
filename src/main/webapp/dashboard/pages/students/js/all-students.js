@@ -244,15 +244,27 @@
 
     // Update Bulk Action Buttons
     function updateBulkActionButtons() {
-        const checkedCount = document.querySelectorAll('.student-checkbox:checked').length;
+        // Only count visible checkboxes (not hidden by pagination or filters)
+        const visibleRows = Array.from(studentsTable.querySelectorAll('tbody tr'))
+            .filter(row => row.style.display !== 'none' && !row.classList.contains('empty-state-row'));
+        
+        const checkedCount = visibleRows.filter(row => {
+            const checkbox = row.querySelector('.student-checkbox');
+            return checkbox && checkbox.checked;
+        }).length;
+        
         const selectedCountSpan = document.getElementById('selectedCount');
         
-        if (bulkDeleteBtn && selectedCountSpan) {
-            if (checkedCount > 0) {
-                bulkDeleteBtn.style.display = 'inline-block';
-                selectedCountSpan.textContent = checkedCount;
-            } else {
-                bulkDeleteBtn.style.display = 'none';
+        if (!bulkDeleteBtn || !selectedCountSpan) return;
+        
+        if (checkedCount > 0) {
+            bulkDeleteBtn.style.display = 'inline-block';
+            selectedCountSpan.textContent = checkedCount;
+        } else {
+            bulkDeleteBtn.style.display = 'none';
+            if (selectAll) {
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
             }
         }
     }
@@ -288,6 +300,9 @@
         
         // Update select all state
         updateSelectAllState();
+        
+        // Update bulk action buttons to reflect current state
+        updateBulkActionButtons();
     }
 
     // Update Pagination Info
@@ -627,11 +642,16 @@
         
         showConfirmationModal({
             title: 'Delete Student',
-            message: `Are you sure you want to delete <strong>${studentName}</strong>?<br><br>This action cannot be undone.`,
+            message: `Are you sure you want to delete this student?<br><br>This action cannot be undone.`,
             confirmText: 'Yes, Delete',
             cancelText: 'Cancel',
             confirmClass: 'btn-danger',
             onConfirm: function() {
+                // Save the state of other checked checkboxes BEFORE deletion
+                const checkedStudentIds = Array.from(document.querySelectorAll('.student-checkbox:checked'))
+                    .map(cb => cb.closest('tr')?.dataset.studentId)
+                    .filter(id => id && id !== studentId); // Exclude the student being deleted
+                
                 // Remove row from table
                 if (row) {
                     row.remove();
@@ -640,16 +660,27 @@
                     allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
                     filteredStudents = filteredStudents.filter(r => r !== row);
                     
-                    // Reset select all checkbox
-                    if (selectAll) {
-                        selectAll.checked = false;
-                        selectAll.indeterminate = false;
-                    }
-                    
                     // Update view
                     updatePagination();
-                    updateBulkActionButtons();
                     showEmptyState();
+                    
+                    // Restore the checked state of other students after re-render
+                    setTimeout(() => {
+                        checkedStudentIds.forEach(id => {
+                            const studentRow = document.querySelector(`tr[data-student-id="${id}"]`);
+                            if (studentRow) {
+                                const checkbox = studentRow.querySelector('.student-checkbox');
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                    studentRow.classList.add('row-selected');
+                                }
+                            }
+                        });
+                        
+                        // Update bulk action buttons and select all state
+                        updateBulkActionButtons();
+                        updateSelectAllState();
+                    }, 50);
                     
                     showToast(`Student "${studentName}" deleted successfully`, 'success');
                 }
@@ -662,7 +693,11 @@
         const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
         
         if (selectedCheckboxes.length === 0) {
-            showToast('Please select students to delete', 'warning');
+            if (typeof showToast === 'function') {
+                showToast('Please select students to delete', 'warning');
+            } else {
+                alert('Please select students to delete');
+            }
             return;
         }
 
@@ -673,59 +708,77 @@
             const row = checkbox.closest('tr');
             const nameEl = row.querySelector('.student-name');
             if (nameEl) {
-                studentNames.push(nameEl.textContent);
+                studentNames.push(nameEl.textContent.trim());
             }
         });
 
-        const studentList = studentNames.length <= 5 
-            ? studentNames.map(name => `<li>${name}</li>`).join('')
-            : studentNames.slice(0, 5).map(name => `<li>${name}</li>`).join('') + 
-              `<li><em>...and ${studentNames.length - 5} more</em></li>`;
-
-        showConfirmationModal({
-            title: 'Delete Multiple Students',
-            message: `Are you sure you want to delete <strong>${studentCount} student(s)</strong>?<br><br>
-                     <div style="text-align: left; max-height: 200px; overflow-y: auto;">
-                         <ul style="margin: 10px 0; padding-left: 20px;">
-                             ${studentList}
-                         </ul>
-                     </div>
-                     <br>This action cannot be undone.`,
-            confirmText: 'Yes, Delete All',
-            cancelText: 'Cancel',
-            confirmClass: 'btn-danger',
-            onConfirm: function() {
-                // Remove all selected rows
+        if (typeof showConfirmationModal === 'function') {
+            showConfirmationModal({
+                title: 'Delete Students',
+                message: `Are you sure you want to delete <strong>${studentCount} student(s)</strong>?<br><br>This action cannot be undone.`,
+                confirmText: 'Yes, Delete',
+                cancelText: 'Cancel',
+                confirmClass: 'btn-danger',
+                onConfirm: function() {
+                    // Remove all selected rows
+                    selectedCheckboxes.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        if (row) {
+                            row.remove();
+                        }
+                    });
+                    
+                    // Update arrays
+                    allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
+                    filteredStudents = [...allRows];
+                    
+                    // Reset checkboxes
+                    if (selectAll) {
+                        selectAll.checked = false;
+                        selectAll.indeterminate = false;
+                    }
+                    
+                    // Hide bulk delete button
+                    if (bulkDeleteBtn) {
+                        bulkDeleteBtn.style.display = 'none';
+                    }
+                    
+                    // Reset to page 1 if current page is now empty
+                    const totalPages = Math.ceil(filteredStudents.length / entriesPerPage);
+                    if (currentPage > totalPages) {
+                        currentPage = Math.max(1, totalPages);
+                    }
+                    
+                    // Update view
+                    updatePagination();
+                    showEmptyState();
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(`${studentCount} student(s) deleted successfully`, 'success');
+                    }
+                }
+            });
+        } else {
+            // Fallback to confirm dialog
+            if (confirm(`Are you sure you want to delete ${studentCount} student(s)? This action cannot be undone.`)) {
                 selectedCheckboxes.forEach(checkbox => {
                     const row = checkbox.closest('tr');
-                    if (row) {
-                        row.remove();
-                    }
+                    if (row) row.remove();
                 });
-                
-                // Update arrays
                 allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
                 filteredStudents = [...allRows];
-                
-                // Reset checkboxes
                 if (selectAll) {
                     selectAll.checked = false;
                     selectAll.indeterminate = false;
                 }
-                
-                // Hide bulk delete button
                 if (bulkDeleteBtn) {
                     bulkDeleteBtn.style.display = 'none';
                 }
-                
-                // Update view
-                currentPage = 1;
                 updatePagination();
                 showEmptyState();
-                
-                showToast(`${studentCount} student(s) deleted successfully`, 'success');
+                alert(`${studentCount} student(s) deleted successfully`);
             }
-        });
+        }
     }
 
     // Add Student

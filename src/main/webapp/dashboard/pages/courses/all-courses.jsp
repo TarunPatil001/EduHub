@@ -113,72 +113,76 @@
                 </div>
 
                 <!-- Courses Table -->
-                <div class="table-wrapper">
-                    <table class="courses-table">
-                        <colgroup>
-                            <col style="width: 50px;"><!-- Checkbox -->
-                            <col style="min-width: 120px;"><!-- Course Code -->
-                            <col style="min-width: 200px;"><!-- Course Name -->
-                            <col style="min-width: 120px;"><!-- Category -->
-                            <col style="min-width: 110px;"><!-- Level -->
-                            <col style="min-width: 100px;"><!-- Duration -->
-                            <col style="min-width: 120px;"><!-- Max Students -->
-                            <col style="min-width: 90px;"><!-- Fee -->
-                            <col style="min-width: 100px;"><!-- Mode -->
-                            <col style="min-width: 120px;"><!-- Start Date -->
-                            <col style="min-width: 120px;"><!-- End Date -->
-                            <col style="min-width: 180px;"><!-- Teacher -->
-                            <col style="min-width: 90px;"><!-- Status -->
-                            <col style="min-width: 130px;"><!-- Actions -->
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th class="text-center">
-                                    <input type="checkbox" id="selectAllCourses" class="form-check-input">
-                                </th>
-                                <th>Course Code</th>
-                                <th>Course Name</th>
-                                <th>Category</th>
-                                <th>Level</th>
-                                <th>Duration</th>
-                                <th>Max Students</th>
-                                <th>Fee</th>
-                                <th>Mode</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Teacher</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="coursesTableBody">
-                            <tr class="empty-state">
-                                <td colspan="14">
-                                    <div class="empty-content">
-                                        <i class="bi bi-inbox"></i>
-                                        <p>No courses found</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination-wrapper">
-                    <div class="pagination-info">
-                        <div class="items-per-page">
-                            <label for="itemsPerPage">Show:</label>
-                            <select id="itemsPerPage" class="form-control-sm">
-                                <option value="10" selected>10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                            </select>
-                            <span>entries</span>
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="coursesTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 40px;">
+                                            <div class="form-check">
+                                                <input type="checkbox" id="selectAllCourses" class="form-check-input">
+                                            </div>
+                                        </th>
+                                        <th>Course Code</th>
+                                        <th>Course Name</th>
+                                        <th>Category</th>
+                                        <th>Level</th>
+                                        <th>Duration</th>
+                                        <th>Max Students</th>
+                                        <th>Fee</th>
+                                        <th>Mode</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Teacher</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="coursesTableBody">
+                                    <tr class="empty-state-row">
+                                        <td colspan="14" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon">
+                                                    <i class="bi bi-journal-plus"></i>
+                                                </div>
+                                                <h4 class="empty-state-title">No Courses Yet</h4>
+                                                <p class="empty-state-text">Get started by adding your first course to the system</p>
+                                                <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-course.jsp" class="btn btn-primary mt-3">
+                                                    <i class="bi bi-plus-lg me-2"></i>Add First Course
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="page-info" id="pageInfo"></div>
                     </div>
-                    <div id="paginationContainer"></div>
+                    
+                    <!-- Pagination Footer -->
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex align-items-center gap-3 flex-wrap">
+                                <div class="entries-info">
+                                    Showing <span id="showingStart">0</span> to <span id="showingEnd">0</span> of <span id="totalEntries">0</span> entries
+                                </div>
+                                <div class="entries-selector-wrapper">
+                                    <label>Show</label>
+                                    <select class="form-select" id="itemsPerPage">
+                                        <option value="10" selected>10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <nav>
+                                <ul class="pagination mb-0" id="paginationContainer">
+                                    <!-- Pagination buttons will be generated by JavaScript -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

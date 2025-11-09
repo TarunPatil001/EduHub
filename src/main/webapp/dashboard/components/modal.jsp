@@ -128,31 +128,52 @@
         const confirmBtn = document.getElementById('modalConfirmBtn');
         confirmBtn.className = 'btn ' + settings.confirmClass;
         
-        // Remove previous event listeners
-        const newConfirmBtn = confirmBtn.cloneNode(true);
-        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+        // Get modal element
+        const modalElement = document.getElementById('confirmationModal');
         
-        const newCancelBtn = document.getElementById('modalCancelBtn').cloneNode(true);
-        document.getElementById('modalCancelBtn').parentNode.replaceChild(newCancelBtn, document.getElementById('modalCancelBtn'));
+        // Dispose of any existing instance first
+        let existingInstance = bootstrap.Modal.getInstance(modalElement);
+        if (existingInstance) {
+            existingInstance.dispose();
+        }
         
-        // Add new event listeners
+        // Create new instance
+        const modal = new bootstrap.Modal(modalElement, {
+            backdrop: true,
+            keyboard: true
+        });
+        
+        // Store instance for later retrieval
+        window.currentConfirmationModal = modal;
+        
+        // Remove previous event listeners by cloning
+        const oldConfirmBtn = document.getElementById('modalConfirmBtn');
+        const newConfirmBtn = oldConfirmBtn.cloneNode(true);
+        oldConfirmBtn.parentNode.replaceChild(newConfirmBtn, oldConfirmBtn);
+        
+        const oldCancelBtn = document.getElementById('modalCancelBtn');
+        const newCancelBtn = oldCancelBtn.cloneNode(true);
+        oldCancelBtn.parentNode.replaceChild(newCancelBtn, oldCancelBtn);
+        
+        // Add new event listeners to the cloned buttons
         newConfirmBtn.addEventListener('click', function() {
             const result = settings.onConfirm();
             // Only close modal if onConfirm doesn't return false
             if (result !== false) {
-                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
-                if (modalInstance) {
-                    modalInstance.hide();
+                if (window.currentConfirmationModal) {
+                    window.currentConfirmationModal.hide();
                 }
             }
         });
         
         newCancelBtn.addEventListener('click', function() {
             settings.onCancel();
+            if (window.currentConfirmationModal) {
+                window.currentConfirmationModal.hide();
+            }
         });
         
         // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
         modal.show();
     }
     

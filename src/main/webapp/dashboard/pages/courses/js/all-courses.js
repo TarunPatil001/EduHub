@@ -55,14 +55,14 @@
 
     // Bind Events
     function bindEvents() {
-        searchInput.addEventListener('input', handleSearch);
-        categoryFilter.addEventListener('change', applyFilters);
-        levelFilter.addEventListener('change', applyFilters);
-        statusFilter.addEventListener('change', applyFilters);
-        resetFiltersBtn.addEventListener('click', resetFilters);
-        itemsPerPageSelect.addEventListener('change', handleItemsPerPageChange);
-        selectAllCheckbox.addEventListener('change', handleSelectAll);
-        bulkDeleteBtn.addEventListener('click', handleBulkDelete);
+        if (searchInput) searchInput.addEventListener('input', handleSearch);
+        if (categoryFilter) categoryFilter.addEventListener('change', applyFilters);
+        if (levelFilter) levelFilter.addEventListener('change', applyFilters);
+        if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+        if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetFilters);
+        if (itemsPerPageSelect) itemsPerPageSelect.addEventListener('change', handleItemsPerPageChange);
+        if (selectAllCheckbox) selectAllCheckbox.addEventListener('change', handleSelectAll);
+        if (bulkDeleteBtn) bulkDeleteBtn.addEventListener('click', handleBulkDelete);
     }
 
     // Handle Search
@@ -72,6 +72,11 @@
 
     // Apply Filters
     function applyFilters() {
+        if (!searchInput || !categoryFilter || !levelFilter || !statusFilter) {
+            console.error('Filter elements not found');
+            return;
+        }
+
         const searchTerm = searchInput.value.toLowerCase().trim();
         const category = categoryFilter.value;
         const level = levelFilter.value;
@@ -79,9 +84,9 @@
 
         filteredCourses = allCourses.filter(course => {
             const matchesSearch = searchTerm === '' ||
-                course.name.toLowerCase().includes(searchTerm) ||
-                course.code.toLowerCase().includes(searchTerm) ||
-                course.teacher.toLowerCase().includes(searchTerm);
+                (course.name && course.name.toLowerCase().includes(searchTerm)) ||
+                (course.code && course.code.toLowerCase().includes(searchTerm)) ||
+                (course.teacher && course.teacher.toLowerCase().includes(searchTerm));
 
             const matchesCategory = category === 'all' || course.category === category;
             const matchesLevel = level === 'all' || course.level === level;
@@ -90,17 +95,29 @@
             return matchesSearch && matchesCategory && matchesLevel && matchesStatus;
         });
 
+        // Reset to first page
         currentPage = 1;
+        
+        // Clear selections when filters change
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
+        
         renderTable();
         renderPagination();
     }
 
     // Update Stats
     function updateStats() {
+        if (!totalCoursesEl || !activeCoursesEl || !totalStudentsEl || !totalTeachersEl) {
+            return;
+        }
+
         const totalCourses = allCourses.length;
-        const activeCourses = allCourses.filter(c => c.status === 'active').length;
-        const totalCapacity = allCourses.reduce((sum, c) => sum + c.maxStudents, 0);
-        const uniqueTeachers = new Set(allCourses.map(c => c.teacher)).size;
+        const activeCourses = allCourses.filter(c => c && c.status === 'active').length;
+        const totalCapacity = allCourses.reduce((sum, c) => sum + (c && c.maxStudents ? c.maxStudents : 0), 0);
+        const uniqueTeachers = new Set(allCourses.filter(c => c && c.teacher).map(c => c.teacher)).size;
 
         totalCoursesEl.textContent = totalCourses;
         activeCoursesEl.textContent = activeCourses;
@@ -110,88 +127,250 @@
 
     // Render Table
     function renderTable() {
+        if (!tableBody) {
+            console.error('Table body element not found');
+            return;
+        }
+
+        const thead = document.querySelector('#coursesTable thead');
+        const tableResponsive = document.querySelector('.table-responsive');
+
         if (filteredCourses.length === 0) {
             showEmptyState();
             return;
+        }
+
+        // Show header when there are courses
+        if (thead) thead.style.display = '';
+        if (tableResponsive) {
+            tableResponsive.style.overflowX = 'auto';
+            tableResponsive.style.overflowY = 'visible';
+        }
+
+        // Validate current page is within bounds
+        const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+        if (currentPage > totalPages && totalPages > 0) {
+            currentPage = totalPages;
+        }
+        if (currentPage < 1) {
+            currentPage = 1;
         }
 
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         const paginatedCourses = filteredCourses.slice(startIndex, endIndex);
 
-        tableBody.innerHTML = paginatedCourses.map(course => `
-            <tr data-course-id="${course.id}">
-                <td class="text-center">
-                    <input type="checkbox" class="form-check-input course-checkbox" data-course-id="${course.id}">
-                </td>
-                <td><span class="course-code">${course.code}</span></td>
-                <td><span class="course-name">${course.name}</span></td>
-                <td><span class="category-badge category-${course.category}">${capitalize(course.category)}</span></td>
-                <td><span class="level-badge level-${course.level}">${capitalize(course.level)}</span></td>
-                <td>${course.duration}</td>
-                <td>${course.maxStudents}</td>
-                <td>₹${course.fee.toLocaleString()}</td>
-                <td><span class="mode-badge mode-${course.modeOfConduct}">${capitalize(course.modeOfConduct)}</span></td>
-                <td>${formatDate(course.startDate)}</td>
-                <td>${formatDate(course.endDate)}</td>
-                <td>${course.teacher}</td>
-                <td><span class="status-badge status-${course.status}">${capitalize(course.status)}</span></td>
+        tableBody.innerHTML = paginatedCourses.map(course => {
+            // Safely escape and validate all course properties
+            const safeId = course.id || 0;
+            const safeCode = escapeHtml(course.code || 'N/A');
+            const safeName = escapeHtml(course.name || 'Unnamed Course');
+            const safeCategory = course.category || 'unknown';
+            const safeLevel = course.level || 'unknown';
+            const safeDuration = escapeHtml(course.duration || 'N/A');
+            const safeMaxStudents = course.maxStudents || 0;
+            const safeFee = course.fee || 0;
+            const safeMode = course.modeOfConduct || 'unknown';
+            const safeTeacher = escapeHtml(course.teacher || 'Not Assigned');
+            const safeStatus = course.status || 'inactive';
+
+            return `
+            <tr data-course-id="${safeId}">
                 <td>
-                    <div class="action-buttons">
-                        <button class="action-btn view" onclick="viewCourse(${course.id})" title="View Details">
-                            <i class="bi bi-eye-fill"></i>
-                        </button>
-                        <button class="action-btn edit" onclick="editCourse(${course.id})" title="Edit Course">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                        <button class="action-btn delete" onclick="handleDeleteCourse(${course.id})" title="Delete Course">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input course-checkbox" data-course-id="${safeId}">
                     </div>
                 </td>
-            </tr>
-        `).join('');
-
-        // Add event listeners to checkboxes
-        document.querySelectorAll('.course-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', updateBulkDeleteButton);
-        });
-
-        // Reset select all checkbox
-        selectAllCheckbox.checked = false;
-        selectAllCheckbox.indeterminate = false;
-    }
-
-    // Show Empty State
-    function showEmptyState() {
-        tableBody.innerHTML = `
-            <tr class="empty-state">
-                <td colspan="14">
-                    <div class="empty-content">
-                        <i class="bi bi-inbox"></i>
-                        <p>No courses found</p>
+                <td><span class="course-code">${safeCode}</span></td>
+                <td><span class="course-name">${safeName}</span></td>
+                <td><span class="category-badge category-${safeCategory}">${capitalize(safeCategory)}</span></td>
+                <td><span class="level-badge level-${safeLevel}">${capitalize(safeLevel)}</span></td>
+                <td>${safeDuration}</td>
+                <td>${safeMaxStudents}</td>
+                <td>₹${safeFee.toLocaleString()}</td>
+                <td><span class="mode-badge mode-${safeMode}">${capitalize(safeMode)}</span></td>
+                <td>${formatDate(course.startDate)}</td>
+                <td>${formatDate(course.endDate)}</td>
+                <td>${safeTeacher}</td>
+                <td><span class="status-badge status-${safeStatus}">${capitalize(safeStatus)}</span></td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-primary view-btn" onclick="viewCourse(${safeId})" title="View Details">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success edit-btn" onclick="editCourse(${safeId})" title="Edit Course">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-btn" onclick="handleDeleteCourse(${safeId})" title="Delete Course">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
         `;
-        paginationContainer.innerHTML = '';
-        pageInfo.textContent = '';
-        bulkDeleteBtn.style.display = 'none';
+        }).join('');
+
+        // Add event listeners to checkboxes
+        document.querySelectorAll('.course-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('tr');
+                
+                if (this.checked) {
+                    row.classList.add('row-selected');
+                } else {
+                    row.classList.remove('row-selected');
+                    row.style.backgroundColor = '';
+                    row.style.borderLeft = '';
+                }
+                
+                updateBulkDeleteButton();
+                updateSelectAllState();
+            });
+        });
+
+        // Update pagination info
+        updatePaginationInfo();
+        
+        // Update bulk delete button to reflect current selection
+        updateBulkDeleteButton();
+        updateSelectAllState();
     }
 
-    // Render Pagination
-    function renderPagination() {
-        const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+    // Update Pagination Info
+    function updatePaginationInfo() {
+        const showingStartEl = document.getElementById('showingStart');
+        const showingEndEl = document.getElementById('showingEnd');
+        const totalEntriesEl = document.getElementById('totalEntries');
 
-        if (totalPages <= 1) {
-            paginationContainer.innerHTML = '';
-            pageInfo.textContent = '';
+        if (!showingStartEl || !showingEndEl || !totalEntriesEl) {
+            return;
+        }
+
+        if (filteredCourses.length === 0) {
+            showingStartEl.textContent = '0';
+            showingEndEl.textContent = '0';
+            totalEntriesEl.textContent = '0';
             return;
         }
 
         const startItem = (currentPage - 1) * itemsPerPage + 1;
         const endItem = Math.min(currentPage * itemsPerPage, filteredCourses.length);
-        pageInfo.textContent = `Showing ${startItem}-${endItem} of ${filteredCourses.length} courses`;
+
+        showingStartEl.textContent = startItem.toString();
+        showingEndEl.textContent = endItem.toString();
+        totalEntriesEl.textContent = filteredCourses.length.toString();
+    }
+
+    // Show Empty State
+    function showEmptyState() {
+        if (!tableBody) return;
+
+        const thead = document.querySelector('#coursesTable thead');
+        const tableResponsive = document.querySelector('.table-responsive');
+        const hasActiveFilters = (searchInput && searchInput.value.trim()) || 
+                                (categoryFilter && categoryFilter.value !== 'all') || 
+                                (levelFilter && levelFilter.value !== 'all') || 
+                                (statusFilter && statusFilter.value !== 'all');
+        const isCompletelyEmpty = allCourses.length === 0;
+
+        if (isCompletelyEmpty) {
+            // Hide table header when completely empty
+            if (thead) thead.style.display = 'none';
+            if (tableResponsive) {
+                tableResponsive.style.overflowX = 'visible';
+                tableResponsive.style.overflowY = 'visible';
+            }
+
+            tableBody.innerHTML = `
+                <tr class="empty-state-row">
+                    <td colspan="14" class="text-center py-5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-journal-plus"></i>
+                            </div>
+                            <h4 class="empty-state-title">No Courses Yet</h4>
+                            <p class="empty-state-text">Get started by adding your first course to the system</p>
+                            <a href="${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/create-course.jsp" class="btn btn-primary mt-3">
+                                <i class="bi bi-plus-lg me-2"></i>Add First Course
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else if (hasActiveFilters) {
+            // Show header for filtered results
+            if (thead) thead.style.display = '';
+            if (tableResponsive) {
+                tableResponsive.style.overflowX = 'auto';
+                tableResponsive.style.overflowY = 'visible';
+            }
+
+            tableBody.innerHTML = `
+                <tr class="empty-state-row">
+                    <td colspan="14" class="text-center py-5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <h4 class="empty-state-title">No Courses Found</h4>
+                            <p class="empty-state-text">No courses match your current search or filter criteria</p>
+                            <button class="btn btn-outline-primary mt-3" id="emptyResetBtn">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Clear Filters
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            // Attach click handler to reset button in empty state
+            const emptyResetBtn = document.getElementById('emptyResetBtn');
+            if (emptyResetBtn) {
+                emptyResetBtn.addEventListener('click', resetFilters);
+            }
+        }
+
+        if (paginationContainer) paginationContainer.innerHTML = '';
+        
+        const showingStartEl = document.getElementById('showingStart');
+        const showingEndEl = document.getElementById('showingEnd');
+        const totalEntriesEl = document.getElementById('totalEntries');
+        
+        if (showingStartEl) showingStartEl.textContent = '0';
+        if (showingEndEl) showingEndEl.textContent = '0';
+        if (totalEntriesEl) totalEntriesEl.textContent = '0';
+        
+        if (bulkDeleteBtn) bulkDeleteBtn.style.display = 'none';
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
+    }
+
+    // Render Pagination
+    function renderPagination() {
+        if (!paginationContainer) return;
+
+        const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+
+        if (totalPages <= 1) {
+            paginationContainer.innerHTML = '';
+            if (pageInfo) pageInfo.textContent = '';
+            return;
+        }
+
+        // Ensure current page is valid
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
+
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, filteredCourses.length);
+        if (pageInfo) {
+            pageInfo.textContent = `Showing ${startItem}-${endItem} of ${filteredCourses.length} courses`;
+        }
 
         let paginationHTML = '<ul class="pagination">';
 
@@ -267,8 +446,32 @@
 
     // Handle Items Per Page Change
     function handleItemsPerPageChange() {
-        itemsPerPage = parseInt(itemsPerPageSelect.value);
-        currentPage = 1;
+        if (!itemsPerPageSelect) return;
+
+        const newItemsPerPage = parseInt(itemsPerPageSelect.value);
+        if (isNaN(newItemsPerPage) || newItemsPerPage < 1) {
+            console.error('Invalid items per page value');
+            return;
+        }
+
+        // Calculate which item the user is currently viewing
+        const currentFirstItem = (currentPage - 1) * itemsPerPage + 1;
+        
+        // Update items per page
+        itemsPerPage = newItemsPerPage;
+        
+        // Calculate new page to maintain roughly the same position
+        currentPage = Math.ceil(currentFirstItem / itemsPerPage);
+        
+        // Validate new page is within bounds
+        const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+        if (currentPage > totalPages && totalPages > 0) {
+            currentPage = totalPages;
+        }
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
+
         renderTable();
         renderPagination();
     }
@@ -276,65 +479,95 @@
     // Reset Filters
     function resetFilters() {
         // Clear search input
-        searchInput.value = '';
+        if (searchInput) searchInput.value = '';
         
         // Reset dropdowns to default
-        categoryFilter.value = 'all';
-        levelFilter.value = 'all';
-        statusFilter.value = 'all';
+        if (categoryFilter) categoryFilter.value = 'all';
+        if (levelFilter) levelFilter.value = 'all';
+        if (statusFilter) statusFilter.value = 'all';
         
         // Reapply filters (which will show all courses)
         applyFilters();
         
         // Show toast notification
-        showToast('Filters have been reset', 'success');
+        if (typeof showToast === 'function') {
+            showToast('Filters have been reset', 'success');
+        }
     }
 
     // Capitalize
     function capitalize(str) {
+        if (!str || typeof str !== 'string') return 'Unknown';
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
     // Format Date
     function formatDate(dateString) {
         if (!dateString) return '-';
-        const date = new Date(dateString);
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '-';
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        } catch (e) {
+            return '-';
+        }
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     // Course Actions
     window.viewCourse = function(courseId) {
-        const course = allCourses.find(c => c.id === courseId);
-        if (!course) return;
+        const course = allCourses.find(c => c && c.id === courseId);
+        if (!course) {
+            if (typeof showToast === 'function') {
+                showToast('Course not found', 'error');
+            }
+            return;
+        }
 
-        showSuccessModal({
-            title: 'Course Details',
-            message: `
-                <div style="text-align: left;">
-                    <h4 style="color: #667eea; margin-bottom: 1rem;">${course.name}</h4>
-                    <p><strong>Course Code:</strong> ${course.code}</p>
-                    <p><strong>Category:</strong> ${capitalize(course.category)}</p>
-                    <p><strong>Level:</strong> ${capitalize(course.level)}</p>
-                    <p><strong>Duration:</strong> ${course.duration}</p>
-                    <p><strong>Max Students:</strong> ${course.maxStudents}</p>
-                    <p><strong>Fee:</strong> ₹${course.fee.toLocaleString()}</p>
-                    <p><strong>Mode of Conduct:</strong> ${capitalize(course.modeOfConduct)}</p>
-                    <p><strong>Start Date:</strong> ${formatDate(course.startDate)}</p>
-                    <p><strong>End Date:</strong> ${formatDate(course.endDate)}</p>
-                    <p><strong>Teacher:</strong> ${course.teacher}</p>
-                    <p><strong>Status:</strong> ${capitalize(course.status)}</p>
-                </div>
-            `
-        });
+        if (typeof showSuccessModal === 'function') {
+            showSuccessModal({
+                title: 'Course Details',
+                message: `
+                    <div style="text-align: left;">
+                        <h4 style="color: #667eea; margin-bottom: 1rem;">${escapeHtml(course.name || 'N/A')}</h4>
+                        <p><strong>Course Code:</strong> ${escapeHtml(course.code || 'N/A')}</p>
+                        <p><strong>Category:</strong> ${capitalize(course.category)}</p>
+                        <p><strong>Level:</strong> ${capitalize(course.level)}</p>
+                        <p><strong>Duration:</strong> ${escapeHtml(course.duration || 'N/A')}</p>
+                        <p><strong>Max Students:</strong> ${course.maxStudents || 0}</p>
+                        <p><strong>Fee:</strong> ₹${(course.fee || 0).toLocaleString()}</p>
+                        <p><strong>Mode of Conduct:</strong> ${capitalize(course.modeOfConduct)}</p>
+                        <p><strong>Start Date:</strong> ${formatDate(course.startDate)}</p>
+                        <p><strong>End Date:</strong> ${formatDate(course.endDate)}</p>
+                        <p><strong>Teacher:</strong> ${escapeHtml(course.teacher || 'Not Assigned')}</p>
+                        <p><strong>Status:</strong> ${capitalize(course.status)}</p>
+                    </div>
+                `
+            });
+        }
     };
 
     window.editCourse = function(courseId) {
-        const course = allCourses.find(c => c.id === courseId);
-        if (!course) return;
+        const course = allCourses.find(c => c && c.id === courseId);
+        if (!course) {
+            if (typeof showToast === 'function') {
+                showToast('Course not found', 'error');
+            }
+            return;
+        }
 
         // In production, redirect to edit page
-        showToast(`Edit functionality for "${course.name}" will be implemented soon`, 'info');
+        if (typeof showToast === 'function') {
+            showToast(`Edit functionality for "${escapeHtml(course.name)}" will be implemented soon`, 'info');
+        }
     };
 
     // Handle Select All Checkbox
@@ -344,6 +577,17 @@
         
         checkboxes.forEach(checkbox => {
             checkbox.checked = isChecked;
+            const row = checkbox.closest('tr');
+            
+            if (isChecked) {
+                if (row) row.classList.add('row-selected');
+            } else {
+                if (row) {
+                    row.classList.remove('row-selected');
+                    row.style.backgroundColor = '';
+                    row.style.borderLeft = '';
+                }
+            }
         });
         
         updateBulkDeleteButton();
@@ -351,24 +595,36 @@
 
     // Update Bulk Delete Button
     function updateBulkDeleteButton() {
-        const checkedBoxes = document.querySelectorAll('.course-checkbox:checked');
-        const count = checkedBoxes.length;
+        if (!bulkDeleteBtn || !selectedCountEl) return;
+        
+        // Count checked checkboxes directly from DOM
+        const checkedCheckboxes = document.querySelectorAll('.course-checkbox:checked');
+        const count = checkedCheckboxes.length;
         
         if (count > 0) {
             bulkDeleteBtn.style.display = 'inline-block';
             selectedCountEl.textContent = count;
         } else {
             bulkDeleteBtn.style.display = 'none';
-            selectAllCheckbox.checked = false;
-            selectAllCheckbox.indeterminate = false;
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
         }
-
-        // Update select all checkbox state
+    }
+    
+    // Update Select All State
+    function updateSelectAllState() {
+        if (!selectAllCheckbox) return;
+        
         const allCheckboxes = document.querySelectorAll('.course-checkbox');
+        const checkedBoxes = document.querySelectorAll('.course-checkbox:checked');
+        const count = checkedBoxes.length;
+        
         if (count === 0) {
             selectAllCheckbox.checked = false;
             selectAllCheckbox.indeterminate = false;
-        } else if (count === allCheckboxes.length) {
+        } else if (count === allCheckboxes.length && allCheckboxes.length > 0) {
             selectAllCheckbox.checked = true;
             selectAllCheckbox.indeterminate = false;
         } else {
@@ -379,85 +635,207 @@
 
     // Handle Bulk Delete
     function handleBulkDelete() {
-        const checkedBoxes = document.querySelectorAll('.course-checkbox:checked');
-        const courseIds = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.courseId));
+        // Get checked course IDs directly from DOM
+        const checkedCheckboxes = document.querySelectorAll('.course-checkbox:checked');
+        const courseIds = Array.from(checkedCheckboxes)
+            .map(cb => parseInt(cb.dataset.courseId))
+            .filter(id => !isNaN(id));
         
         if (courseIds.length === 0) {
-            showToast('Please select courses to delete', 'warning');
+            if (typeof showToast === 'function') {
+                showToast('Please select courses to delete', 'warning');
+            } else {
+                alert('Please select courses to delete');
+            }
             return;
         }
 
-        const courseNames = courseIds.map(id => {
-            const course = allCourses.find(c => c.id === id);
-            return course ? course.name : '';
-        }).filter(name => name);
-
-        const courseList = courseNames.length <= 5 
-            ? courseNames.map(name => `<li>${name}</li>`).join('')
-            : courseNames.slice(0, 5).map(name => `<li>${name}</li>`).join('') + `<li><em>...and ${courseNames.length - 5} more</em></li>`;
-
-        showConfirmationModal({
-            title: 'Delete Multiple Courses',
-            message: `Are you sure you want to delete <strong>${courseIds.length} course(s)</strong>?<br><br>
-                     <div style="text-align: left; max-height: 200px; overflow-y: auto;">
-                         <ul style="margin: 10px 0; padding-left: 20px;">
-                             ${courseList}
-                         </ul>
-                     </div>
-                     <br>This action cannot be undone.`,
-            confirmText: 'Yes, Delete All',
-            cancelText: 'Cancel',
-            confirmClass: 'btn-danger',
-            onConfirm: function() {
-                // Remove courses
-                allCourses = allCourses.filter(course => !courseIds.includes(course.id));
-                
-                // Uncheck all checkboxes
-                selectAllCheckbox.checked = false;
-                selectAllCheckbox.indeterminate = false;
-                
-                // Update view
+        if (typeof showConfirmationModal === 'function') {
+            showConfirmationModal({
+                title: 'Delete Courses',
+                message: `Are you sure you want to delete <strong>${courseIds.length} course(s)</strong>?<br><br>This action cannot be undone.`,
+                confirmText: 'Yes, Delete',
+                cancelText: 'Cancel',
+                confirmClass: 'btn-danger',
+                onConfirm: function() {
+                    // Close the modal manually
+                    closeConfirmationModal();
+                    
+                    // Remove courses from data
+                    allCourses = allCourses.filter(course => course && !courseIds.includes(course.id));
+                    
+                    // Reapply filters to update filteredCourses
+                    applyFilters();
+                    
+                    // Adjust current page if needed
+                    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+                    if (currentPage > totalPages && totalPages > 0) {
+                        currentPage = totalPages;
+                    }
+                    if (currentPage < 1 && filteredCourses.length > 0) {
+                        currentPage = 1;
+                    }
+                    
+                    // Update view
+                    updateStats();
+                    renderTable();
+                    renderPagination();
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(`${courseIds.length} course(s) deleted successfully`, 'success');
+                    }
+                }
+            });
+        } else {
+            // Fallback to confirm dialog
+            if (confirm(`Are you sure you want to delete ${courseIds.length} course(s)? This action cannot be undone.`)) {
+                allCourses = allCourses.filter(course => course && !courseIds.includes(course.id));
                 applyFilters();
                 updateStats();
-                bulkDeleteBtn.style.display = 'none';
-                
-                showToast(`${courseIds.length} course(s) deleted successfully`, 'success');
+                renderTable();
+                renderPagination();
+                alert(`${courseIds.length} course(s) deleted successfully`);
             }
-        });
+        }
     }
 
     // Handle Single Delete
     window.handleDeleteCourse = function(courseId) {
-        const course = allCourses.find(c => c.id === courseId);
-        if (!course) return;
+        const course = allCourses.find(c => c && c.id === courseId);
+        if (!course) {
+            if (typeof showToast === 'function') {
+                showToast('Course not found', 'error');
+            }
+            return;
+        }
+
+        if (typeof showConfirmationModal !== 'function') {
+            if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+                const index = allCourses.findIndex(c => c && c.id === courseId);
+                if (index !== -1) {
+                    allCourses.splice(index, 1);
+                    applyFilters();
+                    updateStats();
+                    renderTable();
+                    renderPagination();
+                    alert(`Course deleted successfully`);
+                }
+            }
+            return;
+        }
 
         showConfirmationModal({
             title: 'Delete Course',
-            message: `Are you sure you want to delete <strong>"${course.name}"</strong>?<br><br>This action cannot be undone.`,
+            message: `Are you sure you want to delete <strong>${escapeHtml(course.name)}</strong>?<br><br>This action cannot be undone.`,
             confirmText: 'Yes, Delete',
             cancelText: 'Cancel',
             confirmClass: 'btn-danger',
             onConfirm: function() {
-                const index = allCourses.findIndex(c => c.id === courseId);
+                // Close the modal manually first
+                closeConfirmationModal();
+                
+                // STEP 1: Save the IDs of currently checked courses (excluding the one being deleted)
+                const checkedCourseIds = Array.from(document.querySelectorAll('.course-checkbox:checked'))
+                    .map(cb => parseInt(cb.dataset.courseId))
+                    .filter(id => !isNaN(id) && id !== courseId);
+                
+                // STEP 2: Remove the course from data
+                const index = allCourses.findIndex(c => c && c.id === courseId);
                 if (index !== -1) {
+                    const deletedCourseName = allCourses[index].name;
                     allCourses.splice(index, 1);
                     
-                    // Uncheck all checkboxes
-                    selectAllCheckbox.checked = false;
-                    selectAllCheckbox.indeterminate = false;
-                    
-                    // Update view
+                    // STEP 3: Reapply filters to update filteredCourses
                     applyFilters();
+                    
+                    // STEP 4: Check if current page is now empty and adjust if needed
+                    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+                    if (currentPage > totalPages && totalPages > 0) {
+                        currentPage = totalPages;
+                    }
+                    if (currentPage < 1 && filteredCourses.length > 0) {
+                        currentPage = 1;
+                    }
+                    
+                    // STEP 5: Update stats and re-render
                     updateStats();
+                    renderTable();
+                    renderPagination();
                     
-                    // Hide bulk delete button
-                    bulkDeleteBtn.style.display = 'none';
+                    // STEP 6: After DOM updates, restore the checked state of remaining courses
+                    setTimeout(() => {
+                        checkedCourseIds.forEach(id => {
+                            const checkbox = document.querySelector(`.course-checkbox[data-course-id="${id}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                                const row = checkbox.closest('tr');
+                                if (row) {
+                                    row.classList.add('row-selected');
+                                }
+                            }
+                        });
+                        
+                        // STEP 7: Update the button count to reflect the remaining checked items
+                        updateBulkDeleteButton();
+                        updateSelectAllState();
+                    }, 100);
                     
-                    showToast(`Course "${course.name}" deleted successfully`, 'success');
+                    if (typeof showToast === 'function') {
+                        showToast(`Course "${escapeHtml(deletedCourseName)}" deleted successfully`, 'success');
+                    }
                 }
             }
         });
     };
+    
+    // Helper function to manually close confirmation modal
+    function closeConfirmationModal() {
+        const modalElement = document.getElementById('confirmationModal');
+        if (!modalElement) return;
+        
+        // Try multiple methods to close the modal
+        
+        // Method 1: Use Bootstrap Modal instance
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+                return;
+            }
+        }
+        
+        // Method 2: Use stored global instance
+        if (window.currentConfirmationModal) {
+            try {
+                window.currentConfirmationModal.hide();
+                return;
+            } catch (e) {
+                console.log('Stored modal instance failed:', e);
+            }
+        }
+        
+        // Method 3: Manual DOM manipulation
+        const backdrop = document.querySelector('.modal-backdrop');
+        
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+        modalElement.setAttribute('aria-hidden', 'true');
+        modalElement.removeAttribute('aria-modal');
+        modalElement.removeAttribute('role');
+        
+        if (backdrop) {
+            backdrop.classList.remove('show');
+            setTimeout(() => {
+                if (backdrop.parentNode) {
+                    backdrop.parentNode.removeChild(backdrop);
+                }
+            }, 150);
+        }
+        
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
 
     // Note: Using reusable modal and toast components from dashboard/components/
     // - showConfirmationModal() for confirmations

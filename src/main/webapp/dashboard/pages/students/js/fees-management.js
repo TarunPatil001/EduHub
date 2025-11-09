@@ -266,15 +266,27 @@
 
     // Update Bulk Action Buttons
     function updateBulkActionButtons() {
-        const checkedCount = document.querySelectorAll('.fee-checkbox:checked').length;
+        // Only count visible checkboxes (not hidden by pagination or filters)
+        const visibleRows = Array.from(feesTable.querySelectorAll('tbody tr'))
+            .filter(row => row.style.display !== 'none' && !row.classList.contains('empty-state-row'));
+        
+        const checkedCount = visibleRows.filter(row => {
+            const checkbox = row.querySelector('.fee-checkbox');
+            return checkbox && checkbox.checked;
+        }).length;
+        
         const selectedCountSpan = document.getElementById('selectedCount');
         
-        if (bulkDeleteBtn && selectedCountSpan) {
-            if (checkedCount > 0) {
-                bulkDeleteBtn.style.display = 'inline-block';
-                selectedCountSpan.textContent = checkedCount;
-            } else {
-                bulkDeleteBtn.style.display = 'none';
+        if (!bulkDeleteBtn || !selectedCountSpan) return;
+        
+        if (checkedCount > 0) {
+            bulkDeleteBtn.style.display = 'inline-block';
+            selectedCountSpan.textContent = checkedCount;
+        } else {
+            bulkDeleteBtn.style.display = 'none';
+            if (selectAll) {
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
             }
         }
     }
@@ -284,7 +296,13 @@
         const selectedCheckboxes = document.querySelectorAll('.fee-checkbox:checked');
         
         if (selectedCheckboxes.length === 0) {
-            Toast.warning('Please select fee records to delete');
+            if (typeof Toast !== 'undefined' && Toast.warning) {
+                Toast.warning('Please select fee records to delete');
+            } else if (typeof showToast === 'function') {
+                showToast('Please select fee records to delete', 'warning');
+            } else {
+                alert('Please select fee records to delete');
+            }
             return;
         }
 
@@ -295,60 +313,80 @@
             const row = checkbox.closest('tr');
             const nameEl = row.querySelector('.student-info span');
             if (nameEl) {
-                studentNames.push(nameEl.textContent);
+                studentNames.push(nameEl.textContent.trim());
             }
         });
 
-        const studentList = studentNames.length <= 5 
-            ? studentNames.map(name => `<li>${name}</li>`).join('')
-            : studentNames.slice(0, 5).map(name => `<li>${name}</li>`).join('') + 
-              `<li><em>...and ${studentNames.length - 5} more</em></li>`;
-
-        showConfirmationModal({
-            title: 'Delete Multiple Fee Records',
-            message: `Are you sure you want to delete <strong>${recordCount} fee record(s)</strong>?<br><br>
-                     <div style="text-align: left; max-height: 200px; overflow-y: auto;">
-                         <ul style="margin: 10px 0; padding-left: 20px;">
-                             ${studentList}
-                         </ul>
-                     </div>
-                     <br>This action cannot be undone.`,
-            confirmText: 'Yes, Delete All',
-            cancelText: 'Cancel',
-            confirmClass: 'btn-danger',
-            icon: 'bi-trash text-danger',
-            onConfirm: function() {
-                // Remove all selected rows
+        if (typeof showConfirmationModal === 'function') {
+            showConfirmationModal({
+                title: 'Delete Fee Records',
+                message: `Are you sure you want to delete <strong>${recordCount} fee record(s)</strong>?<br><br>This action cannot be undone.`,
+                confirmText: 'Yes, Delete',
+                cancelText: 'Cancel',
+                confirmClass: 'btn-danger',
+                icon: 'bi-trash text-danger',
+                onConfirm: function() {
+                    // Remove all selected rows
+                    selectedCheckboxes.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        if (row) {
+                            row.remove();
+                        }
+                    });
+                    
+                    // Update arrays
+                    allRows = Array.from(feesTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
+                    filteredRows = [...allRows];
+                    
+                    // Reset checkboxes
+                    if (selectAll) {
+                        selectAll.checked = false;
+                        selectAll.indeterminate = false;
+                    }
+                    
+                    // Hide bulk delete button
+                    if (bulkDeleteBtn) {
+                        bulkDeleteBtn.style.display = 'none';
+                    }
+                    
+                    // Reset to page 1 if current page is now empty
+                    const totalPages = Math.ceil(filteredRows.length / entriesPerPage);
+                    if (currentPage > totalPages) {
+                        currentPage = Math.max(1, totalPages);
+                    }
+                    
+                    // Update view
+                    updatePagination();
+                    showEmptyState();
+                    
+                    if (typeof Toast !== 'undefined' && Toast.success) {
+                        Toast.success(`${recordCount} fee record(s) deleted successfully`);
+                    } else if (typeof showToast === 'function') {
+                        showToast(`${recordCount} fee record(s) deleted successfully`, 'success');
+                    }
+                }
+            });
+        } else {
+            // Fallback to confirm dialog
+            if (confirm(`Are you sure you want to delete ${recordCount} fee record(s)? This action cannot be undone.`)) {
                 selectedCheckboxes.forEach(checkbox => {
                     const row = checkbox.closest('tr');
-                    if (row) {
-                        row.remove();
-                    }
+                    if (row) row.remove();
                 });
-                
-                // Update arrays
                 allRows = Array.from(feesTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
                 filteredRows = [...allRows];
-                
-                // Reset checkboxes
                 if (selectAll) {
                     selectAll.checked = false;
                     selectAll.indeterminate = false;
                 }
-                
-                // Hide bulk delete button
                 if (bulkDeleteBtn) {
                     bulkDeleteBtn.style.display = 'none';
                 }
-                
-                // Update view
-                currentPage = 1;
                 updatePagination();
                 showEmptyState();
-                
-                Toast.success(`${recordCount} fee record(s) deleted successfully`);
+                alert(`${recordCount} fee record(s) deleted successfully`);
             }
-        });
+        }
     }
 
     // Pagination
@@ -382,6 +420,9 @@
         
         // Update select all state
         updateSelectAllState();
+        
+        // Update bulk action buttons to reflect current state
+        updateBulkActionButtons();
     }
 
     // Update Pagination Info
@@ -630,7 +671,7 @@
     function handleSendReminder(studentId) {
         showConfirmationModal({
             title: 'Send Payment Reminder',
-            message: `Send fee payment reminder to student ${studentId}?`,
+            message: `Are you sure you want to send a fee payment reminder?`,
             confirmText: 'Send Reminder',
             cancelText: 'Cancel',
             confirmClass: 'btn-primary',
@@ -655,7 +696,7 @@
 
         showConfirmationModal({
             title: 'Send Payment Reminders',
-            message: `Send payment reminders to ${pendingCount} student${pendingCount > 1 ? 's' : ''} with pending payments?`,
+            message: `Are you sure you want to send payment reminders to all students with pending payments?`,
             confirmText: 'Send All',
             cancelText: 'Cancel',
             confirmClass: 'btn-primary',

@@ -179,26 +179,51 @@
 
     // Show Empty State
     function showEmptyState() {
+        const thead = document.querySelector('#attendanceTable thead');
+        const tableResponsive = document.querySelector('.table-responsive');
+        
+        // Hide table header when no data
+        if (thead) thead.style.display = 'none';
+        if (tableResponsive) {
+            tableResponsive.style.overflowX = 'visible';
+            tableResponsive.style.overflowY = 'visible';
+        }
+        
         tableBody.innerHTML = `
-            <tr>
+            <tr class="empty-state-row">
                 <td colspan="5" class="text-center py-5">
-                    <i class="bi bi-inbox fs-1 text-muted"></i>
-                    <p class="text-muted mt-2 mb-0">Select a class to view students</p>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <h4 class="empty-state-title">No Class Selected</h4>
+                        <p class="empty-state-text">Please select a class and date to mark attendance</p>
+                    </div>
                 </td>
             </tr>
         `;
         students = [];
         filteredStudents = [];
         paginationContainer.innerHTML = '';
-        pageInfo.textContent = '';
+        if (pageInfo) pageInfo.textContent = '';
         updateStats();
     }
 
     // Render Table
     function renderTable() {
+        const thead = document.querySelector('#attendanceTable thead');
+        const tableResponsive = document.querySelector('.table-responsive');
+        
         if (filteredStudents.length === 0) {
             showEmptyState();
             return;
+        }
+
+        // Show table header when students exist
+        if (thead) thead.style.display = '';
+        if (tableResponsive) {
+            tableResponsive.style.overflowX = 'auto';
+            tableResponsive.style.overflowY = 'visible';
         }
 
         tableBody.innerHTML = '';
@@ -277,6 +302,7 @@
     // Filter Students
     function filterStudents() {
         const query = searchInput.value.toLowerCase().trim();
+        const thead = document.querySelector('#attendanceTable thead');
         
         if (query === '') {
             filteredStudents = [...students];
@@ -286,6 +312,32 @@
                 const roll = student.roll.toLowerCase();
                 return name.includes(query) || roll.includes(query);
             });
+        }
+        
+        // Handle empty search results
+        if (filteredStudents.length === 0 && students.length > 0) {
+            // Show header for filtered results
+            if (thead) thead.style.display = '';
+            
+            tableBody.innerHTML = `
+                <tr class="empty-state-row">
+                    <td colspan="5" class="text-center py-5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <h4 class="empty-state-title">No Students Found</h4>
+                            <p class="empty-state-text">No students match your search criteria</p>
+                            <button class="btn btn-outline-primary mt-3" onclick="document.getElementById('searchInput').value=''; document.getElementById('searchInput').dispatchEvent(new Event('input'));">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Clear Search
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            paginationContainer.innerHTML = '';
+            if (pageInfo) pageInfo.textContent = '';
+            return;
         }
         
         currentPage = 1;

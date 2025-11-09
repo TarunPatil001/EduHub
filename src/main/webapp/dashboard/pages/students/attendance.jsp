@@ -106,7 +106,7 @@
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="attendanceTable">
-                                <thead class="table-light">
+                                <thead class="table-light" style="display: none;">
                                     <tr>
                                         <th style="width: 50px;">
                                             <div class="form-check">
