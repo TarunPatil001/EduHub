@@ -490,13 +490,29 @@
         selectAll.checked = false;
         selectAll.indeterminate = false;
         
-        // Show empty state
-        showEmptyState();
+        // Show empty state with proper styling
+        tableBody.innerHTML = `
+            <tr class="empty-state-row">
+                <td colspan="5" class="text-center py-5">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <h4 class="empty-state-title">No Class Selected</h4>
+                        <p class="empty-state-text">Please select a class and date to mark attendance</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        
+        // Clear pagination
+        paginationContainer.innerHTML = '';
+        document.getElementById('showingStart').textContent = '0';
+        document.getElementById('showingEnd').textContent = '0';
+        document.getElementById('totalEntries').textContent = '0';
         
         // Reset stats
         updateStats();
-        
-        showToast('Table reset. Select a class to mark attendance again.', 'success');
     }
 
     // Export CSV

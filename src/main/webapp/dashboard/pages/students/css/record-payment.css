@@ -141,19 +141,7 @@
     border-radius: 10px;
     border: 2px solid #667eea;
     box-shadow: 0 2px 12px rgba(102, 126, 234, 0.1);
-    animation: slideInUp 0.4s ease-out;
     margin-top: 1rem;
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .student-details-card .detail-item {
@@ -300,6 +288,45 @@
 
 .alert-warning i {
     margin-right: 0.5rem;
+}
+
+/* Empty State Design */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.empty-state-icon i {
+    font-size: 2.5rem;
+    color: #adb5bd;
+}
+
+.empty-state-text {
+    font-size: 1rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.empty-state-subtext {
+    font-size: 0.875rem;
+    color: #adb5bd;
+    display: block;
 }
 
 /* Installment Checkbox Wrapper */
@@ -479,23 +506,7 @@
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
-/* Buttons */
-.btn-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    border-radius: 8px;
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-}
-
-.btn-success:hover {
-    background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
+/* Buttons - Using Bootstrap defaults */
 
 /* Sidebar Info */
 .sticky-top {
@@ -639,15 +650,7 @@ input[type="file"]::-webkit-file-upload-button:hover {
         font-size: 1rem;
     }
     
-    /* Form Buttons */
-    .d-flex.gap-2.mb-4 {
-        flex-direction: column !important;
-    }
-    
-    .d-flex.gap-2.mb-4 .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
+    /* Form Buttons - Using Bootstrap responsive utilities */
     
     /* Student Details Card */
     .student-details-card {

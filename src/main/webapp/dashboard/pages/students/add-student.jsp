@@ -189,7 +189,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="row mb-3">
+                                <div class="row g-3">
                                     <div class="col-md-4">
                                         <label for="passingYear" class="form-label">Passing Year <span class="required-star">*</span></label>
                                         <input type="text" class="form-control year-picker" id="passingYear" name="passingYear" required placeholder="Click to select year" readonly>
@@ -209,11 +209,22 @@
                                     <div class="col-md-4">
                                         <label for="batchPreference" class="form-label">Batch Preference</label>
                                         <select class="form-select" id="batchPreference" name="batchPreference">
-                                            <option value="">Select Batch</option>
-                                            <option value="morning">Morning Batch</option>
-                                            <option value="afternoon">Afternoon Batch</option>
-                                            <option value="evening">Evening Batch</option>
-                                            <option value="weekend">Weekend Batch</option>
+                                            <option value="">Select Batch Mode</option>
+                                            <option value="online">Online</option>
+                                            <option value="offline">Offline</option>
+                                            <option value="hybrid">Hybrid</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-4">
+                                        <label for="studentStatus" class="form-label">Student Status <span class="required-star">*</span></label>
+                                        <select class="form-select" id="studentStatus" name="studentStatus" required>
+                                            <option value="">Select Status</option>
+                                            <option value="Active" selected>Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                            <option value="Suspended">Suspended</option>
+                                            <option value="Graduated">Graduated</option>
                                         </select>
                                     </div>
                                 </div>

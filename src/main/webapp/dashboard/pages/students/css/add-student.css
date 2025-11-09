@@ -102,14 +102,9 @@
     text-decoration: underline;
 }
 
-/* Sticky Bottom Sidebar for Registration Guidelines */
+/* Registration Guidelines Sidebar - Static Position */
 .sticky-bottom-sidebar {
-    position: sticky;
-    bottom: 20px;
-    align-self: flex-end;
-    z-index: 10;
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
+    /* Removed sticky positioning and overflow scroll */
 }
 
 /* Year Picker Styling */
@@ -231,11 +226,7 @@
         margin-bottom: 0.5rem;
     }
     
-    /* Adjust button text for mobile */
-    .btn-lg {
-        font-size: 0.95rem;
-        padding: 0.65rem 1rem;
-    }
+    /* Buttons - Using Bootstrap defaults */
     
     /* Photo upload container */
     .photo-preview {
@@ -263,10 +254,6 @@
 
 @media (max-width: 576px) {
     /* Extra small devices - further adjustments */
-    .btn-lg {
-        font-size: 0.875rem;
-        padding: 0.5rem 0.875rem;
-    }
     
     /* Stack all form columns */
     .row.mb-3 > [class*="col-"] {

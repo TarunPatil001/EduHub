@@ -102,49 +102,63 @@
                 </div>
 
                 <!-- Attendance Table -->
-                <div class="card-custom mb-4">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="attendanceTable">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width: 50px;" class="text-center">
-                                        <div class="form-check d-inline-block">
-                                            <input type="checkbox" id="selectAll" class="form-check-input">
-                                        </div>
-                                    </th>
-                                    <th style="width: 100px;">Roll No</th>
-                                    <th>Student Name</th>
-                                    <th style="width: 180px;">Status</th>
-                                    <th style="width: 150px;" class="text-center">Quick Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="studentTableBody">
-                                <tr>
-                                    <td colspan="5" class="text-center py-5">
-                                        <i class="bi bi-inbox fs-1 text-muted"></i>
-                                        <p class="text-muted mt-2 mb-0">Select a class to view students</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Pagination Controls -->
-                <div class="card-custom mb-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <label for="itemsPerPage" class="mb-0">Show:</label>
-                            <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;">
-                                <option value="10" selected>10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span class="text-muted">entries</span>
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="attendanceTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">
+                                            <div class="form-check">
+                                                <input type="checkbox" id="selectAll" class="form-check-input">
+                                            </div>
+                                        </th>
+                                        <th style="width: 100px;">Roll No</th>
+                                        <th>Student Name</th>
+                                        <th style="width: 180px;">Status</th>
+                                        <th style="width: 150px;">Quick Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentTableBody">
+                                    <tr class="empty-state-row">
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon">
+                                                    <i class="bi bi-calendar-check"></i>
+                                                </div>
+                                                <h4 class="empty-state-title">No Class Selected</h4>
+                                                <p class="empty-state-text">Please select a class and date to mark attendance</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="text-muted" id="pageInfo"></div>
-                        <div id="paginationContainer"></div>
+                    </div>
+                    
+                    <!-- Pagination Footer -->
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex align-items-center gap-3 flex-wrap">
+                                <div class="entries-info">
+                                    Showing <span id="showingStart">0</span> to <span id="showingEnd">0</span> of <span id="totalEntries">0</span> entries
+                                </div>
+                                <div class="entries-selector-wrapper">
+                                    <label>Show</label>
+                                    <select class="form-select" id="itemsPerPage">
+                                        <option value="10" selected>10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <nav>
+                                <ul class="pagination mb-0" id="paginationContainer">
+                                    <!-- Pagination buttons will be generated by JavaScript -->
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
 

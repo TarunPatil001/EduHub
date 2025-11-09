@@ -268,3 +268,263 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
         }
     });
 })();
+
+/**
+ * Add Student Form Handler
+ * Handles form submission, validation, and default values for new students
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+    const addStudentForm = document.getElementById('addStudentForm');
+    
+    if (addStudentForm) {
+        addStudentForm.addEventListener('submit', handleFormSubmit);
+    }
+    
+    // Initialize form defaults
+    initializeFormDefaults();
+});
+
+/**
+ * Initialize form default values
+ */
+function initializeFormDefaults() {
+    // Set default status to Active
+    const statusSelect = document.getElementById('studentStatus');
+    if (statusSelect && !statusSelect.value) {
+        statusSelect.value = 'Active';
+    }
+}
+
+/**
+ * Handle form submission
+ */
+function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    // Validate form
+    if (!addStudentForm.checkValidity()) {
+        event.stopPropagation();
+        addStudentForm.classList.add('was-validated');
+        Toast.error('Please fill all required fields');
+        return;
+    }
+    
+    // Collect form data
+    const formData = new FormData(addStudentForm);
+    
+    // Add default values for new students
+    const studentData = {
+        // Personal Information
+        studentName: formData.get('studentName'),
+        fatherName: formData.get('fatherName'),
+        surname: formData.get('surname'),
+        dateOfBirth: formData.get('dateOfBirth'),
+        gender: formData.get('gender'),
+        bloodGroup: formData.get('bloodGroup'),
+        
+        // Contact Information
+        mobileNumber: formData.get('mobileNumber'),
+        whatsappNumber: formData.get('whatsappNumber'),
+        parentMobile: formData.get('parentMobile'),
+        emailId: formData.get('emailId'),
+        instagramId: formData.get('instagramId'),
+        linkedinId: formData.get('linkedinId'),
+        
+        // Address Information
+        permanentAddress: formData.get('permanentAddress'),
+        currentAddress: formData.get('currentAddress'),
+        
+        // Educational Information
+        collegeName: formData.get('collegeName'),
+        educationQualification: formData.get('educationQualification'),
+        passingYear: formData.get('passingYear'),
+        
+        // Course Enrollment
+        courseEnrolled: formData.get('courseEnrolled'),
+        batchPreference: formData.get('batchPreference'),
+        studentStatus: formData.get('studentStatus') || 'Active',
+        
+        // Enrollment date
+        enrollDate: new Date().toISOString().split('T')[0], // Current date
+        
+        // Note: Grade and Attendance will be set by separate modules
+        // - Grade: Set by assessment/grading module
+        // - Attendance: Set by attendance tracking module
+        
+        // Medical Information
+        medicalHistory: formData.get('medicalHistory'),
+        medicalCondition: formData.get('medicalCondition'),
+        medicineName: formData.get('medicineName')
+    };
+    
+    // Show loading overlay
+    showLoadingOverlay('Registering student...');
+    
+    // Simulate API call to register student
+    setTimeout(() => {
+        hideLoadingOverlay();
+        
+        // Show success message
+        Toast.success('Student registered successfully!');
+        
+        // Log the student data (in production, this would be sent to backend)
+        console.log('Student Data:', studentData);
+        
+        // Show confirmation modal
+        showConfirmationModal({
+            title: 'Student Registered Successfully',
+            message: `
+                <div class="alert alert-success mb-3">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>Success!</strong> Student has been registered successfully.
+                </div>
+                <div class="mb-3">
+                    <p class="mb-2"><strong>Student Name:</strong> ${studentData.studentName} ${studentData.surname}</p>
+                    <p class="mb-2"><strong>Course:</strong> ${getCourseName(studentData.courseEnrolled)}</p>
+                    <p class="mb-2"><strong>Status:</strong> <span class="badge bg-success">${studentData.studentStatus}</span></p>
+                    <p class="mb-2"><strong>Batch Mode:</strong> <span class="badge bg-info">${studentData.batchPreference || 'Not Selected'}</span></p>
+                    <p class="mb-2"><strong>Enrollment Date:</strong> ${new Date().toLocaleDateString('en-IN')}</p>
+                </div>
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Next Steps:</strong>
+                    <ul class="mb-0 mt-2 small">
+                        <li>Grade will be assigned after first assessment</li>
+                        <li>Attendance tracking starts from first class</li>
+                        <li>Student can now access their dashboard</li>
+                    </ul>
+                </div>
+            `,
+            confirmText: 'View All Students',
+            cancelText: 'Add Another Student',
+            confirmClass: 'btn-primary',
+            icon: 'bi-check-circle-fill text-success',
+            onConfirm: function() {
+                // Redirect to all students page
+                window.location.href = 'all-students.jsp';
+            },
+            onCancel: function() {
+                // Reset form to add another student
+                resetForm();
+            }
+        });
+        
+    }, 1500);
+}
+
+/**
+ * Get course name by ID
+ */
+function getCourseName(courseId) {
+    const courses = {
+        '1': 'Web Development',
+        '2': 'Data Science',
+        '3': 'Machine Learning',
+        '4': 'Mobile App Development',
+        '5': 'Python Programming'
+    };
+    return courses[courseId] || 'Unknown Course';
+}
+
+/**
+ * Toggle medical details section
+ */
+function toggleMedicalDetails(show) {
+    const medicalDetailsSection = document.getElementById('medicalDetailsSection');
+    if (medicalDetailsSection) {
+        medicalDetailsSection.style.display = show ? 'block' : 'none';
+        
+        // Make fields required/optional based on selection
+        const medicalCondition = document.getElementById('medicalCondition');
+        if (medicalCondition) {
+            medicalCondition.required = show;
+        }
+    }
+}
+
+/**
+ * Handle file upload display
+ */
+function handleFileUpload(input, boxId, fileNameId) {
+    const box = document.getElementById(boxId);
+    const fileName = document.getElementById(fileNameId);
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        
+        // Update box appearance
+        if (box) {
+            box.style.borderColor = '#198754';
+            box.style.backgroundColor = '#d1e7dd';
+        }
+        
+        // Display file name
+        if (fileName) {
+            fileName.textContent = `✓ ${file.name}`;
+            fileName.style.color = '#198754';
+        }
+    }
+}
+
+/**
+ * Copy permanent address to current address
+ */
+function copyAddress() {
+    const permanentAddress = document.getElementById('permanentAddress');
+    const currentAddress = document.getElementById('currentAddress');
+    
+    if (permanentAddress && currentAddress) {
+        currentAddress.value = permanentAddress.value;
+        Toast.info('Address copied successfully');
+    }
+}
+
+/**
+ * Reset form to initial state
+ */
+function resetForm() {
+    const form = document.getElementById('addStudentForm');
+    if (form) {
+        form.reset();
+        form.classList.remove('was-validated');
+        
+        // Reset file upload displays
+        const fileBoxes = document.querySelectorAll('.file-upload-box');
+        fileBoxes.forEach(box => {
+            box.style.borderColor = '#dee2e6';
+            box.style.backgroundColor = '#f8f9fa';
+        });
+        
+        const fileNames = document.querySelectorAll('.file-name');
+        fileNames.forEach(name => {
+            name.textContent = '';
+        });
+        
+        // Hide medical details section
+        const medicalDetailsSection = document.getElementById('medicalDetailsSection');
+        if (medicalDetailsSection) {
+            medicalDetailsSection.style.display = 'none';
+        }
+        
+        // Reset to default status
+        initializeFormDefaults();
+        
+        Toast.info('Form reset successfully');
+    }
+}
+
+/**
+ * Preview uploaded photo
+ */
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            Toast.success('Photo uploaded successfully');
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}

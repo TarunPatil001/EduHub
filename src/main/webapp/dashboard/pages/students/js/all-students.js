@@ -30,6 +30,7 @@
         
         attachEventListeners();
         updatePagination();
+        showEmptyState(); // Show empty state if no students
     }
 
     // Event Listeners
@@ -361,26 +362,93 @@
     // Show Empty State
     function showEmptyState() {
         const tbody = studentsTable.querySelector('tbody');
+        const thead = studentsTable.querySelector('thead');
+        const tableResponsive = studentsTable.closest('.table-responsive');
         let emptyRow = tbody.querySelector('.empty-state-row');
 
         if (filteredStudents.length === 0) {
+            // Check if it's a completely empty table or just filtered results
+            const isCompletelyEmpty = allRows.length === 0;
+            const hasActiveFilters = (searchInput && searchInput.value.trim()) || 
+                                    (courseFilter && courseFilter.value) || 
+                                    (statusFilter && statusFilter.value);
+            
             if (!emptyRow) {
                 emptyRow = document.createElement('tr');
                 emptyRow.className = 'empty-state-row';
+                tbody.appendChild(emptyRow);
+            }
+            
+            // Update content based on whether table is empty or just filtered
+            if (isCompletelyEmpty) {
+                // Hide table header and remove scroll container when completely empty
+                if (thead) thead.style.display = 'none';
+                if (tableResponsive) {
+                    tableResponsive.style.overflowX = 'visible';
+                    tableResponsive.style.overflowY = 'visible';
+                }
+                
                 emptyRow.innerHTML = `
-                    <td colspan="10">
+                    <td colspan="23" class="text-center py-5">
                         <div class="empty-state">
-                            <i class="bi bi-inbox"></i>
-                            <h4>No Students Found</h4>
-                            <p>Try adjusting your filters or search terms</p>
+                            <div class="empty-state-icon">
+                                <i class="bi bi-person-plus"></i>
+                            </div>
+                            <h4 class="empty-state-title">No Students Yet</h4>
+                            <p class="empty-state-text">Get started by adding your first student to the system</p>
+                            <button class="btn btn-primary mt-3" id="emptyAddStudentBtn">
+                                <i class="bi bi-plus-lg me-2"></i>Add First Student
+                            </button>
                         </div>
                     </td>
                 `;
-                tbody.appendChild(emptyRow);
+                
+                // Attach click handler to the add student button in empty state
+                const emptyAddBtn = emptyRow.querySelector('#emptyAddStudentBtn');
+                if (emptyAddBtn) {
+                    emptyAddBtn.addEventListener('click', handleAddStudent);
+                }
+            } else if (hasActiveFilters) {
+                // Show table header and restore scroll for filtered results
+                if (thead) thead.style.display = '';
+                if (tableResponsive) {
+                    tableResponsive.style.overflowX = 'auto';
+                    tableResponsive.style.overflowY = 'visible';
+                }
+                
+                emptyRow.innerHTML = `
+                    <td colspan="23" class="text-center py-5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <h4 class="empty-state-title">No Students Found</h4>
+                            <p class="empty-state-text">No students match your current search or filter criteria</p>
+                            <button class="btn btn-outline-primary mt-3" id="emptyResetBtn">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Clear Filters
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                // Attach click handler to reset button in empty state
+                const emptyResetBtn = emptyRow.querySelector('#emptyResetBtn');
+                if (emptyResetBtn) {
+                    emptyResetBtn.addEventListener('click', handleResetFilters);
+                }
             }
+            
             emptyRow.style.display = '';
-        } else if (emptyRow) {
-            emptyRow.style.display = 'none';
+        } else {
+            // Show table header and restore scroll when there are students
+            if (thead) thead.style.display = '';
+            if (tableResponsive) {
+                tableResponsive.style.overflowX = 'auto';
+                tableResponsive.style.overflowY = 'visible';
+            }
+            if (emptyRow) {
+                emptyRow.style.display = 'none';
+            }
         }
     }
 
@@ -392,42 +460,149 @@
         const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
         if (!row) return;
 
-        // Extract student data
+        // Extract student data from table cells
         const cells = row.querySelectorAll('td');
         const studentName = row.querySelector('.student-name')?.textContent || '';
-        const email = cells[3]?.textContent || '';
-        const phone = cells[4]?.textContent || '';
-        const course = row.dataset.course || '';
-        const status = row.dataset.status || '';
+        const enrollDate = row.querySelector('.text-muted')?.textContent.replace('Enrolled: ', '') || '';
+        const avatar = row.querySelector('.student-avatar')?.textContent || '';
+        
+        // Get all data from cells (adjusting indices based on table structure)
+        const fatherName = cells[3]?.textContent || 'N/A';
+        const surname = cells[4]?.textContent || 'N/A';
+        const dob = cells[5]?.textContent || 'N/A';
+        const gender = cells[6]?.textContent || 'N/A';
+        const bloodGroup = cells[7]?.textContent || 'N/A';
+        const email = cells[8]?.textContent || 'N/A';
+        const phone = cells[9]?.textContent || 'N/A';
+        const whatsapp = cells[10]?.textContent || 'N/A';
+        const parentMobile = cells[11]?.textContent || 'N/A';
+        const instagram = cells[12]?.textContent || 'N/A';
+        const linkedin = cells[13]?.textContent || 'N/A';
+        const course = row.dataset.course || 'N/A';
+        const batchMode = cells[15]?.textContent || 'N/A';
+        const college = cells[16]?.textContent || 'N/A';
+        const qualification = cells[17]?.textContent || 'N/A';
+        const passingYear = cells[18]?.textContent || 'N/A';
+        const grade = cells[19]?.textContent || 'N/A';
+        const attendance = cells[20]?.textContent || 'N/A';
+        const status = row.dataset.status || 'N/A';
 
-        // Populate modal
+        // Populate modal with comprehensive data
         const modalContent = document.getElementById('studentDetailsContent');
         if (modalContent) {
             modalContent.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <h6 class="text-muted">Student ID</h6>
-                        <p class="fw-bold">${studentId}</p>
+                <div class="student-details-modal">
+                    <!-- Student Header -->
+                    <div class="text-center mb-4 pb-3 border-bottom">
+                        <div class="student-avatar-large mb-2">${avatar}</div>
+                        <h4 class="mb-1">${studentName} ${surname}</h4>
+                        <p class="text-muted mb-2">${studentId}</p>
+                        <span class="badge status-${status.toLowerCase()} fs-6">${status}</span>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="text-muted">Name</h6>
-                        <p class="fw-bold">${studentName}</p>
+
+                    <!-- Personal Information -->
+                    <h6 class="text-primary mb-3"><i class="bi bi-person-fill me-2"></i>Personal Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Full Name</small>
+                            <strong>${studentName} ${surname}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Father's Name</small>
+                            <strong>${fatherName}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Date of Birth</small>
+                            <strong>${dob}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Gender</small>
+                            <strong>${gender}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Blood Group</small>
+                            <strong>${bloodGroup}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Enrollment Date</small>
+                            <strong>${enrollDate}</strong>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="text-muted">Email</h6>
-                        <p>${email}</p>
+
+                    <!-- Contact Information -->
+                    <h6 class="text-primary mb-3"><i class="bi bi-telephone-fill me-2"></i>Contact Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Email</small>
+                            <strong><a href="mailto:${email}">${email}</a></strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Phone</small>
+                            <strong>${phone}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">WhatsApp</small>
+                            <strong>${whatsapp}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Parent Mobile</small>
+                            <strong>${parentMobile}</strong>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="text-muted">Phone</h6>
-                        <p>${phone}</p>
+
+                    <!-- Social Media -->
+                    <h6 class="text-primary mb-3"><i class="bi bi-share-fill me-2"></i>Social Media</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Instagram</small>
+                            <strong>${instagram !== 'N/A' ? `<a href="https://instagram.com/${instagram.replace('@', '')}" target="_blank">${instagram}</a>` : 'N/A'}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">LinkedIn</small>
+                            <strong>${linkedin !== 'N/A' ? `<a href="https://linkedin.com/in/${linkedin}" target="_blank">${linkedin}</a>` : 'N/A'}</strong>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="text-muted">Course</h6>
-                        <p>${course}</p>
+
+                    <!-- Academic Information -->
+                    <h6 class="text-primary mb-3"><i class="bi bi-book-fill me-2"></i>Academic Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Course</small>
+                            <strong><span class="course-badge">${course}</span></strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Batch Mode</small>
+                            <strong><span class="badge bg-info">${batchMode}</span></strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Grade</small>
+                            <strong>${grade}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Attendance</small>
+                            <strong>${attendance}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Status</small>
+                            <strong><span class="badge status-${status.toLowerCase()}">${status}</span></strong>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="text-muted">Status</h6>
-                        <p><span class="badge status-${status.toLowerCase()}">${status}</span></p>
+
+                    <!-- Education Background -->
+                    <h6 class="text-primary mb-3"><i class="bi bi-mortarboard-fill me-2"></i>Education Background</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">College/University</small>
+                            <strong>${college}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Qualification</small>
+                            <strong>${qualification}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Passing Year</small>
+                            <strong>${passingYear}</strong>
+                        </div>
                     </div>
                 </div>
             `;

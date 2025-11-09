@@ -20,6 +20,15 @@
     ];
 
     let selectedStudent = null;
+    
+    // Make refresh function available globally
+    window.handleRefreshPaymentHistory = function() {
+        if (window.currentStudentId) {
+            refreshPaymentHistory(window.currentStudentId);
+        } else {
+            Toast.warning('Please select a student first');
+        }
+    };
 
     // DOM Elements
     const studentSearch = document.getElementById('studentSearch');
@@ -65,17 +74,11 @@
                        document.getElementById('transactionId'), document.getElementById('bankName'),
                        document.getElementById('paymentNotes'), document.getElementById('paymentProof')];
         
-        const noStudentWarning = document.getElementById('noStudentWarning');
-        
         fields.forEach(field => {
             if (field) {
                 field.disabled = !enable;
             }
         });
-
-        if (noStudentWarning) {
-            noStudentWarning.style.display = enable ? 'none' : 'block';
-        }
     }
 
     // Event Listeners
@@ -170,6 +173,9 @@
             return;
         }
 
+        // Store current student ID globally for refresh functionality
+        window.currentStudentId = selectedStudent.id;
+
         // Update form fields
         studentSearch.value = selectedStudent.name;
         selectedStudentId.value = selectedStudent.id;
@@ -191,7 +197,6 @@
         if (paymentAmount) {
             paymentAmount.setAttribute('max', pendingAmount);
             paymentAmount.value = '';
-            paymentAmount.focus();
         }
     }
 
@@ -209,7 +214,6 @@
         document.getElementById('detailPendingAmount').textContent = '₹' + pendingAmount.toLocaleString('en-IN');
 
         studentDetailsCard.style.display = 'block';
-        studentDetailsCard.classList.add('animate-in');
     }
 
     // Update Amount Helper

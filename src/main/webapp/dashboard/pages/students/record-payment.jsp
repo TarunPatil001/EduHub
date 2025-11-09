@@ -169,14 +169,14 @@
 
                             <!-- Form Actions -->
                             <div class="d-flex gap-2 mb-4">
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="bi bi-check-circle"></i> Record Payment
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-1"></i>Record Payment
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-lg" id="resetBtn">
-                                    <i class="bi bi-arrow-clockwise"></i> Reset Form
+                                <button type="button" class="btn btn-outline-secondary" id="resetBtn">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Reset Form
                                 </button>
-                                <a href="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp" class="btn btn-outline-danger btn-lg">
-                                    <i class="bi bi-x-circle"></i> Cancel
+                                <a href="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp" class="btn btn-outline-danger">
+                                    <i class="bi bi-x-circle me-1"></i>Cancel
                                 </a>
                             </div>
                         </form>

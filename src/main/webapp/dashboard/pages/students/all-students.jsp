@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*"%>
 <%@ page import="java.time.LocalDate"%>
 <%@ page import="java.time.format.DateTimeFormatter"%>
@@ -21,48 +20,91 @@ public String formatDate(String dateStr) {
 <%
 // Dummy student data
 class Student {
-	String id, name, email, phone, course, enrollDate, status, avatar, grade, attendance;
+	String id, name, fatherName, surname, email, phone, whatsappNumber, parentMobile;
+	String course, enrollDate, status, avatar, grade, attendance;
+	String dateOfBirth, gender, bloodGroup, instagramId, linkedinId;
+	String permanentAddress, currentAddress, collegeName, educationQualification, passingYear;
+	String batchPreference, medicalHistory;
 
-	public Student(String id, String name, String email, String phone, String course, String enrollDate, String status,
-	String avatar, String grade, String attendance) {
+	public Student(String id, String name, String fatherName, String surname, String email, String phone, 
+	String whatsappNumber, String parentMobile, String course, String enrollDate, String status,
+	String avatar, String grade, String attendance, String dateOfBirth, String gender, String bloodGroup,
+	String instagramId, String linkedinId, String permanentAddress, String currentAddress, 
+	String collegeName, String educationQualification, String passingYear, String batchPreference, String medicalHistory) {
 		this.id = id;
 		this.name = name;
+		this.fatherName = fatherName;
+		this.surname = surname;
 		this.email = email;
 		this.phone = phone;
+		this.whatsappNumber = whatsappNumber;
+		this.parentMobile = parentMobile;
 		this.course = course;
 		this.enrollDate = enrollDate;
 		this.status = status;
 		this.avatar = avatar;
 		this.grade = grade;
 		this.attendance = attendance;
+		this.dateOfBirth = dateOfBirth;
+		this.gender = gender;
+		this.bloodGroup = bloodGroup;
+		this.instagramId = instagramId;
+		this.linkedinId = linkedinId;
+		this.permanentAddress = permanentAddress;
+		this.currentAddress = currentAddress;
+		this.collegeName = collegeName;
+		this.educationQualification = educationQualification;
+		this.passingYear = passingYear;
+		this.batchPreference = batchPreference;
+		this.medicalHistory = medicalHistory;
 	}
 }
 
 List<Student> students = Arrays.asList(
-		new Student("STU001", "Aarav Sharma", "aarav.sharma@email.com", "+91 98765 43210", "Computer Science",
-		"2024-01-15", "Active", "AS", "A+", "95%"),
-		new Student("STU002", "Diya Patel", "diya.patel@email.com", "+91 98765 43211", "Business Administration",
-		"2024-01-20", "Active", "DP", "A", "92%"),
-		new Student("STU003", "Arjun Kumar", "arjun.kumar@email.com", "+91 98765 43212", "Engineering", "2024-02-01",
-		"Active", "AK", "B+", "88%"),
-		new Student("STU004", "Ananya Singh", "ananya.singh@email.com", "+91 98765 43213", "Mathematics", "2024-02-10",
-		"Inactive", "AS", "A-", "78%"),
-		new Student("STU005", "Vihaan Mehta", "vihaan.mehta@email.com", "+91 98765 43214", "Computer Science",
-		"2024-02-15", "Active", "VM", "A", "90%"),
-		new Student("STU006", "Aisha Khan", "aisha.khan@email.com", "+91 98765 43215", "Data Science", "2024-03-01",
-		"Active", "AK", "A+", "96%"),
-		new Student("STU007", "Rohan Verma", "rohan.verma@email.com", "+91 98765 43216", "Physics", "2024-03-05",
-		"Active", "RV", "B", "85%"),
-		new Student("STU008", "Sara Ali", "sara.ali@email.com", "+91 98765 43217", "Chemistry", "2024-03-10", "Active",
-		"SA", "A-", "89%"),
-		new Student("STU009", "Kabir Reddy", "kabir.reddy@email.com", "+91 98765 43218", "Business Administration",
-		"2024-03-15", "Suspended", "KR", "C+", "65%"),
-		new Student("STU010", "Myra Gupta", "myra.gupta@email.com", "+91 98765 43219", "Engineering", "2024-04-01",
-		"Active", "MG", "A+", "94%"),
-		new Student("STU011", "Advait Joshi", "advait.joshi@email.com", "+91 98765 43220", "Computer Science",
-		"2024-04-05", "Active", "AJ", "B+", "87%"),
-		new Student("STU012", "Zara Iyer", "zara.iyer@email.com", "+91 98765 43221", "Mathematics", "2024-04-10",
-		"Active", "ZI", "A", "91%"));
+		new Student("STU001", "Aarav", "Rajesh", "Sharma", "aarav.sharma@email.com", "+91 98765 43210", "+91 98765 43210", "+91 98765 00001", "Computer Science",
+				"2024-01-15", "Active", "AS", "A+", "95%", "2002-05-15", "Male", "A+", "@aarav_sharma", "aarav-sharma", "123 MG Road, Mumbai", "123 MG Road, Mumbai", 
+				"Mumbai University", "B.Tech", "2023", "Online", "None"),
+			new Student("STU002", "Diya", "Ashok", "Patel", "diya.patel@email.com", "+91 98765 43211", "+91 98765 43211", "+91 98765 00002", "Business Administration",
+				"2024-01-20", "Active", "DP", "A", "92%", "2003-08-22", "Female", "B+", "@diya_patel", "diya-patel", "456 Park Street, Delhi", "456 Park Street, Delhi",
+				"Delhi University", "MBA", "2024", "Offline", "None"),
+			new Student("STU003", "Arjun", "Vijay", "Kumar", "arjun.kumar@email.com", "+91 98765 43212", "+91 98765 43212", "+91 98765 00003", "Engineering", "2024-02-01",
+				"Active", "AK", "B+", "88%", "2001-12-10", "Male", "O+", "@arjun_kumar", "arjun-kumar", "789 Linking Road, Bangalore", "789 Linking Road, Bangalore",
+				"Bangalore Institute", "B.E", "2023", "Hybrid", "Asthma"),
+			new Student("STU004", "Ananya", "Suresh", "Singh", "ananya.singh@email.com", "+91 98765 43213", "+91 98765 43213", "+91 98765 00004", "Mathematics", "2024-02-10",
+				"Inactive", "AS", "A-", "78%", "2002-03-18", "Female", "AB+", "@ananya_singh", "ananya-singh", "321 Brigade Road, Chennai", "321 Brigade Road, Chennai",
+				"Chennai College", "M.Sc", "2024", "Online", "None"),
+			new Student("STU005", "Vihaan", "Ramesh", "Mehta", "vihaan.mehta@email.com", "+91 98765 43214", "+91 98765 43214", "+91 98765 00005", "Computer Science",
+				"2024-02-15", "Active", "VM", "A", "90%", "2003-01-25", "Male", "A-", "@vihaan_mehta", "vihaan-mehta", "654 FC Road, Pune", "654 FC Road, Pune",
+				"Pune University", "B.Tech", "2023", "Offline", "None"),
+			new Student("STU006", "Aisha", "Imran", "Khan", "aisha.khan@email.com", "+91 98765 43215", "+91 98765 43215", "+91 98765 00006", "Data Science", "2024-03-01",
+				"Active", "AK", "A+", "96%", "2002-07-30", "Female", "B-", "@aisha_khan", "aisha-khan", "987 Nehru Place, Hyderabad", "987 Nehru Place, Hyderabad",
+				"Hyderabad Institute", "B.Sc", "2023", "Online", "None"),
+			new Student("STU007", "Rohan", "Prakash", "Verma", "rohan.verma@email.com", "+91 98765 43216", "+91 98765 43216", "+91 98765 00007", "Physics", "2024-03-05",
+				"Active", "RV", "B", "85%", "2001-11-14", "Male", "O-", "@rohan_verma", "rohan-verma", "147 Anna Salai, Chennai", "147 Anna Salai, Chennai",
+				"Chennai Tech", "B.Sc", "2022", "Hybrid", "Diabetes"),
+			new Student("STU008", "Sara", "Mohammed", "Ali", "sara.ali@email.com", "+91 98765 43217", "+91 98765 43217", "+91 98765 00008", "Chemistry", "2024-03-10", "Active",
+				"SA", "A-", "89%", "2003-04-05", "Female", "A+", "@sara_ali", "sara-ali", "258 MG Road, Kolkata", "258 MG Road, Kolkata",
+				"Kolkata University", "M.Sc", "2024", "Online", "None"),
+			new Student("STU009", "Kabir", "Srinivas", "Reddy", "kabir.reddy@email.com", "+91 98765 43218", "+91 98765 43218", "+91 98765 00009", "Business Administration",
+				"2024-03-15", "Suspended", "KR", "C+", "65%", "2002-09-20", "Male", "AB-", "@kabir_reddy", "kabir-reddy", "369 Commercial Street, Bangalore", "369 Commercial Street, Bangalore",
+				"Bangalore Business School", "BBA", "2023", "Offline", "None"),
+			new Student("STU010", "Myra", "Anil", "Gupta", "myra.gupta@email.com", "+91 98765 43219", "+91 98765 43219", "+91 98765 00010", "Engineering", "2024-04-01",
+				"Active", "MG", "A+", "94%", "2002-06-12", "Female", "B+", "@myra_gupta", "myra-gupta", "741 Sector 18, Noida", "741 Sector 18, Noida",
+				"Noida Engineering College", "B.E", "2023", "Hybrid", "None"),
+			new Student("STU011", "Advait", "Mohan", "Joshi", "advait.joshi@email.com", "+91 98765 43220", "+91 98765 43220", "+91 98765 00011", "Computer Science",
+				"2024-04-05", "Active", "AJ", "B+", "87%", "2003-02-28", "Male", "O+", "@advait_joshi", "advait-joshi", "852 Shivaji Nagar, Pune", "852 Shivaji Nagar, Pune",
+				"Pune IT Institute", "B.Tech", "2024", "Online", "None"),
+			new Student("STU012", "Zara", "Ganesh", "Iyer", "zara.iyer@email.com", "+91 98765 43221", "+91 98765 43221", "+91 98765 00012", "Mathematics", "2024-04-10",
+				"Active", "ZI", "A", "91%", "2002-10-08", "Female", "A-", "@zara_iyer", "zara-iyer", "963 T Nagar, Chennai", "963 T Nagar, Chennai",
+				"Chennai Math Institute", "M.Sc", "2023", "Offline", "None"),
+			// Newly enrolled students - Grade and Attendance not yet assigned
+			new Student("STU013", "Priya", "Sunil", "Desai", "priya.desai@email.com", "+91 98765 43222", "+91 98765 43222", "+91 98765 00013", "Data Science", "2024-11-08",
+				"Active", "PD", null, null, "2003-06-15", "Female", "O+", "@priya_desai", "priya-desai", "147 MG Road, Pune", "147 MG Road, Pune",
+				"Pune College of Engineering", "B.Tech", "2024", "Hybrid", "None"),
+			new Student("STU014", "Rahul", "Deepak", "Nair", "rahul.nair@email.com", "+91 98765 43223", "+91 98765 43223", "+91 98765 00014", "Web Development", "2024-11-09",
+				"Active", "RN", null, null, "2002-12-20", "Male", "B+", "@rahul_nair", "rahul-nair", "258 Brigade Road, Mumbai", "258 Brigade Road, Mumbai",
+				"Mumbai Institute of Technology", "B.E", "2023", "Online", "None")
+);
 
 pageContext.setAttribute("students", students);
 %>
@@ -221,16 +263,29 @@ pageContext.setAttribute("students", students);
 										</th>
 										<th>Student ID</th>
 										<th>Name</th>
+										<th>Father's Name</th>
+										<th>Surname</th>
+										<th>DOB</th>
+										<th>Gender</th>
+										<th>Blood Group</th>
 										<th>Email</th>
 										<th>Phone</th>
+										<th>WhatsApp</th>
+										<th>Parent Mobile</th>
+										<th>Instagram</th>
+										<th>LinkedIn</th>
 										<th>Course</th>
+										<th>Batch Mode</th>
+										<th>College</th>
+										<th>Qualification</th>
+										<th>Passing Year</th>
 										<th>Grade</th>
 										<th>Attendance</th>
 										<th>Status</th>
 										<th>Actions</th>
 									</tr>
 								</thead>
-								<tbody>
+								<tbody id="studentsTableBody">
 									<%
 									for (Student student : students) {
 									%>
@@ -252,27 +307,56 @@ pageContext.setAttribute("students", students);
 												</div>
 											</div>
 										</td>
+										<td><%=student.fatherName%></td>
+										<td><%=student.surname%></td>
+										<td><%=formatDate(student.dateOfBirth)%></td>
+										<td><%=student.gender%></td>
+										<td><%=student.bloodGroup%></td>
 										<td><%=student.email%></td>
 										<td><%=student.phone%></td>
+										<td><%=student.whatsappNumber%></td>
+										<td><%=student.parentMobile%></td>
+										<td><%=student.instagramId%></td>
+										<td><%=student.linkedinId%></td>
 										<td><span class="course-badge"><%=student.course%></span></td>
-										<td><span
-											class="grade-badge grade-<%=student.grade.charAt(0)%>"><%=student.grade%></span>
+										<td><span class="badge bg-info"><%=student.batchPreference%></span></td>
+										<td><%=student.collegeName%></td>
+										<td><%=student.educationQualification%></td>
+										<td><%=student.passingYear%></td>
+										<td>
+											<%
+											if (student.grade == null || student.grade.isEmpty() || "null".equals(student.grade)) {
+											%>
+												<span class="badge bg-secondary"><i class="bi bi-dash-circle"></i> Not Assigned</span>
+											<%
+											} else {
+											%>
+												<span class="grade-badge grade-<%=student.grade.charAt(0)%>"><%=student.grade%></span>
+											<%
+											}
+											%>
 										</td>
 										<td>
-											<div class="attendance-progress">
-												<div class="progress" style="height: 8px;">
-													<div
-														class="progress-bar <%=Integer.parseInt(student.attendance.replace("%", "")) >= 90 ? "bg-success"
-		: Integer.parseInt(student.attendance.replace("%", "")) >= 75 ? "bg-warning" : "bg-danger"%>"
-														style="width: <%=student.attendance%>"></div>
+											<%
+											if (student.attendance == null || student.attendance.isEmpty() || "null".equals(student.attendance)) {
+											%>
+												<span class="badge bg-secondary"><i class="bi bi-dash-circle"></i> Not Tracked</span>
+											<%
+											} else {
+												int attendancePercent = Integer.parseInt(student.attendance.replace("%", ""));
+											%>
+												<div class="attendance-progress">
+													<div class="progress" style="height: 8px;">
+														<div class="progress-bar <%=attendancePercent >= 90 ? "bg-success" : attendancePercent >= 75 ? "bg-warning" : "bg-danger"%>"
+															style="width: <%=student.attendance%>"></div>
+													</div>
+													<small><%=student.attendance%></small>
 												</div>
-												<small><%=student.attendance%></small>
-											</div>
+											<%
+											}
+											%>
 										</td>
-										<td><span
-											class="badge status-<%=student.status.toLowerCase()%>">
-												<%=student.status%>
-										</span></td>
+										<td><span class="badge status-<%=student.status.toLowerCase()%>"><%=student.status%></span></td>
 										<td>
 											<div class="btn-group" role="group">
 												<button class="btn btn-sm btn-outline-primary view-btn"
@@ -336,7 +420,7 @@ pageContext.setAttribute("students", students);
 
 	<!-- Student Details Modal -->
 	<div class="modal fade" id="studentDetailsModal" tabindex="-1">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-xl modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Student Details</h5>
