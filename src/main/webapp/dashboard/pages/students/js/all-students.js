@@ -16,6 +16,7 @@
     const studentsTable = document.getElementById('studentsTable');
     const addStudentBtn = document.getElementById('addStudentBtn');
     const exportBtn = document.getElementById('exportBtn');
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
 
     // State
     let currentPage = 1;
@@ -64,23 +65,42 @@
             selectAll.addEventListener('change', handleSelectAll);
         }
 
-        // Student Checkboxes
-        const checkboxes = document.querySelectorAll('.student-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                // Highlight the row when checkbox is checked
-                const row = this.closest('tr');
-                if (this.checked) {
+        // Student Checkboxes - using event delegation
+        studentsTable.addEventListener('change', function(e) {
+            if (e.target.classList.contains('student-checkbox')) {
+                const checkbox = e.target;
+                const row = checkbox.closest('tr');
+                
+                if (checkbox.checked) {
                     row.classList.add('row-selected');
                 } else {
                     row.classList.remove('row-selected');
+                    // Clear any inline styles
+                    row.style.backgroundColor = '';
+                    row.style.borderLeft = '';
                 }
+                
                 updateSelectAllState();
-            });
+                updateBulkActionButtons();
+            }
         });
 
-        // Action Buttons
-        attachActionButtons();
+        // Action Buttons - using event delegation
+        studentsTable.addEventListener('click', function(e) {
+            const target = e.target.closest('button');
+            if (!target) return;
+            
+            const studentId = target.dataset.studentId;
+            if (!studentId) return;
+            
+            if (target.classList.contains('view-btn')) {
+                handleViewStudent(studentId);
+            } else if (target.classList.contains('edit-btn')) {
+                handleEditStudent(studentId);
+            } else if (target.classList.contains('delete-btn')) {
+                handleDeleteStudent(studentId);
+            }
+        });
 
         // Add Student
         if (addStudentBtn) {
@@ -93,38 +113,12 @@
         }
 
         // Bulk Delete
-        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
         if (bulkDeleteBtn) {
             bulkDeleteBtn.addEventListener('click', handleBulkDelete);
         }
     }
 
-    // Attach action button listeners
-    function attachActionButtons() {
-        // View buttons
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const studentId = e.currentTarget.dataset.studentId;
-                handleViewStudent(studentId);
-            });
-        });
-
-        // Edit buttons
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const studentId = e.currentTarget.dataset.studentId;
-                handleEditStudent(studentId);
-            });
-        });
-
-        // Delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const studentId = e.currentTarget.dataset.studentId;
-                handleDeleteStudent(studentId);
-            });
-        });
-    }
+    // Removed attachActionButtons - now using event delegation
 
     // Search Handler
     function handleSearch() {
@@ -169,13 +163,22 @@
     // Apply Filters and Display
     function applyFiltersAndDisplay() {
         // Hide all rows first
-        allRows.forEach(row => row.style.display = 'none');
+        allRows.forEach(row => {
+            row.style.display = 'none';
+            // Maintain row highlighting if checkbox is checked
+            const checkbox = row.querySelector('.student-checkbox');
+            if (checkbox && checkbox.checked) {
+                row.classList.add('row-selected');
+            }
+        });
 
         // Show filtered rows
         filteredStudents.forEach(row => row.style.display = '');
 
         updatePagination();
         showEmptyState();
+        updateSelectAllState();
+        updateBulkActionButtons();
     }
 
     // Reset Filters
@@ -192,16 +195,21 @@
     // Select All Handler
     function handleSelectAll() {
         const isChecked = selectAll.checked;
-        const visibleCheckboxes = studentsTable.querySelectorAll('tbody tr:not([style*="display: none"]) .student-checkbox');
+        const visibleRows = Array.from(studentsTable.querySelectorAll('tbody tr'))
+            .filter(row => row.style.display !== 'none' && !row.classList.contains('empty-state-row'));
         
-        visibleCheckboxes.forEach(checkbox => {
-            checkbox.checked = isChecked;
-            // Highlight the row
-            const row = checkbox.closest('tr');
-            if (isChecked) {
-                row.classList.add('row-selected');
-            } else {
-                row.classList.remove('row-selected');
+        visibleRows.forEach(row => {
+            const checkbox = row.querySelector('.student-checkbox');
+            if (checkbox) {
+                checkbox.checked = isChecked;
+                
+                if (isChecked) {
+                    row.classList.add('row-selected');
+                } else {
+                    row.classList.remove('row-selected');
+                    row.style.backgroundColor = '';
+                    row.style.borderLeft = '';
+                }
             }
         });
 
@@ -210,25 +218,32 @@
 
     // Update Select All State
     function updateSelectAllState() {
-        const visibleCheckboxes = Array.from(
-            studentsTable.querySelectorAll('tbody tr:not([style*="display: none"]) .student-checkbox')
-        );
+        const visibleRows = Array.from(studentsTable.querySelectorAll('tbody tr'))
+            .filter(row => row.style.display !== 'none' && !row.classList.contains('empty-state-row'));
+        
+        const visibleCheckboxes = visibleRows.map(row => row.querySelector('.student-checkbox')).filter(cb => cb);
         const checkedCheckboxes = visibleCheckboxes.filter(cb => cb.checked);
 
         if (selectAll) {
-            selectAll.checked = visibleCheckboxes.length > 0 && 
-                                visibleCheckboxes.length === checkedCheckboxes.length;
-            selectAll.indeterminate = checkedCheckboxes.length > 0 && 
-                                       checkedCheckboxes.length < visibleCheckboxes.length;
+            if (visibleCheckboxes.length === 0) {
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
+            } else if (checkedCheckboxes.length === 0) {
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
+            } else if (checkedCheckboxes.length === visibleCheckboxes.length) {
+                selectAll.checked = true;
+                selectAll.indeterminate = false;
+            } else {
+                selectAll.checked = false;
+                selectAll.indeterminate = true;
+            }
         }
-
-        updateBulkActionButtons();
     }
 
     // Update Bulk Action Buttons
     function updateBulkActionButtons() {
         const checkedCount = document.querySelectorAll('.student-checkbox:checked').length;
-        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
         const selectedCountSpan = document.getElementById('selectedCount');
         
         if (bulkDeleteBtn && selectedCountSpan) {
@@ -247,8 +262,17 @@
         const totalEntries = filteredStudents.length;
         const totalPages = Math.ceil(totalEntries / perPage);
 
-        // Hide all rows
-        allRows.forEach(row => row.style.display = 'none');
+        // Hide all rows and maintain selection state
+        allRows.forEach(row => {
+            row.style.display = 'none';
+            // Maintain row highlighting if checkbox is checked
+            const checkbox = row.querySelector('.student-checkbox');
+            if (checkbox && checkbox.checked) {
+                row.classList.add('row-selected');
+            } else {
+                row.classList.remove('row-selected');
+            }
+        });
 
         // Show current page rows
         const start = (currentPage - 1) * perPage;
@@ -260,6 +284,9 @@
         // Update pagination info
         updatePaginationInfo(start, end, totalEntries);
         renderPaginationButtons(totalPages);
+        
+        // Update select all state
+        updateSelectAllState();
     }
 
     // Update Pagination Info
@@ -419,29 +446,38 @@
     }
 
     // Delete Student
-    function deleteStudent(studentId) {
-        showConfirmationModal({
+    function handleDeleteStudent(studentId) {
+        const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+        const studentName = row ? row.querySelector('.student-name')?.textContent || 'this student' : 'this student';
+        
         showConfirmationModal({
             title: 'Delete Student',
-            message: 'Are you sure you want to delete this student? This action cannot be undone.',
-            confirmText: 'Delete',
+            message: `Are you sure you want to delete <strong>${studentName}</strong>?<br><br>This action cannot be undone.`,
+            confirmText: 'Yes, Delete',
             cancelText: 'Cancel',
             confirmClass: 'btn-danger',
-            icon: 'bi-exclamation-triangle-fill text-danger',
             onConfirm: function() {
-                // In a real application, make an API call here
-                console.log('Student deleted:', studentId);
-                
                 // Remove row from table
-                const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
                 if (row) {
                     row.remove();
-                    allRows = Array.from(studentsTable.querySelectorAll('tbody tr'));
-                    filteredStudents = [...allRows];
+                    
+                    // Update arrays
+                    allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
+                    filteredStudents = filteredStudents.filter(r => r !== row);
+                    
+                    // Reset select all checkbox
+                    if (selectAll) {
+                        selectAll.checked = false;
+                        selectAll.indeterminate = false;
+                    }
+                    
+                    // Update view
                     updatePagination();
+                    updateBulkActionButtons();
+                    showEmptyState();
+                    
+                    showToast(`Student "${studentName}" deleted successfully`, 'success');
                 }
-                
-                showToast('Student deleted successfully', 'success');
             }
         });
     }
@@ -449,35 +485,42 @@
     // Bulk Delete Students
     function handleBulkDelete() {
         const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
-        const selectedCount = selectedCheckboxes.length;
         
-        if (selectedCount === 0) {
-            showToast('No students selected', 'warning');
+        if (selectedCheckboxes.length === 0) {
+            showToast('Please select students to delete', 'warning');
             return;
         }
+
+        const studentCount = selectedCheckboxes.length;
+        const studentNames = [];
         
-        // Get student IDs and names
-        const selectedStudents = Array.from(selectedCheckboxes).map(checkbox => {
+        selectedCheckboxes.forEach(checkbox => {
             const row = checkbox.closest('tr');
-            return {
-                id: row.dataset.studentId,
-                name: row.querySelector('.student-name')?.textContent || 'Unknown'
-            };
+            const nameEl = row.querySelector('.student-name');
+            if (nameEl) {
+                studentNames.push(nameEl.textContent);
+            }
         });
-        
-        // Show confirmation modal
+
+        const studentList = studentNames.length <= 5 
+            ? studentNames.map(name => `<li>${name}</li>`).join('')
+            : studentNames.slice(0, 5).map(name => `<li>${name}</li>`).join('') + 
+              `<li><em>...and ${studentNames.length - 5} more</em></li>`;
+
         showConfirmationModal({
             title: 'Delete Multiple Students',
-            message: `Are you sure you want to delete ${selectedCount} student${selectedCount > 1 ? 's' : ''}? This action cannot be undone.`,
-            confirmText: 'Delete All',
+            message: `Are you sure you want to delete <strong>${studentCount} student(s)</strong>?<br><br>
+                     <div style="text-align: left; max-height: 200px; overflow-y: auto;">
+                         <ul style="margin: 10px 0; padding-left: 20px;">
+                             ${studentList}
+                         </ul>
+                     </div>
+                     <br>This action cannot be undone.`,
+            confirmText: 'Yes, Delete All',
             cancelText: 'Cancel',
             confirmClass: 'btn-danger',
-            icon: 'bi-exclamation-triangle-fill text-danger',
             onConfirm: function() {
-                // In a real application, make an API call here
-                console.log('Bulk deleting students:', selectedStudents);
-                
-                // Remove rows from table
+                // Remove all selected rows
                 selectedCheckboxes.forEach(checkbox => {
                     const row = checkbox.closest('tr');
                     if (row) {
@@ -485,21 +528,27 @@
                     }
                 });
                 
-                // Update arrays and pagination
+                // Update arrays
                 allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
                 filteredStudents = [...allRows];
                 
-                // Reset select all checkbox
+                // Reset checkboxes
                 if (selectAll) {
                     selectAll.checked = false;
                     selectAll.indeterminate = false;
                 }
                 
-                // Update display
-                updatePagination();
-                updateBulkActionButtons();
+                // Hide bulk delete button
+                if (bulkDeleteBtn) {
+                    bulkDeleteBtn.style.display = 'none';
+                }
                 
-                showToast(`${selectedCount} student${selectedCount > 1 ? 's' : ''} deleted successfully`, 'success');
+                // Update view
+                currentPage = 1;
+                updatePagination();
+                showEmptyState();
+                
+                showToast(`${studentCount} student(s) deleted successfully`, 'success');
             }
         });
     }

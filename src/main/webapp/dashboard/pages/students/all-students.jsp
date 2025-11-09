@@ -1,6 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.*"%>
+<%@ page import="java.time.LocalDate"%>
+<%@ page import="java.time.format.DateTimeFormatter"%>
+<%!
+// Helper method to format date to DD-MM-YYYY
+public String formatDate(String dateStr) {
+	try {
+		if (dateStr != null && !dateStr.isEmpty()) {
+			LocalDate date = LocalDate.parse(dateStr);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			return date.format(formatter);
+		}
+	} catch (Exception e) {
+		// Return original if parsing fails
+	}
+	return dateStr;
+}
+%>
 <%
 // Dummy student data
 class Student {
@@ -181,15 +198,6 @@ pageContext.setAttribute("students", students);
 								</select>
 							</div>
 							<div class="col-md-2">
-								<label class="form-label">Show Entries</label> <select
-									class="form-select" id="entriesPerPage">
-									<option value="10">10</option>
-									<option value="25">25</option>
-									<option value="50">50</option>
-									<option value="100">100</option>
-								</select>
-							</div>
-							<div class="col-md-2">
 								<button class="btn btn-outline-secondary w-100"
 									id="resetFilters">
 									<i class="bi bi-arrow-clockwise me-2"></i>Reset
@@ -206,8 +214,11 @@ pageContext.setAttribute("students", students);
 							<table class="table table-hover mb-0" id="studentsTable">
 								<thead class="table-light">
 									<tr>
-										<th><input type="checkbox" class="form-check-input"
-											id="selectAll"></th>
+										<th style="width: 40px;">
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="selectAll">
+											</div>
+										</th>
 										<th>Student ID</th>
 										<th>Name</th>
 										<th>Email</th>
@@ -226,15 +237,18 @@ pageContext.setAttribute("students", students);
 									<tr data-student-id="<%=student.id%>"
 										data-course="<%=student.course%>"
 										data-status="<%=student.status%>">
-										<td><input type="checkbox"
-											class="form-check-input student-checkbox"></td>
+										<td>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input student-checkbox" value="<%=student.id%>">
+											</div>
+										</td>
 										<td><strong><%=student.id%></strong></td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="student-avatar"><%=student.avatar%></div>
 												<div class="ms-2">
 													<div class="student-name"><%=student.name%></div>
-													<small class="text-muted">Enrolled: <%=student.enrollDate%></small>
+													<small class="text-muted">Enrolled: <%=formatDate(student.enrollDate)%></small>
 												</div>
 											</div>
 										</td>
@@ -283,13 +297,24 @@ pageContext.setAttribute("students", students);
 							</table>
 						</div>
 					</div>
-					<div class="card-footer bg-white">
+					<div class="card-footer">
 						<div
 							class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-							<div class="text-muted">
-								Showing <span id="showingStart">1</span> to <span
-									id="showingEnd">12</span> of <span id="totalEntries">12</span>
-								entries
+							<div class="d-flex align-items-center gap-3 flex-wrap">
+								<div class="entries-info">
+									Showing <span id="showingStart">1</span> to <span
+										id="showingEnd">12</span> of <span id="totalEntries">12</span>
+									entries
+								</div>
+								<div class="entries-selector-wrapper">
+									<label for="entriesPerPage">Show:</label>
+									<select class="form-select form-select-sm" id="entriesPerPage">
+										<option value="10">10</option>
+										<option value="25">25</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+								</div>
 							</div>
 							<nav>
 								<ul class="pagination mb-0" id="pagination">
