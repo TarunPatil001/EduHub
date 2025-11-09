@@ -1,0 +1,581 @@
+// Student Attendance System - Complete Functional Implementation
+(function() {
+    'use strict';
+
+    // Demo Data - Replace with actual API calls
+    const demoData = {
+        'class-10a': [
+            { id: 'S001', roll: '001', name: 'Aarav Sharma' },
+            { id: 'S002', roll: '002', name: 'Diya Patel' },
+            { id: 'S003', roll: '003', name: 'Rohan Mehta' },
+            { id: 'S004', roll: '004', name: 'Sara Khan' },
+            { id: 'S005', roll: '005', name: 'Vikram Singh' },
+            { id: 'S006', roll: '006', name: 'Priya Desai' },
+            { id: 'S007', roll: '007', name: 'Arjun Kumar' },
+            { id: 'S008', roll: '008', name: 'Ananya Reddy' },
+            { id: 'S009', roll: '009', name: 'Kabir Joshi' },
+            { id: 'S010', roll: '010', name: 'Ishita Gupta' },
+            { id: 'S011', roll: '011', name: 'Aditya Verma' },
+            { id: 'S012', roll: '012', name: 'Tanvi Kulkarni' },
+            { id: 'S013', roll: '013', name: 'Siddharth Rao' },
+            { id: 'S014', roll: '014', name: 'Nisha Pillai' },
+            { id: 'S015', roll: '015', name: 'Rahul Mishra' },
+            { id: 'S016', roll: '016', name: 'Sneha Srinivasan' },
+            { id: 'S017', roll: '017', name: 'Karan Bhatia' },
+            { id: 'S018', roll: '018', name: 'Meera Nair' },
+            { id: 'S019', roll: '019', name: 'Arnav Kapoor' },
+            { id: 'S020', roll: '020', name: 'Riya Malhotra' },
+            { id: 'S021', roll: '021', name: 'Dev Sharma' },
+            { id: 'S022', roll: '022', name: 'Kavya Iyer' },
+            { id: 'S023', roll: '023', name: 'Aryan Jain' },
+            { id: 'S024', roll: '024', name: 'Aisha Khanna' },
+            { id: 'S025', roll: '025', name: 'Vivaan Das' }
+        ],
+        'class-10b': [
+            { id: 'S026', roll: '001', name: 'Neha Kapoor' },
+            { id: 'S027', roll: '002', name: 'Harsh Agarwal' },
+            { id: 'S028', roll: '003', name: 'Aditi Singh' },
+            { id: 'S029', roll: '004', name: 'Varun Reddy' },
+            { id: 'S030', roll: '005', name: 'Simran Kaur' },
+            { id: 'S031', roll: '006', name: 'Ayush Pandey' },
+            { id: 'S032', roll: '007', name: 'Pooja Iyer' },
+            { id: 'S033', roll: '008', name: 'Nikhil Saxena' },
+            { id: 'S034', roll: '009', name: 'Tanya Mehta' },
+            { id: 'S035', roll: '010', name: 'Sanjay Kumar' },
+            { id: 'S036', roll: '011', name: 'Lakshmi Rao' },
+            { id: 'S037', roll: '012', name: 'Akash Verma' },
+            { id: 'S038', roll: '013', name: 'Divya Nair' },
+            { id: 'S039', roll: '014', name: 'Ritesh Patel' },
+            { id: 'S040', roll: '015', name: 'Shruti Joshi' },
+            { id: 'S041', roll: '016', name: 'Manish Gupta' },
+            { id: 'S042', roll: '017', name: 'Anjali Shah' },
+            { id: 'S043', roll: '018', name: 'Rohit Sharma' },
+            { id: 'S044', roll: '019', name: 'Swati Kulkarni' },
+            { id: 'S045', roll: '020', name: 'Gaurav Chopra' }
+        ],
+        'class-11a': [
+            { id: 'S046', roll: '001', name: 'Yash Bhatia' },
+            { id: 'S047', roll: '002', name: 'Kriti Desai' },
+            { id: 'S048', roll: '003', name: 'Mohit Agarwal' },
+            { id: 'S049', roll: '004', name: 'Pallavi Singh' },
+            { id: 'S050', roll: '005', name: 'Deepak Kumar' },
+            { id: 'S051', roll: '006', name: 'Sakshi Reddy' },
+            { id: 'S052', roll: '007', name: 'Vishal Mehta' },
+            { id: 'S053', roll: '008', name: 'Nidhi Sharma' },
+            { id: 'S054', roll: '009', name: 'Ankit Verma' },
+            { id: 'S055', roll: '010', name: 'Priyanka Iyer' }
+        ],
+        'class-11b': [
+            { id: 'S056', roll: '001', name: 'Sonal Chopra' },
+            { id: 'S057', roll: '002', name: 'Manoj Kumar' },
+            { id: 'S058', roll: '003', name: 'Ankita Desai' },
+            { id: 'S059', roll: '004', name: 'Rajesh Verma' },
+            { id: 'S060', roll: '005', name: 'Neelam Singh' },
+            { id: 'S061', roll: '006', name: 'Prakash Reddy' },
+            { id: 'S062', roll: '007', name: 'Rekha Sharma' },
+            { id: 'S063', roll: '008', name: 'Sandeep Mehta' },
+            { id: 'S064', roll: '009', name: 'Shweta Kapoor' },
+            { id: 'S065', roll: '010', name: 'Vikas Agarwal' }
+        ],
+        'class-12a': [
+            { id: 'S066', roll: '001', name: 'Kartik Bhatia' },
+            { id: 'S067', roll: '002', name: 'Lata Singh' },
+            { id: 'S068', roll: '003', name: 'Mukesh Kumar' },
+            { id: 'S069', roll: '004', name: 'Nisha Reddy' },
+            { id: 'S070', roll: '005', name: 'Omkar Sharma' },
+            { id: 'S071', roll: '006', name: 'Poonam Verma' },
+            { id: 'S072', roll: '007', name: 'Ramesh Mehta' },
+            { id: 'S073', roll: '008', name: 'Sunita Kapoor' },
+            { id: 'S074', roll: '009', name: 'Tarun Agarwal' },
+            { id: 'S075', roll: '010', name: 'Uma Desai' }
+        ],
+        'class-12b': [
+            { id: 'S076', roll: '001', name: 'Garima Chopra' },
+            { id: 'S077', roll: '002', name: 'Harish Kumar' },
+            { id: 'S078', roll: '003', name: 'Ishaan Desai' },
+            { id: 'S079', roll: '004', name: 'Jasmine Verma' },
+            { id: 'S080', roll: '005', name: 'Kunal Singh' },
+            { id: 'S081', roll: '006', name: 'Lavanya Reddy' },
+            { id: 'S082', roll: '007', name: 'Mohan Sharma' },
+            { id: 'S083', roll: '008', name: 'Naveen Mehta' },
+            { id: 'S084', roll: '009', name: 'Ojas Kapoor' },
+            { id: 'S085', roll: '010', name: 'Payal Agarwal' }
+        ]
+    };
+
+    // State
+    let students = [];
+    let attendance = {};
+    let filteredStudents = [];
+    let currentPage = 1;
+    let itemsPerPage = 10;
+
+    // DOM Elements
+    const classSelect = document.getElementById('classSelect');
+    const dateInput = document.getElementById('dateInput');
+    const searchInput = document.getElementById('searchInput');
+    const selectAll = document.getElementById('selectAll');
+    const tableBody = document.getElementById('studentTableBody');
+    const markAllPresentBtn = document.getElementById('markAllPresentBtn');
+    const markAllAbsentBtn = document.getElementById('markAllAbsentBtn');
+    const markSelectedAbsentBtn = document.getElementById('markSelectedAbsentBtn');
+    const markSelectedPresentBtn = document.getElementById('markSelectedPresentBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const presentCount = document.getElementById('presentCount');
+    const absentCount = document.getElementById('absentCount');
+    const totalCount = document.getElementById('totalCount');
+    const itemsPerPageSelect = document.getElementById('itemsPerPage');
+    const paginationContainer = document.getElementById('paginationContainer');
+    const pageInfo = document.getElementById('pageInfo');
+
+    // Initialize
+    function init() {
+        setTodayDate();
+        bindEvents();
+    }
+
+    // Set today's date
+    function setTodayDate() {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+        dateInput.max = today;
+    }
+
+    // Bind Events
+    function bindEvents() {
+        classSelect.addEventListener('change', loadStudents);
+        searchInput.addEventListener('input', filterStudents);
+        selectAll.addEventListener('change', toggleSelectAll);
+        markAllPresentBtn.addEventListener('click', () => markAll('Present'));
+        markAllAbsentBtn.addEventListener('click', () => markAll('Absent'));
+        markSelectedAbsentBtn.addEventListener('click', () => smartMark('Absent', 'Present'));
+        markSelectedPresentBtn.addEventListener('click', () => smartMark('Present', 'Absent'));
+        resetBtn.addEventListener('click', reset);
+        saveBtn.addEventListener('click', save);
+        exportBtn.addEventListener('click', exportCSV);
+        itemsPerPageSelect.addEventListener('change', handleItemsPerPageChange);
+    }
+
+    // Load Students
+    function loadStudents() {
+        const classId = classSelect.value;
+        if (!classId) {
+            showEmptyState();
+            return;
+        }
+
+        students = demoData[classId] || [];
+        filteredStudents = [...students];
+        attendance = {};
+        students.forEach(s => attendance[s.id] = 'Absent');
+
+        currentPage = 1;
+        renderTable();
+        renderPagination();
+        updateStats();
+    }
+
+    // Show Empty State
+    function showEmptyState() {
+        tableBody.innerHTML = `
+            <tr class="empty-state">
+                <td colspan="5">
+                    <div class="empty-content">
+                        <i class="bi bi-inbox"></i>
+                        <p>Select a class to view students</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        students = [];
+        filteredStudents = [];
+        paginationContainer.innerHTML = '';
+        pageInfo.textContent = '';
+        updateStats();
+    }
+
+    // Render Table
+    function renderTable() {
+        if (filteredStudents.length === 0) {
+            showEmptyState();
+            return;
+        }
+
+        tableBody.innerHTML = '';
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedStudents = filteredStudents.slice(startIndex, endIndex);
+
+        paginatedStudents.forEach(student => {
+            const tr = document.createElement('tr');
+            tr.id = `row-${student.id}`;
+            
+            tr.innerHTML = `
+                <td class="col-checkbox">
+                    <input type="checkbox" class="checkbox-input student-check" data-id="${student.id}">
+                </td>
+                <td class="col-roll"><strong>${student.roll}</strong></td>
+                <td class="col-name">${student.name}</td>
+                <td class="col-status">
+                    <select class="status-select" data-id="${student.id}">
+                        <option value="Present">Present</option>
+                        <option value="Absent" selected>Absent</option>
+                        <option value="Late">Late</option>
+                        <option value="Excused">Excused</option>
+                    </select>
+                </td>
+                <td class="col-action">
+                    <button class="quick-btn quick-btn-present" data-id="${student.id}" title="Mark Present">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                    <button class="quick-btn quick-btn-absent" data-id="${student.id}" title="Mark Absent">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </td>
+            `;
+
+            // Checkbox event
+            const checkbox = tr.querySelector('.student-check');
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    tr.style.backgroundColor = '#dbeafe';
+                } else {
+                    tr.style.backgroundColor = '';
+                }
+            });
+
+            // Status dropdown event
+            const statusSelect = tr.querySelector('.status-select');
+            statusSelect.addEventListener('change', function() {
+                attendance[student.id] = this.value;
+                updateStats();
+            });
+
+            // Quick Present button
+            const presentBtn = tr.querySelector('.quick-btn-present');
+            presentBtn.addEventListener('click', function() {
+                attendance[student.id] = 'Present';
+                statusSelect.value = 'Present';
+                updateStats();
+            });
+
+            // Quick Absent button
+            const absentBtn = tr.querySelector('.quick-btn-absent');
+            absentBtn.addEventListener('click', function() {
+                attendance[student.id] = 'Absent';
+                statusSelect.value = 'Absent';
+                updateStats();
+            });
+
+            tableBody.appendChild(tr);
+        });
+    }
+
+    // Filter Students
+    function filterStudents() {
+        const query = searchInput.value.toLowerCase().trim();
+        
+        if (query === '') {
+            filteredStudents = [...students];
+        } else {
+            filteredStudents = students.filter(student => {
+                const name = student.name.toLowerCase();
+                const roll = student.roll.toLowerCase();
+                return name.includes(query) || roll.includes(query);
+            });
+        }
+        
+        currentPage = 1;
+        renderTable();
+        renderPagination();
+    }
+
+    // Toggle Select All
+    function toggleSelectAll() {
+        const checkboxes = document.querySelectorAll('.student-check');
+        const isChecked = selectAll.checked;
+        
+        checkboxes.forEach(cb => {
+            if (cb.closest('tr').style.display !== 'none') {
+                cb.checked = isChecked;
+                const row = cb.closest('tr');
+                row.style.backgroundColor = isChecked ? '#dbeafe' : '';
+            }
+        });
+    }
+
+    // Mark All
+    function markAll(status) {
+        if (students.length === 0) {
+            showToast('Please select a class first', 'warning');
+            return;
+        }
+
+        showConfirmationModal({
+            title: 'Confirm Action',
+            message: `Mark all ${students.length} students as ${status}?`,
+            confirmText: 'Yes, Continue',
+            cancelText: 'Cancel',
+            confirmClass: status === 'Present' ? 'btn-success' : 'btn-danger',
+            onConfirm: function() {
+                students.forEach(s => {
+                    attendance[s.id] = status;
+                    const row = document.getElementById(`row-${s.id}`);
+                    if (row) {
+                        row.querySelector('.status-select').value = status;
+                    }
+                });
+                updateStats();
+                showToast(`All students marked as ${status}`, 'success');
+            }
+        });
+    }
+
+    // Smart Mark
+    function smartMark(selectedStatus, othersStatus) {
+        const checked = Array.from(document.querySelectorAll('.student-check:checked'));
+        
+        if (checked.length === 0) {
+            showToast('Please select at least one student', 'warning');
+            return;
+        }
+
+        const selectedCount = checked.length;
+        const othersCount = students.length - selectedCount;
+
+        showConfirmationModal({
+            title: 'Confirm Smart Marking',
+            message: `Mark ${selectedCount} selected as ${selectedStatus} and ${othersCount} others as ${othersStatus}?`,
+            confirmText: 'Yes, Continue',
+            cancelText: 'Cancel',
+            confirmClass: selectedStatus === 'Present' ? 'btn-success' : 'btn-danger',
+            onConfirm: function() {
+                const selectedIds = checked.map(cb => cb.dataset.id);
+                
+                students.forEach(s => {
+                    const status = selectedIds.includes(s.id) ? selectedStatus : othersStatus;
+                    attendance[s.id] = status;
+                    
+                    const row = document.getElementById(`row-${s.id}`);
+                    if (row) {
+                        row.querySelector('.status-select').value = status;
+                        row.querySelector('.student-check').checked = false;
+                        row.style.backgroundColor = '';
+                    }
+                });
+
+                selectAll.checked = false;
+                updateStats();
+                showToast(`${selectedCount} marked as ${selectedStatus}, ${othersCount} as ${othersStatus}`, 'success');
+            }
+        });
+    }
+
+    // Reset
+    function reset() {
+        if (students.length === 0) return;
+
+        students.forEach(s => {
+            attendance[s.id] = 'Absent';
+            const row = document.getElementById(`row-${s.id}`);
+            if (row) {
+                row.querySelector('.status-select').value = 'Absent';
+                row.querySelector('.student-check').checked = false;
+                row.style.backgroundColor = '';
+            }
+        });
+
+        selectAll.checked = false;
+        updateStats();
+        showToast('Attendance reset to all absent', 'info');
+    }
+
+    // Save
+    function save() {
+        if (!classSelect.value) {
+            showToast('Please select a class', 'warning');
+            return;
+        }
+
+        if (students.length === 0) {
+            showToast('No students to save', 'warning');
+            return;
+        }
+
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+
+        // Simulate API call
+        setTimeout(() => {
+            const present = Object.values(attendance).filter(s => s === 'Present').length;
+            const absent = students.length - present;
+            
+            const className = classSelect.options[classSelect.selectedIndex].text;
+            const date = new Date(dateInput.value).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            showSuccessModal({
+                title: 'Attendance Saved!',
+                message: `Attendance for <strong>${className}</strong> on <strong>${date}</strong> has been saved successfully.<br><br>
+                         <i class="bi bi-check-circle-fill text-success"></i> Present: ${present}<br>
+                         <i class="bi bi-x-circle-fill text-danger"></i> Absent: ${absent}`
+            });
+
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
+        }, 1000);
+    }
+
+    // Export CSV
+    function exportCSV() {
+        if (students.length === 0) {
+            showToast('No data to export', 'warning');
+            return;
+        }
+
+        let csv = 'Roll No,Name,Status,Date\n';
+        students.forEach(s => {
+            csv += `${s.roll},"${s.name}",${attendance[s.id]},${dateInput.value}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `attendance_${dateInput.value}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Attendance exported successfully', 'success');
+    }
+
+    // Update Stats
+    function updateStats() {
+        const present = Object.values(attendance).filter(s => s === 'Present').length;
+        const absent = Object.values(attendance).filter(s => s === 'Absent').length;
+        
+        presentCount.textContent = present;
+        absentCount.textContent = absent;
+        totalCount.textContent = students.length;
+    }
+
+    // Pagination Functions
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+        
+        if (totalPages <= 1) {
+            paginationContainer.innerHTML = '';
+            pageInfo.textContent = '';
+            return;
+        }
+
+        // Update page info
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, filteredStudents.length);
+        pageInfo.textContent = `Showing ${startItem}-${endItem} of ${filteredStudents.length} students`;
+
+        // Generate pagination buttons
+        let paginationHTML = '<ul class="pagination">';
+
+        // Previous button
+        paginationHTML += `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${currentPage - 1}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+        `;
+
+        // Page numbers
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // First page
+        if (startPage > 1) {
+            paginationHTML += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
+            if (startPage > 2) {
+                paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+        }
+
+        // Page numbers
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>
+            `;
+        }
+
+        // Last page
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+            paginationHTML += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`;
+        }
+
+        // Next button
+        paginationHTML += `
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${currentPage + 1}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        `;
+
+        paginationHTML += '</ul>';
+        paginationContainer.innerHTML = paginationHTML;
+
+        // Bind click events
+        paginationContainer.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = parseInt(this.dataset.page);
+                if (page && page !== currentPage && page >= 1 && page <= totalPages) {
+                    goToPage(page);
+                }
+            });
+        });
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        renderTable();
+        renderPagination();
+        selectAll.checked = false;
+    }
+
+    function handleItemsPerPageChange() {
+        itemsPerPage = parseInt(itemsPerPageSelect.value);
+        currentPage = 1;
+        renderTable();
+        renderPagination();
+    }
+
+    // Note: Using reusable modal and toast components from dashboard/components/
+    // - showConfirmationModal() for confirmations
+    // - showSuccessModal() for success messages
+    // - showErrorModal() for error messages
+    // - showToast() for toast notifications
+
+    // Start
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+})();
