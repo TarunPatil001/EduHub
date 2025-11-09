@@ -28,9 +28,14 @@
                             <h2>All Courses</h2>
                             <p class="text-muted">View and manage all available courses</p>
                         </div>
-                        <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-course.jsp" class="btn btn-primary">
-                            <i class="bi bi-plus-circle"></i> Add New Course
-                        </a>
+                        <div class="d-flex gap-2">
+                            <button id="bulkDeleteBtn" class="btn btn-danger" style="display: none;">
+                                <i class="bi bi-trash"></i> Delete Selected (<span id="selectedCount">0</span>)
+                            </button>
+                            <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-course.jsp" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Add New Course
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -111,6 +116,7 @@
                 <div class="table-wrapper">
                     <table class="courses-table">
                         <colgroup>
+                            <col style="width: 50px;"><!-- Checkbox -->
                             <col style="min-width: 120px;"><!-- Course Code -->
                             <col style="min-width: 200px;"><!-- Course Name -->
                             <col style="min-width: 120px;"><!-- Category -->
@@ -127,6 +133,9 @@
                         </colgroup>
                         <thead>
                             <tr>
+                                <th class="text-center">
+                                    <input type="checkbox" id="selectAllCourses" class="form-check-input">
+                                </th>
                                 <th>Course Code</th>
                                 <th>Course Name</th>
                                 <th>Category</th>
@@ -144,7 +153,7 @@
                         </thead>
                         <tbody id="coursesTableBody">
                             <tr class="empty-state">
-                                <td colspan="13">
+                                <td colspan="14">
                                     <div class="empty-content">
                                         <i class="bi bi-inbox"></i>
                                         <p>No courses found</p>

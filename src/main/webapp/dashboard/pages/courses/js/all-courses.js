@@ -34,6 +34,9 @@
     const itemsPerPageSelect = document.getElementById('itemsPerPage');
     const paginationContainer = document.getElementById('paginationContainer');
     const pageInfo = document.getElementById('pageInfo');
+    const selectAllCheckbox = document.getElementById('selectAllCourses');
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const selectedCountEl = document.getElementById('selectedCount');
 
     // Stats elements
     const totalCoursesEl = document.getElementById('totalCourses');
@@ -58,6 +61,8 @@
         statusFilter.addEventListener('change', applyFilters);
         resetFiltersBtn.addEventListener('click', resetFilters);
         itemsPerPageSelect.addEventListener('change', handleItemsPerPageChange);
+        selectAllCheckbox.addEventListener('change', handleSelectAll);
+        bulkDeleteBtn.addEventListener('click', handleBulkDelete);
     }
 
     // Handle Search
@@ -115,7 +120,10 @@
         const paginatedCourses = filteredCourses.slice(startIndex, endIndex);
 
         tableBody.innerHTML = paginatedCourses.map(course => `
-            <tr>
+            <tr data-course-id="${course.id}">
+                <td class="text-center">
+                    <input type="checkbox" class="form-check-input course-checkbox" data-course-id="${course.id}">
+                </td>
                 <td><span class="course-code">${course.code}</span></td>
                 <td><span class="course-name">${course.name}</span></td>
                 <td><span class="category-badge category-${course.category}">${capitalize(course.category)}</span></td>
@@ -136,20 +144,29 @@
                         <button class="action-btn edit" onclick="editCourse(${course.id})" title="Edit Course">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
-                        <button class="action-btn delete" onclick="deleteCourse(${course.id})" title="Delete Course">
+                        <button class="action-btn delete" onclick="handleDeleteCourse(${course.id})" title="Delete Course">
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </div>
                 </td>
             </tr>
         `).join('');
+
+        // Add event listeners to checkboxes
+        document.querySelectorAll('.course-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkDeleteButton);
+        });
+
+        // Reset select all checkbox
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
     }
 
     // Show Empty State
     function showEmptyState() {
         tableBody.innerHTML = `
             <tr class="empty-state">
-                <td colspan="13">
+                <td colspan="14">
                     <div class="empty-content">
                         <i class="bi bi-inbox"></i>
                         <p>No courses found</p>
@@ -159,6 +176,7 @@
         `;
         paginationContainer.innerHTML = '';
         pageInfo.textContent = '';
+        bulkDeleteBtn.style.display = 'none';
     }
 
     // Render Pagination
@@ -319,7 +337,97 @@
         showToast(`Edit functionality for "${course.name}" will be implemented soon`, 'info');
     };
 
-    window.deleteCourse = function(courseId) {
+    // Handle Select All Checkbox
+    function handleSelectAll() {
+        const checkboxes = document.querySelectorAll('.course-checkbox');
+        const isChecked = selectAllCheckbox.checked;
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+        
+        updateBulkDeleteButton();
+    }
+
+    // Update Bulk Delete Button
+    function updateBulkDeleteButton() {
+        const checkedBoxes = document.querySelectorAll('.course-checkbox:checked');
+        const count = checkedBoxes.length;
+        
+        if (count > 0) {
+            bulkDeleteBtn.style.display = 'inline-block';
+            selectedCountEl.textContent = count;
+        } else {
+            bulkDeleteBtn.style.display = 'none';
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
+
+        // Update select all checkbox state
+        const allCheckboxes = document.querySelectorAll('.course-checkbox');
+        if (count === 0) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        } else if (count === allCheckboxes.length) {
+            selectAllCheckbox.checked = true;
+            selectAllCheckbox.indeterminate = false;
+        } else {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = true;
+        }
+    }
+
+    // Handle Bulk Delete
+    function handleBulkDelete() {
+        const checkedBoxes = document.querySelectorAll('.course-checkbox:checked');
+        const courseIds = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.courseId));
+        
+        if (courseIds.length === 0) {
+            showToast('Please select courses to delete', 'warning');
+            return;
+        }
+
+        const courseNames = courseIds.map(id => {
+            const course = allCourses.find(c => c.id === id);
+            return course ? course.name : '';
+        }).filter(name => name);
+
+        const courseList = courseNames.length <= 5 
+            ? courseNames.map(name => `<li>${name}</li>`).join('')
+            : courseNames.slice(0, 5).map(name => `<li>${name}</li>`).join('') + `<li><em>...and ${courseNames.length - 5} more</em></li>`;
+
+        showConfirmationModal({
+            title: 'Delete Multiple Courses',
+            message: `Are you sure you want to delete <strong>${courseIds.length} course(s)</strong>?<br><br>
+                     <div style="text-align: left; max-height: 200px; overflow-y: auto;">
+                         <ul style="margin: 10px 0; padding-left: 20px;">
+                             ${courseList}
+                         </ul>
+                     </div>
+                     <br>This action cannot be undone.`,
+            confirmText: 'Yes, Delete All',
+            cancelText: 'Cancel',
+            confirmClass: 'btn-danger',
+            onConfirm: function() {
+                // Remove courses
+                allCourses = allCourses.filter(course => !courseIds.includes(course.id));
+                
+                // Uncheck all checkboxes
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+                
+                // Update view
+                applyFilters();
+                updateStats();
+                bulkDeleteBtn.style.display = 'none';
+                
+                showToast(`${courseIds.length} course(s) deleted successfully`, 'success');
+            }
+        });
+    }
+
+    // Handle Single Delete
+    window.handleDeleteCourse = function(courseId) {
         const course = allCourses.find(c => c.id === courseId);
         if (!course) return;
 
@@ -333,8 +441,18 @@
                 const index = allCourses.findIndex(c => c.id === courseId);
                 if (index !== -1) {
                     allCourses.splice(index, 1);
+                    
+                    // Uncheck all checkboxes
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                    
+                    // Update view
                     applyFilters();
                     updateStats();
+                    
+                    // Hide bulk delete button
+                    bulkDeleteBtn.style.display = 'none';
+                    
                     showToast(`Course "${course.name}" deleted successfully`, 'success');
                 }
             }

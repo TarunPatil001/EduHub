@@ -22,20 +22,17 @@
             
             <div class="dashboard-content">
                 <!-- Page Header -->
-                <div class="attendance-header">
-                    <div class="header-content">
-                        <div class="header-left">
-                            <h2 class="page-title">
-                                <i class="bi bi-calendar-check-fill"></i>
-                                Student Attendance
-                            </h2>
-                            <p class="page-subtitle">Mark attendance for entire class in seconds</p>
+                <div class="page-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2>Student Attendance</h2>
+                            <p class="text-muted">Mark attendance for entire class in seconds</p>
                         </div>
-                        <div class="header-right">
-                            <button id="saveBtn" class="btn btn-primary btn-lg">
+                        <div class="d-flex gap-2">
+                            <button id="saveBtn" class="btn btn-primary">
                                 <i class="bi bi-save"></i> Save Attendance
                             </button>
-                            <button id="exportBtn" class="btn btn-outline-secondary btn-lg">
+                            <button id="exportBtn" class="btn btn-outline-secondary">
                                 <i class="bi bi-download"></i> Export CSV
                             </button>
                         </div>
@@ -43,11 +40,13 @@
                 </div>
 
                 <!-- Filter Controls -->
-                <div class="attendance-controls">
-                    <div class="control-row">
-                        <div class="control-group">
-                            <label class="control-label">Class / Section</label>
-                            <select id="classSelect" class="form-control">
+                <div class="card-custom mb-4">
+                    <h5 class="mb-4"><i class="bi bi-funnel-fill"></i> Filter Options</h5>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="classSelect" class="form-label">Class / Section <span class="required-star">*</span></label>
+                            <select id="classSelect" class="form-select">
                                 <option value="">Select Class</option>
                                 <option value="class-10a">Class 10-A</option>
                                 <option value="class-10b">Class 10-B</option>
@@ -57,99 +56,105 @@
                                 <option value="class-12b">Class 12-B</option>
                             </select>
                         </div>
-                        <div class="control-group">
-                            <label class="control-label">Date</label>
+                        <div class="col-md-4">
+                            <label for="dateInput" class="form-label">Date <span class="required-star">*</span></label>
                             <input type="date" id="dateInput" class="form-control">
                         </div>
-                        <div class="control-group">
-                            <label class="control-label">Search Students</label>
+                        <div class="col-md-4">
+                            <label for="searchInput" class="form-label">Search Students</label>
                             <input type="text" id="searchInput" class="form-control" placeholder="Search by name or roll...">
                         </div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="attendance-actions">
-                    <div class="action-buttons">
-                        <button id="markAllPresentBtn" class="btn btn-success">
-                            <i class="bi bi-check-all"></i> All Present
-                        </button>
-                        <button id="markAllAbsentBtn" class="btn btn-danger">
-                            <i class="bi bi-x-circle"></i> All Absent
-                        </button>
-                        <button id="markSelectedAbsentBtn" class="btn btn-warning">
-                            <i class="bi bi-person-x"></i> Selected Absent, Others Present
-                        </button>
-                        <button id="markSelectedPresentBtn" class="btn btn-info">
-                            <i class="bi bi-person-check"></i> Selected Present, Others Absent
-                        </button>
-                        <button id="resetBtn" class="btn btn-secondary">
-                            <i class="bi bi-arrow-counterclockwise"></i> Reset
-                        </button>
-                    </div>
-                    <div class="attendance-stats">
-                        <span class="stat-badge stat-present">
-                            <i class="bi bi-check-circle-fill"></i> Present: <strong id="presentCount">0</strong>
-                        </span>
-                        <span class="stat-badge stat-absent">
-                            <i class="bi bi-x-circle-fill"></i> Absent: <strong id="absentCount">0</strong>
-                        </span>
-                        <span class="stat-badge stat-total">
-                            <i class="bi bi-people-fill"></i> Total: <strong id="totalCount">0</strong>
-                        </span>
+                <div class="card-custom mb-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button id="markAllPresentBtn" class="btn btn-success btn-sm">
+                                <i class="bi bi-check-all"></i> All Present
+                            </button>
+                            <button id="markAllAbsentBtn" class="btn btn-danger btn-sm">
+                                <i class="bi bi-x-circle"></i> All Absent
+                            </button>
+                            <button id="markSelectedAbsentBtn" class="btn btn-warning btn-sm">
+                                <i class="bi bi-person-x"></i> Selected Absent
+                            </button>
+                            <button id="markSelectedPresentBtn" class="btn btn-info btn-sm">
+                                <i class="bi bi-person-check"></i> Selected Present
+                            </button>
+                            <button id="resetBtn" class="btn btn-secondary btn-sm">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset
+                            </button>
+                        </div>
+                        <div class="d-flex gap-3">
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-check-circle-fill"></i> Present: <strong id="presentCount">0</strong>
+                            </span>
+                            <span class="badge bg-danger fs-6">
+                                <i class="bi bi-x-circle-fill"></i> Absent: <strong id="absentCount">0</strong>
+                            </span>
+                            <span class="badge bg-secondary fs-6">
+                                <i class="bi bi-people-fill"></i> Total: <strong id="totalCount">0</strong>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Attendance Table -->
-                <div class="attendance-table-wrapper">
-                    <table class="attendance-table" id="attendanceTable">
-                        <thead>
-                            <tr>
-                                <th class="col-checkbox">
-                                    <input type="checkbox" id="selectAll" class="checkbox-input">
-                                </th>
-                                <th class="col-roll">Roll No</th>
-                                <th class="col-name">Student Name</th>
-                                <th class="col-status">Status</th>
-                                <th class="col-action">Quick Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentTableBody">
-                            <tr class="empty-state">
-                                <td colspan="5">
-                                    <div class="empty-content">
-                                        <i class="bi bi-inbox"></i>
-                                        <p>Select a class to view students</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="card-custom mb-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="attendanceTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 50px;" class="text-center">
+                                        <div class="form-check d-inline-block">
+                                            <input type="checkbox" id="selectAll" class="form-check-input">
+                                        </div>
+                                    </th>
+                                    <th style="width: 100px;">Roll No</th>
+                                    <th>Student Name</th>
+                                    <th style="width: 180px;">Status</th>
+                                    <th style="width: 150px;" class="text-center">Quick Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center py-5">
+                                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                                        <p class="text-muted mt-2 mb-0">Select a class to view students</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Pagination Controls -->
-                <div class="pagination-wrapper">
-                    <div class="pagination-info">
-                        <div class="items-per-page">
-                            <label for="itemsPerPage">Show:</label>
-                            <select id="itemsPerPage" class="form-control form-control-sm">
+                <div class="card-custom mb-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="itemsPerPage" class="mb-0">Show:</label>
+                            <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;">
                                 <option value="10" selected>10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
                                 <option value="100">100</option>
                             </select>
-                            <span>entries</span>
+                            <span class="text-muted">entries</span>
                         </div>
-                        <div class="page-info" id="pageInfo"></div>
+                        <div class="text-muted" id="pageInfo"></div>
+                        <div id="paginationContainer"></div>
                     </div>
-                    <div id="paginationContainer"></div>
                 </div>
 
                 <!-- Help Info -->
-                <div class="help-info">
-                    <i class="bi bi-info-circle"></i>
-                    <strong>Quick Guide:</strong> Select students by clicking checkboxes, then use action buttons. 
-                    Example: Select 3 absent students → Click "Selected Absent, Others Present" → Done in seconds!
+                <div class="alert alert-info d-flex align-items-start">
+                    <i class="bi bi-info-circle fs-5 me-2"></i>
+                    <div>
+                        <strong>Quick Guide:</strong> Select students by clicking checkboxes, then use action buttons. 
+                        Example: Select 3 absent students → Click "Selected Absent" → Done in seconds!
+                    </div>
                 </div>
             </div>
         </div>

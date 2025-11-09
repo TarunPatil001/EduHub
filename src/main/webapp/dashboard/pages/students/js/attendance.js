@@ -180,12 +180,10 @@
     // Show Empty State
     function showEmptyState() {
         tableBody.innerHTML = `
-            <tr class="empty-state">
-                <td colspan="5">
-                    <div class="empty-content">
-                        <i class="bi bi-inbox"></i>
-                        <p>Select a class to view students</p>
-                    </div>
+            <tr>
+                <td colspan="5" class="text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                    <p class="text-muted mt-2 mb-0">Select a class to view students</p>
                 </td>
             </tr>
         `;
@@ -213,24 +211,26 @@
             tr.id = `row-${student.id}`;
             
             tr.innerHTML = `
-                <td class="col-checkbox">
-                    <input type="checkbox" class="checkbox-input student-check" data-id="${student.id}">
+                <td class="text-center">
+                    <div class="form-check d-inline-block">
+                        <input type="checkbox" class="form-check-input student-check" data-id="${student.id}">
+                    </div>
                 </td>
-                <td class="col-roll"><strong>${student.roll}</strong></td>
-                <td class="col-name">${student.name}</td>
-                <td class="col-status">
-                    <select class="status-select" data-id="${student.id}">
+                <td><strong>${student.roll}</strong></td>
+                <td>${student.name}</td>
+                <td>
+                    <select class="form-select form-select-sm status-select" data-id="${student.id}">
                         <option value="Present">Present</option>
                         <option value="Absent" selected>Absent</option>
                         <option value="Late">Late</option>
                         <option value="Excused">Excused</option>
                     </select>
                 </td>
-                <td class="col-action">
-                    <button class="quick-btn quick-btn-present" data-id="${student.id}" title="Mark Present">
+                <td class="text-center">
+                    <button class="btn btn-success btn-sm btn-action" data-id="${student.id}" data-action="present" title="Mark Present">
                         <i class="bi bi-check-lg"></i>
                     </button>
-                    <button class="quick-btn quick-btn-absent" data-id="${student.id}" title="Mark Absent">
+                    <button class="btn btn-danger btn-sm btn-action ms-1" data-id="${student.id}" data-action="absent" title="Mark Absent">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </td>
@@ -238,12 +238,17 @@
 
             // Checkbox event
             const checkbox = tr.querySelector('.student-check');
-            checkbox.addEventListener('change', function() {
+            checkbox.addEventListener('change', function(e) {
+                const row = this.closest('tr');
                 if (this.checked) {
-                    tr.style.backgroundColor = '#dbeafe';
+                    row.classList.add('selected');
                 } else {
-                    tr.style.backgroundColor = '';
+                    row.classList.remove('selected');
+                    // Force remove any inline styles that might interfere
+                    row.style.backgroundColor = '';
+                    row.style.borderLeft = '';
                 }
+                updateSelectAllCheckbox();
             });
 
             // Status dropdown event
@@ -253,20 +258,16 @@
                 updateStats();
             });
 
-            // Quick Present button
-            const presentBtn = tr.querySelector('.quick-btn-present');
-            presentBtn.addEventListener('click', function() {
-                attendance[student.id] = 'Present';
-                statusSelect.value = 'Present';
-                updateStats();
-            });
-
-            // Quick Absent button
-            const absentBtn = tr.querySelector('.quick-btn-absent');
-            absentBtn.addEventListener('click', function() {
-                attendance[student.id] = 'Absent';
-                statusSelect.value = 'Absent';
-                updateStats();
+            // Quick action buttons
+            const actionButtons = tr.querySelectorAll('.btn-action');
+            actionButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const status = action === 'present' ? 'Present' : 'Absent';
+                    attendance[student.id] = status;
+                    statusSelect.value = status;
+                    updateStats();
+                });
             });
 
             tableBody.appendChild(tr);
@@ -301,9 +302,34 @@
             if (cb.closest('tr').style.display !== 'none') {
                 cb.checked = isChecked;
                 const row = cb.closest('tr');
-                row.style.backgroundColor = isChecked ? '#dbeafe' : '';
+                if (isChecked) {
+                    row.classList.add('selected');
+                } else {
+                    row.classList.remove('selected');
+                }
             }
         });
+    }
+
+    // Update Select All Checkbox state
+    function updateSelectAllCheckbox() {
+        const checkboxes = document.querySelectorAll('.student-check');
+        const visibleCheckboxes = Array.from(checkboxes).filter(cb => cb.closest('tr').style.display !== 'none');
+        const checkedCount = visibleCheckboxes.filter(cb => cb.checked).length;
+        
+        if (visibleCheckboxes.length === 0) {
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+        } else if (checkedCount === 0) {
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+        } else if (checkedCount === visibleCheckboxes.length) {
+            selectAll.checked = true;
+            selectAll.indeterminate = false;
+        } else {
+            selectAll.checked = false;
+            selectAll.indeterminate = true;
+        }
     }
 
     // Mark All
@@ -325,8 +351,15 @@
                     const row = document.getElementById(`row-${s.id}`);
                     if (row) {
                         row.querySelector('.status-select').value = status;
+                        const checkbox = row.querySelector('.student-check');
+                        if (checkbox) {
+                            checkbox.checked = false;
+                        }
+                        row.classList.remove('selected');
                     }
                 });
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
                 updateStats();
                 showToast(`All students marked as ${status}`, 'success');
             }
@@ -361,12 +394,14 @@
                     const row = document.getElementById(`row-${s.id}`);
                     if (row) {
                         row.querySelector('.status-select').value = status;
-                        row.querySelector('.student-check').checked = false;
-                        row.style.backgroundColor = '';
+                        const checkbox = row.querySelector('.student-check');
+                        checkbox.checked = false;
+                        row.classList.remove('selected');
                     }
                 });
 
                 selectAll.checked = false;
+                selectAll.indeterminate = false;
                 updateStats();
                 showToast(`${selectedCount} marked as ${selectedStatus}, ${othersCount} as ${othersStatus}`, 'success');
             }
@@ -382,12 +417,16 @@
             const row = document.getElementById(`row-${s.id}`);
             if (row) {
                 row.querySelector('.status-select').value = 'Absent';
-                row.querySelector('.student-check').checked = false;
-                row.style.backgroundColor = '';
+                const checkbox = row.querySelector('.student-check');
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
+                row.classList.remove('selected');
             }
         });
 
         selectAll.checked = false;
+        selectAll.indeterminate = false;
         updateStats();
         showToast('Attendance reset to all absent', 'info');
     }
@@ -426,9 +465,38 @@
                          <i class="bi bi-x-circle-fill text-danger"></i> Absent: ${absent}`
             });
 
+            // Reset table after successful save
+            resetTableAfterSave();
+
             saveBtn.disabled = false;
             saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
         }, 1000);
+    }
+
+    // Reset table after save
+    function resetTableAfterSave() {
+        // Clear class selection
+        classSelect.value = '';
+        
+        // Clear search input
+        searchInput.value = '';
+        
+        // Reset all data
+        students = [];
+        filteredStudents = [];
+        attendance = {};
+        
+        // Uncheck select all
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+        
+        // Show empty state
+        showEmptyState();
+        
+        // Reset stats
+        updateStats();
+        
+        showToast('Table reset. Select a class to mark attendance again.', 'success');
     }
 
     // Export CSV
