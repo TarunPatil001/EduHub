@@ -139,6 +139,12 @@
     function resetForm() {
         form.reset();
         
+        // Reset status to empty (Select Status option)
+        const statusField = document.getElementById('status');
+        if (statusField) {
+            statusField.value = '';
+        }
+        
         // Remove all validation classes
         document.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
             el.classList.remove('is-valid', 'is-invalid');
@@ -190,7 +196,8 @@
             startDate: formData.get('startDate'),
             endDate: formData.get('endDate'),
             instructor: formData.get('instructor'),
-            modeOfConduct: formData.get('modeOfConduct')
+            modeOfConduct: formData.get('modeOfConduct'),
+            status: formData.get('status')
         };
 
         // Simulate API call
@@ -210,6 +217,13 @@
                 onClose: function() {
                     // Reset form or redirect
                     form.reset();
+                    
+                    // Reset status to empty (Select Status option)
+                    const statusField = document.getElementById('status');
+                    if (statusField) {
+                        statusField.value = '';
+                    }
+                    
                     document.querySelectorAll('.is-valid').forEach(el => {
                         el.classList.remove('is-valid');
                     });
