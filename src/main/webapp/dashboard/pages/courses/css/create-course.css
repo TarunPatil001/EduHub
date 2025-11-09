@@ -7,3 +7,76 @@
 .required-star {
     color: #dc3545;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    /* Page Header Mobile */
+    .page-header .d-flex {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+
+    .page-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header .text-muted {
+        font-size: 0.9rem;
+    }
+
+    /* Back Button Mobile - Full Width */
+    .page-header .btn-outline-secondary {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    /* Form Mobile Optimization */
+    .card-custom {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-custom h5 {
+        font-size: 1.1rem;
+    }
+
+    /* Form Controls */
+    .form-control,
+    .form-select {
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Submit Buttons */
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        min-height: 44px;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-header {
+        margin-bottom: 1rem !important;
+    }
+
+    .page-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .card-custom {
+        padding: 0.75rem;
+    }
+}

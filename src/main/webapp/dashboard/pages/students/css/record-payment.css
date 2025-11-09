@@ -627,18 +627,28 @@ input[type="file"]::-webkit-file-upload-button:hover {
 @media (max-width: 768px) {
     /* Page Header Mobile */
     .page-header .d-flex {
-        flex-direction: column-reverse;
-        align-items: flex-start !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
         gap: 1rem;
-    }
-    
-    .page-header .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
     }
     
     .page-header h2 {
         font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .page-header .text-muted {
+        font-size: 0.9rem;
+    }
+    
+    /* Back Button Full Width */
+    .page-header .btn,
+    .page-header .btn-outline-secondary {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
     }
     
     /* Card Padding */
@@ -650,7 +660,22 @@ input[type="file"]::-webkit-file-upload-button:hover {
         font-size: 1rem;
     }
     
-    /* Form Buttons - Using Bootstrap responsive utilities */
+    /* Form Buttons Full Width */
+    .btn-primary,
+    .btn-secondary,
+    .btn-lg {
+        width: 100%;
+        min-height: 44px;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Button Groups on Mobile */
+    .d-flex.gap-2,
+    .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
     
     /* Student Details Card */
     .student-details-card {

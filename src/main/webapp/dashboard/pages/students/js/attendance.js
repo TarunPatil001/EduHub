@@ -205,7 +205,16 @@
         students = [];
         filteredStudents = [];
         paginationContainer.innerHTML = '';
-        if (pageInfo) pageInfo.textContent = '';
+        
+        // Reset pagination info
+        const showingStartEl = document.getElementById('showingStart');
+        const showingEndEl = document.getElementById('showingEnd');
+        const totalEntriesEl = document.getElementById('totalEntries');
+        
+        if (showingStartEl) showingStartEl.textContent = '0';
+        if (showingEndEl) showingEndEl.textContent = '0';
+        if (totalEntriesEl) totalEntriesEl.textContent = '0';
+        
         updateStats();
     }
 
@@ -297,6 +306,9 @@
 
             tableBody.appendChild(tr);
         });
+
+        // Update pagination info after rendering
+        updatePaginationInfo();
     }
 
     // Filter Students
@@ -336,7 +348,16 @@
                 </tr>
             `;
             paginationContainer.innerHTML = '';
-            if (pageInfo) pageInfo.textContent = '';
+            
+            // Reset pagination info for empty search
+            const showingStartEl = document.getElementById('showingStart');
+            const showingEndEl = document.getElementById('showingEnd');
+            const totalEntriesEl = document.getElementById('totalEntries');
+            
+            if (showingStartEl) showingStartEl.textContent = '0';
+            if (showingEndEl) showingEndEl.textContent = '0';
+            if (totalEntriesEl) totalEntriesEl.textContent = '0';
+            
             return;
         }
         
@@ -606,16 +627,13 @@
     function renderPagination() {
         const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
         
+        // Update pagination info elements
+        updatePaginationInfo();
+        
         if (totalPages <= 1) {
             paginationContainer.innerHTML = '';
-            pageInfo.textContent = '';
             return;
         }
-
-        // Update page info
-        const startItem = (currentPage - 1) * itemsPerPage + 1;
-        const endItem = Math.min(currentPage * itemsPerPage, filteredStudents.length);
-        pageInfo.textContent = `Showing ${startItem}-${endItem} of ${filteredStudents.length} students`;
 
         // Generate pagination buttons
         let paginationHTML = '<ul class="pagination">';
@@ -685,6 +703,30 @@
                 }
             });
         });
+    }
+
+    function updatePaginationInfo() {
+        const showingStartEl = document.getElementById('showingStart');
+        const showingEndEl = document.getElementById('showingEnd');
+        const totalEntriesEl = document.getElementById('totalEntries');
+
+        if (!showingStartEl || !showingEndEl || !totalEntriesEl) {
+            return;
+        }
+
+        if (filteredStudents.length === 0) {
+            showingStartEl.textContent = '0';
+            showingEndEl.textContent = '0';
+            totalEntriesEl.textContent = '0';
+            return;
+        }
+
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, filteredStudents.length);
+
+        showingStartEl.textContent = startItem.toString();
+        showingEndEl.textContent = endItem.toString();
+        totalEntriesEl.textContent = filteredStudents.length.toString();
     }
 
     function goToPage(page) {

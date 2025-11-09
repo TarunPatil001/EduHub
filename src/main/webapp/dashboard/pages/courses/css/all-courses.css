@@ -824,8 +824,136 @@
 
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .stat-content h4 {
+        font-size: 1.5rem;
+    }
+
+    /* Controls Section Mobile Optimization */
+    .controls-section {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .search-box {
+        min-width: 100%;
+        width: 100%;
+    }
+
+    .search-box input {
+        font-size: 0.9rem;
+        padding: 0.65rem 1rem 0.65rem 2.5rem;
+    }
+
+    .filter-group {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .filter-select {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        font-size: 0.9rem;
+        padding: 0.65rem 2.5rem 0.65rem 0.75rem;
+    }
+
+    .btn-reset {
+        width: 100%;
+        justify-content: center;
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Page Header Mobile */
+    .page-header {
+        padding: 0.5rem 0;
+    }
+
+    .page-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .page-header .d-flex {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+
+    .page-header .d-flex .d-flex {
+        flex-direction: row !important;
+        gap: 0.5rem;
+    }
+
+    #bulkDeleteBtn {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    /* Table Mobile Optimization */
+    .table-responsive {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+
+    #coursesTable {
+        font-size: 0.8rem;
+    }
+
+    #coursesTable thead th {
+        font-size: 0.75rem !important;
+        padding: 0.75rem 0.5rem !important;
+    }
+
+    #coursesTable tbody td {
+        padding: 0.75rem 0.5rem !important;
+        font-size: 0.8rem;
+    }
+
+    /* Badges Mobile */
+    .course-code {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .category-badge,
+    .level-badge,
+    .mode-badge,
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    /* Action Buttons Mobile */
+    .btn-group {
+        gap: 0.25rem;
+    }
+
+    .btn-sm {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .action-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    /* Pagination Mobile */
     .pagination-wrapper {
         flex-direction: column;
     }
@@ -837,5 +965,122 @@
 
     .pagination {
         justify-content: center;
+        gap: 0.25rem;
+    }
+
+    .page-link {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+        min-width: 32px;
+    }
+
+    /* Card Footer Mobile */
+    .card-footer {
+        padding: 0.75rem 1rem !important;
+    }
+
+    .card-footer .d-flex {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    .entries-info {
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    .entries-selector-wrapper {
+        justify-content: center;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .entries-selector-wrapper label {
+        font-size: 0.8rem;
+    }
+
+    .entries-selector-wrapper select {
+        font-size: 0.8rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Extra small devices optimization */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .page-header p {
+        font-size: 0.875rem;
+    }
+
+    .controls-section {
+        padding: 0.75rem;
+    }
+
+    .filter-select option {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    /* Improve dropdown option visibility on mobile */
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    /* Make buttons more touch-friendly */
+    .btn {
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+    }
+
+    .filter-select,
+    .search-box input,
+    .btn-reset {
+        min-height: 44px;
+    }
+
+    /* Empty state mobile */
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .empty-state-icon i {
+        font-size: 2.5rem;
+    }
+
+    .empty-state-title {
+        font-size: 1.25rem;
+    }
+
+    .empty-state-text {
+        font-size: 0.9rem;
+    }
+}
+
+/* Landscape mode optimization for tablets */
+@media (max-width: 1024px) and (orientation: landscape) {
+    .filter-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .filter-select {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-width: calc(50% - 0.5rem);
+    }
+
+    .btn-reset {
+        flex: 1 1 100%;
     }
 }

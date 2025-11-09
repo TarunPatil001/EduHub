@@ -161,15 +161,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Help Info -->
-                <div class="alert alert-info d-flex align-items-start">
-                    <i class="bi bi-info-circle fs-5 me-2"></i>
-                    <div>
-                        <strong>Quick Guide:</strong> Select students by clicking checkboxes, then use action buttons. 
-                        Example: Select 3 absent students → Click "Selected Absent" → Done in seconds!
-                    </div>
-                </div>
             </div>
         </div>
     </div>
