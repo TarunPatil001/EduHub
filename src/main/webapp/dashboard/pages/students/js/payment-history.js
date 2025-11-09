@@ -51,33 +51,36 @@ function refreshPaymentHistory(studentId) {
     
     if (!historyList) return;
     
-    // Show loading state
-    historyList.style.opacity = '0.5';
+    // Don't show loading state if no student is selected
+    if (studentId) {
+        historyList.style.opacity = '0.5';
+    }
     
     // Simulate API call to refresh data
     setTimeout(() => {
-        if (!studentId) {
-            // No student selected - show message
+        if (!studentId || studentId === undefined || studentId === null) {
+            // No student selected - show empty state
             historyList.innerHTML = `
-                <div class="alert alert-info mb-0" id="noStudentSelectedMsg">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Please select a student to view their payment history
+                <div class="empty-state" id="emptyPaymentHistory">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <p class="empty-state-text">No payment history</p>
                 </div>
             `;
-            if (historyTitle) historyTitle.textContent = 'Select a Student';
+            if (historyTitle) historyTitle.textContent = 'Payment History';
             if (refreshBtn) refreshBtn.style.display = 'none';
             if (viewAllBtn) viewAllBtn.style.display = 'none';
+            historyList.style.opacity = '1';
         } else {
             // Load payment history for selected student
             loadStudentPaymentHistory(studentId);
             if (historyTitle) historyTitle.textContent = 'Payment History';
             if (refreshBtn) refreshBtn.style.display = 'block';
-            if (viewAllBtn) viewAllBtn.style.display = 'block';
             Toast.success('Payment history refreshed');
+            historyList.style.opacity = '1';
         }
-        
-        historyList.style.opacity = '1';
-    }, 500);
+    }, studentId ? 500 : 0); // No delay if no student selected
 }
 
 /**
@@ -91,11 +94,17 @@ function loadStudentPaymentHistory(studentId, showAll = false) {
     
     if (payments.length === 0) {
         historyList.innerHTML = `
-            <div class="alert alert-warning mb-0">
-                <i class="bi bi-exclamation-triangle"></i>
-                No payment records found
+            <div class="empty-state" id="emptyPaymentHistory">
+                <div class="empty-state-icon">
+                    <i class="bi bi-receipt"></i>
+                </div>
+                <p class="empty-state-text">No payments yet</p>
+                <small class="empty-state-subtext">Payment records will appear here</small>
             </div>
         `;
+        // Hide view all button when no payments
+        const viewAllBtn = document.getElementById('viewAllPaymentsBtn');
+        if (viewAllBtn) viewAllBtn.style.display = 'none';
         return;
     }
     
@@ -122,13 +131,13 @@ function loadStudentPaymentHistory(studentId, showAll = false) {
                     </div>
                 </div>
                 <div class="payment-actions">
-                    <button class="btn-icon" onclick="viewPayment('${payment.receiptNumber}')" title="View Details">
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewPayment('${payment.receiptNumber}')" title="View Details">
                         <i class="bi bi-eye"></i>
                     </button>
-                    <button class="btn-icon" onclick="editPayment('${payment.receiptNumber}')" title="Edit Payment">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="editPayment('${payment.receiptNumber}')" title="Edit Payment">
                         <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="btn-icon text-danger" onclick="deletePayment('${payment.receiptNumber}')" title="Delete Payment">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deletePayment('${payment.receiptNumber}')" title="Delete Payment">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
@@ -373,58 +382,37 @@ function deletePayment(receiptNumber) {
                 <strong>Warning:</strong> This action cannot be undone!
             </div>
             <p class="mb-2">Are you sure you want to delete this payment record?</p>
-            <p class="mb-3"><strong>Receipt Number:</strong> <code class="text-danger">${receiptNumber}</code></p>
-            <div class="mb-0">
-                <label class="form-label fw-semibold">Reason for Deletion <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="deleteReason" rows="3" placeholder="Please provide a detailed reason for deleting this payment record (minimum 10 characters)..." required></textarea>
-                <div class="invalid-feedback" id="deleteReasonError" style="display: none;">
-                    Please provide a detailed reason for deletion (minimum 10 characters)
-                </div>
-            </div>
+            <p class="mb-0"><strong>Receipt Number:</strong> <code class="text-danger">${receiptNumber}</code></p>
         `,
         confirmText: '<i class="bi bi-trash"></i> Delete Payment',
         cancelText: 'Cancel',
         confirmClass: 'btn-danger',
         icon: 'bi-trash-fill text-danger',
         onConfirm: function() {
-            const reasonInput = document.getElementById('deleteReason');
-            const reasonError = document.getElementById('deleteReasonError');
-            const reason = reasonInput?.value || '';
-            
-            // Validate reason
-            if (!reason || reason.trim().length < 10) {
-                // Show validation error
-                if (reasonInput) {
-                    reasonInput.classList.add('is-invalid');
-                    reasonInput.focus();
-                }
-                if (reasonError) {
-                    reasonError.style.display = 'block';
-                }
-                Toast.error('Please provide a detailed reason for deletion (minimum 10 characters)');
-                
-                // Return false to prevent modal from closing
-                return false;
-            }
-            
-            // Clear validation state
-            if (reasonInput) {
-                reasonInput.classList.remove('is-invalid');
-            }
-            if (reasonError) {
-                reasonError.style.display = 'none';
-            }
-            
             // Show loading
             showLoadingOverlay('Deleting payment...');
             
+            // Get current student ID
+            const selectedStudentId = document.getElementById('selectedStudentId')?.value;
+            
             // Simulate API call
             setTimeout(() => {
+                // Actually delete the payment from the data structure
+                if (selectedStudentId && studentPayments[selectedStudentId]) {
+                    const paymentIndex = studentPayments[selectedStudentId].findIndex(
+                        payment => payment.receiptNumber === receiptNumber
+                    );
+                    
+                    if (paymentIndex !== -1) {
+                        // Remove the payment from the array
+                        studentPayments[selectedStudentId].splice(paymentIndex, 1);
+                    }
+                }
+                
                 hideLoadingOverlay();
                 Toast.success('Payment record deleted successfully');
                 
                 // Refresh payment history with current student ID
-                const selectedStudentId = document.getElementById('selectedStudentId')?.value;
                 if (selectedStudentId && typeof refreshPaymentHistory === 'function') {
                     refreshPaymentHistory(selectedStudentId);
                 }

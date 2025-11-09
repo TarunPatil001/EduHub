@@ -104,11 +104,6 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-credit-card"></i> Payment Details</h5>
                                 
-                                <!-- Warning when no student selected -->
-                                <div class="alert alert-warning mb-3" id="noStudentWarning">
-                                    <i class="bi bi-exclamation-triangle"></i> Please select a student first to enter payment details
-                                </div>
-                                
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Payment Amount <span class="required-star">*</span></label>
@@ -196,21 +191,23 @@
                                     <i class="bi bi-clock-history"></i>
                                     <span id="paymentHistoryTitle">Select a Student</span>
                                 </h6>
-                                <button class="btn-refresh" onclick="refreshPaymentHistory()" id="refreshPaymentBtn" style="display:none;" title="Refresh">
+                                <button class="btn btn-sm btn-outline-primary" onclick="handleRefreshPaymentHistory()" id="refreshPaymentBtn" style="display:none;" title="Refresh">
                                     <i class="bi bi-arrow-clockwise"></i>
                                 </button>
                             </div>
                             
                             <div id="paymentHistoryList">
                                 <!-- Payment history items will be dynamically loaded -->
-                                <div class="alert alert-info mb-0" id="noStudentSelectedMsg">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    Please select a student to view their payment history
+                                <div class="empty-state" id="emptyPaymentHistory">
+                                    <div class="empty-state-icon">
+                                        <i class="bi bi-clock-history"></i>
+                                    </div>
+                                    <p class="empty-state-text">No payment history</p>
                                 </div>
                             </div>
 
-                            <div class="text-center mt-3" id="viewAllPaymentsBtn" style="display:none;">
-                                <button class="btn btn-sm btn-link" onclick="toggleFullPaymentHistory()" id="toggleHistoryBtn">
+                            <div class="text-end mt-3" id="viewAllPaymentsBtn" style="display:none;">
+                                <button class="btn btn-sm btn-outline-primary" onclick="toggleFullPaymentHistory()" id="toggleHistoryBtn">
                                     <span id="toggleHistoryText">View All Payments</span> <i class="bi bi-chevron-down" id="toggleHistoryIcon"></i>
                                 </button>
                             </div>
