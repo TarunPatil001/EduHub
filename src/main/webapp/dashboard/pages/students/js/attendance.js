@@ -289,8 +289,13 @@
             const statusSelect = tr.querySelector('.status-select');
             statusSelect.addEventListener('change', function() {
                 attendance[student.id] = this.value;
+                // Update the dropdown's value attribute for CSS styling
+                this.setAttribute('value', this.value);
                 updateStats();
             });
+            
+            // Set initial value attribute for CSS styling
+            statusSelect.setAttribute('value', statusSelect.value);
 
             // Quick action buttons
             const actionButtons = tr.querySelectorAll('.btn-action');
@@ -300,6 +305,8 @@
                     const status = action === 'present' ? 'Present' : 'Absent';
                     attendance[student.id] = status;
                     statusSelect.value = status;
+                    // Update the dropdown's value attribute for CSS styling
+                    statusSelect.setAttribute('value', status);
                     updateStats();
                 });
             });
@@ -423,7 +430,10 @@
                     attendance[s.id] = status;
                     const row = document.getElementById(`row-${s.id}`);
                     if (row) {
-                        row.querySelector('.status-select').value = status;
+                        const statusSelect = row.querySelector('.status-select');
+                        statusSelect.value = status;
+                        // Update the dropdown's value attribute for CSS styling
+                        statusSelect.setAttribute('value', status);
                         const checkbox = row.querySelector('.student-check');
                         if (checkbox) {
                             checkbox.checked = false;
@@ -466,7 +476,10 @@
                     
                     const row = document.getElementById(`row-${s.id}`);
                     if (row) {
-                        row.querySelector('.status-select').value = status;
+                        const statusSelect = row.querySelector('.status-select');
+                        statusSelect.value = status;
+                        // Update the dropdown's value attribute for CSS styling
+                        statusSelect.setAttribute('value', status);
                         const checkbox = row.querySelector('.student-check');
                         checkbox.checked = false;
                         row.classList.remove('selected');

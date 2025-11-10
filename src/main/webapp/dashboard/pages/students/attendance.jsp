@@ -87,15 +87,15 @@
                                 <i class="bi bi-arrow-counterclockwise"></i> Reset
                             </button>
                         </div>
-                        <div class="d-flex gap-3">
+                        <div class="d-flex gap-3 attendance-stats">
                             <span class="badge bg-success fs-6">
-                                <i class="bi bi-check-circle-fill"></i> Present: <strong id="presentCount">0</strong>
+                                <i class="bi bi-check-circle-fill me-1"></i>Present: <strong id="presentCount" class="ms-1">0</strong>
                             </span>
                             <span class="badge bg-danger fs-6">
-                                <i class="bi bi-x-circle-fill"></i> Absent: <strong id="absentCount">0</strong>
+                                <i class="bi bi-x-circle-fill me-1"></i>Absent: <strong id="absentCount" class="ms-1">0</strong>
                             </span>
                             <span class="badge bg-secondary fs-6">
-                                <i class="bi bi-people-fill"></i> Total: <strong id="totalCount">0</strong>
+                                <i class="bi bi-people-fill me-1"></i>Total: <strong id="totalCount" class="ms-1">0</strong>
                             </span>
                         </div>
                     </div>
