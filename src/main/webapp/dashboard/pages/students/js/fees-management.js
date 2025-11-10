@@ -513,15 +513,15 @@
                 tbody.appendChild(emptyRow);
             }
             
+            // Hide table header for both empty table and no search results
+            if (thead) thead.style.display = 'none';
+            if (tableResponsive) {
+                tableResponsive.style.overflowX = 'visible';
+                tableResponsive.style.overflowY = 'visible';
+            }
+            
             // Update content based on whether table is empty or just filtered
             if (isCompletelyEmpty) {
-                // Hide table header and remove scroll when completely empty
-                if (thead) thead.style.display = 'none';
-                if (tableResponsive) {
-                    tableResponsive.style.overflowX = 'visible';
-                    tableResponsive.style.overflowY = 'visible';
-                }
-                
                 emptyRow.innerHTML = `
                     <td colspan="11" class="text-center py-5">
                         <div class="empty-state">
@@ -537,13 +537,6 @@
                     </td>
                 `;
             } else if (hasActiveFilters) {
-                // Show table header and restore scroll for filtered results
-                if (thead) thead.style.display = '';
-                if (tableResponsive) {
-                    tableResponsive.style.overflowX = 'auto';
-                    tableResponsive.style.overflowY = 'visible';
-                }
-                
                 emptyRow.innerHTML = `
                     <td colspan="11" class="text-center py-5">
                         <div class="empty-state">

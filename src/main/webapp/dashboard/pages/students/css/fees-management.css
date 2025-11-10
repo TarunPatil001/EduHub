@@ -781,6 +781,31 @@
         padding: 0.375rem 0.625rem;
         font-size: 0.875rem;
     }
+    
+    /* Table Footer Mobile - Center all elements */
+    .card-footer .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .card-footer .d-flex > div {
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .entries-info {
+        text-align: center;
+    }
+    
+    .entries-selector-wrapper {
+        justify-content: center;
+    }
+    
+    .card-footer .pagination {
+        justify-content: center;
+    }
 }
 
 @media (max-width: 576px) {
