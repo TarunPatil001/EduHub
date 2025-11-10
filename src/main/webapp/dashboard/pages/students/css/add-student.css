@@ -91,6 +91,13 @@
     color: #dc3545;
 }
 
+/* Form Action Buttons */
+.form-action-buttons .btn {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
 .same-as-permanent {
     cursor: pointer;
     font-size: 0.9rem;
@@ -217,13 +224,15 @@
     }
     
     /* Make form action buttons stack vertically on mobile */
-    .d-flex.gap-2.mb-4 {
+    .form-action-buttons {
         flex-direction: column !important;
     }
     
-    .d-flex.gap-2.mb-4 .btn {
+    .form-action-buttons .btn {
         width: 100%;
         margin-bottom: 0.5rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
     }
     
     /* Buttons - Using Bootstrap defaults */
@@ -234,10 +243,35 @@
         height: 120px;
     }
     
+    /* Photo placeholder - adjust icon and text for mobile */
+    .photo-placeholder i {
+        font-size: 48px !important;
+    }
+    
+    .photo-placeholder p {
+        font-size: 0.75rem !important;
+    }
+    
+    .photo-placeholder p:last-child {
+        font-size: 0.65rem !important;
+    }
+    
     /* File upload boxes - adjust height for mobile */
     .file-upload-box {
         height: 110px;
         padding: 15px;
+    }
+    
+    .file-upload-box i {
+        font-size: 24px !important;
+    }
+    
+    .file-upload-box p {
+        font-size: 0.75rem !important;
+    }
+    
+    .file-upload-box small {
+        font-size: 0.65rem !important;
     }
     
     /* Reduce form padding on mobile */
@@ -264,5 +298,27 @@
     .photo-preview {
         width: 100px;
         height: 100px;
+    }
+    
+    /* Photo placeholder - further adjustments for very small screens */
+    .photo-placeholder i {
+        font-size: 40px !important;
+    }
+    
+    .photo-placeholder p {
+        font-size: 0.7rem !important;
+    }
+    
+    .photo-placeholder p:last-child {
+        font-size: 0.6rem !important;
+    }
+    
+    /* Photo upload container - center alignment */
+    .photo-upload-container {
+        margin-bottom: 15px;
+    }
+    
+    .photo-upload-container .small {
+        font-size: 0.7rem !important;
     }
 }

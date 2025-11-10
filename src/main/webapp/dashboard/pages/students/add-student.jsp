@@ -44,12 +44,13 @@
                                     <div class="photo-preview" onclick="document.getElementById('studentPhoto').click()">
                                         <div class="photo-placeholder" id="photoPlaceholder">
                                             <i class="bi bi-person-circle" style="font-size: 60px;"></i>
-                                            <p class="mb-0 small">Click to upload photo</p>
+                                            <p class="mb-0 small mt-2" style="font-weight: 500;">Click to Upload</p>
+                                            <p class="mb-0" style="font-size: 0.75rem; color: #6c757d;">Student Photo</p>
                                         </div>
                                         <img id="photoPreview" style="display: none;" alt="Student Photo">
                                     </div>
                                     <input type="file" id="studentPhoto" name="studentPhoto" accept="image/*" style="display: none;">
-                                    <p class="small text-muted mt-2">Upload a passport-size photo (JPG, PNG - Max 2MB)</p>
+                                    <p class="small text-muted mt-2 mb-0">Upload a passport-size photo (JPG, PNG - Max 2MB)</p>
                                 </div>
                             </div>
                             
@@ -363,14 +364,14 @@
                             </div>
                             
                             <!-- Form Actions -->
-                            <div class="d-flex gap-2 mb-4">
-                                <button type="submit" class="btn btn-primary btn-lg">
+                            <div class="d-flex gap-2 mb-4 form-action-buttons">
+                                <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-check-circle"></i> Submit Registration
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="resetForm()">
+                                <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
                                     <i class="bi bi-arrow-clockwise"></i> Reset Form
                                 </button>
-                                <a href="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp" class="btn btn-outline-danger btn-lg">
+                                <a href="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp" class="btn btn-outline-danger">
                                     <i class="bi bi-x-circle"></i> Cancel
                                 </a>
                             </div>
