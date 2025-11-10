@@ -504,7 +504,28 @@
     background: #a0aec0;
 }
 
-/* Action Buttons - Using Bootstrap defaults */
+/* Action Buttons */
+#studentsTable th:last-child,
+#studentsTable td:last-child {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+#studentsTable .btn-group {
+    display: inline-flex;
+    gap: 0.25rem;
+}
+
+#studentsTable .btn-group .btn {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1;
+    border-radius: 0.25rem;
+}
+
+#studentsTable .btn-group .btn i {
+    font-size: 0.875rem;
+}
 
 /* Filters Card */
 .card {
@@ -810,13 +831,29 @@
     }
     
     /* Filter Section - Stack filters vertically */
-    .card-body .row .col-md-4,
-    .card-body .row .col-md-2 {
-        margin-bottom: 0.75rem;
+    .card-body .row.g-3 {
+        row-gap: 1rem !important;
     }
     
-    .card-body .row .col-md-2:last-child {
+    .card-body .row .col-md-4,
+    .card-body .row .col-md-2 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
         margin-bottom: 0;
+    }
+    
+    /* Remove extra spacing on label for reset button */
+    .card-body .row .col-md-2:last-child .form-label {
+        display: none;
+    }
+    
+    /* Make reset button full width on mobile */
+    #resetFilters {
+        width: 100% !important;
+        margin-top: 0 !important;
+        height: auto !important;
+        padding: 0.5rem 0.75rem !important;
     }
     
     /* Form Elements */
@@ -951,13 +988,30 @@
     
     /* Form Elements - Full Width */
     .form-control, .form-select {
-        font-size: 0.85rem;
-        padding: 0.5rem 0.625rem;
+        font-size: 0.875rem;
+        padding: 0.625rem 0.75rem;
     }
     
     .input-group-text {
-        padding: 0.5rem 0.625rem;
-        font-size: 0.85rem;
+        padding: 0.625rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    .form-label {
+        font-size: 0.8rem;
+        margin-bottom: 0.375rem;
+        font-weight: 500;
+    }
+    
+    /* Filters - ensure they stack properly */
+    .card-body .row.g-3 {
+        row-gap: 0.875rem !important;
+    }
+    
+    /* Reset button on extra small screens */
+    #resetFilters {
+        font-size: 0.875rem !important;
+        padding: 0.625rem 0.75rem !important;
     }
     
     /* Table - Extra compact */

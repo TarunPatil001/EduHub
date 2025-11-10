@@ -240,6 +240,7 @@ pageContext.setAttribute("students", students);
 								</select>
 							</div>
 							<div class="col-md-2">
+								<label class="form-label">&nbsp;</label>
 								<button class="btn btn-outline-secondary w-100"
 									id="resetFilters">
 									<i class="bi bi-arrow-clockwise me-2"></i>Reset
