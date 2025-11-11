@@ -30,9 +30,9 @@
                 </div>
                 
                 <div class="card-custom">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="mb-3">
                         <h5>All Courses</h5>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary w-100 mt-2">
                             <i class="bi bi-plus-circle"></i> Add Course
                         </button>
                     </div>

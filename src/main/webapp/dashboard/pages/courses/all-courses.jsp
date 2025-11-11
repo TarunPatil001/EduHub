@@ -22,7 +22,7 @@
             
             <div class="dashboard-content">
                 <!-- Page Header -->
-                <div class="page-header mb-4">
+                <div class="page-header mb-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2>All Courses</h2>
@@ -79,43 +79,76 @@
                     </div>
                 </div>
 
-                <!-- Search and Filter -->
-                <div class="controls-section">
-                    <div class="search-box">
-                        <i class="bi bi-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search courses by name, code, or teacher...">
-                    </div>
-                    <div class="filter-group">
-                        <select id="categoryFilter" class="filter-select">
-                            <option value="all">All Categories</option>
-                            <option value="science">Science</option>
-                            <option value="technology">Technology</option>
-                            <option value="mathematics">Mathematics</option>
-                            <option value="arts">Arts</option>
-                            <option value="commerce">Commerce</option>
-                            <option value="language">Language</option>
-                        </select>
-                        <select id="levelFilter" class="filter-select">
-                            <option value="all">All Levels</option>
-                            <option value="beginner">Beginner</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="advanced">Advanced</option>
-                        </select>
-                        <select id="statusFilter" class="filter-select">
-                            <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                        <button id="resetFilters" class="btn-reset" title="Reset all filters">
-                            <i class="bi bi-arrow-clockwise"></i> Reset
-                        </button>
+                <!-- Search and Filter Section -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Search Courses</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" id="searchInput"
+                                        placeholder="Search by name, code, or teacher...">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" id="categoryFilter">
+                                    <option value="all">All Categories</option>
+                                    <option value="science">Science</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="arts">Arts</option>
+                                    <option value="commerce">Commerce</option>
+                                    <option value="language">Language</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Level</label>
+                                <select class="form-select" id="levelFilter">
+                                    <option value="all">All Levels</option>
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="all">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-outline-secondary w-100" id="resetFilters">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Reset
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Courses Table -->
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
-                        <div class="table-responsive">
+                        <!-- Empty State - Show when no data -->
+                        <div id="emptyState" class="empty-state-container">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="bi bi-journal-plus"></i>
+                                </div>
+                                <h4 class="empty-state-title">No Courses Yet</h4>
+                                <p class="empty-state-text">Get started by adding your first course to the system</p>
+                                <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-course.jsp" class="btn btn-primary mt-3">
+                                    <i class="bi bi-plus-lg me-2"></i>Add First Course
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Table - Show when data exists -->
+                        <div class="table-responsive" id="coursesTableContainer" style="display: none;">
                             <table class="table table-hover mb-0" id="coursesTable">
                                 <thead class="table-light">
                                     <tr>
@@ -140,27 +173,14 @@
                                     </tr>
                                 </thead>
                                 <tbody id="coursesTableBody">
-                                    <tr class="empty-state-row">
-                                        <td colspan="14" class="text-center py-5">
-                                            <div class="empty-state">
-                                                <div class="empty-state-icon">
-                                                    <i class="bi bi-journal-plus"></i>
-                                                </div>
-                                                <h4 class="empty-state-title">No Courses Yet</h4>
-                                                <p class="empty-state-text">Get started by adding your first course to the system</p>
-                                                <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-course.jsp" class="btn btn-primary mt-3">
-                                                    <i class="bi bi-plus-lg me-2"></i>Add First Course
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <!-- Course rows will be dynamically added here -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     
-                    <!-- Pagination Footer -->
-                    <div class="card-footer">
+                    <!-- Pagination Footer - Show only when data exists -->
+                    <div class="card-footer" id="paginationFooter" style="display: none;">
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                             <div class="d-flex align-items-center gap-3 flex-wrap">
                                 <div class="entries-info">

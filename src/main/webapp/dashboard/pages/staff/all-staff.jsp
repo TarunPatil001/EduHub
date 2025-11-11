@@ -297,7 +297,25 @@ pageContext.setAttribute("staffList", staffList);
                                 </thead>
                                 <tbody id="staffTableBody">
                                     <%
-                                    for (Staff staff : staffList) {
+                                    if (staffList.isEmpty()) {
+                                    %>
+                                    <tr class="empty-state-row">
+                                        <td colspan="14" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon">
+                                                    <i class="bi bi-people"></i>
+                                                </div>
+                                                <h5 class="empty-state-title">No Staff Members Found</h5>
+                                                <p class="empty-state-text text-muted">Get started by adding your first staff member to the system.</p>
+                                                <a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="btn btn-primary mt-3">
+                                                    <i class="bi bi-plus-circle me-2"></i>Add Staff Member
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <%
+                                    } else {
+                                        for (Staff staff : staffList) {
                                     %>
                                     <tr data-staff-id="<%= staff.id %>" data-role="<%= staff.role %>" 
                                         data-department="<%= staff.department %>" data-status="<%= staff.status %>">
@@ -359,7 +377,10 @@ pageContext.setAttribute("staffList", staffList);
                                             </div>
                                         </td>
                                     </tr>
-                                    <% } %>
+                                    <%
+                                        }
+                                    }
+                                    %>
                                 </tbody>
                             </table>
                         </div>

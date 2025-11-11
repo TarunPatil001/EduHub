@@ -517,24 +517,25 @@ pageContext.setAttribute("students", students);
 			</div>
 
 			<!-- Filters and Search -->
-			<div class="card shadow-sm mb-4">
+			<div class="card shadow-sm mb-3">
 				<div class="card-body">
 					<div class="row g-3 align-items-end">
-						<div class="col-md-4">
-							<label class="form-label">Search Students</label>
+						<div class="col-lg-4 col-md-6">
+							<label for="searchInput" class="form-label fw-semibold">Search Students</label>
 							<div class="input-group">
-								<span class="input-group-text"><i class="bi bi-search"></i></span>
-								<input type="text" class="form-control" id="searchInput"
-									placeholder="Search by name, email, or ID...">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="bi bi-search text-muted"></i>
+								</span>
+								<input type="text" class="form-control border-start-0 ps-0" id="searchInput"
+									placeholder="Search by name, email, or ID..." aria-label="Search students">
 							</div>
 						</div>
-						<div class="col-md-2">
-							<label class="form-label">Course</label> <select
-								class="form-select" id="courseFilter">
+						<div class="col-lg-3 col-md-6">
+							<label for="courseFilter" class="form-label fw-semibold">Course</label>
+							<select class="form-select" id="courseFilter" aria-label="Filter by course">
 								<option value="">All Courses</option>
 								<option value="Computer Science">Computer Science</option>
-								<option value="Business Administration">Business
-									Administration</option>
+								<option value="Business Administration">Business Administration</option>
 								<option value="Engineering">Engineering</option>
 								<option value="Mathematics">Mathematics</option>
 								<option value="Data Science">Data Science</option>
@@ -542,34 +543,34 @@ pageContext.setAttribute("students", students);
 								<option value="Chemistry">Chemistry</option>
 							</select>
 						</div>
-						<div class="col-md-2">
-							<label class="form-label">Status</label> <select
-								class="form-select" id="statusFilter">
+						<div class="col-lg-2 col-md-6">
+							<label for="statusFilter" class="form-label fw-semibold">Status</label>
+							<select class="form-select" id="statusFilter" aria-label="Filter by status">
 								<option value="">All Status</option>
 								<option value="Active">Active</option>
 								<option value="Inactive">Inactive</option>
 								<option value="Suspended">Suspended</option>
 							</select>
 						</div>
-						<div class="col-md-2">
-							<label class="form-label">&nbsp;</label>
-							<button class="btn btn-outline-secondary w-100"
-								id="resetFilters">
-								<i class="bi bi-arrow-clockwise me-2"></i>Reset
+						<div class="col-lg-3 col-md-6">
+							<button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" 
+								id="resetFilters" type="button" aria-label="Reset filters">
+								<i class="bi bi-arrow-clockwise me-2"></i>
+								<span>Reset Filters</span>
 							</button>
 						</div>
 					</div>
 				</div>
 			</div>
 
-				<!-- Students Table -->
-				<div class="card shadow-sm">
-					<div class="card-body p-0">
-						<div class="table-responsive">
-							<table class="table table-hover mb-0" id="studentsTable">
-								<thead class="table-light">
-									<tr>
-										<th style="width: 40px;">
+			<!-- Students Table -->
+			<div class="card shadow-sm">
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<table class="table table-hover mb-0" id="studentsTable">
+							<thead class="table-light">
+								<tr>
+									<th style="width: 40px;">
 											<div class="form-check">
 												<input type="checkbox" class="form-check-input" id="selectAll">
 											</div>

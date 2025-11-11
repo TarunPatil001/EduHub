@@ -132,20 +132,24 @@
             return;
         }
 
-        const thead = document.querySelector('#coursesTable thead');
-        const tableResponsive = document.querySelector('.table-responsive');
+        const emptyState = document.getElementById('emptyState');
+        const tableContainer = document.getElementById('coursesTableContainer');
+        const paginationFooter = document.getElementById('paginationFooter');
 
         if (filteredCourses.length === 0) {
-            showEmptyState();
+            // Show empty state, hide table and pagination
+            if (emptyState) emptyState.style.display = 'block';
+            if (tableContainer) tableContainer.style.display = 'none';
+            if (paginationFooter) paginationFooter.style.display = 'none';
+            
+            updatePaginationInfo();
             return;
         }
 
-        // Show header when there are courses
-        if (thead) thead.style.display = '';
-        if (tableResponsive) {
-            tableResponsive.style.overflowX = 'auto';
-            tableResponsive.style.overflowY = 'visible';
-        }
+        // Show table, hide empty state
+        if (emptyState) emptyState.style.display = 'none';
+        if (tableContainer) tableContainer.style.display = 'block';
+        if (paginationFooter) paginationFooter.style.display = 'block';
 
         // Validate current page is within bounds
         const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
@@ -259,91 +263,6 @@
         showingStartEl.textContent = startItem.toString();
         showingEndEl.textContent = endItem.toString();
         totalEntriesEl.textContent = filteredCourses.length.toString();
-    }
-
-    // Show Empty State
-    function showEmptyState() {
-        if (!tableBody) return;
-
-        const thead = document.querySelector('#coursesTable thead');
-        const tableResponsive = document.querySelector('.table-responsive');
-        const hasActiveFilters = (searchInput && searchInput.value.trim()) || 
-                                (categoryFilter && categoryFilter.value !== 'all') || 
-                                (levelFilter && levelFilter.value !== 'all') || 
-                                (statusFilter && statusFilter.value !== 'all');
-        const isCompletelyEmpty = allCourses.length === 0;
-
-        if (isCompletelyEmpty) {
-            // Hide table header when completely empty
-            if (thead) thead.style.display = 'none';
-            if (tableResponsive) {
-                tableResponsive.style.overflowX = 'visible';
-                tableResponsive.style.overflowY = 'visible';
-            }
-
-            tableBody.innerHTML = `
-                <tr class="empty-state-row">
-                    <td colspan="14" class="text-center py-5">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="bi bi-journal-plus"></i>
-                            </div>
-                            <h4 class="empty-state-title">No Courses Yet</h4>
-                            <p class="empty-state-text">Get started by adding your first course to the system</p>
-                            <a href="${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/create-course.jsp" class="btn btn-primary mt-3">
-                                <i class="bi bi-plus-lg me-2"></i>Add First Course
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        } else if (hasActiveFilters) {
-            // Show header for filtered results
-            if (thead) thead.style.display = '';
-            if (tableResponsive) {
-                tableResponsive.style.overflowX = 'auto';
-                tableResponsive.style.overflowY = 'visible';
-            }
-
-            tableBody.innerHTML = `
-                <tr class="empty-state-row">
-                    <td colspan="14" class="text-center py-5">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="bi bi-search"></i>
-                            </div>
-                            <h4 class="empty-state-title">No Courses Found</h4>
-                            <p class="empty-state-text">No courses match your current search or filter criteria</p>
-                            <button class="btn btn-outline-primary mt-3" id="emptyResetBtn">
-                                <i class="bi bi-arrow-clockwise me-2"></i>Clear Filters
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-
-            // Attach click handler to reset button in empty state
-            const emptyResetBtn = document.getElementById('emptyResetBtn');
-            if (emptyResetBtn) {
-                emptyResetBtn.addEventListener('click', resetFilters);
-            }
-        }
-
-        if (paginationContainer) paginationContainer.innerHTML = '';
-        
-        const showingStartEl = document.getElementById('showingStart');
-        const showingEndEl = document.getElementById('showingEnd');
-        const totalEntriesEl = document.getElementById('totalEntries');
-        
-        if (showingStartEl) showingStartEl.textContent = '0';
-        if (showingEndEl) showingEndEl.textContent = '0';
-        if (totalEntriesEl) totalEntriesEl.textContent = '0';
-        
-        if (bulkDeleteBtn) bulkDeleteBtn.style.display = 'none';
-        if (selectAllCheckbox) {
-            selectAllCheckbox.checked = false;
-            selectAllCheckbox.indeterminate = false;
-        }
     }
 
     // Render Pagination
