@@ -128,57 +128,49 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
                     </div>
                 </div>
 
-                <!-- Statistics Cards -->
-                <div class="row g-3 mb-4">
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stats-card stats-success">
-                            <div class="stats-icon">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </div>
-                            <div class="stats-info">
-                                <h3><%= paidCount %></h3>
-                                <p>Fully Paid</p>
-                                <span class="stats-badge success">₹<%= totalCollected %></span>
-                            </div>
-                        </div>
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stats-card stats-success">
+                    <div class="stats-icon">
+                        <i class="bi bi-check-circle-fill"></i>
                     </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stats-card stats-warning">
-                            <div class="stats-icon">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                            <div class="stats-info">
-                                <h3><%= partialCount %></h3>
-                                <p>Partial Payment</p>
-                                <span class="stats-badge warning">In Progress</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stats-card stats-info">
-                            <div class="stats-icon">
-                                <i class="bi bi-hourglass-split"></i>
-                            </div>
-                            <div class="stats-info">
-                                <h3><%= pendingCount %></h3>
-                                <p>Pending Payment</p>
-                                <span class="stats-badge info">₹<%= totalPending %></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stats-card stats-danger">
-                            <div class="stats-icon">
-                                <i class="bi bi-exclamation-triangle-fill"></i>
-                            </div>
-                            <div class="stats-info">
-                                <h3><%= overdueCount %></h3>
-                                <p>Overdue</p>
-                                <span class="stats-badge danger">Action Required</span>
-                            </div>
-                        </div>
+                    <div class="stats-info">
+                        <h3><%= paidCount %></h3>
+                        <p>Fully Paid</p>
+                        <span class="stats-badge success">₹<%= totalCollected %></span>
                     </div>
                 </div>
+                <div class="stats-card stats-warning">
+                    <div class="stats-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3><%= partialCount %></h3>
+                        <p>Partial Payment</p>
+                        <span class="stats-badge warning">In Progress</span>
+                    </div>
+                </div>
+                <div class="stats-card stats-info">
+                    <div class="stats-icon">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3><%= pendingCount %></h3>
+                        <p>Pending Payment</p>
+                        <span class="stats-badge info">₹<%= totalPending %></span>
+                    </div>
+                </div>
+                <div class="stats-card stats-danger">
+                    <div class="stats-icon">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3><%= overdueCount %></h3>
+                        <p>Overdue</p>
+                        <span class="stats-badge danger">Action Required</span>
+                    </div>
+                </div>
+            </div>
 
                 <!-- Filters and Search -->
                 <div class="card-custom mb-4">

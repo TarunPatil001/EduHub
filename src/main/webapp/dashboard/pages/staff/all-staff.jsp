@@ -162,53 +162,45 @@ pageContext.setAttribute("staffList", staffList);
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stats-card stats-primary">
-                            <div class="stats-icon">
-                                <i class="bi bi-people-fill"></i>
-                            </div>
-                            <div class="stats-content">
-                                <h3 id="totalStaff">15</h3>
-                                <p>Total Staff</p>
-                            </div>
-                        </div>
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stats-card stats-primary">
+                    <div class="stats-icon">
+                        <i class="bi bi-people-fill"></i>
                     </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stats-card stats-success">
-                            <div class="stats-icon">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </div>
-                            <div class="stats-content">
-                                <h3 id="activeStaff">14</h3>
-                                <p>Active Staff</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stats-card stats-warning">
-                            <div class="stats-icon">
-                                <i class="bi bi-mortarboard-fill"></i>
-                            </div>
-                            <div class="stats-content">
-                                <h3 id="totalTeachers">8</h3>
-                                <p>Teachers</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stats-card stats-info">
-                            <div class="stats-icon">
-                                <i class="bi bi-person-gear"></i>
-                            </div>
-                            <div class="stats-content">
-                                <h3 id="supportStaff">7</h3>
-                                <p>Support Staff</p>
-                            </div>
-                        </div>
+                    <div class="stats-content">
+                        <h3 id="totalStaff">15</h3>
+                        <p>Total Staff</p>
                     </div>
                 </div>
+                <div class="stats-card stats-success">
+                    <div class="stats-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="stats-content">
+                        <h3 id="activeStaff">14</h3>
+                        <p>Active Staff</p>
+                    </div>
+                </div>
+                <div class="stats-card stats-warning">
+                    <div class="stats-icon">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                    <div class="stats-content">
+                        <h3 id="totalTeachers">8</h3>
+                        <p>Teachers</p>
+                    </div>
+                </div>
+                <div class="stats-card stats-info">
+                    <div class="stats-icon">
+                        <i class="bi bi-person-gear"></i>
+                    </div>
+                    <div class="stats-content">
+                        <h3 id="supportStaff">7</h3>
+                        <p>Support Staff</p>
+                    </div>
+                </div>
+            </div>
 
                 <!-- Filters and Search -->
                 <div class="card shadow-sm mb-4">

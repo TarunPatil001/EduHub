@@ -476,99 +476,91 @@ pageContext.setAttribute("students", students);
 					</div>
 				</div>
 
-				<!-- Stats Cards -->
-				<div class="row g-3 mb-4">
-					<div class="col-md-3 col-sm-6">
-						<div class="stats-card stats-primary">
-							<div class="stats-icon">
-								<i class="bi bi-people-fill"></i>
-							</div>
-							<div class="stats-content">
-								<h3>1,247</h3>
-								<p>Total Students</p>
-							</div>
-						</div>
+			<!-- Stats Cards -->
+			<div class="stats-grid">
+				<div class="stats-card stats-primary">
+					<div class="stats-icon">
+						<i class="bi bi-people-fill"></i>
 					</div>
-					<div class="col-md-3 col-sm-6">
-						<div class="stats-card stats-success">
-							<div class="stats-icon">
-								<i class="bi bi-check-circle-fill"></i>
-							</div>
-							<div class="stats-content">
-								<h3>1,189</h3>
-								<p>Active Students</p>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-3 col-sm-6">
-						<div class="stats-card stats-warning">
-							<div class="stats-icon">
-								<i class="bi bi-exclamation-triangle-fill"></i>
-							</div>
-							<div class="stats-content">
-								<h3>45</h3>
-								<p>Inactive Students</p>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-3 col-sm-6">
-						<div class="stats-card stats-danger">
-							<div class="stats-icon">
-								<i class="bi bi-ban"></i>
-							</div>
-							<div class="stats-content">
-								<h3>13</h3>
-								<p>Suspended</p>
-							</div>
-						</div>
+					<div class="stats-content">
+						<h3>1,247</h3>
+						<p>Total Students</p>
 					</div>
 				</div>
+				<div class="stats-card stats-success">
+					<div class="stats-icon">
+						<i class="bi bi-check-circle-fill"></i>
+					</div>
+					<div class="stats-content">
+						<h3>1,189</h3>
+						<p>Active Students</p>
+					</div>
+				</div>
+				<div class="stats-card stats-warning">
+					<div class="stats-icon">
+						<i class="bi bi-exclamation-triangle-fill"></i>
+					</div>
+					<div class="stats-content">
+						<h3>45</h3>
+						<p>Inactive Students</p>
+					</div>
+				</div>
+				<div class="stats-card stats-danger">
+					<div class="stats-icon">
+						<i class="bi bi-ban"></i>
+					</div>
+					<div class="stats-content">
+						<h3>13</h3>
+						<p>Suspended</p>
+					</div>
+				</div>
+			</div>
 
-				<!-- Filters and Search -->
-				<div class="card shadow-sm mb-4">
-					<div class="card-body">
-						<div class="row g-3 align-items-end">
-							<div class="col-md-4">
-								<label class="form-label">Search Students</label>
-								<div class="input-group">
-									<span class="input-group-text"><i class="bi bi-search"></i></span>
-									<input type="text" class="form-control" id="searchInput"
-										placeholder="Search by name, email, or ID...">
-								</div>
+			<!-- Filters and Search -->
+			<div class="card shadow-sm mb-4">
+				<div class="card-body">
+					<div class="row g-3 align-items-end">
+						<div class="col-md-4">
+							<label class="form-label">Search Students</label>
+							<div class="input-group">
+								<span class="input-group-text"><i class="bi bi-search"></i></span>
+								<input type="text" class="form-control" id="searchInput"
+									placeholder="Search by name, email, or ID...">
 							</div>
-							<div class="col-md-2">
-								<label class="form-label">Course</label> <select
-									class="form-select" id="courseFilter">
-									<option value="">All Courses</option>
-									<option value="Computer Science">Computer Science</option>
-									<option value="Business Administration">Business
-										Administration</option>
-									<option value="Engineering">Engineering</option>
-									<option value="Mathematics">Mathematics</option>
-									<option value="Data Science">Data Science</option>
-									<option value="Physics">Physics</option>
-									<option value="Chemistry">Chemistry</option>
-								</select>
-							</div>
-							<div class="col-md-2">
-								<label class="form-label">Status</label> <select
-									class="form-select" id="statusFilter">
-									<option value="">All Status</option>
-									<option value="Active">Active</option>
-									<option value="Inactive">Inactive</option>
-									<option value="Suspended">Suspended</option>
-								</select>
-							</div>
-							<div class="col-md-2">
-								<label class="form-label">&nbsp;</label>
-								<button class="btn btn-outline-secondary w-100"
-									id="resetFilters">
-									<i class="bi bi-arrow-clockwise me-2"></i>Reset
-								</button>
-							</div>
+						</div>
+						<div class="col-md-2">
+							<label class="form-label">Course</label> <select
+								class="form-select" id="courseFilter">
+								<option value="">All Courses</option>
+								<option value="Computer Science">Computer Science</option>
+								<option value="Business Administration">Business
+									Administration</option>
+								<option value="Engineering">Engineering</option>
+								<option value="Mathematics">Mathematics</option>
+								<option value="Data Science">Data Science</option>
+								<option value="Physics">Physics</option>
+								<option value="Chemistry">Chemistry</option>
+							</select>
+						</div>
+						<div class="col-md-2">
+							<label class="form-label">Status</label> <select
+								class="form-select" id="statusFilter">
+								<option value="">All Status</option>
+								<option value="Active">Active</option>
+								<option value="Inactive">Inactive</option>
+								<option value="Suspended">Suspended</option>
+							</select>
+						</div>
+						<div class="col-md-2">
+							<label class="form-label">&nbsp;</label>
+							<button class="btn btn-outline-secondary w-100"
+								id="resetFilters">
+								<i class="bi bi-arrow-clockwise me-2"></i>Reset
+							</button>
 						</div>
 					</div>
 				</div>
+			</div>
 
 				<!-- Students Table -->
 				<div class="card shadow-sm">
