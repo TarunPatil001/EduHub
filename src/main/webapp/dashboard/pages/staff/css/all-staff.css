@@ -323,12 +323,20 @@
 }
 
 #staffTable tbody tr.row-selected td {
-    background-color: transparent !important;
+    background-color: #e3f2fd !important;
+}
+
+#staffTable tbody tr.row-selected:hover td {
+    background-color: #bbdefb !important;
 }
 
 /* Ensure entire row is highlighted */
 #staffTable tbody tr.row-selected > * {
-    background-color: transparent !important;
+    background-color: #e3f2fd !important;
+}
+
+#staffTable tbody tr.row-selected:hover > * {
+    background-color: #bbdefb !important;
 }
 
 /* Checkbox Styling */

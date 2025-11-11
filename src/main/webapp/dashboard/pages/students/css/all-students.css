@@ -62,12 +62,20 @@
 }
 
 #studentsTable tbody tr.row-selected td {
-    background-color: transparent !important;
+    background-color: #e3f2fd !important;
+}
+
+#studentsTable tbody tr.row-selected:hover td {
+    background-color: #bbdefb !important;
 }
 
 /* Ensure entire row is highlighted */
 #studentsTable tbody tr.row-selected > * {
-    background-color: transparent !important;
+    background-color: #e3f2fd !important;
+}
+
+#studentsTable tbody tr.row-selected:hover > * {
+    background-color: #bbdefb !important;
 }
 
 /* Checkbox Styling */
@@ -204,6 +212,11 @@
 #studentsTable tbody tr.row-selected td:last-child {
     background-color: #e3f2fd !important;
     box-shadow: -2px 0 5px rgba(13, 110, 253, 0.15);
+}
+
+#studentsTable tbody tr.row-selected:hover td:last-child {
+    background-color: #bbdefb !important;
+    box-shadow: -2px 0 5px rgba(13, 110, 253, 0.25);
 }
 
 /* Table Footer Styling */

@@ -104,7 +104,11 @@
 }
 
 #attendanceTable tbody tr.selected td {
-    background-color: transparent !important;
+    background-color: #e3f2fd !important;
+}
+
+#attendanceTable tbody tr.selected:hover td {
+    background-color: #bbdefb !important;
 }
 
 /* Sticky Actions Column */
