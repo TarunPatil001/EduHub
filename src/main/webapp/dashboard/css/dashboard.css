@@ -1008,3 +1008,72 @@ body {
     color: var(--secondary-color);
     margin: 0;
 }
+
+/* ===================================
+   Global Pagination Styles
+   =================================== */
+.pagination {
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.pagination .page-link {
+    color: #495057;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    margin: 0 0.25rem;
+    transition: all 0.2s ease;
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.pagination .page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #0d6efd;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    z-index: 3;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #fff;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Responsive pagination for tablets */
+@media (max-width: 991px) {
+    .pagination .page-link {
+        min-width: 34px;
+        height: 34px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Responsive pagination for mobile */
+@media (max-width: 575px) {
+    .pagination .page-link {
+        min-width: 32px;
+        height: 32px;
+        padding: 0.35rem 0.55rem;
+        font-size: 0.75rem;
+        margin: 0 0.1rem;
+    }
+}
