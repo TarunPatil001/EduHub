@@ -654,17 +654,32 @@ pageContext.setAttribute("students", students);
 											<%
 											if (student.attendance == null || student.attendance.isEmpty() || "null".equals(student.attendance)) {
 											%>
-												<span class="badge bg-secondary"><i class="bi bi-dash-circle"></i> Not Tracked</span>
+												<div class="attendance-detail">
+													<span class="badge bg-secondary">
+														<i class="bi bi-dash-circle me-1"></i>Not Tracked
+													</span>
+												</div>
 											<%
 											} else {
 												int attendancePercent = Integer.parseInt(student.attendance.replace("%", ""));
+												// Determine trend based on percentage
+												String trend = attendancePercent >= 85 ? "up" : attendancePercent >= 70 ? "stable" : "down";
+												String trendIcon = trend.equals("up") ? "bi-arrow-up-circle-fill text-success" : 
+																	trend.equals("down") ? "bi-arrow-down-circle-fill text-danger" : 
+																	"bi-dash-circle-fill text-warning";
 											%>
-												<div class="attendance-progress">
-													<div class="progress" style="height: 8px;">
-														<div class="progress-bar <%=attendancePercent >= 90 ? "bg-success" : attendancePercent >= 75 ? "bg-warning" : "bg-danger"%>"
-															style="width: <%=student.attendance%>"></div>
+												<div class="attendance-detail">
+													<div class="d-flex align-items-center justify-content-between mb-2">
+														<strong class="attendance-percent <%=attendancePercent >= 90 ? "text-success" : attendancePercent >= 75 ? "text-warning" : "text-danger"%>">
+															<%=student.attendance%>
+														</strong>
+														<i class="bi <%=trendIcon%>" style="font-size: 1rem;" title="Attendance trend"></i>
 													</div>
-													<small><%=student.attendance%></small>
+													<div class="progress" style="height: 6px;">
+														<div class="progress-bar <%=attendancePercent >= 90 ? "bg-success" : attendancePercent >= 75 ? "bg-warning" : "bg-danger"%>"
+															style="width: <%=student.attendance%>" role="progressbar" 
+															aria-valuenow="<%=attendancePercent%>" aria-valuemin="0" aria-valuemax="100"></div>
+													</div>
 												</div>
 											<%
 											}

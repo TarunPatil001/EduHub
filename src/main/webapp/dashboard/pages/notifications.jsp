@@ -26,15 +26,33 @@
             transition: all 0.2s;
         }
         
+        /* Dark mode for filter buttons */
+        [data-theme="dark"] .filter-btn {
+            background: var(--input-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
         .filter-btn:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
+        }
+        
+        [data-theme="dark"] .filter-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--primary-color);
         }
         
         .filter-btn.active {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+        }
+        
+        /* Active filter button stays same in dark mode */
+        [data-theme="dark"] .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
         }
         
         .notification-item-full {
@@ -51,14 +69,48 @@
             position: relative;
         }
         
+        /* Dark mode for notification items */
+        [data-theme="dark"] .notification-item-full {
+            background: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+        
         .notification-item-full:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
         }
         
+        [data-theme="dark"] .notification-item-full:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            background: var(--hover-bg);
+        }
+        
         .notification-item-full.unread {
             border-left: 4px solid var(--primary-color);
             background-color: #F0F7FF;
+        }
+        
+        [data-theme="dark"] .notification-item-full.unread {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        [data-theme="dark"] .notification-item-full.unread:hover {
+            background-color: rgba(59, 130, 246, 0.15);
+        }
+        
+        /* Dark mode for notification content */
+        [data-theme="dark"] .notification-title {
+            color: #F1F5F9;
+        }
+        
+        [data-theme="dark"] .notification-message {
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .notification-time {
+            color: #64748B;
         }
         
         .notification-actions {
@@ -77,9 +129,19 @@
             transition: all 0.2s;
         }
         
+        /* Dark mode for action buttons */
+        [data-theme="dark"] .notification-actions button {
+            color: var(--text-secondary);
+        }
+        
         .notification-actions button:hover {
             background-color: var(--light-color);
             color: var(--dark-color);
+        }
+        
+        [data-theme="dark"] .notification-actions button:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-primary);
         }
         
         .empty-notifications {
@@ -91,6 +153,19 @@
             font-size: 4rem;
             color: #CBD5E1;
             margin-bottom: 1rem;
+        }
+        
+        /* Dark mode for empty state */
+        [data-theme="dark"] .empty-notifications i {
+            color: #475569;
+        }
+        
+        [data-theme="dark"] .empty-notifications h5 {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .empty-notifications .text-muted {
+            color: var(--text-secondary) !important;
         }
     </style>
 </head>

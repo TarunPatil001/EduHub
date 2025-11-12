@@ -123,3 +123,11 @@ function hideLoading() {
  * /dashboard/components/toast-notification.jsp
  * Include that component in your page to use showToast() function
  */
+
+// Load theme switcher script dynamically
+(function loadThemeSwitcher() {
+    const script = document.createElement('script');
+    script.src = document.querySelector('script[src*="dashboard.js"]')
+        .src.replace('dashboard.js', 'theme-switcher.js');
+    document.head.appendChild(script);
+})();

@@ -17,6 +17,13 @@
             top: calc(var(--header-height) + 2rem);
         }
         
+        /* Dark mode for settings nav */
+        [data-theme="dark"] .settings-nav {
+            background: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+        
         .settings-nav .nav-link {
             padding: 0.75rem 1rem;
             color: var(--dark-color);
@@ -35,11 +42,27 @@
             font-size: 1rem;
         }
         
+        /* Dark mode for nav links */
+        [data-theme="dark"] .settings-nav .nav-link {
+            color: var(--text-primary);
+        }
+        
         .settings-nav .nav-link:hover {
             background-color: var(--light-color);
         }
         
+        /* Dark mode for nav link hover */
+        [data-theme="dark"] .settings-nav .nav-link:hover {
+            background-color: var(--hover-bg);
+        }
+        
         .settings-nav .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Active link stays same in dark mode */
+        [data-theme="dark"] .settings-nav .nav-link.active {
             background-color: var(--primary-color);
             color: white;
         }
@@ -63,12 +86,23 @@
             border-bottom: 1px solid #E2E8F0;
         }
         
+        /* Dark mode for group headings */
+        [data-theme="dark"] .settings-group h6 {
+            border-bottom-color: var(--border-color);
+            color: #F1F5F9;
+        }
+        
         .setting-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 1rem 0;
             border-bottom: 1px solid #F8F9FA;
+        }
+        
+        /* Dark mode for setting items */
+        [data-theme="dark"] .setting-item {
+            border-bottom-color: var(--border-color);
         }
         
         .setting-item:last-child {
@@ -81,16 +115,41 @@
             margin-bottom: 0.25rem;
         }
         
+        /* Dark mode for setting info */
+        [data-theme="dark"] .setting-info h6 {
+            color: var(--text-primary);
+        }
+        
         .setting-info p {
             font-size: 0.85rem;
             color: var(--secondary-color);
             margin: 0;
         }
         
+        /* Dark mode for setting description */
+        [data-theme="dark"] .setting-info p {
+            color: var(--text-secondary);
+        }
+        
         .form-switch .form-check-input {
             width: 3rem;
             height: 1.5rem;
             cursor: pointer;
+        }
+        
+        /* Dark mode for switches */
+        [data-theme="dark"] .form-switch .form-check-input {
+            background-color: #374151;
+            border-color: #4B5563;
+        }
+        
+        [data-theme="dark"] .form-switch .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        [data-theme="dark"] .form-switch .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
         }
         
         @media (max-width: 991px) {
@@ -101,6 +160,90 @@
             
             .settings-nav .nav-link {
                 font-size: 0.875rem;
+            }
+            
+            /* Fix setting items on mobile */
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.25rem 0;
+            }
+            
+            .setting-info {
+                width: 100%;
+            }
+            
+            /* Make dropdowns and switches full width on mobile */
+            .setting-item .form-select {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .setting-item .form-check-switch {
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .card-custom {
+                padding: 1rem;
+            }
+            
+            .settings-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .settings-group h6 {
+                font-size: 0.95rem;
+            }
+            
+            .setting-info h6 {
+                font-size: 0.9rem;
+            }
+            
+            .setting-info p {
+                font-size: 0.8rem;
+            }
+            
+            /* Button spacing on mobile */
+            .settings-section .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .settings-section .btn.ms-2 {
+                margin-left: 0 !important;
+                margin-top: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .page-header p {
+                font-size: 0.875rem;
+            }
+            
+            .settings-nav {
+                padding: 0.75rem;
+            }
+            
+            .settings-nav .nav-link {
+                padding: 0.625rem 0.75rem;
+                font-size: 0.8rem;
+            }
+            
+            .settings-nav .nav-link i {
+                font-size: 1rem;
+            }
+            
+            .card-custom h5 {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -130,39 +273,200 @@
                     <!-- Settings Navigation -->
                     <div class="col-lg-3">
                         <nav class="settings-nav">
-                            <button type="button" class="nav-link active" data-section="general">
-                                <i class="bi bi-gear"></i>
-                                <span>General</span>
+                            <button type="button" class="nav-link active" data-section="institute">
+                                <i class="bi bi-building"></i>
+                                <span>Institute Profile</span>
                             </button>
                             <button type="button" class="nav-link" data-section="account">
-                                <i class="bi bi-person"></i>
-                                <span>Account</span>
-                            </button>
-                            <button type="button" class="nav-link" data-section="notifications">
-                                <i class="bi bi-bell"></i>
-                                <span>Notifications</span>
+                                <i class="bi bi-person-circle"></i>
+                                <span>Admin Account</span>
                             </button>
                             <button type="button" class="nav-link" data-section="security">
                                 <i class="bi bi-shield-lock"></i>
                                 <span>Security</span>
                             </button>
-                            <button type="button" class="nav-link" data-section="appearance">
-                                <i class="bi bi-palette"></i>
-                                <span>Appearance</span>
+                            <button type="button" class="nav-link" data-section="preferences">
+                                <i class="bi bi-sliders"></i>
+                                <span>Preferences</span>
                             </button>
-                            <button type="button" class="nav-link" data-section="privacy">
-                                <i class="bi bi-eye-slash"></i>
-                                <span>Privacy</span>
+                            <button type="button" class="nav-link" data-section="notifications">
+                                <i class="bi bi-bell"></i>
+                                <span>Notifications</span>
                             </button>
                         </nav>
                     </div>
                     
                     <!-- Settings Content -->
                     <div class="col-lg-9">
-                        <!-- General Settings -->
-                        <div id="general" class="settings-section active">
+                        <!-- Institute Profile Settings -->
+                        <div id="institute" class="settings-section active">
                             <div class="card-custom">
-                                <h5 class="mb-4">General Settings</h5>
+                                <h5 class="mb-4"><i class="bi bi-building"></i> Institute Profile</h5>
+                                
+                                <div class="settings-group">
+                                    <h6>Basic Information</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="instituteName" class="form-label">Institute Name</label>
+                                        <input type="text" class="form-control" id="instituteName" placeholder="Enter institute name">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="instituteType" class="form-label">Institute Type</label>
+                                        <select class="form-select" id="instituteType">
+                                            <option value="">Select type</option>
+                                            <option value="school">School</option>
+                                            <option value="college">College</option>
+                                            <option value="university">University</option>
+                                            <option value="training_center">Training Center</option>
+                                            <option value="coaching_institute">Coaching Institute</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="instituteEmail" class="form-label">Official Email</label>
+                                        <input type="email" class="form-control" id="instituteEmail" placeholder="contact@institute.com">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="institutePhone" class="form-label">Contact Phone</label>
+                                        <input type="tel" class="form-control" id="institutePhone" placeholder="+1 (555) 000-0000">
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h6>Location</h6>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="country" class="form-label">Country</label>
+                                            <select class="form-select" id="country">
+                                                <option value="">Select country</option>
+                                                <option value="US">United States</option>
+                                                <option value="UK">United Kingdom</option>
+                                                <option value="CA">Canada</option>
+                                                <option value="IN">India</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="state" class="form-label">State/Province</label>
+                                            <input type="text" class="form-control" id="state" placeholder="Enter state">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Address (Optional)</label>
+                                        <textarea class="form-control" id="address" rows="2" placeholder="Street address"></textarea>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="city" class="form-label">City (Optional)</label>
+                                            <input type="text" class="form-control" id="city" placeholder="City">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="zipCode" class="form-label">ZIP/Postal Code (Optional)</label>
+                                            <input type="text" class="form-control" id="zipCode" placeholder="ZIP code">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Save Institute Profile
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Admin Account Settings -->
+                        <div id="account" class="settings-section">
+                            <div class="card-custom">
+                                <h5 class="mb-4"><i class="bi bi-person-circle"></i> Admin Account</h5>
+                                
+                                <div class="settings-group">
+                                    <h6>Personal Information</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="adminName" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="adminName" placeholder="Enter full name">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="adminEmail" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="adminEmail" placeholder="admin@institute.com">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="adminPhone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="adminPhone" placeholder="+1 (555) 000-0000">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" placeholder="username" readonly>
+                                        <small class="form-text text-muted">Username cannot be changed</small>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Update Account
+                                </button>
+                                <button class="btn btn-outline-danger ms-2">
+                                    <i class="bi bi-trash"></i> Delete Account
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Security Settings -->
+                        <div id="security" class="settings-section">
+                            <div class="card-custom">
+                                <h5 class="mb-4"><i class="bi bi-shield-lock"></i> Security Settings</h5>
+                                
+                                <div class="settings-group">
+                                    <h6>Change Password</h6>
+                                    
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
+                                        <small class="form-text text-muted">At least 8 characters with uppercase, lowercase, and number</small>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirmNewPassword" placeholder="Re-enter new password">
+                                    </div>
+                                    
+                                    <button class="btn btn-primary">
+                                        <i class="bi bi-key"></i> Change Password
+                                    </button>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h6>Session Management</h6>
+                                    
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h6>Current Device</h6>
+                                            <p><i class="bi bi-laptop"></i> Windows PC - Last active: Just now</p>
+                                        </div>
+                                        <span class="badge bg-success">Active</span>
+                                    </div>
+                                    
+                                    <button class="btn btn-outline-danger mt-3">
+                                        <i class="bi bi-box-arrow-right"></i> Sign out from all devices
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Preferences Settings -->
+                        <div id="preferences" class="settings-section">
+                            <div class="card-custom">
+                                <h5 class="mb-4"><i class="bi bi-sliders"></i> Preferences</h5>
                                 
                                 <div class="settings-group">
                                     <h6>Language & Region</h6>
@@ -176,7 +480,6 @@
                                             <option selected>English (US)</option>
                                             <option>Spanish</option>
                                             <option>French</option>
-                                            <option>German</option>
                                             <option>Hindi</option>
                                         </select>
                                     </div>
@@ -186,7 +489,7 @@
                                             <h6>Timezone</h6>
                                             <p>Your current timezone</p>
                                         </div>
-                                        <select class="form-select" style="max-width: 200px;">
+                                        <select class="form-select" style="max-width: 250px;">
                                             <option selected>(GMT-5:00) Eastern Time</option>
                                             <option>(GMT-8:00) Pacific Time</option>
                                             <option>(GMT+5:30) India Standard Time</option>
@@ -208,208 +511,12 @@
                                 </div>
                                 
                                 <div class="settings-group">
-                                    <h6>System Preferences</h6>
+                                    <h6>Display Settings</h6>
                                     
                                     <div class="setting-item">
                                         <div class="setting-info">
-                                            <h6>Auto-save forms</h6>
-                                            <p>Automatically save form data as you type</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="autoSave" checked>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Show tooltips</h6>
-                                            <p>Display helpful tooltips throughout the app</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="showTooltips" checked>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <button class="btn btn-primary">Save Changes</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Account Settings -->
-                        <div id="account" class="settings-section">
-                            <div class="card-custom">
-                                <h5 class="mb-4">Account Settings</h5>
-                                
-                                <div class="settings-group">
-                                    <h6>Personal Information</h6>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="firstName" class="form-label">First Name</label>
-                                            <input type="text" class="form-control" id="firstName" value="Admin">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="lastName" class="form-label">Last Name</label>
-                                            <input type="text" class="form-control" id="lastName" value="User">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="email" value="admin@eduhub.com">
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="phone" class="form-label">Phone Number</label>
-                                        <input type="tel" class="form-control" id="phone" placeholder="+1 (555) 123-4567">
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="bio" class="form-label">Bio</label>
-                                        <textarea class="form-control" id="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
-                                    </div>
-                                </div>
-                                
-                                <button class="btn btn-primary">Update Account</button>
-                                <button class="btn btn-outline-danger ms-2">Delete Account</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Notification Settings -->
-                        <div id="notifications" class="settings-section">
-                            <div class="card-custom">
-                                <h5 class="mb-4">Notification Settings</h5>
-                                
-                                <div class="settings-group">
-                                    <h6>Email Notifications</h6>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>New student registrations</h6>
-                                            <p>Get notified when new students register</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="emailStudents" checked>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Attendance updates</h6>
-                                            <p>Receive updates about attendance changes</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="emailAttendance" checked>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Assignment submissions</h6>
-                                            <p>Get notified about new assignment submissions</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="emailAssignments">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="settings-group">
-                                    <h6>Push Notifications</h6>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Desktop notifications</h6>
-                                            <p>Show notifications on your desktop</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="pushDesktop">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Sound alerts</h6>
-                                            <p>Play a sound when you receive notifications</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="soundAlerts" checked>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <button class="btn btn-primary">Save Preferences</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Security Settings -->
-                        <div id="security" class="settings-section">
-                            <div class="card-custom">
-                                <h5 class="mb-4">Security Settings</h5>
-                                
-                                <div class="settings-group">
-                                    <h6>Password</h6>
-                                    
-                                    <div class="mb-3">
-                                        <label for="currentPassword" class="form-label">Current Password</label>
-                                        <input type="password" class="form-control" id="currentPassword">
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="newPassword" class="form-label">New Password</label>
-                                        <input type="password" class="form-control" id="newPassword">
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                        <input type="password" class="form-control" id="confirmPassword">
-                                    </div>
-                                    
-                                    <button class="btn btn-primary">Change Password</button>
-                                </div>
-                                
-                                <div class="settings-group">
-                                    <h6>Two-Factor Authentication</h6>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Enable 2FA</h6>
-                                            <p>Add an extra layer of security to your account</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="enable2FA">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="settings-group">
-                                    <h6>Active Sessions</h6>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Current Device</h6>
-                                            <p>Windows PC - Last active: Just now</p>
-                                        </div>
-                                        <span class="badge bg-success">Active</span>
-                                    </div>
-                                    
-                                    <button class="btn btn-outline-danger mt-3">Sign out from all devices</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Appearance Settings -->
-                        <div id="appearance" class="settings-section">
-                            <div class="card-custom">
-                                <h5 class="mb-4">Appearance Settings</h5>
-                                
-                                <div class="settings-group">
-                                    <h6>Theme</h6>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Dark mode</h6>
-                                            <p>Use dark theme for better visibility at night</p>
+                                            <h6>Dark Mode</h6>
+                                            <p>Use dark theme for better visibility</p>
                                         </div>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" role="switch" id="darkMode">
@@ -418,95 +525,97 @@
                                     
                                     <div class="setting-item">
                                         <div class="setting-info">
-                                            <h6>Compact mode</h6>
-                                            <p>Reduce spacing for a more compact layout</p>
+                                            <h6>Compact View</h6>
+                                            <p>Reduce spacing for more content</p>
                                         </div>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="compactMode">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="compactView">
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="settings-group">
-                                    <h6>Sidebar</h6>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Sidebar position</h6>
-                                            <p>Choose sidebar placement</p>
-                                        </div>
-                                        <select class="form-select" style="max-width: 200px;">
-                                            <option selected>Left</option>
-                                            <option>Right</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <button class="btn btn-primary">Apply Changes</button>
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Save Preferences
+                                </button>
                             </div>
                         </div>
                         
-                        <!-- Privacy Settings -->
-                        <div id="privacy" class="settings-section">
+                        <!-- Notification Settings -->
+                        <div id="notifications" class="settings-section">
                             <div class="card-custom">
-                                <h5 class="mb-4">Privacy Settings</h5>
+                                <h5 class="mb-4"><i class="bi bi-bell"></i> Notification Settings</h5>
                                 
                                 <div class="settings-group">
-                                    <h6>Profile Visibility</h6>
+                                    <h6>Email Notifications</h6>
                                     
                                     <div class="setting-item">
                                         <div class="setting-info">
-                                            <h6>Show profile to other users</h6>
-                                            <p>Allow other users to view your profile</p>
+                                            <h6>New Student Registrations</h6>
+                                            <p>Get notified when students register</p>
                                         </div>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="showProfile" checked>
+                                            <input class="form-check-input" type="checkbox" role="switch" id="emailStudents" checked>
                                         </div>
                                     </div>
                                     
                                     <div class="setting-item">
                                         <div class="setting-info">
-                                            <h6>Show online status</h6>
-                                            <p>Let others know when you're online</p>
+                                            <h6>Fee Payments</h6>
+                                            <p>Receive alerts for fee payments</p>
                                         </div>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="showOnline" checked>
+                                            <input class="form-check-input" type="checkbox" role="switch" id="emailPayments" checked>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h6>Staff Updates</h6>
+                                            <p>Get notified about staff changes</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="emailStaff">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h6>System Alerts</h6>
+                                            <p>Important system notifications</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="emailSystem" checked>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="settings-group">
-                                    <h6>Data & Analytics</h6>
+                                    <h6>Browser Notifications</h6>
                                     
                                     <div class="setting-item">
                                         <div class="setting-info">
-                                            <h6>Usage analytics</h6>
-                                            <p>Help us improve by sharing anonymous usage data</p>
+                                            <h6>Enable Desktop Notifications</h6>
+                                            <p>Show notifications on your desktop</p>
                                         </div>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="analytics" checked>
+                                            <input class="form-check-input" type="checkbox" role="switch" id="desktopNotifications">
                                         </div>
                                     </div>
                                     
                                     <div class="setting-item">
                                         <div class="setting-info">
-                                            <h6>Personalized recommendations</h6>
-                                            <p>Receive personalized content based on your activity</p>
+                                            <h6>Sound Alerts</h6>
+                                            <p>Play sound for notifications</p>
                                         </div>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="recommendations">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="soundAlerts" checked>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="settings-group">
-                                    <h6>Data Management</h6>
-                                    
-                                    <button class="btn btn-outline-primary me-2">Download my data</button>
-                                    <button class="btn btn-outline-danger">Clear all data</button>
-                                </div>
-                                
-                                <button class="btn btn-primary">Save Privacy Settings</button>
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Save Notification Settings
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -571,5 +680,6 @@
             }
         });
     </script>
+    <script src="${pageContext.request.contextPath}/dashboard/js/theme-switcher.js"></script>
 </body>
 </html>
