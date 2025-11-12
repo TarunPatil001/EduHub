@@ -110,9 +110,6 @@
                                 <a href="${pageContext.request.contextPath}/dashboard/pages/teachers.jsp" class="btn btn-outline-success">
                                     <i class="bi bi-person-badge"></i> Add Teacher
                                 </a>
-                                <a href="${pageContext.request.contextPath}/dashboard/pages/attendance.jsp" class="btn btn-outline-info">
-                                    <i class="bi bi-calendar-check"></i> Mark Attendance
-                                </a>
                                 <a href="${pageContext.request.contextPath}/dashboard/pages/courses.jsp" class="btn btn-outline-warning">
                                     <i class="bi bi-book"></i> Manage Courses
                                 </a>

@@ -31,17 +31,16 @@
             
             <!-- Students -->
             <li class="nav-item">
-                <a href="#" class="nav-link has-submenu ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'record-payment' || param.activePage == 'student-attendance' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#studentsMenu">
+                <a href="#" class="nav-link has-submenu ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'record-payment' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#studentsMenu">
                     <i class="bi bi-mortarboard"></i>
                     <span>Students</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <ul class="submenu collapse ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'record-payment' || param.activePage == 'student-attendance' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'show' : ''}" id="studentsMenu">
+                <ul class="submenu collapse ${param.activePage == 'students' || param.activePage == 'add-student' || param.activePage == 'all-students' || param.activePage == 'fees-management' || param.activePage == 'record-payment' || param.activePage == 'performance-reports' || param.activePage == 'id-certificates' ? 'show' : ''}" id="studentsMenu">
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/add-student.jsp" class="nav-link ${param.activePage == 'add-student' ? 'active' : ''}"><i class="bi bi-plus-circle"></i><span>Add Student</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp" class="nav-link ${param.activePage == 'all-students' ? 'active' : ''}"><i class="bi bi-people"></i><span>All Students</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp" class="nav-link ${param.activePage == 'fees-management' ? 'active' : ''}"><i class="bi bi-currency-dollar"></i><span>Fees Management</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/record-payment.jsp" class="nav-link ${param.activePage == 'record-payment' ? 'active' : ''}"><i class="bi bi-credit-card"></i><span>Record Payment</span></a></li>
-                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/attendance.jsp" class="nav-link ${param.activePage == 'student-attendance' ? 'active' : ''}"><i class="bi bi-clock-history"></i><span>Attendance</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/performance-reports.jsp" class="nav-link ${param.activePage == 'performance-reports' ? 'active' : ''}"><i class="bi bi-graph-up"></i><span>Performance Reports</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/students/id-certificates.jsp" class="nav-link ${param.activePage == 'id-certificates' ? 'active' : ''}"><i class="bi bi-card-heading"></i><span>ID Card / Certificates</span></a></li>
                 </ul>
@@ -65,30 +64,28 @@
             
             <!-- Attendance -->
             <li class="nav-item">
-                <a href="#" class="nav-link has-submenu ${param.activePage == 'attendance' || param.activePage == 'student-attendance-mark' || param.activePage == 'staff-attendance' || param.activePage == 'attendance-reports' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#attendanceMenu">
+                <a href="#" class="nav-link has-submenu ${param.activePage == 'attendance' || param.activePage == 'student-attendance-mark' || param.activePage == 'staff-attendance' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#attendanceMenu">
                     <i class="bi bi-calendar-check"></i>
                     <span>Attendance</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <ul class="submenu collapse ${param.activePage == 'attendance' || param.activePage == 'student-attendance-mark' || param.activePage == 'staff-attendance' || param.activePage == 'attendance-reports' ? 'show' : ''}" id="attendanceMenu">
+                <ul class="submenu collapse ${param.activePage == 'attendance' || param.activePage == 'student-attendance-mark' || param.activePage == 'staff-attendance' ? 'show' : ''}" id="attendanceMenu">
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/attendance/student-attendance.jsp" class="nav-link ${param.activePage == 'student-attendance-mark' ? 'active' : ''}"><i class="bi bi-person-check"></i><span>Student Attendance</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/attendance/staff-attendance.jsp" class="nav-link ${param.activePage == 'staff-attendance' ? 'active' : ''}"><i class="bi bi-person-workspace"></i><span>Staff Attendance</span></a></li>
-                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/attendance/attendance-reports.jsp" class="nav-link ${param.activePage == 'attendance-reports' ? 'active' : ''}"><i class="bi bi-file-earmark-bar-graph"></i><span>Attendance Reports</span></a></li>
                 </ul>
             </li>
             
             <!-- Staff Management -->
             <li class="nav-item">
-                <a href="#" class="nav-link has-submenu ${param.activePage == 'staff' || param.activePage == 'add-staff' || param.activePage == 'all-staff' || param.activePage == 'staff-roles' || param.activePage == 'staff-attendance-leave' || param.activePage == 'payroll' || param.activePage == 'performance-reviews' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#staffMenu">
+                <a href="#" class="nav-link has-submenu ${param.activePage == 'staff' || param.activePage == 'add-staff' || param.activePage == 'all-staff' || param.activePage == 'staff-roles' || param.activePage == 'payroll' || param.activePage == 'performance-reviews' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#staffMenu">
                     <i class="bi bi-people-fill"></i>
                     <span>Staff Management</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <ul class="submenu collapse ${param.activePage == 'staff' || param.activePage == 'add-staff' || param.activePage == 'all-staff' || param.activePage == 'staff-roles' || param.activePage == 'staff-attendance-leave' || param.activePage == 'payroll' || param.activePage == 'performance-reviews' ? 'show' : ''}" id="staffMenu">
+                <ul class="submenu collapse ${param.activePage == 'staff' || param.activePage == 'add-staff' || param.activePage == 'all-staff' || param.activePage == 'staff-roles' || param.activePage == 'payroll' || param.activePage == 'performance-reviews' ? 'show' : ''}" id="staffMenu">
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="nav-link ${param.activePage == 'add-staff' ? 'active' : ''}"><i class="bi bi-plus-circle"></i><span>Add Staff</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp" class="nav-link ${param.activePage == 'all-staff' ? 'active' : ''}"><i class="bi bi-person-lines-fill"></i><span>All Staff</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/role-categories.jsp" class="nav-link ${param.activePage == 'staff-roles' ? 'active' : ''}"><i class="bi bi-diagram-3"></i><span>Role-Based Categories</span></a></li>
-                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/attendance-leave.jsp" class="nav-link ${param.activePage == 'staff-attendance-leave' ? 'active' : ''}"><i class="bi bi-calendar2-week"></i><span>Attendance & Leave</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/payroll.jsp" class="nav-link ${param.activePage == 'payroll' ? 'active' : ''}"><i class="bi bi-cash-stack"></i><span>Payroll & Salary</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/performance-reviews.jsp" class="nav-link ${param.activePage == 'performance-reviews' ? 'active' : ''}"><i class="bi bi-star"></i><span>Performance Reviews</span></a></li>
                 </ul>
@@ -126,13 +123,12 @@
             
             <!-- Reports & Analytics -->
             <li class="nav-item">
-                <a href="#" class="nav-link has-submenu ${param.activePage == 'reports' || param.activePage == 'attendance-report' || param.activePage == 'fees-report' || param.activePage == 'course-stats' || param.activePage == 'placement-reports' || param.activePage == 'performance-graphs' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#reportsMenu">
+                <a href="#" class="nav-link has-submenu ${param.activePage == 'reports' || param.activePage == 'fees-report' || param.activePage == 'course-stats' || param.activePage == 'placement-reports' || param.activePage == 'performance-graphs' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#reportsMenu">
                     <i class="bi bi-graph-up-arrow"></i>
                     <span>Reports & Analytics</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <ul class="submenu collapse ${param.activePage == 'reports' || param.activePage == 'attendance-report' || param.activePage == 'fees-report' || param.activePage == 'course-stats' || param.activePage == 'placement-reports' || param.activePage == 'performance-graphs' ? 'show' : ''}" id="reportsMenu">
-                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/reports/attendance-reports.jsp" class="nav-link ${param.activePage == 'attendance-report' ? 'active' : ''}"><i class="bi bi-clock-history"></i><span>Attendance Reports</span></a></li>
+                <ul class="submenu collapse ${param.activePage == 'reports' || param.activePage == 'fees-report' || param.activePage == 'course-stats' || param.activePage == 'placement-reports' || param.activePage == 'performance-graphs' ? 'show' : ''}" id="reportsMenu">
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/reports/fees-collection.jsp" class="nav-link ${param.activePage == 'fees-report' ? 'active' : ''}"><i class="bi bi-cash-coin"></i><span>Fees Collection Reports</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/reports/course-stats.jsp" class="nav-link ${param.activePage == 'course-stats' ? 'active' : ''}"><i class="bi bi-bar-chart"></i><span>Course / Batch Stats</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/reports/placement-reports.jsp" class="nav-link ${param.activePage == 'placement-reports' ? 'active' : ''}"><i class="bi bi-briefcase"></i><span>Placement Reports</span></a></li>
