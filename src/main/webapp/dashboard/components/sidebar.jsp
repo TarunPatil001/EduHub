@@ -49,15 +49,14 @@
             
             <!-- Courses & Batches -->
             <li class="nav-item">
-                <a href="#" class="nav-link has-submenu ${param.activePage == 'courses' || param.activePage == 'create-course' || param.activePage == 'all-courses' || param.activePage == 'assign-teachers' || param.activePage == 'manage-batches' || param.activePage == 'create-batch' || param.activePage == 'study-materials' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#coursesMenu">
+                <a href="#" class="nav-link has-submenu ${param.activePage == 'courses' || param.activePage == 'create-course' || param.activePage == 'all-courses' || param.activePage == 'manage-batches' || param.activePage == 'create-batch' || param.activePage == 'study-materials' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#coursesMenu">
                     <i class="bi bi-book"></i>
                     <span>Courses & Batches</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <ul class="submenu collapse ${param.activePage == 'courses' || param.activePage == 'create-course' || param.activePage == 'all-courses' || param.activePage == 'assign-teachers' || param.activePage == 'manage-batches' || param.activePage == 'create-batch' || param.activePage == 'study-materials' ? 'show' : ''}" id="coursesMenu">
+                <ul class="submenu collapse ${param.activePage == 'courses' || param.activePage == 'create-course' || param.activePage == 'all-courses' || param.activePage == 'manage-batches' || param.activePage == 'create-batch' || param.activePage == 'study-materials' ? 'show' : ''}" id="coursesMenu">
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-course.jsp" class="nav-link ${param.activePage == 'create-course' ? 'active' : ''}"><i class="bi bi-plus-circle"></i><span>Create Course</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/courses/all-courses.jsp" class="nav-link ${param.activePage == 'all-courses' ? 'active' : ''}"><i class="bi bi-journal-text"></i><span>All Courses</span></a></li>
-                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/courses/assign-teachers.jsp" class="nav-link ${param.activePage == 'assign-teachers' ? 'active' : ''}"><i class="bi bi-person-badge"></i><span>Assign Teachers</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-batch.jsp" class="nav-link ${param.activePage == 'create-batch' ? 'active' : ''}"><i class="bi bi-plus-square"></i><span>Create Batch</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/courses/manage-batches.jsp" class="nav-link ${param.activePage == 'manage-batches' ? 'active' : ''}"><i class="bi bi-calendar3"></i><span>Manage Batches</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/courses/study-materials.jsp" class="nav-link ${param.activePage == 'study-materials' ? 'active' : ''}"><i class="bi bi-folder"></i><span>Study Materials</span></a></li>

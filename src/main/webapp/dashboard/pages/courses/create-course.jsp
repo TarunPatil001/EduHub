@@ -101,56 +101,15 @@
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="maxStudents" class="form-label">Max Students <span class="required-star">*</span></label>
-                                        <input type="number" class="form-control" id="maxStudents" name="maxStudents" required placeholder="e.g., 30" min="1">
-                                    </div>
-                                </div>
-                                
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
                                         <label for="fee" class="form-label">Fee (₹)</label>
                                         <input type="number" class="form-control" id="fee" name="fee" placeholder="e.g., 5000" min="0" step="100">
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Schedule -->
+                            <!-- Additional Settings -->
                             <div class="card-custom mb-4">
-                                <h5 class="mb-4"><i class="bi bi-calendar-fill"></i> Schedule</h5>
-                                
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="startDate" class="form-label">Start Date <span class="required-star">*</span></label>
-                                        <input type="date" class="form-control" id="startDate" name="startDate" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="endDate" class="form-label">End Date <span class="required-star">*</span></label>
-                                        <input type="date" class="form-control" id="endDate" name="endDate" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="instructor" class="form-label">Instructor <span class="required-star">*</span></label>
-                                        <select class="form-select" id="instructor" name="instructor" required>
-                                            <option value="">Select Instructor</option>
-                                            <option value="1">Dr. Rajesh Kumar</option>
-                                            <option value="2">Prof. Anjali Singh</option>
-                                            <option value="3">Dr. Priya Sharma</option>
-                                            <option value="4">Ms. Kavita Desai</option>
-                                            <option value="5">Mr. Suresh Reddy</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="modeOfConduct" class="form-label">Mode of Conduct <span class="required-star">*</span></label>
-                                        <select class="form-select" id="modeOfConduct" name="modeOfConduct" required>
-                                            <option value="">Select Mode</option>
-                                            <option value="online">Online</option>
-                                            <option value="offline">Offline</option>
-                                            <option value="hybrid">Hybrid</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                <h5 class="mb-4"><i class="bi bi-gear-fill"></i> Course Settings</h5>
                                 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
@@ -160,7 +119,19 @@
                                             <option value="active" selected>Active</option>
                                             <option value="inactive">Inactive</option>
                                         </select>
+                                        <small class="text-muted">Active courses can have batches created for them</small>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label for="certificateOffered" class="form-label">Certificate Offered</label>
+                                        <select class="form-select" id="certificateOffered" name="certificateOffered">
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mb-0">
+                                    <i class="bi bi-info-circle"></i> <strong>Note:</strong> After creating the course, you can create batches with specific schedules, instructors, and timing in the "Create Batch" section.
                                 </div>
                             </div>
                             
