@@ -88,11 +88,11 @@
                             <button id="markAllAbsentBtn" class="btn btn-danger btn-sm">
                                 <i class="bi bi-x-circle"></i> All Absent
                             </button>
-                            <button id="markSelectedPresentBtn" class="btn btn-info btn-sm">
-                                <i class="bi bi-person-check"></i> Selected Present
-                            </button>
                             <button id="markSelectedAbsentBtn" class="btn btn-warning btn-sm">
                                 <i class="bi bi-person-x"></i> Selected Absent
+                            </button>
+                            <button id="markSelectedPresentBtn" class="btn btn-info btn-sm">
+                                <i class="bi bi-person-check"></i> Selected Present
                             </button>
                             <button id="resetBtn" class="btn btn-secondary btn-sm">
                                 <i class="bi bi-arrow-counterclockwise"></i> Reset
@@ -104,9 +104,6 @@
                             </span>
                             <span class="badge bg-danger fs-6">
                                 <i class="bi bi-x-circle-fill me-1"></i>Absent: <strong id="absentCount" class="ms-1">0</strong>
-                            </span>
-                            <span class="badge bg-warning text-dark fs-6">
-                                <i class="bi bi-calendar-x me-1"></i>Leave: <strong id="leaveCount" class="ms-1">0</strong>
                             </span>
                             <span class="badge bg-secondary fs-6">
                                 <i class="bi bi-people-fill me-1"></i>Total: <strong id="totalCount" class="ms-1">0</strong>
@@ -131,13 +128,12 @@
                                         <th>Staff Name</th>
                                         <th style="width: 150px;">Department</th>
                                         <th style="width: 120px;">Role</th>
-                                        <th style="width: 180px;">Status</th>
-                                        <th style="width: 150px;">Quick Action</th>
+                                        <th style="width: 200px;">Quick Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="staffTableBody">
                                     <tr class="empty-state-row">
-                                        <td colspan="7" class="text-center py-5">
+                                        <td colspan="6" class="text-center py-5">
                                             <div class="empty-state">
                                                 <div class="empty-state-icon">
                                                     <i class="bi bi-people"></i>

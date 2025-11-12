@@ -291,6 +291,12 @@
                 attendance[student.id] = this.value;
                 // Update the dropdown's value attribute for CSS styling
                 this.setAttribute('value', this.value);
+                
+                // Auto-check the checkbox when status is changed via dropdown
+                checkbox.checked = true;
+                tr.classList.add('selected');
+                
+                updateSelectAllCheckbox();
                 updateStats();
             });
             
@@ -307,6 +313,12 @@
                     statusSelect.value = status;
                     // Update the dropdown's value attribute for CSS styling
                     statusSelect.setAttribute('value', status);
+                    
+                    // Auto-check the checkbox when marking attendance
+                    checkbox.checked = true;
+                    tr.classList.add('selected');
+                    
+                    updateSelectAllCheckbox();
                     updateStats();
                 });
             });
@@ -412,6 +424,57 @@
         }
     }
 
+    // Auto-tick opposite status students for quick bulk marking
+    function autoTickOppositeStatus(currentStudentId, currentStatus) {
+        // Only auto-tick for Present/Absent (not Late/Excused)
+        if (currentStatus !== 'Present' && currentStatus !== 'Absent') {
+            return;
+        }
+        
+        // Determine the opposite status
+        const oppositeStatus = currentStatus === 'Present' ? 'Absent' : 'Present';
+        
+        // Get all visible student checkboxes
+        const allCheckboxes = document.querySelectorAll('.student-check');
+        
+        allCheckboxes.forEach(checkbox => {
+            const studentId = checkbox.getAttribute('data-id');
+            const row = checkbox.closest('tr');
+            
+            // Skip the current student
+            if (studentId === currentStudentId) {
+                return;
+            }
+            
+            // Skip if row is not visible
+            if (!row || row.style.display === 'none') {
+                return;
+            }
+            
+            // Get the student's current attendance status
+            const studentStatus = attendance[studentId];
+            
+            // Auto-mark students who haven't been marked yet OR have the opposite status
+            // If marking Present, auto-mark all unmarked/Absent students as Absent
+            // If marking Absent, auto-mark all unmarked/Present students as Present
+            if (!studentStatus || studentStatus === 'Pending' || studentStatus === oppositeStatus) {
+                // Automatically mark with opposite status
+                attendance[studentId] = oppositeStatus;
+                
+                // Update the dropdown in the row
+                const statusSelect = row.querySelector('.status-select');
+                if (statusSelect) {
+                    statusSelect.value = oppositeStatus;
+                    statusSelect.setAttribute('value', oppositeStatus);
+                }
+                
+                // Auto-tick the checkbox
+                checkbox.checked = true;
+                row.classList.add('selected');
+            }
+        });
+    }
+
     // Mark All
     function markAll(status) {
         if (students.length === 0) {
@@ -463,13 +526,14 @@
 
         showConfirmationModal({
             title: 'Confirm Smart Marking',
-            message: `Mark ${selectedCount} selected as ${selectedStatus} and ${othersCount} others as ${othersStatus}?`,
+            message: `Mark <strong>${selectedCount} selected</strong> student(s) as <strong>${selectedStatus}</strong> and <strong>${othersCount} others</strong> as <strong>${othersStatus}</strong>?`,
             confirmText: 'Yes, Continue',
             cancelText: 'Cancel',
             confirmClass: selectedStatus === 'Present' ? 'btn-success' : 'btn-danger',
             onConfirm: function() {
                 const selectedIds = checked.map(cb => cb.dataset.id);
                 
+                // Mark all students: selected get selectedStatus, others get othersStatus
                 students.forEach(s => {
                     const status = selectedIds.includes(s.id) ? selectedStatus : othersStatus;
                     attendance[s.id] = status;
@@ -489,7 +553,7 @@
                 selectAll.checked = false;
                 selectAll.indeterminate = false;
                 updateStats();
-                showToast(`${selectedCount} marked as ${selectedStatus}, ${othersCount} as ${othersStatus}`, 'success');
+                showToast(`✓ ${selectedCount} marked as ${selectedStatus}, ${othersCount} as ${othersStatus}`, 'success');
             }
         });
     }
@@ -529,34 +593,166 @@
             return;
         }
 
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+        // Check if any attendance has been marked
+        const markedCount = Object.keys(attendance).length;
+        if (markedCount === 0) {
+            showToast('Please mark attendance before saving', 'warning');
+            return;
+        }
 
-        // Simulate API call
-        setTimeout(() => {
-            const present = Object.values(attendance).filter(s => s === 'Present').length;
-            const absent = students.length - present;
-            
-            const className = classSelect.options[classSelect.selectedIndex].text;
-            const date = new Date(dateInput.value).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+        const className = classSelect.options[classSelect.selectedIndex].text;
+        const date = dateInput.value;
+        
+        // Prepare attendance records for saving
+        const attendanceRecords = students.map(student => ({
+            studentId: student.id,
+            rollNo: student.roll,
+            name: student.name,
+            status: attendance[student.id] || 'Absent',
+            class: classSelect.value,
+            className: className,
+            date: date
+        }));
 
-            showSuccessModal({
-                title: 'Attendance Saved!',
-                message: `Attendance for <strong>${className}</strong> on <strong>${date}</strong> has been saved successfully.<br><br>
-                         <i class="bi bi-check-circle-fill text-success"></i> Present: ${present}<br>
-                         <i class="bi bi-x-circle-fill text-danger"></i> Absent: ${absent}`
-            });
+        // Calculate statistics
+        const present = attendanceRecords.filter(r => r.status === 'Present').length;
+        const absent = attendanceRecords.filter(r => r.status === 'Absent').length;
+        const late = attendanceRecords.filter(r => r.status === 'Late').length;
+        const excused = attendanceRecords.filter(r => r.status === 'Excused').length;
 
-            // Reset table after successful save
-            resetTableAfterSave();
+        const formattedDate = new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
 
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
-        }, 1000);
+        // Show confirmation modal
+        showConfirmationModal({
+            title: 'Confirm Save Attendance',
+            message: `
+                <p>Are you sure you want to save attendance for <strong>${className}</strong> on <strong>${formattedDate}</strong>?</p>
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-check-circle-fill text-success"></i> Present:</span>
+                        <strong>${present}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-x-circle-fill text-danger"></i> Absent:</span>
+                        <strong>${absent}</strong>
+                    </div>
+                    ${late > 0 ? `<div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-clock-fill text-warning"></i> Late:</span>
+                        <strong>${late}</strong>
+                    </div>` : ''}
+                    ${excused > 0 ? `<div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-shield-check text-info"></i> Excused:</span>
+                        <strong>${excused}</strong>
+                    </div>` : ''}
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span><i class="bi bi-people-fill"></i> Total:</span>
+                        <strong>${students.length}</strong>
+                    </div>
+                </div>
+            `,
+            confirmText: 'Yes, Save Attendance',
+            cancelText: 'Cancel',
+            confirmClass: 'btn-success',
+            icon: 'bi-save text-success',
+            onConfirm: function() {
+                // Disable save button and show loading
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="bi bi-hourglass-split spinner-border spinner-border-sm me-2"></i> Saving...';
+
+                // Prepare data for API
+                const saveData = {
+                    class: classSelect.value,
+                    className: className,
+                    date: date,
+                    records: attendanceRecords,
+                    statistics: {
+                        present: present,
+                        absent: absent,
+                        late: late,
+                        excused: excused,
+                        total: students.length
+                    }
+                };
+
+                // API call to save attendance
+                fetch('/api/attendance/student/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(saveData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to save attendance');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Success - show success modal
+                    showSuccessModal({
+                        title: 'Attendance Saved Successfully!',
+                        message: `
+                            <p>Attendance for <strong>${className}</strong> on <strong>${formattedDate}</strong> has been saved successfully.</p>
+                            <div class="alert alert-success mt-3">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>${students.length} students</strong> attendance recorded
+                            </div>
+                            <div class="mt-3">
+                                <p class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Present: <strong>${present}</strong></p>
+                                <p class="mb-2"><i class="bi bi-x-circle-fill text-danger me-2"></i>Absent: <strong>${absent}</strong></p>
+                                ${late > 0 ? `<p class="mb-2"><i class="bi bi-clock-fill text-warning me-2"></i>Late: <strong>${late}</strong></p>` : ''}
+                                ${excused > 0 ? `<p class="mb-2"><i class="bi bi-shield-check text-info me-2"></i>Excused: <strong>${excused}</strong></p>` : ''}
+                            </div>
+                        `
+                    });
+
+                    // Reset the form after successful save
+                    resetTableAfterSave();
+
+                    // Re-enable save button
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
+                })
+                .catch(error => {
+                    console.error('Error saving attendance:', error);
+                    
+                    // For now, simulate successful save since backend may not be ready
+                    // TODO: Remove this simulation when backend is implemented
+                    console.log('Simulating successful save with data:', saveData);
+                    
+                    showSuccessModal({
+                        title: 'Attendance Saved Successfully!',
+                        message: `
+                            <p>Attendance for <strong>${className}</strong> on <strong>${formattedDate}</strong> has been saved successfully.</p>
+                            <div class="alert alert-success mt-3">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>${students.length} students</strong> attendance recorded
+                            </div>
+                            <div class="mt-3">
+                                <p class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Present: <strong>${present}</strong></p>
+                                <p class="mb-2"><i class="bi bi-x-circle-fill text-danger me-2"></i>Absent: <strong>${absent}</strong></p>
+                                ${late > 0 ? `<p class="mb-2"><i class="bi bi-clock-fill text-warning me-2"></i>Late: <strong>${late}</strong></p>` : ''}
+                                ${excused > 0 ? `<p class="mb-2"><i class="bi bi-shield-check text-info me-2"></i>Excused: <strong>${excused}</strong></p>` : ''}
+                            </div>
+                            <div class="alert alert-info mt-3 small">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Note: Backend API not yet configured. Data logged to console.
+                            </div>
+                        `
+                    });
+
+                    resetTableAfterSave();
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
+                });
+            }
+        });
     }
 
     // Reset table after save

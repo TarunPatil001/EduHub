@@ -299,6 +299,138 @@
     font-weight: 700;
 }
 
+/* Status Row Highlighting - NEW */
+#attendanceTable tbody tr.status-present {
+    background-color: #d1f2eb !important;
+    border-left: 4px solid #0f5132 !important;
+}
+
+#attendanceTable tbody tr.status-absent {
+    background-color: #f8d7da !important;
+    border-left: 4px solid #842029 !important;
+}
+
+#attendanceTable tbody tr.status-present:hover {
+    background-color: #beeee2 !important;
+}
+
+#attendanceTable tbody tr.status-absent:hover {
+    background-color: #f1c2c7 !important;
+}
+
+#attendanceTable tbody tr.status-present td:last-child,
+#attendanceTable tbody tr.status-absent td:last-child {
+    background-color: inherit !important;
+}
+
+/* Status Indicators - NEW */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+}
+
+.status-present-badge {
+    color: #0f5132;
+    animation: fadeInScale 0.3s ease;
+}
+
+.status-absent-badge {
+    color: #842029;
+    animation: fadeInScale 0.3s ease;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Button Group Styling - NEW */
+.btn-group .btn-action {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0;
+    margin: 0;
+    transition: all 0.2s ease;
+}
+
+.btn-group .btn-action:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.btn-group .btn-action:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.btn-group .btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-group .btn-action:active {
+    transform: translateY(0);
+}
+
+/* Enhanced Button Styles */
+.btn-group .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-group .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-group .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-group .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-group .btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-group .btn-outline-success:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.btn-group .btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-group .btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+/* Make clicked buttons stay highlighted */
+.btn-group .btn-action.btn-success,
+.btn-group .btn-action.btn-danger {
+    font-weight: 600;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;

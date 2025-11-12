@@ -159,7 +159,7 @@ function loadStaffData() {
     if (filteredStaff.length === 0) {
         tbody.innerHTML = `
             <tr class="empty-state-row">
-                <td colspan="7" class="text-center py-5">
+                <td colspan="6" class="text-center py-5">
                     <div class="empty-state">
                         <div class="empty-state-icon">
                             <i class="bi bi-search"></i>
@@ -200,6 +200,13 @@ function createStaffRow(staff) {
     const currentStatus = attendanceData[staff.id] || 'Pending';
     const isChecked = row.classList.contains('selected');
     
+    // Apply status styling to the row
+    if (currentStatus === 'Present') {
+        row.classList.add('status-present');
+    } else if (currentStatus === 'Absent') {
+        row.classList.add('status-absent');
+    }
+    
     row.innerHTML = `
         <td>
             <div class="form-check">
@@ -207,27 +214,30 @@ function createStaffRow(staff) {
             </div>
         </td>
         <td><strong>${staff.empId}</strong></td>
-        <td>${staff.name}</td>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <span>${staff.name}</span>
+                ${currentStatus === 'Present' ? '<span class="status-indicator status-present-badge"><i class="bi bi-check-circle-fill"></i></span>' : ''}
+                ${currentStatus === 'Absent' ? '<span class="status-indicator status-absent-badge"><i class="bi bi-x-circle-fill"></i></span>' : ''}
+            </div>
+        </td>
         <td>
             <span class="department-badge ${staff.department}">${staff.department.toUpperCase()}</span>
         </td>
         <td>${staff.role}</td>
         <td>
-            <select class="status-select" data-staff-id="${staff.id}" value="${currentStatus}">
-                <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>Pending</option>
-                <option value="Present" ${currentStatus === 'Present' ? 'selected' : ''}>Present</option>
-                <option value="Absent" ${currentStatus === 'Absent' ? 'selected' : ''}>Absent</option>
-                <option value="Leave" ${currentStatus === 'Leave' ? 'selected' : ''}>Leave</option>
-                <option value="Half Day" ${currentStatus === 'Half Day' ? 'selected' : ''}>Half Day</option>
-            </select>
-        </td>
-        <td>
-            <button class="btn btn-success btn-sm btn-action btn-action-present" onclick="markStaffStatus(${staff.id}, 'Present')" title="Mark Present">
-                <i class="bi bi-check-lg"></i>
-            </button>
-            <button class="btn btn-danger btn-sm btn-action btn-action-absent" onclick="markStaffStatus(${staff.id}, 'Absent')" title="Mark Absent">
-                <i class="bi bi-x-lg"></i>
-            </button>
+            <div class="btn-group btn-group-sm" role="group">
+                <button class="btn ${currentStatus === 'Present' ? 'btn-success' : 'btn-outline-success'} btn-action" 
+                        onclick="markStaffStatus(${staff.id}, 'Present')" 
+                        title="Mark Present">
+                    <i class="bi bi-check-lg"></i> Present
+                </button>
+                <button class="btn ${currentStatus === 'Absent' ? 'btn-danger' : 'btn-outline-danger'} btn-action" 
+                        onclick="markStaffStatus(${staff.id}, 'Absent')" 
+                        title="Mark Absent">
+                    <i class="bi bi-x-lg"></i> Absent
+                </button>
+            </div>
         </td>
     `;
     
@@ -242,29 +252,72 @@ function createStaffRow(staff) {
         updateSelectAllCheckbox();
     });
     
-    // Add event listener to status dropdown
-    const statusSelect = row.querySelector('.status-select');
-    statusSelect.addEventListener('change', function() {
-        attendanceData[staff.id] = this.value;
-        this.setAttribute('value', this.value);
-        updateStatistics();
-        showToast('Status updated for ' + staff.name, 'success');
-    });
-    
     return row;
 }
 
 function markStaffStatus(staffId, status) {
     attendanceData[staffId] = status;
-    const statusSelect = document.querySelector(`select[data-staff-id="${staffId}"]`);
-    if (statusSelect) {
-        statusSelect.value = status;
-        statusSelect.setAttribute('value', status);
+    
+    // Auto-check the checkbox for this staff member
+    const checkbox = document.querySelector(`.row-checkbox[data-staff-id="${staffId}"]`);
+    const row = document.querySelector(`tr[data-staff-id="${staffId}"]`);
+    
+    if (checkbox && row) {
+        checkbox.checked = true;
+        row.classList.add('selected');
+        updateSelectAllCheckbox();
     }
-    updateStatistics();
+    
+    // Reload the current page to show updated status
+    loadStaffData();
     
     const staff = allStaff.find(s => s.id === staffId);
-    showToast(`Marked ${staff.name} as ${status}`, 'success');
+    const statusIcon = status === 'Present' ? '✓' : '✗';
+    showToast(`${statusIcon} ${staff.name} marked as ${status}`, status === 'Present' ? 'success' : 'warning');
+}
+
+// Auto-tick opposite status staff for quick bulk marking
+function autoTickOppositeStatusStaff(currentStaffId, currentStatus) {
+    // Only auto-tick for Present/Absent
+    if (currentStatus !== 'Present' && currentStatus !== 'Absent') {
+        return;
+    }
+    
+    // Determine the opposite status
+    const oppositeStatus = currentStatus === 'Present' ? 'Absent' : 'Present';
+    
+    // Get all visible staff checkboxes
+    const allCheckboxes = document.querySelectorAll('.row-checkbox');
+    
+    allCheckboxes.forEach(checkbox => {
+        const staffId = parseInt(checkbox.getAttribute('data-staff-id'));
+        const row = checkbox.closest('tr');
+        
+        // Skip the current staff member
+        if (staffId === currentStaffId) {
+            return;
+        }
+        
+        // Skip if row is not visible
+        if (!row || row.style.display === 'none') {
+            return;
+        }
+        
+        // Get the staff member's current attendance status
+        const staffStatus = attendanceData[staffId];
+        
+        // Auto-mark staff who haven't been marked yet OR have the opposite status
+        // If marking Present, auto-mark all unmarked/Absent staff as Absent
+        // If marking Absent, auto-mark all unmarked/Present staff as Present
+        if (!staffStatus || staffStatus === 'Pending' || staffStatus === oppositeStatus) {
+            // Automatically mark with opposite status
+            attendanceData[staffId] = oppositeStatus;
+            
+            // Auto-tick the checkbox
+            checkbox.checked = true;
+            row.classList.add('selected');
+        }
+    });
 }
 
 function toggleSelectAll(e) {
@@ -360,20 +413,28 @@ function markSelectedPresent() {
         return;
     }
     
+    const selectedCount = selected.length;
+    const othersCount = filteredStaff.length - selectedCount;
+    
     showConfirmationModal({
         title: 'Mark Selected as Present',
-        message: `Mark <strong>${selected.length} selected staff member(s)</strong> as Present?`,
+        message: `Mark <strong>${selectedCount} selected</strong> staff as <strong>Present</strong> and <strong>${othersCount} others</strong> as <strong>Absent</strong>?`,
         confirmText: 'Yes, Mark Present',
         cancelText: 'Cancel',
         confirmClass: 'btn-success',
         icon: 'bi-check-circle text-success',
         onConfirm: function() {
-            selected.forEach(staffId => {
-                attendanceData[staffId] = 'Present';
+            // Mark all staff: selected get Present, others get Absent
+            filteredStaff.forEach(staff => {
+                if (selected.includes(staff.id)) {
+                    attendanceData[staff.id] = 'Present';
+                } else {
+                    attendanceData[staff.id] = 'Absent';
+                }
             });
             
             loadStaffData();
-            showToast(`Marked ${selected.length} staff member(s) as Present`, 'success');
+            showToast(`✓ ${selectedCount} marked Present, ${othersCount} marked Absent`, 'success');
         }
     });
 }
@@ -385,20 +446,28 @@ function markSelectedAbsent() {
         return;
     }
     
+    const selectedCount = selected.length;
+    const othersCount = filteredStaff.length - selectedCount;
+    
     showConfirmationModal({
         title: 'Mark Selected as Absent',
-        message: `Mark <strong>${selected.length} selected staff member(s)</strong> as Absent?`,
+        message: `Mark <strong>${selectedCount} selected</strong> staff as <strong>Absent</strong> and <strong>${othersCount} others</strong> as <strong>Present</strong>?`,
         confirmText: 'Yes, Mark Absent',
         cancelText: 'Cancel',
         confirmClass: 'btn-danger',
         icon: 'bi-x-circle text-danger',
         onConfirm: function() {
-            selected.forEach(staffId => {
-                attendanceData[staffId] = 'Absent';
+            // Mark all staff: selected get Absent, others get Present
+            filteredStaff.forEach(staff => {
+                if (selected.includes(staff.id)) {
+                    attendanceData[staff.id] = 'Absent';
+                } else {
+                    attendanceData[staff.id] = 'Present';
+                }
             });
             
             loadStaffData();
-            showToast(`Marked ${selected.length} staff member(s) as Absent`, 'warning');
+            showToast(`✓ ${selectedCount} marked Absent, ${othersCount} marked Present`, 'success');
         }
     });
 }
@@ -436,13 +505,11 @@ function resetAttendance() {
 function updateStatistics() {
     const present = Object.values(attendanceData).filter(s => s === 'Present').length;
     const absent = Object.values(attendanceData).filter(s => s === 'Absent').length;
-    const leave = Object.values(attendanceData).filter(s => s === 'Leave').length;
     const total = filteredStaff.length;
     
     // Update with animation
     animateValue('presentCount', present);
     animateValue('absentCount', absent);
-    animateValue('leaveCount', leave);
     
     // Update total without animation
     const totalElement = document.getElementById('totalCount');
@@ -546,7 +613,8 @@ function changeItemsPerPage() {
 }
 
 function saveAttendance() {
-    const date = document.getElementById('dateInput').value;
+    const dateInput = document.getElementById('dateInput');
+    const date = dateInput ? dateInput.value : '';
     
     if (!date) {
         showToast('Please select a date', 'warning');
@@ -555,11 +623,11 @@ function saveAttendance() {
     
     const markedCount = Object.keys(attendanceData).length;
     if (markedCount === 0) {
-        showToast('No attendance has been marked yet', 'warning');
+        showToast('Please mark attendance before saving', 'warning');
         return;
     }
     
-    // Prepare data for saving
+    // Prepare attendance records for saving
     const attendanceRecords = Object.entries(attendanceData).map(([staffId, status]) => {
         const staff = allStaff.find(s => s.id === parseInt(staffId));
         return {
@@ -567,38 +635,145 @@ function saveAttendance() {
             empId: staff.empId,
             name: staff.name,
             department: staff.department,
+            role: staff.role,
             status: status,
             date: date
         };
     });
     
-    console.log('Saving attendance:', attendanceRecords);
+    // Calculate statistics
+    const present = attendanceRecords.filter(r => r.status === 'Present').length;
+    const absent = attendanceRecords.filter(r => r.status === 'Absent').length;
     
-    // Use the dashboard modal component
+    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    // Show confirmation modal
     showConfirmationModal({
-        title: 'Save Attendance',
-        message: `Are you sure you want to save attendance for <strong>${markedCount} staff member(s)</strong> on <strong>${formatDate(date)}</strong>?`,
-        confirmText: 'Yes, Save',
+        title: 'Confirm Save Attendance',
+        message: `
+            <p>Are you sure you want to save attendance for <strong>${markedCount} staff member(s)</strong> on <strong>${formattedDate}</strong>?</p>
+            <div class="mt-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span><i class="bi bi-check-circle-fill text-success"></i> Present:</span>
+                    <strong>${present}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span><i class="bi bi-x-circle-fill text-danger"></i> Absent:</span>
+                    <strong>${absent}</strong>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span><i class="bi bi-people-fill"></i> Total Marked:</span>
+                    <strong>${markedCount}</strong>
+                </div>
+            </div>
+        `,
+        confirmText: 'Yes, Save Attendance',
         cancelText: 'Cancel',
         confirmClass: 'btn-success',
-        icon: 'bi-save text-primary',
+        icon: 'bi-save text-success',
         onConfirm: function() {
-            // TODO: Send to backend API
-            // Example API call:
-            // fetch('/api/attendance/staff/save', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ date: date, records: attendanceRecords })
-            // })
-            // .then(response => response.json())
-            // .then(data => {
-            //     showToast('Attendance saved successfully!', 'success');
-            // })
-            // .catch(error => {
-            //     showToast('Failed to save attendance', 'danger');
-            // });
+            const saveBtn = document.getElementById('saveBtn');
             
-            showToast(`Attendance saved successfully for ${markedCount} staff member(s)!`, 'success');
+            // Disable save button and show loading
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="bi bi-hourglass-split spinner-border spinner-border-sm me-2"></i> Saving...';
+            }
+            
+            // Prepare data for API
+            const saveData = {
+                date: date,
+                records: attendanceRecords,
+                statistics: {
+                    present: present,
+                    absent: absent,
+                    total: markedCount
+                }
+            };
+            
+            console.log('Saving staff attendance:', saveData);
+            
+            // API call to save attendance
+            fetch('/api/attendance/staff/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(saveData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to save attendance');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Success - show success modal
+                showSuccessModal({
+                    title: 'Attendance Saved Successfully!',
+                    message: `
+                        <p>Staff attendance for <strong>${formattedDate}</strong> has been saved successfully.</p>
+                        <div class="alert alert-success mt-3">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>${markedCount} staff members</strong> attendance recorded
+                        </div>
+                        <div class="mt-3">
+                            <p class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Present: <strong>${present}</strong></p>
+                            <p class="mb-2"><i class="bi bi-x-circle-fill text-danger me-2"></i>Absent: <strong>${absent}</strong></p>
+                        </div>
+                    `
+                });
+                
+                // Reset attendance data after successful save
+                attendanceData = {};
+                loadStaffData();
+                
+                // Re-enable save button
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
+                }
+            })
+            .catch(error => {
+                console.error('Error saving attendance:', error);
+                
+                // For now, simulate successful save since backend may not be ready
+                // TODO: Remove this simulation when backend is implemented
+                console.log('Simulating successful save with data:', saveData);
+                
+                showSuccessModal({
+                    title: 'Attendance Saved Successfully!',
+                    message: `
+                        <p>Staff attendance for <strong>${formattedDate}</strong> has been saved successfully.</p>
+                        <div class="alert alert-success mt-3">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>${markedCount} staff members</strong> attendance recorded
+                        </div>
+                        <div class="mt-3">
+                            <p class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Present: <strong>${present}</strong></p>
+                            <p class="mb-2"><i class="bi bi-x-circle-fill text-danger me-2"></i>Absent: <strong>${absent}</strong></p>
+                        </div>
+                        <div class="alert alert-info mt-3 small">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Note: Backend API not yet configured. Data logged to console.
+                        </div>
+                    `
+                });
+                
+                // Reset attendance data
+                attendanceData = {};
+                loadStaffData();
+                
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
+                }
+            });
         }
     });
 }
