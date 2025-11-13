@@ -88,24 +88,14 @@
                 </ul>
             </li>
             
-            <!-- Communication -->
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/dashboard/pages/communication/notice-board.jsp" 
-                   class="nav-link ${param.activePage == 'notice-board' ? 'active' : ''}">
-                    <i class="bi bi-megaphone"></i>
-                    <span>Notice Board</span>
-                </a>
-            </li>
-            
             <!-- Reports & Analytics -->
             <li class="nav-item">
-                <a href="#" class="nav-link has-submenu ${param.activePage == 'reports' || param.activePage == 'fees-report' || param.activePage == 'placement-reports' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#reportsMenu">
+                <a href="#" class="nav-link has-submenu ${param.activePage == 'reports' || param.activePage == 'placement-reports' ? 'active' : ''}" data-bs-toggle="collapse" data-bs-target="#reportsMenu">
                     <i class="bi bi-graph-up-arrow"></i>
                     <span>Reports & Analytics</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <ul class="submenu collapse ${param.activePage == 'reports' || param.activePage == 'fees-report' || param.activePage == 'placement-reports' ? 'show' : ''}" id="reportsMenu">
-                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/reports/fees-collection.jsp" class="nav-link ${param.activePage == 'fees-report' ? 'active' : ''}"><i class="bi bi-cash-coin"></i><span>Fees Collection Reports</span></a></li>
+                <ul class="submenu collapse ${param.activePage == 'reports' || param.activePage == 'placement-reports' ? 'show' : ''}" id="reportsMenu">
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/reports/placement-reports.jsp" class="nav-link ${param.activePage == 'placement-reports' ? 'active' : ''}"><i class="bi bi-briefcase"></i><span>Placement Reports</span></a></li>
                 </ul>
             </li>
