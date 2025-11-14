@@ -86,7 +86,148 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
     
+    // Initialize Charts
+    initializeCharts();
+    
 });
+
+/**
+ * Initialize Dashboard Charts
+ */
+function initializeCharts() {
+    // Attendance Trends Chart
+    const attendanceChartCanvas = document.getElementById('attendanceChart');
+    if (attendanceChartCanvas) {
+        const attendanceCtx = attendanceChartCanvas.getContext('2d');
+        new Chart(attendanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Student Attendance',
+                    data: [92, 94, 89, 95, 91, 88, 93],
+                    borderColor: 'rgb(13, 110, 253)',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }, {
+                    label: 'Staff Attendance',
+                    data: [96, 98, 95, 97, 96, 94, 97],
+                    borderColor: 'rgb(25, 135, 84)',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: {
+                            display: true,
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+    }
+    
+    // Course Distribution Chart
+    const courseChartCanvas = document.getElementById('courseDistributionChart');
+    if (courseChartCanvas) {
+        const courseCtx = courseChartCanvas.getContext('2d');
+        new Chart(courseCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Full Stack Development', 'Data Science', 'Digital Marketing', 'Others'],
+                datasets: [{
+                    data: [425, 320, 289, 200],
+                    backgroundColor: [
+                        'rgba(13, 110, 253, 0.8)',
+                        'rgba(25, 135, 84, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(108, 117, 125, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgb(13, 110, 253)',
+                        'rgb(25, 135, 84)',
+                        'rgb(255, 193, 7)',
+                        'rgb(108, 117, 125)'
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    }
+}
 
 /**
  * Format numbers with commas

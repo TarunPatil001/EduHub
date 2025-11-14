@@ -1803,6 +1803,147 @@ body {
     color: var(--text-primary);
 }
 
+/* Stat Icon Styles */
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.5rem;
+    width: 2px;
+    height: calc(100% - 0.5rem);
+    background: var(--border-color);
+}
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -1.75rem;
+    top: 0.25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--card-bg);
+}
+
+.timeline-content h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.timeline-content p {
+    margin-bottom: 0.25rem;
+}
+
+/* List Group Item Improvements */
+.list-group-item {
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.list-group-item:hover {
+    border-left-color: var(--primary-color);
+    background-color: var(--hover-bg);
+}
+
+.list-group-item h6 {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Progress Bar Customization */
+.progress {
+    border-radius: 0.5rem;
+    background-color: var(--border-color);
+}
+
+.progress-bar {
+    border-radius: 0.5rem;
+    transition: width 0.6s ease;
+}
+
+/* Badge Customization */
+.badge {
+    font-weight: 500;
+    padding: 0.35rem 0.65rem;
+    border-radius: 0.375rem;
+}
+
+/* Chart Container */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Alert Banner Styles */
+.card-custom.bg-warning {
+    border-left: 4px solid var(--warning-color);
+}
+
+/* Hover Effects for Cards */
+.card-custom:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .card-custom:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Dark Mode Timeline */
+[data-theme="dark"] .timeline-item::before {
+    background: var(--border-color);
+}
+
+[data-theme="dark"] .timeline-marker {
+    border-color: var(--card-bg);
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 1200px) {
+    .stats-card-value {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .stat-icon i {
+        font-size: 1.5rem !important;
+    }
+}
+
 /* Table Styles */
 .table-custom {
     background: var(--card-bg);
