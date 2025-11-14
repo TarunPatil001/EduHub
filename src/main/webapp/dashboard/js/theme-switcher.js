@@ -47,8 +47,15 @@
         updateThemeToggles(newTheme);
         
         // Show toast notification
+        console.log(`Theme switched to: ${newTheme} mode`);
+        
+        // Create a simple visual feedback
+        const message = `${newTheme === THEME_DARK ? 'Dark' : 'Light'} mode enabled`;
         if (typeof showToast === 'function') {
-            showToast(`${newTheme === THEME_DARK ? 'Dark' : 'Light'} mode enabled`, 'info', 2000);
+            showToast(message, 'info', 2000);
+        } else {
+            // Simple console feedback
+            console.log(message);
         }
     }
 
@@ -74,15 +81,26 @@
         // Dark mode toggle in settings
         const darkModeToggle = document.getElementById('darkMode');
         if (darkModeToggle) {
-            darkModeToggle.addEventListener('change', function() {
+            // Remove any existing listeners to prevent duplicates
+            const newToggle = darkModeToggle.cloneNode(true);
+            darkModeToggle.parentNode.replaceChild(newToggle, darkModeToggle);
+            
+            newToggle.addEventListener('change', function(e) {
+                console.log('Settings dark mode toggle changed:', this.checked);
                 toggleTheme();
             });
+            
+            // Sync initial state
+            const currentTheme = getCurrentTheme();
+            newToggle.checked = (currentTheme === THEME_DARK);
+            console.log('Dark mode toggle initialized in settings. Checked:', newToggle.checked);
         }
         
         // Any elements with data-theme-toggle attribute
         const themeToggles = document.querySelectorAll('[data-theme-toggle]');
         themeToggles.forEach(toggle => {
             toggle.addEventListener('change', function() {
+                console.log('Custom theme toggle changed');
                 toggleTheme();
             });
         });
@@ -117,11 +135,25 @@
             initTheme();
             attachThemeListeners();
             watchSystemTheme();
+            
+            // Re-check and update theme icon after a short delay to catch late-loading elements
+            setTimeout(function() {
+                const currentTheme = getCurrentTheme();
+                updateThemeToggles(currentTheme);
+                console.log('Theme initialization complete. Current theme:', currentTheme);
+            }, 100);
         });
     } else {
         initTheme();
         attachThemeListeners();
         watchSystemTheme();
+        
+        // Re-check and update theme icon after a short delay
+        setTimeout(function() {
+            const currentTheme = getCurrentTheme();
+            updateThemeToggles(currentTheme);
+            console.log('Theme initialization complete (immediate). Current theme:', currentTheme);
+        }, 100);
     }
 
 })();

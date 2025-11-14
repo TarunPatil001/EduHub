@@ -678,6 +678,19 @@
                     }
                 }
             }
+            
+            // Initialize dark mode toggle state
+            setTimeout(function() {
+                const darkModeToggle = document.getElementById('darkMode');
+                if (darkModeToggle && typeof ThemeSwitcher !== 'undefined') {
+                    // Sync toggle with current theme
+                    const currentTheme = ThemeSwitcher.getCurrentTheme();
+                    darkModeToggle.checked = (currentTheme === 'dark');
+                    
+                    // Log for debugging
+                    console.log('Dark mode toggle initialized. Current theme:', currentTheme);
+                }
+            }, 100);
         });
     </script>
     <script src="${pageContext.request.contextPath}/dashboard/js/theme-switcher.js"></script>

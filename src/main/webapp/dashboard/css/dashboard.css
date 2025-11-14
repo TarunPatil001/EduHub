@@ -1387,11 +1387,16 @@ body {
     position: relative;
     padding: 0.5rem;
     border-radius: 50%;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
 }
 
 .btn-icon:hover {
     background-color: var(--light-color);
+    transform: scale(1.05);
+}
+
+.btn-icon:active {
+    transform: scale(0.95);
 }
 
 .btn-icon .notification-badge {
