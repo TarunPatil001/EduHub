@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/dashboard/components/ui_component/head.jsp">
+    <jsp:include page="/public/components/head.jsp">
         <jsp:param name="title" value="Placement Records - Dashboard - EduHub"/>
         <jsp:param name="description" value="Manage student placement records and track employment"/>
     </jsp:include>
@@ -11,12 +11,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
+        <jsp:include page="/dashboard/components/sidebar.jsp">
             <jsp:param name="activePage" value="placement-reports"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/ui_component/header.jsp">
+            <jsp:include page="/dashboard/components/header.jsp">
                 <jsp:param name="pageTitle" value="Placement Records"/>
             </jsp:include>
             
@@ -31,7 +31,7 @@
                     </div>
                     <div class="action-section">
                         <button class="btn btn-primary" id="addRecordBtn">
-                            <i class="bi bi-plus-circle"></i> Add Record
+                            <i class="bi bi-plus-circle"></i> <span>Add Record</span>
                         </button>
                         <button class="btn btn-secondary" id="exportBtn">
                             <i class="bi bi-download"></i> <span>Export</span>
@@ -208,7 +208,7 @@
                         </div>
                         <h4 class="empty-title text-muted">No Records Found</h4>
                         <p class="empty-text text-muted">No placement records match your filters. Try adjusting your search criteria or add a new record.</p>
-                        <button class="btn btn-primary mt-3" id="emptyAddBtn">
+                        <button class="btn btn-primary btn-sm mt-3" id="emptyAddBtn">
                             <i class="bi bi-plus-circle"></i> Add First Record
                         </button>
                     </div>
@@ -427,12 +427,12 @@
     </div>
 
     <!-- Toast Notification Component -->
-    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
     
     <!-- Modal Component -->
-    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
+    <jsp:include page="/dashboard/components/modal.jsp"/>
 
-    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+    <jsp:include page="/public/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/reports/js/placement-reports.js"></script>
 </body>
