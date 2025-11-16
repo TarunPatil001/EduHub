@@ -25,12 +25,14 @@ class Student {
 	String dateOfBirth, gender, bloodGroup, instagramId, linkedinId;
 	String permanentAddress, currentAddress, collegeName, educationQualification, passingYear;
 	String batchPreference, medicalHistory;
+	int attendanceDays, totalDays;
 
 	public Student(String id, String name, String fatherName, String surname, String email, String phone, 
 	String whatsappNumber, String parentMobile, String course, String enrollDate, String status,
 	String avatar, String grade, String attendance, String dateOfBirth, String gender, String bloodGroup,
 	String instagramId, String linkedinId, String permanentAddress, String currentAddress, 
-	String collegeName, String educationQualification, String passingYear, String batchPreference, String medicalHistory) {
+	String collegeName, String educationQualification, String passingYear, String batchPreference, String medicalHistory,
+	int attendanceDays, int totalDays) {
 		this.id = id;
 		this.name = name;
 		this.fatherName = fatherName;
@@ -57,10 +59,52 @@ class Student {
 		this.passingYear = passingYear;
 		this.batchPreference = batchPreference;
 		this.medicalHistory = medicalHistory;
+		this.attendanceDays = attendanceDays;
+		this.totalDays = totalDays;
 	}
 }
 
 List<Student> students = Arrays.asList(
+		new Student("STU001", "Aarav", "Rajesh", "Sharma", "aarav.sharma@email.com", "+91 98765 43210", "+91 98765 43210", "+91 98765 00001", "Computer Science",
+				"2024-01-15", "Active", "AS", "A+", "95%", "2002-05-15", "Male", "A+", "@aarav_sharma", "aarav-sharma", "123 MG Road, Mumbai", "123 MG Road, Mumbai", 
+				"Mumbai University", "B.Tech", "2023", "Online", "None", 95, 100),
+			new Student("STU002", "Diya", "Ashok", "Patel", "diya.patel@email.com", "+91 98765 43211", "+91 98765 43211", "+91 98765 00002", "Business Administration",
+				"2024-01-20", "Active", "DP", "A", "92%", "2003-08-22", "Female", "B+", "@diya_patel", "diya-patel", "456 Park Street, Delhi", "456 Park Street, Delhi",
+				"Delhi University", "MBA", "2024", "Offline", "None", 92, 100),
+			new Student("STU003", "Arjun", "Vijay", "Kumar", "arjun.kumar@email.com", "+91 98765 43212", "+91 98765 43212", "+91 98765 00003", "Engineering", "2024-02-01",
+				"Active", "AK", "B+", "88%", "2001-12-10", "Male", "O+", "@arjun_kumar", "arjun-kumar", "789 Linking Road, Bangalore", "789 Linking Road, Bangalore",
+				"Bangalore Institute", "B.E", "2023", "Hybrid", "Asthma", 88, 100),
+			new Student("STU004", "Ananya", "Suresh", "Singh", "ananya.singh@email.com", "+91 98765 43213", "+91 98765 43213", "+91 98765 00004", "Mathematics", "2024-02-10",
+				"Inactive", "AS", "A-", "78%", "2002-03-18", "Female", "AB+", "@ananya_singh", "ananya-singh", "321 Brigade Road, Chennai", "321 Brigade Road, Chennai",
+				"Chennai College", "M.Sc", "2024", "Online", "None", 78, 100),
+			new Student("STU005", "Vihaan", "Ramesh", "Mehta", "vihaan.mehta@email.com", "+91 98765 43214", "+91 98765 43214", "+91 98765 00005", "Computer Science",
+				"2024-02-15", "Active", "VM", "A", "90%", "2003-01-25", "Male", "A-", "@vihaan_mehta", "vihaan-mehta", "654 FC Road, Pune", "654 FC Road, Pune",
+				"Pune University", "B.Tech", "2023", "Offline", "None", 90, 100),
+			new Student("STU006", "Aisha", "Imran", "Khan", "aisha.khan@email.com", "+91 98765 43215", "+91 98765 43215", "+91 98765 00006", "Data Science", "2024-03-01",
+				"Active", "AK", "A+", "96%", "2002-07-30", "Female", "B-", "@aisha_khan", "aisha-khan", "987 Nehru Place, Hyderabad", "987 Nehru Place, Hyderabad",
+				"Hyderabad Institute", "B.Sc", "2023", "Online", "None", 96, 100),
+			new Student("STU007", "Rohan", "Prakash", "Verma", "rohan.verma@email.com", "+91 98765 43216", "+91 98765 43216", "+91 98765 00007", "Physics", "2024-03-05",
+				"Active", "RV", "B", "85%", "2001-11-14", "Male", "O-", "@rohan_verma", "rohan-verma", "147 Anna Salai, Chennai", "147 Anna Salai, Chennai",
+				"Chennai Tech", "B.Sc", "2022", "Hybrid", "Diabetes", 85, 100),
+			new Student("STU008", "Sara", "Mohammed", "Ali", "sara.ali@email.com", "+91 98765 43217", "+91 98765 43217", "+91 98765 00008", "Chemistry", "2024-03-10", "Active",
+				"SA", "A-", "89%", "2003-04-05", "Female", "A+", "@sara_ali", "sara-ali", "258 MG Road, Kolkata", "258 MG Road, Kolkata",
+				"Kolkata University", "M.Sc", "2024", "Online", "None", 89, 100),
+			new Student("STU009", "Kabir", "Srinivas", "Reddy", "kabir.reddy@email.com", "+91 98765 43218", "+91 98765 43218", "+91 98765 00009", "Business Administration",
+				"2024-03-15", "Suspended", "KR", "C+", "65%", "2002-09-20", "Male", "AB-", "@kabir_reddy", "kabir-reddy", "369 Commercial Street, Bangalore", "369 Commercial Street, Bangalore",
+				"Bangalore Business School", "BBA", "2023", "Offline", "None", 65, 100),
+			new Student("STU010", "Myra", "Anil", "Gupta", "myra.gupta@email.com", "+91 98765 43219", "+91 98765 43219", "+91 98765 00010", "Engineering", "2024-04-01",
+				"Active", "MG", "A+", "94%", "2002-06-12", "Female", "B+", "@myra_gupta", "myra-gupta", "741 Sector 18, Noida", "741 Sector 18, Noida",
+				"Noida Engineering College", "B.E", "2023", "Hybrid", "None", 94, 100),
+			new Student("STU011", "Advait", "Mohan", "Joshi", "advait.joshi@email.com", "+91 98765 43220", "+91 98765 43220", "+91 98765 00011", "Computer Science",
+				"2024-04-05", "Active", "AJ", "B+", "87%", "2003-02-28", "Male", "O+", "@advait_joshi", "advait-joshi", "852 Shivaji Nagar, Pune", "852 Shivaji Nagar, Pune",
+				"Pune IT Institute", "B.Tech", "2024", "Online", "None", 87, 100),
+			new Student("STU012", "Zara", "Ganesh", "Iyer", "zara.iyer@email.com", "+91 98765 43221", "+91 98765 43221", "+91 98765 00012", "Mathematics", "2024-04-10",
+				"Active", "ZI", "A", "91%", "2002-10-08", "Female", "A-", "@zara_iyer", "zara-iyer", "963 T Nagar, Chennai", "963 T Nagar, Chennai",
+				"Chennai Math Institute", "M.Sc", "2023", "Offline", "None", 91, 100),
+			new Student("STU013", "Priya", "Sunil", "Desai", "priya.desai@email.com", "+91 98765 43222", "+91 98765 43222", "+91 98765 00013", "Data Science", "2024-11-08",
+				"Active", "PD", null, null, "2003-06-15", "Female", "O+", "@priya_desai", "priya-desai", "147 MG Road, Pune", "147 MG Road, Pune",
+				"Pune College of Engineering", "B.Tech", "2024", "Hybrid", "None", 0, 0)
+);
 		new Student("STU001", "Aarav", "Rajesh", "Sharma", "aarav.sharma@email.com", "+91 98765 43210", "+91 98765 43210", "+91 98765 00001", "Computer Science",
 				"2024-01-15", "Active", "AS", "A+", "95%", "2002-05-15", "Male", "A+", "@aarav_sharma", "aarav-sharma", "123 MG Road, Mumbai", "123 MG Road, Mumbai", 
 				"Mumbai University", "B.Tech", "2023", "Online", "None"),
@@ -471,7 +515,7 @@ pageContext.setAttribute("students", students);
 								<i class="bi bi-download me-2"></i>Export
 							</button>
 						<button class="btn btn-primary" id="addStudentBtn">
-							<i class="bi bi-plus-lg me-2"></i>Add Student
+							<i class="bi bi-plus-circle"></i> Add Student
 						</button>
 					</div>
 					</div>
@@ -653,7 +697,7 @@ pageContext.setAttribute("students", students);
 										</td>
 										<td>
 											<%
-											if (student.attendance == null || student.attendance.isEmpty() || "null".equals(student.attendance)) {
+											if (student.totalDays == 0 || student.attendance == null || student.attendance.isEmpty() || "null".equals(student.attendance)) {
 											%>
 												<div class="attendance-detail">
 													<span class="badge bg-secondary">
@@ -662,7 +706,7 @@ pageContext.setAttribute("students", students);
 												</div>
 											<%
 											} else {
-												int attendancePercent = Integer.parseInt(student.attendance.replace("%", ""));
+												int attendancePercent = (student.attendanceDays * 100) / student.totalDays;
 												// Determine trend based on percentage
 												String trend = attendancePercent >= 85 ? "up" : attendancePercent >= 70 ? "stable" : "down";
 												String trendIcon = trend.equals("up") ? "bi-arrow-up-circle-fill text-success" : 
@@ -672,15 +716,16 @@ pageContext.setAttribute("students", students);
 												<div class="attendance-detail">
 													<div class="d-flex align-items-center justify-content-between mb-2">
 														<strong class="attendance-percent <%=attendancePercent >= 90 ? "text-success" : attendancePercent >= 75 ? "text-warning" : "text-danger"%>">
-															<%=student.attendance%>
+															<%=student.attendanceDays%>/<%=student.totalDays%> days
 														</strong>
 														<i class="bi <%=trendIcon%>" style="font-size: 1rem;" title="Attendance trend"></i>
 													</div>
 													<div class="progress" style="height: 6px;">
 														<div class="progress-bar <%=attendancePercent >= 90 ? "bg-success" : attendancePercent >= 75 ? "bg-warning" : "bg-danger"%>"
-															style="width: <%=student.attendance%>" role="progressbar" 
+															style="width: <%=attendancePercent%>%" role="progressbar" 
 															aria-valuenow="<%=attendancePercent%>" aria-valuemin="0" aria-valuemax="100"></div>
 													</div>
+													<small class="text-muted"><%=attendancePercent%>%</small>
 												</div>
 											<%
 											}

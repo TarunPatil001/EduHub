@@ -145,7 +145,7 @@
                                 <h4 class="empty-state-title">No Courses Yet</h4>
                                 <p class="empty-state-text">Get started by adding your first course to the system</p>
                                 <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-course.jsp" class="btn btn-primary mt-3">
-                                    <i class="bi bi-plus-lg me-2"></i>Add First Course
+                                    <i class="bi bi-plus-circle"></i> Add First Course
                                 </a>
                             </div>
                         </div>

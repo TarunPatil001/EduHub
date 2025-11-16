@@ -159,7 +159,7 @@ pageContext.setAttribute("staffList", staffList);
                                 <i class="bi bi-download me-2"></i>Export
                             </button>
                             <a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="btn btn-primary">
-                                <i class="bi bi-plus-circle me-2"></i>Add New Staff
+                                <i class="bi bi-plus-circle"></i> Add New Staff
                             </a>
                         </div>
                     </div>
@@ -311,7 +311,7 @@ pageContext.setAttribute("staffList", staffList);
                                                 <h5 class="empty-state-title">No Staff Members Found</h5>
                                                 <p class="empty-state-text text-muted">Get started by adding your first staff member to the system.</p>
                                                 <a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="btn btn-primary mt-3">
-                                                    <i class="bi bi-plus-circle me-2"></i>Add Staff Member
+                                                    <i class="bi bi-plus-circle"></i> Add Staff Member
                                                 </a>
                                             </div>
                                         </td>

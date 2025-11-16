@@ -570,7 +570,7 @@
                         <i class="bi bi-inbox empty-state-icon"></i>
                         <h4 class="text-muted mt-4 mb-2">No batches found</h4>
                         <p class="text-muted">Try adjusting your filters or create a new batch to get started</p>
-                        <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-batch.jsp" class="btn btn-primary action-btn-modern mt-3">
+                        <a href="${pageContext.request.contextPath}/dashboard/pages/courses/create-batch.jsp" class="btn btn-primary mt-3">
                             <i class="bi bi-plus-circle"></i> Create New Batch
                         </a>
                     </div>

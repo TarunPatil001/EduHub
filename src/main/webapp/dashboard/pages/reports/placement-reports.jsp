@@ -31,7 +31,7 @@
                     </div>
                     <div class="action-section">
                         <button class="btn btn-primary" id="addRecordBtn">
-                            <i class="bi bi-plus-circle"></i> <span>Add Record</span>
+                            <i class="bi bi-plus-circle"></i> Add Record
                         </button>
                         <button class="btn btn-secondary" id="exportBtn">
                             <i class="bi bi-download"></i> <span>Export</span>
@@ -208,7 +208,7 @@
                         </div>
                         <h4 class="empty-title text-muted">No Records Found</h4>
                         <p class="empty-text text-muted">No placement records match your filters. Try adjusting your search criteria or add a new record.</p>
-                        <button class="btn btn-primary btn-sm mt-3" id="emptyAddBtn">
+                        <button class="btn btn-primary mt-3" id="emptyAddBtn">
                             <i class="bi bi-plus-circle"></i> Add First Record
                         </button>
                     </div>

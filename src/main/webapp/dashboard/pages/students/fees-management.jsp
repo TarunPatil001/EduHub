@@ -124,8 +124,8 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
                             <button class="btn btn-outline-primary" id="sendReminderBtn">
                                 <i class="bi bi-envelope me-1"></i>Send Reminders
                             </button>
-                            <a href="${pageContext.request.contextPath}/dashboard/pages/students/record-payment.jsp" class="btn btn-success">
-                                <i class="bi bi-plus-lg me-1"></i>Record Payment
+                            <a href="${pageContext.request.contextPath}/dashboard/pages/students/record-payment.jsp" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Record Payment
                             </a>
                         </div>
                     </div>
