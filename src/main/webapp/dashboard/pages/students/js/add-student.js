@@ -191,6 +191,12 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
 // Year Picker Implementation
 (function() {
     const yearPickerInput = document.getElementById('passingYear');
+    
+    // Check if the year picker input exists before initializing
+    if (!yearPickerInput) {
+        return;
+    }
+    
     const currentYear = new Date().getFullYear();
     const maxYear = currentYear + 15;
     const minYear = 1950;
@@ -201,6 +207,11 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
     dropdown.className = 'year-picker-dropdown';
     yearPickerInput.parentElement.style.position = 'relative';
     yearPickerInput.parentElement.appendChild(dropdown);
+    
+    function formatAcademicYear(year) {
+        const nextYear = year + 1;
+        return `${year}-${nextYear.toString().slice(-2)}`;
+    }
     
     function renderYearPicker() {
         const endYear = displayRangeStart + 11;
@@ -217,13 +228,20 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
             <div class="year-picker-grid" id="yearGrid"></div>
         `;
         
-        dropdown.querySelector('[data-action="prev"]').addEventListener('click', () => changeYearRange(-12));
-        dropdown.querySelector('[data-action="next"]').addEventListener('click', () => changeYearRange(12));
+        dropdown.querySelector('[data-action="prev"]').addEventListener('click', (e) => {
+            e.stopPropagation();
+            changeYearRange(-12);
+        });
+        dropdown.querySelector('[data-action="next"]').addEventListener('click', (e) => {
+            e.stopPropagation();
+            changeYearRange(12);
+        });
         
         const grid = dropdown.querySelector('#yearGrid');
         for (let year = displayRangeStart; year <= endYear; year++) {
             const yearItem = document.createElement('div');
             yearItem.className = 'year-picker-item';
+            yearItem.setAttribute('data-year', year);
             
             if (year === currentYear) yearItem.classList.add('current');
             if (year === selectedYear) yearItem.classList.add('selected');
@@ -232,10 +250,14 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
                 yearItem.style.opacity = '0.3';
                 yearItem.style.pointerEvents = 'none';
             } else {
-                yearItem.addEventListener('click', () => selectYear(year));
+                yearItem.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectYear(year);
+                });
             }
             
-            yearItem.textContent = year;
+            // Display in academic year format (2024-25)
+            yearItem.textContent = formatAcademicYear(year);
             grid.appendChild(yearItem);
         }
     }
@@ -247,18 +269,44 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
     
     function selectYear(year) {
         selectedYear = year;
-        yearPickerInput.value = year;
+        // Display in academic year format (2024-25)
+        yearPickerInput.value = formatAcademicYear(year);
         dropdown.classList.remove('show');
         yearPickerInput.dispatchEvent(new Event('change'));
     }
     
-    yearPickerInput.addEventListener('click', function() {
+    // Initialize the year picker with years on page load
+    renderYearPicker();
+    
+    // Function to position dropdown
+    function positionDropdown() {
+        const rect = yearPickerInput.getBoundingClientRect();
+        dropdown.style.top = `${rect.bottom + 5}px`;
+        dropdown.style.left = `${rect.left}px`;
+    }
+    
+    yearPickerInput.addEventListener('click', function(e) {
+        e.stopPropagation();
         if (!dropdown.classList.contains('show')) {
             displayRangeStart = Math.floor(((selectedYear || currentYear) - 5) / 12) * 12;
             renderYearPicker();
+            positionDropdown();
             dropdown.classList.add('show');
         } else {
             dropdown.classList.remove('show');
+        }
+    });
+    
+    // Reposition dropdown on scroll and resize
+    window.addEventListener('scroll', function() {
+        if (dropdown.classList.contains('show')) {
+            positionDropdown();
+        }
+    }, true);
+    
+    window.addEventListener('resize', function() {
+        if (dropdown.classList.contains('show')) {
+            positionDropdown();
         }
     });
     

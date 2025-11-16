@@ -642,8 +642,7 @@ input[type="file"]::-webkit-file-upload-button:hover {
     }
     
     /* Back Button Full Width */
-    .page-header .btn,
-    .page-header .btn-outline-secondary {
+    .page-header .btn {
         width: 100%;
         justify-content: center;
         min-height: 44px;

@@ -128,7 +128,6 @@
     const totalCount = document.getElementById('totalCount');
     const itemsPerPageSelect = document.getElementById('itemsPerPage');
     const paginationContainer = document.getElementById('paginationContainer');
-    const pageInfo = document.getElementById('pageInfo');
 
     // Initialize
     function init() {

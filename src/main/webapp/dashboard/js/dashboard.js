@@ -23,14 +23,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (toggleSidebar) {
         toggleSidebar.addEventListener('click', function() {
+            const icon = toggleSidebar.querySelector('i');
+            
             if (window.innerWidth <= 991) {
                 // Mobile: Slide sidebar in/out
                 sidebar.classList.toggle('show');
                 sidebarOverlay.classList.toggle('show');
+                
+                // Toggle icon
+                if (sidebar.classList.contains('show')) {
+                    icon.classList.remove('bi-layout-sidebar-inset');
+                    icon.classList.add('bi-layout-sidebar-inset-reverse');
+                } else {
+                    icon.classList.remove('bi-layout-sidebar-inset-reverse');
+                    icon.classList.add('bi-layout-sidebar-inset');
+                }
             } else {
                 // Desktop: Collapse sidebar to icon-only mode
                 sidebar.classList.toggle('collapsed');
                 document.querySelector('.dashboard-main').classList.toggle('expanded');
+                
+                // Toggle icon
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('bi-layout-sidebar-inset');
+                    icon.classList.add('bi-layout-sidebar-inset-reverse');
+                } else {
+                    icon.classList.remove('bi-layout-sidebar-inset-reverse');
+                    icon.classList.add('bi-layout-sidebar-inset');
+                }
             }
         });
     }
@@ -39,6 +59,11 @@ document.addEventListener('DOMContentLoaded', function() {
         closeSidebar.addEventListener('click', function() {
             sidebar.classList.remove('show');
             sidebarOverlay.classList.remove('show');
+            
+            // Reset icon to default
+            const icon = toggleSidebar.querySelector('i');
+            icon.classList.remove('bi-layout-sidebar-inset-reverse');
+            icon.classList.add('bi-layout-sidebar-inset');
         });
     }
     
@@ -47,6 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebarOverlay.addEventListener('click', function() {
             sidebar.classList.remove('show');
             sidebarOverlay.classList.remove('show');
+            
+            // Reset icon to default
+            const icon = toggleSidebar.querySelector('i');
+            icon.classList.remove('bi-layout-sidebar-inset-reverse');
+            icon.classList.add('bi-layout-sidebar-inset');
         });
     }
     
@@ -59,6 +89,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isClickInsideSidebar && !isToggleButton && sidebar && sidebar.classList.contains('show')) {
                 sidebar.classList.remove('show');
                 sidebarOverlay.classList.remove('show');
+                
+                // Reset icon to default
+                const icon = toggleSidebar.querySelector('i');
+                icon.classList.remove('bi-layout-sidebar-inset-reverse');
+                icon.classList.add('bi-layout-sidebar-inset');
             }
         }
     });
@@ -68,6 +103,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth > 991) {
             sidebar.classList.remove('show');
             sidebarOverlay.classList.remove('show');
+            
+            // Reset icon to default when transitioning to desktop
+            if (toggleSidebar) {
+                const icon = toggleSidebar.querySelector('i');
+                if (!sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('bi-layout-sidebar-inset-reverse');
+                    icon.classList.add('bi-layout-sidebar-inset');
+                }
+            }
         }
     });
     

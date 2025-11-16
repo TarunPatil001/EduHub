@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="All Courses - Dashboard - EduHub"/>
         <jsp:param name="description" value="View all courses in EduHub"/>
     </jsp:include>
@@ -11,23 +11,26 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="all-courses"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="All Courses"/>
             </jsp:include>
             
             <div class="dashboard-content">
                 <!-- Page Header -->
-                <div class="page-header mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2>All Courses</h2>
-                            <p class="text-muted">View and manage all available courses</p>
-                        </div>
+                <div class="page-header-wrapper mb-4">
+                    <!-- Page Heading -->
+                    <div class="page-title-container">
+                        <h2>All Courses</h2>
+                        <p class="text-muted">View and manage all available courses</p>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="back-button-container">
                         <div class="d-flex gap-2">
                             <button id="bulkDeleteBtn" class="btn btn-danger" style="display: none;">
                                 <i class="bi bi-trash"></i> Delete Selected (<span id="selectedCount">0</span>)
@@ -209,10 +212,10 @@
     </div>
 
     <!-- Use existing dashboard components -->
-    <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/courses/js/all-courses.js"></script>
 </body>

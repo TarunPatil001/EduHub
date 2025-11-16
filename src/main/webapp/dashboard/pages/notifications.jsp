@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="Notifications - Dashboard - EduHub"/>
         <jsp:param name="description" value="View all notifications in EduHub"/>
     </jsp:include>
@@ -172,14 +172,14 @@
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <jsp:include page="../components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="notifications"/>
         </jsp:include>
         
         <!-- Main Content -->
         <div class="dashboard-main">
             <!-- Header -->
-            <jsp:include page="../components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="Notifications"/>
             </jsp:include>
             
@@ -349,7 +349,7 @@
         </div>
     </div>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script>
         // Filter notifications

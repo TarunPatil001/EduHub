@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="ID Cards & Certificates - Dashboard - EduHub"/>
         <jsp:param name="description" value="Generate student ID cards and certificates in EduHub"/>
     </jsp:include>
@@ -11,12 +11,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="id-certificates"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="ID Cards & Certificates"/>
             </jsp:include>
             
@@ -300,7 +300,7 @@
         </div>
     </div>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/id-certificates.js"></script>
 </body>

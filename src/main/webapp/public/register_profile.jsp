@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/public/components/head.jsp">
+	<jsp:include page="/dashboard/components/ui_component/head.jsp">
 		<jsp:param name="title" value="Setup Institute Profile - Step 3 - EduHub"/>
 		<jsp:param name="description" value="Complete your institute profile setup"/>
 	</jsp:include>
@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/public/components/navbar.jsp">
+	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
 		<jsp:param name="activePage" value="register"/>
 	</jsp:include>
 
@@ -77,129 +77,105 @@
 									<form action="${pageContext.request.contextPath}/public/login.jsp?registered=true" method="post" class="auth-form" enctype="multipart/form-data">
 										
 										<!-- Institute Address -->
-										<div class="form-group">
-											<label for="address" class="form-label">
-												<i class="bi bi-geo-alt"></i> Complete Address
-											</label>
-											<textarea 
-												class="form-control" 
-												id="address" 
-												name="address" 
-												rows="3" 
-												placeholder="Enter complete institute address"
-												required
-											></textarea>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="textarea"/>
+											<jsp:param name="id" value="address"/>
+											<jsp:param name="name" value="address"/>
+											<jsp:param name="icon" value="geo-alt"/>
+											<jsp:param name="label" value="Complete Address"/>
+											<jsp:param name="placeholder" value="Enter complete institute address"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="rows" value="3"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Postal Code & Established Year -->
 										<div class="row">
-											<div class="col-md-6">
-												<div class="form-group">
-													<label for="postalCode" class="form-label">
-														<i class="bi bi-mailbox"></i> Postal Code
-													</label>
-													<input 
-														type="text" 
-														class="form-control" 
-														id="postalCode" 
-														name="postalCode" 
-														placeholder="Enter postal code" 
-														required
-													>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="form-group">
-													<label for="establishedYear" class="form-label">
-														<i class="bi bi-calendar"></i> Established Year
-													</label>
-													<input 
-														type="number" 
-														class="form-control" 
-														id="establishedYear" 
-														name="establishedYear" 
-														placeholder="YYYY" 
-														min="1800" 
-														max="2026"
-														required
-													>
-												</div>
-											</div>
+											<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+												<jsp:param name="type" value="text"/>
+												<jsp:param name="id" value="postalCode"/>
+												<jsp:param name="name" value="postalCode"/>
+												<jsp:param name="icon" value="mailbox"/>
+												<jsp:param name="label" value="Postal Code"/>
+												<jsp:param name="placeholder" value="Enter postal code"/>
+												<jsp:param name="required" value="true"/>
+												<jsp:param name="class" value="col-md-6 form-group"/>
+											</jsp:include>
+											
+											<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+												<jsp:param name="type" value="number"/>
+												<jsp:param name="id" value="establishedYear"/>
+												<jsp:param name="name" value="establishedYear"/>
+												<jsp:param name="icon" value="calendar"/>
+												<jsp:param name="label" value="Established Year"/>
+												<jsp:param name="placeholder" value="YYYY"/>
+												<jsp:param name="required" value="true"/>
+												<jsp:param name="min" value="1800"/>
+												<jsp:param name="max" value="2026"/>
+												<jsp:param name="class" value="col-md-6 form-group"/>
+											</jsp:include>
 										</div>
 
 										<!-- Institute Website -->
-										<div class="form-group">
-											<label for="website" class="form-label">
-												<i class="bi bi-globe"></i> Website (Optional)
-											</label>
-											<input 
-												type="url" 
-												class="form-control" 
-												id="website" 
-												name="website" 
-												placeholder="https://www.yourinstitute.com"
-											>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="url"/>
+											<jsp:param name="id" value="website"/>
+											<jsp:param name="name" value="website"/>
+											<jsp:param name="icon" value="globe"/>
+											<jsp:param name="label" value="Website (Optional)"/>
+											<jsp:param name="placeholder" value="https://www.yourinstitute.com"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Registration Number -->
-										<div class="form-group">
-											<label for="registrationNumber" class="form-label">
-												<i class="bi bi-file-text"></i> Registration Number
-											</label>
-											<input 
-												type="text" 
-												class="form-control" 
-												id="registrationNumber" 
-												name="registrationNumber" 
-												placeholder="Enter official registration number" 
-												required
-											>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="text"/>
+											<jsp:param name="id" value="registrationNumber"/>
+											<jsp:param name="name" value="registrationNumber"/>
+											<jsp:param name="icon" value="file-text"/>
+											<jsp:param name="label" value="Registration Number"/>
+											<jsp:param name="placeholder" value="Enter official registration number"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Student Capacity -->
-										<div class="form-group">
-											<label for="studentCapacity" class="form-label">
-												<i class="bi bi-people"></i> Student Capacity
-											</label>
-											<select class="form-select" id="studentCapacity" name="studentCapacity" required>
-												<option value="" selected>Select capacity range</option>
-												<option value="0-100">0 - 100 students</option>
-												<option value="101-500">101 - 500 students</option>
-												<option value="501-1000">501 - 1,000 students</option>
-												<option value="1001-5000">1,001 - 5,000 students</option>
-												<option value="5000+">5,000+ students</option>
-											</select>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="select"/>
+											<jsp:param name="id" value="studentCapacity"/>
+											<jsp:param name="name" value="studentCapacity"/>
+											<jsp:param name="icon" value="people"/>
+											<jsp:param name="label" value="Student Capacity"/>
+											<jsp:param name="placeholder" value="Select capacity range"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="options" value="0-100|0 - 100 students,101-500|101 - 500 students,501-1000|501 - 1,000 students,1001-5000|1,001 - 5,000 students,5000+|5,000+ students"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Institute Logo -->
-										<div class="form-group">
-											<label for="logo" class="form-label">
-												<i class="bi bi-image"></i> Institute Logo (Optional)
-											</label>
-											<input 
-												type="file" 
-												class="form-control" 
-												id="logo" 
-												name="logo" 
-												accept="image/*"
-											>
-											<small class="form-text text-muted">Max size: 2MB. Formats: JPG, PNG</small>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="file"/>
+											<jsp:param name="id" value="logo"/>
+											<jsp:param name="name" value="logo"/>
+											<jsp:param name="icon" value="image"/>
+											<jsp:param name="label" value="Institute Logo (Optional)"/>
+											<jsp:param name="accept" value="image/*"/>
+											<jsp:param name="helperText" value="Max size: 2MB. Formats: JPG, PNG"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Description -->
-										<div class="form-group">
-											<label for="description" class="form-label">
-												<i class="bi bi-card-text"></i> About Institute
-											</label>
-											<textarea 
-												class="form-control" 
-												id="description" 
-												name="description" 
-												rows="4" 
-												placeholder="Brief description about your institute"
-												required
-											></textarea>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="textarea"/>
+											<jsp:param name="id" value="description"/>
+											<jsp:param name="name" value="description"/>
+											<jsp:param name="icon" value="card-text"/>
+											<jsp:param name="label" value="About Institute"/>
+											<jsp:param name="placeholder" value="Brief description about your institute"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="rows" value="4"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Terms & Conditions -->
 										<div class="form-check mb-4">
@@ -212,9 +188,11 @@
 										<!-- Navigation Buttons -->
 										<div class="row g-2 mb-3">
 											<div class="col-6">
-												<a href="${pageContext.request.contextPath}/public/register_admin.jsp" class="btn btn-outline-secondary w-100">
-													<i class="bi bi-arrow-left"></i> Back
-												</a>
+												<jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+													<jsp:param name="url" value="${pageContext.request.contextPath}/public/register_admin.jsp"/>
+													<jsp:param name="text" value="Back"/>
+													<jsp:param name="class" value="w-100"/>
+												</jsp:include>
 											</div>
 											<div class="col-6">
 												<button type="submit" class="btn btn-primary w-100 auth-submit-btn">
@@ -237,7 +215,7 @@
 		</div>
 	</main>
 
-	<jsp:include page="/public/components/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
 
 </body>
 </html>

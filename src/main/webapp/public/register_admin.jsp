@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/public/components/head.jsp">
+	<jsp:include page="/dashboard/components/ui_component/head.jsp">
 		<jsp:param name="title" value="Create Admin Account - Step 2 - EduHub"/>
 		<jsp:param name="description" value="Create your institute admin account"/>
 	</jsp:include>
@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/public/components/navbar.jsp">
+	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
 		<jsp:param name="activePage" value="register"/>
 	</jsp:include>
 
@@ -77,52 +77,42 @@
 									<form action="${pageContext.request.contextPath}/public/register_profile.jsp" method="post" class="auth-form">
 										
 										<!-- Admin Full Name -->
-										<div class="form-group">
-											<label for="adminName" class="form-label">
-												<i class="bi bi-person"></i> Admin Full Name
-											</label>
-											<input 
-												type="text" 
-												class="form-control" 
-												id="adminName" 
-												name="adminName" 
-												placeholder="Enter admin's full name" 
-												required
-											>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="text"/>
+											<jsp:param name="id" value="adminName"/>
+											<jsp:param name="name" value="adminName"/>
+											<jsp:param name="icon" value="person"/>
+											<jsp:param name="label" value="Admin Full Name"/>
+											<jsp:param name="placeholder" value="Enter admin's full name"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Admin Email -->
-										<div class="form-group">
-											<label for="adminEmail" class="form-label">
-												<i class="bi bi-envelope"></i> Admin Email Address
-											</label>
-											<input 
-												type="email" 
-												class="form-control" 
-												id="adminEmail" 
-												name="adminEmail" 
-												placeholder="admin@yourinstitute.com" 
-												required
-											>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="email"/>
+											<jsp:param name="id" value="adminEmail"/>
+											<jsp:param name="name" value="adminEmail"/>
+											<jsp:param name="icon" value="envelope"/>
+											<jsp:param name="label" value="Admin Email Address"/>
+											<jsp:param name="placeholder" value="admin@yourinstitute.com"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Username -->
-										<div class="form-group">
-											<label for="username" class="form-label">
-												<i class="bi bi-person-badge"></i> Username
-											</label>
-											<input 
-												type="text" 
-												class="form-control" 
-												id="username" 
-												name="username" 
-												placeholder="Choose a unique username" 
-												required
-												pattern="[a-zA-Z0-9_]{4,20}"
-												title="Username must be 4-20 characters (letters, numbers, underscore only)"
-											>
-											<small class="form-text text-muted">4-20 characters, letters, numbers, and underscore only</small>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="text"/>
+											<jsp:param name="id" value="username"/>
+											<jsp:param name="name" value="username"/>
+											<jsp:param name="icon" value="person-badge"/>
+											<jsp:param name="label" value="Username"/>
+											<jsp:param name="placeholder" value="Choose a unique username"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="pattern" value="[a-zA-Z0-9_]{4,20}"/>
+											<jsp:param name="helperText" value="4-20 characters, letters, numbers, and underscore only"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Password -->
 										<div class="form-group">
@@ -167,26 +157,25 @@
 										</div>
 
 										<!-- Phone Number -->
-										<div class="form-group">
-											<label for="adminPhone" class="form-label">
-												<i class="bi bi-phone"></i> Phone Number
-											</label>
-											<input 
-												type="tel" 
-												class="form-control" 
-												id="adminPhone" 
-												name="adminPhone" 
-												placeholder="+1 (555) 000-0000" 
-												required
-											>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="tel"/>
+											<jsp:param name="id" value="adminPhone"/>
+											<jsp:param name="name" value="adminPhone"/>
+											<jsp:param name="icon" value="phone"/>
+											<jsp:param name="label" value="Phone Number"/>
+											<jsp:param name="placeholder" value="+1 (555) 000-0000"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Navigation Buttons -->
 										<div class="row g-2">
 											<div class="col-6">
-												<a href="${pageContext.request.contextPath}/public/register_institute.jsp" class="btn btn-outline-secondary btn-lg w-100">
-													<i class="bi bi-arrow-left"></i> Back
-												</a>
+												<jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+													<jsp:param name="url" value="${pageContext.request.contextPath}/public/register_institute.jsp"/>
+													<jsp:param name="text" value="Back"/>
+													<jsp:param name="class" value="btn-lg w-100"/>
+												</jsp:include>
 											</div>
 											<div class="col-6">
 												<button type="submit" class="btn btn-primary btn-lg w-100 auth-submit-btn">
@@ -210,7 +199,7 @@
 		</div>
 	</main>
 
-	<jsp:include page="/public/components/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
 	
 	<script>
 		function togglePassword(fieldId) {

@@ -26,15 +26,6 @@
         font-size: 0.9rem;
     }
 
-    /* Back Button Mobile - Full Width */
-    .page-header .btn-outline-secondary {
-        width: 100%;
-        justify-content: center;
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        min-height: 44px;
-    }
-
     /* Form Mobile Optimization */
     .card-custom {
         padding: 1rem;
@@ -48,8 +39,8 @@
     /* Form Controls */
     .form-control,
     .form-select {
-        font-size: 0.95rem;
-        min-height: 44px;
+        font-size: 0.875rem;
+        height: 38px;
     }
 
     .form-label {

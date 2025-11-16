@@ -182,7 +182,7 @@ Edit CSS variables in `dashboard/css/dashboard.css`:
 ```
 
 ### Sidebar Menu
-Edit `dashboard/components/sidebar.jsp` to add/remove menu items.
+Edit `dashboard/components/ui_component/sidebar.jsp` to add/remove menu items.
 
 ### Header Actions
-Edit `dashboard/components/header.jsp` to customize notifications and profile menu.
+Edit `dashboard/components/ui_component/header.jsp` to customize notifications and profile menu.

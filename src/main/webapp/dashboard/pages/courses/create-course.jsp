@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="Create Course - Dashboard - EduHub"/>
         <jsp:param name="description" value="Create new course in EduHub"/>
     </jsp:include>
@@ -11,25 +11,29 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="create-course"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="Create Course"/>
             </jsp:include>
             
             <div class="dashboard-content">
-                <div class="page-header mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2>Create New Course</h2>
-                            <p class="text-muted">Fill in the course details below</p>
-                        </div>
-                        <a href="${pageContext.request.contextPath}/dashboard/pages/courses/all-courses.jsp" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Back to Courses
-                        </a>
+                <div class="page-header-wrapper mb-4">
+                    <!-- Page Heading -->
+                    <div class="page-title-container">
+                        <h2>Create New Course</h2>
+                        <p class="text-muted">Fill in the course details below</p>
+                    </div>
+                    
+                    <!-- Back Button -->
+                    <div class="back-button-container">
+                        <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                            <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/courses/all-courses.jsp"/>
+                            <jsp:param name="text" value="Back to Courses"/>
+                        </jsp:include>
                     </div>
                 </div>
                 
@@ -42,38 +46,49 @@
                                 <h5 class="mb-4"><i class="bi bi-info-circle-fill"></i> Basic Information</h5>
                                 
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="courseCode" class="form-label">Course Code <span class="required-star">*</span></label>
-                                        <input type="text" class="form-control" id="courseCode" name="courseCode" required placeholder="e.g., CS-101">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="courseName" class="form-label">Course Name <span class="required-star">*</span></label>
-                                        <input type="text" class="form-control" id="courseName" name="courseName" required placeholder="e.g., Introduction to Computer Science">
-                                    </div>
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="courseCode"/>
+                                        <jsp:param name="name" value="courseCode"/>
+                                        <jsp:param name="label" value="Course Code"/>
+                                        <jsp:param name="placeholder" value="e.g., CS-101"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="courseName"/>
+                                        <jsp:param name="name" value="courseName"/>
+                                        <jsp:param name="label" value="Course Name"/>
+                                        <jsp:param name="placeholder" value="e.g., Introduction to Computer Science"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
                                 </div>
                                 
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="category" class="form-label">Category <span class="required-star">*</span></label>
-                                        <select class="form-select" id="category" name="category" required>
-                                            <option value="">Select Category</option>
-                                            <option value="science">Science</option>
-                                            <option value="technology">Technology</option>
-                                            <option value="mathematics">Mathematics</option>
-                                            <option value="arts">Arts</option>
-                                            <option value="commerce">Commerce</option>
-                                            <option value="language">Language</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="level" class="form-label">Level <span class="required-star">*</span></label>
-                                        <select class="form-select" id="level" name="level" required>
-                                            <option value="">Select Level</option>
-                                            <option value="beginner">Beginner</option>
-                                            <option value="intermediate">Intermediate</option>
-                                            <option value="advanced">Advanced</option>
-                                        </select>
-                                    </div>
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="category"/>
+                                        <jsp:param name="name" value="category"/>
+                                        <jsp:param name="label" value="Category"/>
+                                        <jsp:param name="placeholder" value="Select Category"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="science|Science,technology|Technology,mathematics|Mathematics,arts|Arts,commerce|Commerce,language|Language"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="level"/>
+                                        <jsp:param name="name" value="level"/>
+                                        <jsp:param name="label" value="Level"/>
+                                        <jsp:param name="placeholder" value="Select Level"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="beginner|Beginner,intermediate|Intermediate,advanced|Advanced"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
                                 </div>
                                 
                                 <div class="mb-3">
@@ -152,10 +167,10 @@
     </div>
 
     <!-- Use existing dashboard components -->
-    <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/courses/js/create-course.js"></script>
 </body>

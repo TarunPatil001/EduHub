@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="Record Payment - Dashboard - EduHub"/>
         <jsp:param name="description" value="Record student fee payment in EduHub"/>
     </jsp:include>
@@ -12,26 +12,30 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="record-payment"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="Record Payment"/>
             </jsp:include>
             
             <div class="dashboard-content">
                 <!-- Page Header -->
-                <div class="page-header mb-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                        <div>
-                            <h2 class="mb-1">Record Payment</h2>
-                            <p class="text-muted mb-0">Record student fee payment transactions</p>
-                        </div>
-                        <a href="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Back to Fees
-                        </a>
+                <div class="page-header-wrapper mb-4">
+                    <!-- Page Heading -->
+                    <div class="page-title-container">
+                        <h2 class="mb-1">Record Payment</h2>
+                        <p class="text-muted mb-0">Record student fee payment transactions</p>
+                    </div>
+                    
+                    <!-- Back Button -->
+                    <div class="back-button-container">
+                        <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                            <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp"/>
+                            <jsp:param name="text" value="Back to Fees"/>
+                        </jsp:include>
                     </div>
                 </div>
 
@@ -105,38 +109,50 @@
                                 <h5 class="mb-4"><i class="bi bi-credit-card"></i> Payment Details</h5>
                                 
                                 <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Payment Amount <span class="required-star">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">₹</span>
-                                            <input type="number" class="form-control" id="paymentAmount" placeholder="Enter amount" required min="0.01" step="0.01" max="9999999">
-                                        </div>
-                                        <small class="text-muted" id="amountHelper"></small>
-                                        <div class="invalid-feedback">Please enter a valid payment amount</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Payment Date <span class="required-star">*</span></label>
-                                        <input type="date" class="form-control" id="paymentDate" required max="">
-                                        <small class="text-muted">Cannot be a future date</small>
-                                        <div class="invalid-feedback">Please select a valid date</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Payment Method <span class="required-star">*</span></label>
-                                        <select class="form-select" id="paymentMethod" required>
-                                            <option value="">Select payment method</option>
-                                            <option value="Cash">Cash</option>
-                                            <option value="Online Transfer">Online Transfer (UPI/NEFT/IMPS)</option>
-                                            <option value="Credit Card">Credit Card</option>
-                                            <option value="Debit Card">Debit Card</option>
-                                            <option value="Cheque">Cheque</option>
-                                            <option value="Demand Draft">Demand Draft</option>
-                                        </select>
-                                        <div class="invalid-feedback">Please select a payment method</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Receipt Number</label>
-                                        <input type="text" class="form-control" id="receiptNumber" placeholder="Auto-generated" readonly>
-                                    </div>
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="number"/>
+                                        <jsp:param name="id" value="paymentAmount"/>
+                                        <jsp:param name="label" value="Payment Amount"/>
+                                        <jsp:param name="placeholder" value="Enter amount"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="min" value="0.01"/>
+                                        <jsp:param name="step" value="0.01"/>
+                                        <jsp:param name="max" value="9999999"/>
+                                        <jsp:param name="prepend" value="₹"/>
+                                        <jsp:param name="errorText" value="Please enter a valid payment amount"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="date"/>
+                                        <jsp:param name="id" value="paymentDate"/>
+                                        <jsp:param name="label" value="Payment Date"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="max" value=""/>
+                                        <jsp:param name="helperText" value="Cannot be a future date"/>
+                                        <jsp:param name="errorText" value="Please select a valid date"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="paymentMethod"/>
+                                        <jsp:param name="label" value="Payment Method"/>
+                                        <jsp:param name="placeholder" value="Select payment method"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="Cash|Cash,Online Transfer|Online Transfer (UPI/NEFT/IMPS),Credit Card|Credit Card,Debit Card|Debit Card,Cheque|Cheque,Demand Draft|Demand Draft"/>
+                                        <jsp:param name="errorText" value="Please select a payment method"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="receiptNumber"/>
+                                        <jsp:param name="label" value="Receipt Number"/>
+                                        <jsp:param name="placeholder" value="Auto-generated"/>
+                                        <jsp:param name="readonly" value="true"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
                                 </div>
                             </div>
 
@@ -145,23 +161,39 @@
                                 <h5 class="mb-4"><i class="bi bi-receipt"></i> Transaction Details</h5>
                                 
                                 <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Transaction ID / Reference Number</label>
-                                        <input type="text" class="form-control" id="transactionId" placeholder="For online/card payments">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Bank Name</label>
-                                        <input type="text" class="form-control" id="bankName" placeholder="If applicable">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="form-label">Payment Notes</label>
-                                        <textarea class="form-control" id="paymentNotes" rows="3" placeholder="Add any additional notes or remarks..."></textarea>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="form-label">Attach Receipt/Proof (Optional)</label>
-                                        <input type="file" class="form-control" id="paymentProof" accept="image/*,.pdf">
-                                        <small class="text-muted">Supported formats: JPG, PNG, PDF (Max 5MB)</small>
-                                    </div>
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="transactionId"/>
+                                        <jsp:param name="label" value="Transaction ID / Reference Number"/>
+                                        <jsp:param name="placeholder" value="For online/card payments"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="bankName"/>
+                                        <jsp:param name="label" value="Bank Name"/>
+                                        <jsp:param name="placeholder" value="If applicable"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="textarea"/>
+                                        <jsp:param name="id" value="paymentNotes"/>
+                                        <jsp:param name="label" value="Payment Notes"/>
+                                        <jsp:param name="placeholder" value="Add any additional notes or remarks..."/>
+                                        <jsp:param name="rows" value="3"/>
+                                        <jsp:param name="class" value="col-md-12"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:param name="type" value="file"/>
+                                        <jsp:param name="id" value="paymentProof"/>
+                                        <jsp:param name="label" value="Attach Receipt/Proof (Optional)"/>
+                                        <jsp:param name="accept" value="image/*,.pdf"/>
+                                        <jsp:param name="helperText" value="Supported formats: JPG, PNG, PDF (Max 5MB)"/>
+                                        <jsp:param name="class" value="col-md-12"/>
+                                    </jsp:include>
                                 </div>
                             </div>
 
@@ -236,10 +268,10 @@
     </div>
     
     <!-- Include Reusable Components -->
-    <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/record-payment.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/payment-history.js"></script>

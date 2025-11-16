@@ -10,17 +10,19 @@
 <header class="dashboard-header">
     <div class="header-left">
         <button class="btn-toggle-sidebar" id="toggleSidebar">
-            <i class="bi bi-list"></i>
+            <i class="bi bi-layout-sidebar-inset"></i>
         </button>
-        <h5 class="mb-0">${param.pageTitle != null ? param.pageTitle : 'Dashboard'}</h5>
+        <h5 class="mb-0">
+            <span class="desktop-title">${param.pageTitle != null ? param.pageTitle : 'Dashboard'}</span>
+            <span class="mobile-title">
+                ${param.pageTitle != null && param.pageTitle.contains('Dashboard Overview') ? 'Dashboard' : 
+                  (param.pageTitle != null && param.pageTitle.length() > 15 ? param.pageTitle.substring(0, 15).concat('...') : 
+                  (param.pageTitle != null ? param.pageTitle : 'Dashboard'))}
+            </span>
+        </h5>
     </div>
     
     <div class="header-right">
-        <div class="header-search d-none d-md-block">
-            <i class="bi bi-search"></i>
-            <input type="text" class="form-control" placeholder="Search...">
-        </div>
-        
         <div class="header-notifications dropdown">
             <button class="btn-icon" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-bell"></i>
@@ -105,9 +107,6 @@
                 <i class="bi bi-chevron-down"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-end">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/dashboard/pages/profile.jsp">
-                    <i class="bi bi-person"></i> My Profile
-                </a>
                 <a class="dropdown-item" href="${pageContext.request.contextPath}/dashboard/pages/settings.jsp">
                     <i class="bi bi-gear"></i> Settings
                 </a>

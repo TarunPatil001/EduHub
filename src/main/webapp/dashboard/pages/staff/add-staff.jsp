@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="Add Staff - Dashboard - EduHub"/>
         <jsp:param name="description" value="Add new staff member in EduHub"/>
     </jsp:include>
@@ -249,19 +249,30 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="add-staff"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="Add Staff"/>
             </jsp:include>
             
             <div class="dashboard-content">
-                <div class="page-header">
-                    <h2>Add New Staff Member</h2>
-                    <p>Register a new staff member in the system</p>
+                <div class="page-header-wrapper">
+                    <!-- Page Heading -->
+                    <div class="page-title-container">
+                        <h2>Add New Staff Member</h2>
+                        <p>Register a new staff member in the system</p>
+                    </div>
+                    
+                    <!-- Back Button -->
+                    <div class="back-button-container">
+                        <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                            <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp"/>
+                            <jsp:param name="text" value="Back to Staff"/>
+                        </jsp:include>
+                    </div>
                 </div>
                 
                 <div class="add-staff-container">
@@ -736,9 +747,10 @@
                             <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
                                 <i class="bi bi-x-circle"></i> Clear Form
                             </button>
-                            <button type="button" class="btn btn-secondary" onclick="window.location.href='${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp'">
-                                <i class="bi bi-arrow-left"></i> Cancel
-                            </button>
+                            <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                                <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp"/>
+                                <jsp:param name="text" value="Cancel"/>
+                            </jsp:include>
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle"></i> Add Staff Member
                             </button>
@@ -749,14 +761,14 @@
         </div>
     </div>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     
     <!-- Include Reusable Modal Component -->
-    <jsp:include page="/dashboard/components/modal.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
     
     <script>
         // Photo preview functionality

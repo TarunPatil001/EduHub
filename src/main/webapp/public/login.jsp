@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/public/components/head.jsp">
+	<jsp:include page="/dashboard/components/ui_component/head.jsp">
 		<jsp:param name="title" value="Institute Login - EduHub"/>
 		<jsp:param name="description" value="Login to your institute dashboard on EduHub"/>
 	</jsp:include>
@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/public/components/navbar.jsp">
+	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
 		<jsp:param name="activePage" value="login"/>
 	</jsp:include>
 
@@ -78,20 +78,17 @@
 
 									<form action="${pageContext.request.contextPath}/login" method="post" class="auth-form">
 										<!-- Institute ID / Email -->
-										<div class="form-group">
-											<label for="username" class="form-label">
-												<i class="bi bi-building"></i> Institute ID / Email
-											</label>
-											<input 
-												type="text" 
-												class="form-control" 
-												id="username" 
-												name="username" 
-												placeholder="Enter your institute ID or email" 
-												required
-												autocomplete="username"
-											>
-										</div>
+										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:param name="type" value="text"/>
+											<jsp:param name="id" value="username"/>
+											<jsp:param name="name" value="username"/>
+											<jsp:param name="icon" value="building"/>
+											<jsp:param name="label" value="Institute ID / Email"/>
+											<jsp:param name="placeholder" value="Enter your institute ID or email"/>
+											<jsp:param name="required" value="true"/>
+											<jsp:param name="autocomplete" value="username"/>
+											<jsp:param name="class" value="form-group"/>
+										</jsp:include>
 
 										<!-- Password -->
 										<div class="form-group">
@@ -157,7 +154,7 @@
 		</div>
 	</main>
 
-	<jsp:include page="/public/components/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
 	
 	<script>
 		function togglePassword(fieldId) {

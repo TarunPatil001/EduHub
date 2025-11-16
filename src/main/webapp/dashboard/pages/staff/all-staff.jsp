@@ -121,7 +121,7 @@ pageContext.setAttribute("staffList", staffList);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="All Staff - Dashboard - EduHub"/>
         <jsp:param name="description" value="View all staff members in EduHub"/>
     </jsp:include>
@@ -130,23 +130,26 @@ pageContext.setAttribute("staffList", staffList);
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="all-staff"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="All Staff"/>
             </jsp:include>
             
             <div class="dashboard-content">
                 <!-- Page Header -->
-                <div class="page-header mb-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                        <div>
-                            <h2 class="mb-1">All Staff Members</h2>
-                            <p class="text-muted mb-0">Manage and view all staff members</p>
-                        </div>
+                <div class="page-header-wrapper mb-4">
+                    <!-- Page Heading -->
+                    <div class="page-title-container">
+                        <h2 class="mb-1">All Staff Members</h2>
+                        <p class="text-muted mb-0">Manage and view all staff members</p>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="back-button-container">
                         <div class="d-flex align-items-center gap-2 flex-wrap">
                             <!-- Bulk Delete Button (hidden by default) -->
                             <button class="btn btn-danger" id="bulkDeleteBtn" style="display: none;">
@@ -440,12 +443,12 @@ pageContext.setAttribute("staffList", staffList);
     </div>
     
     <!-- Include Reusable Modal Component -->
-    <jsp:include page="/dashboard/components/modal.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/staff/js/all-staff.js"></script>
 </body>

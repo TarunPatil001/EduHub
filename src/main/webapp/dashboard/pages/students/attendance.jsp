@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="Student Attendance - EduHub"/>
         <jsp:param name="description" value="Fast and efficient attendance marking system"/>
     </jsp:include>
@@ -11,12 +11,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="student-attendance"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="Student Attendance"/>
             </jsp:include>
             
@@ -44,26 +44,31 @@
                     <h5 class="mb-4"><i class="bi bi-funnel-fill"></i> Filter Options</h5>
                     
                     <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="classSelect" class="form-label">Class / Section <span class="required-star">*</span></label>
-                            <select id="classSelect" class="form-select">
-                                <option value="">Select Class</option>
-                                <option value="class-10a">Class 10-A</option>
-                                <option value="class-10b">Class 10-B</option>
-                                <option value="class-11a">Class 11-A</option>
-                                <option value="class-11b">Class 11-B</option>
-                                <option value="class-12a">Class 12-A</option>
-                                <option value="class-12b">Class 12-B</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="dateInput" class="form-label">Date <span class="required-star">*</span></label>
-                            <input type="date" id="dateInput" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="searchInput" class="form-label">Search Students</label>
-                            <input type="text" id="searchInput" class="form-control" placeholder="Search by name or roll...">
-                        </div>
+                        <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                            <jsp:param name="type" value="select"/>
+                            <jsp:param name="id" value="classSelect"/>
+                            <jsp:param name="label" value="Class / Section"/>
+                            <jsp:param name="placeholder" value="Select Class"/>
+                            <jsp:param name="required" value="true"/>
+                            <jsp:param name="options" value="class-10a|Class 10-A,class-10b|Class 10-B,class-11a|Class 11-A,class-11b|Class 11-B,class-12a|Class 12-A,class-12b|Class 12-B"/>
+                            <jsp:param name="class" value="col-md-4"/>
+                        </jsp:include>
+                        
+                        <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                            <jsp:param name="type" value="date"/>
+                            <jsp:param name="id" value="dateInput"/>
+                            <jsp:param name="label" value="Date"/>
+                            <jsp:param name="required" value="true"/>
+                            <jsp:param name="class" value="col-md-4"/>
+                        </jsp:include>
+                        
+                        <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                            <jsp:param name="type" value="text"/>
+                            <jsp:param name="id" value="searchInput"/>
+                            <jsp:param name="label" value="Search Students"/>
+                            <jsp:param name="placeholder" value="Search by name or roll..."/>
+                            <jsp:param name="class" value="col-md-4"/>
+                        </jsp:include>
                     </div>
                 </div>
 
@@ -166,10 +171,10 @@
     </div>
 
     <!-- Use existing dashboard components -->
-    <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/attendance.js"></script>
 </body>

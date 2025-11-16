@@ -125,13 +125,13 @@
 }
 
 .year-picker-dropdown {
-    position: absolute;
+    position: fixed;
     background: white;
     border: 1px solid #dee2e6;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     padding: 15px;
-    z-index: 1000;
+    z-index: 1050;
     max-height: 300px;
     overflow-y: auto;
     display: none;

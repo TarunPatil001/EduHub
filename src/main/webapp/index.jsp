@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/public/components/head.jsp">
+	<jsp:include page="/dashboard/components/ui_component/head.jsp">
 		<jsp:param name="title" value="Home - EduHub"/>
 		<jsp:param name="description" value="A comprehensive web-based educational management system designed to streamline the management of students, faculty, attendance, courses, and communication — all in one centralized hub."/>
 	</jsp:include>
@@ -10,24 +10,24 @@
 </head>
 <body style="padding-top: 80px;">
 	<!-- Navigation -->
-	<jsp:include page="/public/components/navbar.jsp">
+	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
 		<jsp:param name="activePage" value="home"/>
 	</jsp:include>
 	
 	<!-- Main Content -->
 	<main>
-		<jsp:include page="/public/components/hero.jsp"/>
-		<jsp:include page="/public/components/features.jsp"/>
-		<jsp:include page="/public/components/cta.jsp"/>
+		<jsp:include page="/dashboard/components/ui_component/hero.jsp"/>
+		<jsp:include page="/dashboard/components/ui_component/features.jsp"/>
+		<jsp:include page="/dashboard/components/ui_component/cta.jsp"/>
 	</main>
 	
 	<!-- Footer -->
 	<footer>
-		<jsp:include page="/public/components/footer.jsp"/>
+		<jsp:include page="/dashboard/components/ui_component/footer.jsp"/>
 	</footer>
 	
 	<!-- Scripts -->
-	<jsp:include page="/public/components/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
 	
 	<script>
 		// Adjust body padding for fixed navbar on different screen sizes

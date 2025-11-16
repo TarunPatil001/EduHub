@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/public/components/head.jsp">
+    <jsp:include page="/dashboard/components/ui_component/head.jsp">
         <jsp:param name="title" value="Performance Reports - Dashboard - EduHub"/>
         <jsp:param name="description" value="View student performance reports in EduHub"/>
     </jsp:include>
@@ -10,12 +10,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/sidebar.jsp">
+        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
             <jsp:param name="activePage" value="performance-reports"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/header.jsp">
+            <jsp:include page="/dashboard/components/ui_component/header.jsp">
                 <jsp:param name="pageTitle" value="Performance Reports"/>
             </jsp:include>
             
@@ -260,11 +260,11 @@
                             <span class="small text-muted" id="recordInfo">Showing 1-10 of 12 records</span>
                             <div class="d-flex align-items-center gap-2">
                                 <label class="mb-0 small text-muted">Show:</label>
-                                <select id="itemsPerPage" class="form-select form-select-sm" style="width: 70px;">
-                                    <option value="5">5</option>
-                                    <option value="10" selected>10</option>
+                                <select id="itemsPerPage" class="form-select form-select-sm">
+                                    <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
+                                    <option value="100">100</option>
                                 </select>
                             </div>
                         </div>
@@ -288,12 +288,12 @@
         </div>
     </div>
     
-    <jsp:include page="/public/components/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/performance-reports.js"></script>
     
     <!-- Include Toast and Modal Components -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
-    <jsp:include page="/dashboard/components/modal.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
 </body>
 </html>
