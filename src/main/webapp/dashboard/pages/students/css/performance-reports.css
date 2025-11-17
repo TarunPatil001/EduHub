@@ -1,0 +1,93 @@
+/**
+ * Performance Reports Page - Custom Styles
+ * Clean and professional styling for student performance data
+ */
+
+/* Stats Cards Styling */
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.stat-icon i {
+    font-size: 1.75rem;
+}
+
+/* Avatar Styling for Student Names */
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Table Enhancements */
+.table-custom thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.75rem;
+}
+
+.table-custom tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table-custom td {
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+/* Badge Styling */
+.badge {
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .stat-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .avatar-sm {
+        display: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .page-header-wrapper,
+    .card-custom:first-child,
+    .btn,
+    .pagination {
+        display: none !important;
+    }
+    
+    .table {
+        font-size: 0.85rem;
+    }
+}
