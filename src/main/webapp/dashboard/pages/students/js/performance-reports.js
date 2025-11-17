@@ -16,18 +16,18 @@
 
     // Sample data (replace with actual API calls)
     const sampleStudents = [
-        { rollNo: 'CS001', name: 'John Doe', department: 'Computer Science', semester: 3, batch: '2024', machineTest: 45, machineTestMax: 50, viva: 18, vivaMax: 20, percentage: 85.5, grade: 'A', status: 'Pass' },
-        { rollNo: 'EC002', name: 'Jane Smith', department: 'Electronics', semester: 2, batch: '2024', machineTest: 40, machineTestMax: 50, viva: 15, vivaMax: 20, percentage: 78.2, grade: 'B', status: 'Pass' },
-        { rollNo: 'ME003', name: 'Mike Johnson', department: 'Mechanical', semester: 4, batch: '2023', machineTest: 32, machineTestMax: 50, viva: 13, vivaMax: 20, percentage: 65.8, grade: 'C', status: 'Pass' },
-        { rollNo: 'CS004', name: 'Sarah Williams', department: 'Computer Science', semester: 1, batch: '2024', machineTest: 48, machineTestMax: 50, viva: 19, vivaMax: 20, percentage: 92.0, grade: 'A+', status: 'Pass' },
-        { rollNo: 'CE005', name: 'David Brown', department: 'Civil', semester: 3, batch: '2023', machineTest: 20, machineTestMax: 50, viva: 9, vivaMax: 20, percentage: 45.5, grade: 'D', status: 'Fail' },
-        { rollNo: 'EC006', name: 'Emily Davis', department: 'Electronics', semester: 2, batch: '2024', machineTest: 43, machineTestMax: 50, viva: 17, vivaMax: 20, percentage: 88.3, grade: 'A', status: 'Pass' },
-        { rollNo: 'CS007', name: 'Rajesh Kumar', department: 'Computer Science', semester: 3, batch: '2024', machineTest: 47, machineTestMax: 50, viva: 19, vivaMax: 20, percentage: 94.2, grade: 'A+', status: 'Pass' },
-        { rollNo: 'ME008', name: 'Priya Sharma', department: 'Mechanical', semester: 2, batch: '2023', machineTest: 38, machineTestMax: 50, viva: 16, vivaMax: 20, percentage: 77.1, grade: 'B', status: 'Pass' },
-        { rollNo: 'CE009', name: 'Amit Patel', department: 'Civil', semester: 4, batch: '2022', machineTest: 35, machineTestMax: 50, viva: 14, vivaMax: 20, percentage: 70.0, grade: 'B', status: 'Pass' },
-        { rollNo: 'EC010', name: 'Sneha Reddy', department: 'Electronics', semester: 1, batch: '2024', machineTest: 42, machineTestMax: 50, viva: 18, vivaMax: 20, percentage: 85.7, grade: 'A', status: 'Pass' },
-        { rollNo: 'CS011', name: 'Vikram Singh', department: 'Computer Science', semester: 3, batch: '2023', machineTest: 25, machineTestMax: 50, viva: 10, vivaMax: 20, percentage: 50.0, grade: 'D', status: 'Pass' },
-        { rollNo: 'ME012', name: 'Kavita Jain', department: 'Mechanical', semester: 2, batch: '2024', machineTest: 44, machineTestMax: 50, viva: 17, vivaMax: 20, percentage: 87.1, grade: 'A', status: 'Pass' },
+        { rollNo: 'CS001', name: 'John Doe', department: 'Computer Science', semester: 3, batch: '2024', machineTest: 45, machineTestMax: 50, viva: 85, vivaMax: 100, percentage: 86.7, grade: 'A', status: 'Pass' },
+        { rollNo: 'EC002', name: 'Jane Smith', department: 'Electronics', semester: 2, batch: '2024', machineTest: 40, machineTestMax: 50, viva: 75, vivaMax: 100, percentage: 76.7, grade: 'B', status: 'Pass' },
+        { rollNo: 'ME003', name: 'Mike Johnson', department: 'Mechanical', semester: 4, batch: '2023', machineTest: 32, machineTestMax: 50, viva: 68, vivaMax: 100, percentage: 66.7, grade: 'C', status: 'Pass' },
+        { rollNo: 'CS004', name: 'Sarah Williams', department: 'Computer Science', semester: 1, batch: '2024', machineTest: 48, machineTestMax: 50, viva: 92, vivaMax: 100, percentage: 93.3, grade: 'A+', status: 'Pass' },
+        { rollNo: 'CE005', name: 'David Brown', department: 'Civil', semester: 3, batch: '2023', machineTest: 20, machineTestMax: 50, viva: 45, vivaMax: 100, percentage: 43.3, grade: 'D', status: 'Fail' },
+        { rollNo: 'EC006', name: 'Emily Davis', department: 'Electronics', semester: 2, batch: '2024', machineTest: 43, machineTestMax: 50, viva: 88, vivaMax: 100, percentage: 87.3, grade: 'A', status: 'Pass' },
+        { rollNo: 'CS007', name: 'Rajesh Kumar', department: 'Computer Science', semester: 3, batch: '2024', machineTest: 47, machineTestMax: 50, viva: 95, vivaMax: 100, percentage: 94.7, grade: 'A+', status: 'Pass' },
+        { rollNo: 'ME008', name: 'Priya Sharma', department: 'Mechanical', semester: 2, batch: '2023', machineTest: 38, machineTestMax: 50, viva: 78, vivaMax: 100, percentage: 77.3, grade: 'B', status: 'Pass' },
+        { rollNo: 'CE009', name: 'Amit Patel', department: 'Civil', semester: 4, batch: '2022', machineTest: 35, machineTestMax: 50, viva: 72, vivaMax: 100, percentage: 71.3, grade: 'B', status: 'Pass' },
+        { rollNo: 'EC010', name: 'Sneha Reddy', department: 'Electronics', semester: 1, batch: '2024', machineTest: 42, machineTestMax: 50, viva: 86, vivaMax: 100, percentage: 85.3, grade: 'A', status: 'Pass' },
+        { rollNo: 'CS011', name: 'Vikram Singh', department: 'Computer Science', semester: 3, batch: '2023', machineTest: 25, machineTestMax: 50, viva: 55, vivaMax: 100, percentage: 53.3, grade: 'D', status: 'Pass' },
+        { rollNo: 'ME012', name: 'Kavita Jain', department: 'Mechanical', semester: 2, batch: '2024', machineTest: 44, machineTestMax: 50, viva: 87, vivaMax: 100, percentage: 87.3, grade: 'A', status: 'Pass' },
     ];
 
     // Initialize on page load
@@ -78,14 +78,14 @@
      * Setup filter listeners for automatic application
      */
     function setupFilterListeners() {
-        // Get filter elements by ID for precise control
-        const filterDepartment = document.getElementById('filterDepartment');
+        // Get filter elements by ID - matching the JSP IDs
+        const filterCourse = document.getElementById('filterCourse');
         const filterBatch = document.getElementById('filterBatch');
-        const filterSemester = document.getElementById('filterSemester');
+        const filterGrade = document.getElementById('filterGrade');
         const filterStatus = document.getElementById('filterStatus');
 
         // Add change listeners to each filter
-        [filterDepartment, filterBatch, filterSemester, filterStatus].forEach(filter => {
+        [filterCourse, filterBatch, filterGrade, filterStatus].forEach(filter => {
             if (filter) {
                 filter.addEventListener('change', function() {
                     applyFilters();
@@ -160,9 +160,9 @@
      * Setup table sorting
      */
     function setupTableSorting() {
-        const headers = document.querySelectorAll('.table-custom thead th');
+        const headers = document.querySelectorAll('#performanceTable thead th');
         headers.forEach((header, index) => {
-            const columnMap = ['rollNo', 'name', 'department', 'semester', 'machineTest', 'viva', 'percentage', 'grade', 'status'];
+            const columnMap = ['rollNo', 'name', 'department', 'batch', 'attendance', 'machineTest', 'viva', 'percentage', 'grade', 'status'];
             if (index < columnMap.length) {
                 header.style.cursor = 'pointer';
                 header.style.userSelect = 'none';
@@ -187,7 +187,7 @@
         }
 
         // Update header icons
-        const allHeaders = document.querySelectorAll('.table-custom thead th');
+        const allHeaders = document.querySelectorAll('#performanceTable thead th');
         allHeaders.forEach(h => {
             const icon = h.querySelector('i');
             if (icon) {
@@ -278,15 +278,15 @@
      * Reset filters
      */
     function resetFilters() {
-        // Reset all filter dropdowns by ID
-        const filterDepartment = document.getElementById('filterDepartment');
+        // Reset all filter dropdowns by ID - matching JSP IDs
+        const filterCourse = document.getElementById('filterCourse');
         const filterBatch = document.getElementById('filterBatch');
-        const filterSemester = document.getElementById('filterSemester');
+        const filterGrade = document.getElementById('filterGrade');
         const filterStatus = document.getElementById('filterStatus');
 
-        if (filterDepartment) filterDepartment.selectedIndex = 0;
+        if (filterCourse) filterCourse.selectedIndex = 0;
         if (filterBatch) filterBatch.selectedIndex = 0;
-        if (filterSemester) filterSemester.selectedIndex = 0;
+        if (filterGrade) filterGrade.selectedIndex = 0;
         if (filterStatus) filterStatus.selectedIndex = 0;
 
         // Clear search input
@@ -308,7 +308,7 @@
         updateStatistics();
         
         // Reset table headers
-        const allHeaders = document.querySelectorAll('.table-custom thead th');
+        const allHeaders = document.querySelectorAll('#performanceTable thead th');
         allHeaders.forEach(h => {
             const icon = h.querySelector('i');
             if (icon) {
@@ -327,29 +327,29 @@
      * Apply current filter values
      */
     function applyCurrentFilters(data) {
-        const filterDepartment = document.getElementById('filterDepartment');
+        const filterCourse = document.getElementById('filterCourse');
         const filterBatch = document.getElementById('filterBatch');
-        const filterSemester = document.getElementById('filterSemester');
+        const filterGrade = document.getElementById('filterGrade');
         const filterStatus = document.getElementById('filterStatus');
 
-        const department = filterDepartment ? filterDepartment.value : '';
+        const course = filterCourse ? filterCourse.value : '';
         const batch = filterBatch ? filterBatch.value : '';
-        const semester = filterSemester ? filterSemester.value : '';
+        const grade = filterGrade ? filterGrade.value : '';
         const status = filterStatus ? filterStatus.value : '';
 
         return data.filter(student => {
             let match = true;
             
-            if (department && department !== '') {
-                match = match && student.department === department;
+            if (course && course !== '') {
+                match = match && student.department === course;
             }
             
             if (batch && batch !== '') {
                 match = match && student.batch === batch;
             }
             
-            if (semester && semester !== '') {
-                match = match && student.semester === parseInt(semester);
+            if (grade && grade !== '') {
+                match = match && student.grade === grade;
             }
             
             if (status && status !== '') {
@@ -387,7 +387,7 @@
      * Render table
      */
     function renderTable() {
-        const tbody = document.querySelector('.table-custom tbody');
+        const tbody = document.getElementById('performanceTableBody');
         if (!tbody) return;
 
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -397,7 +397,7 @@
         if (pageData.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="10" class="text-center py-4">
+                    <td colspan="11" class="text-center py-5">
                         <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
                         <p class="text-muted mt-2 mb-0">No records found</p>
                     </td>
@@ -408,116 +408,212 @@
             return;
         }
 
-        tbody.innerHTML = pageData.map(student => `
-            <tr>
-                <td><strong>${escapeHtml(student.rollNo)}</strong></td>
-                <td>${escapeHtml(student.name)}</td>
-                <td>${escapeHtml(student.department)}</td>
-                <td>${student.semester}</td>
-                <td><span class="badge ${getScoreBadgeClass(student.machineTest, student.machineTestMax)}">${student.machineTest}/${student.machineTestMax}</span></td>
-                <td><span class="badge ${getScoreBadgeClass(student.viva, student.vivaMax)}">${student.viva}/${student.vivaMax}</span></td>
-                <td><span class="badge ${getPercentageBadgeClass(student.percentage)}">${student.percentage.toFixed(1)}%</span></td>
-                <td><span class="badge ${getGradeBadgeClass(student.grade)}">${escapeHtml(student.grade)}</span></td>
-                <td><span class="badge ${student.status === 'Pass' ? 'bg-success' : 'bg-danger'}">${escapeHtml(student.status)}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="viewStudentDetails('${escapeHtml(student.rollNo)}')" title="View Details">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = pageData.map(student => {
+            const initials = student.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const avatarColors = ['bg-primary-subtle text-primary', 'bg-success-subtle text-success', 'bg-warning-subtle text-warning', 'bg-info-subtle text-info', 'bg-danger-subtle text-danger'];
+            const avatarColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
+            
+            return `
+                <tr>
+                    <td><strong>${escapeHtml(student.rollNo)}</strong></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm ${avatarColor} me-2">${initials}</div>
+                            <span>${escapeHtml(student.name)}</span>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(student.department)}</td>
+                    <td><span class="badge bg-secondary">${student.batch}</span></td>
+                    <td>
+                        <span class="badge ${getAttendanceBadgeClass(95)}">
+                            <i class="bi bi-calendar-check me-1"></i>95%
+                        </span>
+                    </td>
+                    <td><span class="badge ${getScoreBadgeClass(student.machineTest, student.machineTestMax)}">${student.machineTest}/${student.machineTestMax}</span></td>
+                    <td><span class="badge ${getScoreBadgeClass(student.viva, student.vivaMax)}">${student.viva}/${student.vivaMax}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <strong class="${getPercentageColorClass(student.percentage)}">${student.percentage.toFixed(1)}%</strong>
+                        </div>
+                    </td>
+                    <td><span class="badge ${getGradeBadgeClass(student.grade)}">${escapeHtml(student.grade)}</span></td>
+                    <td><span class="badge ${student.status === 'Pass' ? 'bg-success' : 'bg-danger'}">${escapeHtml(student.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewDetails('${escapeHtml(student.rollNo)}')" title="View Details">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
 
         updatePagination();
         updateRecordInfo();
     }
 
     /**
-     * Update pagination
+     * Update pagination - Matching all-students table implementation
      */
     function updatePagination() {
         const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-        const pagination = document.querySelector('.pagination');
+        const pagination = document.getElementById('pagination');
         if (!pagination) return;
 
-        let paginationHtml = '';
+        pagination.innerHTML = '';
 
         // Previous button
-        paginationHtml += `
-            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">Previous</a>
-            </li>
-        `;
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a>`;
+        prevLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+        pagination.appendChild(prevLi);
 
         // Page numbers
-        const maxVisible = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+        const maxButtons = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
-        if (endPage - startPage < maxVisible - 1) {
-            startPage = Math.max(1, endPage - maxVisible + 1);
-        }
-
-        if (startPage > 1) {
-            paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(1); return false;">1</a></li>`;
-            if (startPage > 2) {
-                paginationHtml += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
-            }
+        if (endPage - startPage < maxButtons - 1) {
+            startPage = Math.max(1, endPage - maxButtons + 1);
         }
 
         for (let i = startPage; i <= endPage; i++) {
-            paginationHtml += `
-                <li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
-                </li>
-            `;
-        }
-
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                paginationHtml += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
-            }
-            paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${totalPages}); return false;">${totalPages}</a></li>`;
+            const pageLi = document.createElement('li');
+            pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            pageLi.innerHTML = `<a class="page-link" href="#"></a>`;
+            pageLi.querySelector('a').textContent = i;
+            
+            pageLi.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage = i;
+                renderTable();
+            });
+            
+            pagination.appendChild(pageLi);
         }
 
         // Next button
-        paginationHtml += `
-            <li class="page-item ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">Next</a>
-            </li>
-        `;
-
-        pagination.innerHTML = paginationHtml;
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>`;
+        nextLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+        pagination.appendChild(nextLi);
     }
 
     /**
      * Update record info
      */
     function updateRecordInfo() {
-        const recordInfo = document.getElementById('recordInfo');
-        if (recordInfo) {
-            const startIndex = (currentPage - 1) * itemsPerPage + 1;
-            const endIndex = Math.min(currentPage * itemsPerPage, filteredData.length);
-            recordInfo.textContent = filteredData.length > 0 
-                ? `Showing ${startIndex}-${endIndex} of ${filteredData.length} records`
-                : 'No records to display';
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(currentPage * itemsPerPage, filteredData.length);
+        
+        // Update the spans matching all-students table structure
+        const showingStartEl = document.getElementById('showingStart');
+        const showingEndEl = document.getElementById('showingEnd');
+        const totalEntriesEl = document.getElementById('totalEntries');
+        
+        if (showingStartEl && showingEndEl && totalEntriesEl) {
+            if (filteredData.length > 0) {
+                showingStartEl.textContent = startIndex + 1;
+                showingEndEl.textContent = endIndex;
+                totalEntriesEl.textContent = filteredData.length;
+            } else {
+                showingStartEl.textContent = '0';
+                showingEndEl.textContent = '0';
+                totalEntriesEl.textContent = '0';
+            }
         }
     }
 
     /**
-     * Change page
+     * View detailed student performance in modal
      */
-    window.changePage = function(page) {
-        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-        if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        renderTable();
-        
-        // Scroll to top of table
-        document.querySelector('.table-responsive')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.viewDetails = function(rollNo) {
+        const student = currentData.find(s => s.rollNo === rollNo);
+        if (!student) {
+            console.error('Student not found:', rollNo);
+            return;
+        }
+
+        // Populate modal with student data
+        populateStudentModal(student);
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('studentDetailsModal'));
+        modal.show();
     };
 
     /**
-     * View student details
+     * Populate student performance modal - Simplified
+     */
+    function populateStudentModal(student) {
+        // Generate initials for avatar
+        const initials = student.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        
+        // Update student header
+        document.getElementById('modalStudentAvatar').textContent = initials;
+        document.getElementById('modalStudentName').textContent = student.name;
+        document.getElementById('modalStudentRoll').textContent = student.rollNo;
+        document.getElementById('modalCourseName').textContent = student.department;
+        
+        // Update grade display
+        document.getElementById('modalOverallGrade').textContent = student.grade;
+        document.getElementById('modalOverallPercentage').textContent = student.percentage.toFixed(1) + '%';
+        
+        // Update quick stats
+        const attendance = Math.floor(Math.random() * 20) + 80;
+        document.getElementById('modalAttendance').textContent = attendance + '%';
+        document.getElementById('modalMachineTest').textContent = `${student.machineTest}/${student.machineTestMax}`;
+        document.getElementById('modalViva').textContent = `${student.viva}/${student.vivaMax}`;
+        document.getElementById('modalRank').textContent = '#' + calculateRank(student);
+        
+        // Calculate percentages
+        const machineTestPercent = ((student.machineTest / student.machineTestMax) * 100).toFixed(1);
+        const vivaPercent = ((student.viva / student.vivaMax) * 100).toFixed(1);
+        
+        // Update performance breakdown
+        document.getElementById('modalMachineTestPercent').textContent = machineTestPercent + '%';
+        document.getElementById('modalMachineTestBar').style.width = machineTestPercent + '%';
+        document.getElementById('modalVivaPercent').textContent = vivaPercent + '%';
+        document.getElementById('modalVivaBar').style.width = vivaPercent + '%';
+        document.getElementById('modalOverallPercent').textContent = student.percentage.toFixed(1) + '%';
+        document.getElementById('modalOverallBar').style.width = student.percentage.toFixed(1) + '%';
+        
+        // Update course information
+        document.getElementById('modalStudentBatch').textContent = student.batch + '-' + (parseInt(student.batch) + 1);
+        document.getElementById('modalStudentStatus').textContent = student.status;
+        document.getElementById('modalStudentStatus').className = `badge ${student.status === 'Pass' ? 'bg-success' : 'bg-danger'}`;
+        document.getElementById('modalEnrollDate').textContent = 'Jan 15, ' + student.batch;
+        
+        // Update performance summary
+        document.getElementById('modalFinalScore').textContent = student.percentage.toFixed(1) + '%';
+        document.getElementById('modalGradeBadge').textContent = student.grade;
+        document.getElementById('modalGradeBadge').className = `badge ${getGradeBadgeClass(student.grade)}`;
+        document.getElementById('modalResultStatus').textContent = student.status;
+        document.getElementById('modalResultStatus').className = `badge ${student.status === 'Pass' ? 'bg-success' : 'bg-danger'}`;
+    }
+
+    /**
+     * Export student data to PDF (mock)
+     */
+    window.exportStudentData = function() {
+        Toast.info('PDF export feature coming soon!');
+    };
+
+    /**
+     * View student details (legacy function for compatibility)
      */
     window.viewStudentDetails = function(rollNo) {
         const student = currentData.find(s => s.rollNo === rollNo);
@@ -770,8 +866,8 @@
         const topPerformers = filteredData.filter(s => s.percentage >= 90).length;
         const needAttention = filteredData.filter(s => s.percentage < 60).length;
 
-        // Update stat cards
-        const statCards = document.querySelectorAll('.card h3');
+        // Update stat cards - using the correct selector
+        const statCards = document.querySelectorAll('.card-custom h3');
         if (statCards.length >= 4) {
             statCards[0].textContent = totalStudents;
             statCards[1].textContent = avgScore.toFixed(1) + '%';
@@ -795,6 +891,13 @@
         if (percentage >= 80) return 'bg-success';
         if (percentage >= 60) return 'bg-info';
         if (percentage >= 50) return 'bg-warning';
+        return 'bg-danger';
+    }
+
+    function getAttendanceBadgeClass(attendance) {
+        if (attendance >= 90) return 'bg-success';
+        if (attendance >= 75) return 'bg-info';
+        if (attendance >= 60) return 'bg-warning';
         return 'bg-danger';
     }
 
@@ -828,10 +931,32 @@
         return currentData.reduce((sum, s) => sum + s.percentage, 0) / currentData.length;
     }
 
+    function getGradeFromPercentage(percentage) {
+        if (percentage >= 90) return 'A+';
+        if (percentage >= 80) return 'A';
+        if (percentage >= 70) return 'B';
+        if (percentage >= 60) return 'C';
+        return 'D';
+    }
+
+    function getPercentageColorClass(percentage) {
+        if (percentage >= 80) return 'text-success';
+        if (percentage >= 60) return 'text-info';
+        if (percentage >= 50) return 'text-warning';
+        return 'text-danger';
+    }
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
+
+    /**
+     * Print report (global function for page header button)
+     */
+    window.printReport = function() {
+        window.print();
+    };
 
 })();
