@@ -99,28 +99,257 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Base table styling */
-.table {
-    width: 100%;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-    vertical-align: top;
-    border-color: var(--border-color);
+/* Stats Card Enhancements */
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
 }
 
-.table > :not(caption) > * > * {
-    padding: 0.75rem;
-    background-color: transparent;
-    border-bottom-width: 1px;
-    box-shadow: inset 0 0 0 9999px transparent;
+/* ===================================
+   Enhanced Text Formatting for Dashboard
+   =================================== */
+
+/* Stats Card Text */
+.stats-card h6,
+.stats-card-title {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 0.5rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.table > tbody {
-    vertical-align: inherit;
+.stats-card h3,
+.stats-card-value {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.25rem !important;
 }
 
-.table > thead {
-    vertical-align: bottom;
+.stats-card small {
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+}
+
+/* Card Titles and Content */
+.card h5,
+.card-custom h5,
+.card-title {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 1rem !important;
+}
+
+.card h6,
+.card-custom h6 {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+.card p,
+.card-custom p {
+    font-size: 0.875rem !important;
+    line-height: 1.6 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Page Header Text */
+.page-header h2 {
+    font-size: 1.875rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.page-header p {
+    font-size: 0.95rem !important;
+    color: var(--text-secondary) !important;
+    font-weight: 400 !important;
+}
+
+/* Table Text */
+.table th {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    color: var(--text-primary) !important;
+}
+
+/* List Group Text */
+.list-group-item h6 {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.list-group-item p,
+.list-group-item small {
+    font-size: 0.8125rem !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Button Text */
+.btn {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.3px;
+}
+
+.btn-sm {
+    font-size: 0.8125rem !important;
+}
+
+.btn-lg {
+    font-size: 1rem !important;
+}
+
+/* Badge Text */
+.badge {
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.3px;
+}
+
+/* Form Label Text */
+.form-label {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Form Control Text */
+.form-control,
+.form-select {
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    color: var(--text-primary) !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-secondary) !important;
+    opacity: 0.7;
+}
+
+/* Alert Text */
+.alert h6 {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.alert p {
+    font-size: 0.875rem !important;
+    margin-bottom: 0 !important;
+}
+
+/* Sidebar Text */
+.sidebar-header h4 {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px;
+}
+
+.sidebar-nav .nav-link {
+    font-size: 0.9375rem !important;
+    font-weight: 500 !important;
+}
+
+.submenu .nav-link {
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+}
+
+/* Timeline Text */
+.timeline-content h6 {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+.timeline-content p {
+    font-size: 0.8125rem !important;
+    color: var(--text-secondary) !important;
+}
+
+.timeline-content small {
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+}
+
+/* Breadcrumb Text */
+.breadcrumb-item {
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+}
+
+.breadcrumb-item.active {
+    font-weight: 500 !important;
+}
+
+/* Dropdown Text */
+.dropdown-item {
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+}
+
+.dropdown-header {
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Notification Text */
+.notification-title {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+}
+
+.notification-message {
+    font-size: 0.8125rem !important;
+    font-weight: 400 !important;
+}
+
+.notification-time {
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+}
+
+/* Dashboard Header Text */
+.dashboard-header h5 {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Make sure all text inherits properly */
+* {
+    font-family: inherit;
+}
+
+/* Ensure proper text rendering */
+body, html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* Dark mode for tables */
@@ -790,18 +1019,67 @@ input[type="url"] {
 }
 
 body {
-    background-color: var(--body-bg);
-    color: var(--text-primary);
+    background-color: var(--body-bg) !important;
+    color: var(--text-primary) !important;
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+/* Typography - Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+h1 { font-size: 2.5rem; font-weight: 700; }
+h2 { font-size: 2rem; font-weight: 600; }
+h3 { font-size: 1.75rem; font-weight: 600; }
+h4 { font-size: 1.5rem; font-weight: 500; }
+h5 { font-size: 1.25rem; font-weight: 500; }
+h6 { font-size: 1rem; font-weight: 500; }
+
+/* Typography - Paragraphs and Text */
+p {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+span, label, a, button, input, select, textarea {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.small, small {
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+strong, b {
+    font-weight: 700;
+}
+
+.text-muted {
+    color: var(--text-secondary) !important;
 }
 
 /* Dashboard Container */
 .dashboard-container {
-    display: flex;
-    min-height: 100vh;
-    height: 100vh;
-    background-color: var(--body-bg);
+    display: flex !important;
+    min-height: 100vh !important;
     position: relative;
+    height: 100vh;
+    background-color: var(--body-bg) !important;
     overflow: hidden;
     max-width: 100vw;
     width: 100%;
@@ -994,6 +1272,7 @@ body {
     align-items: center;
     gap: 0.75rem;
     transition: all 0.2s ease;
+    border: none;
     border-left: 3px solid transparent;
     text-decoration: none;
     white-space: nowrap;
@@ -1013,6 +1292,14 @@ body {
 .sidebar-nav .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.05);
     color: white;
+}
+
+.sidebar-nav .nav-link:focus {
+    outline: none;
+    box-shadow: none;
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
 }
 
 .sidebar-nav .nav-link.active {
@@ -1051,6 +1338,7 @@ body {
 .submenu .nav-link {
     padding: 0.75rem 1.25rem 0.75rem 3rem;
     font-size: 0.875rem;
+    border: none;
     border-left: 3px solid transparent;
 }
 
@@ -1061,6 +1349,14 @@ body {
 .submenu .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.05);
     color: white;
+}
+
+.submenu .nav-link:focus {
+    outline: none;
+    box-shadow: none;
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
 }
 
 .submenu .nav-link.active {
@@ -1917,17 +2213,6 @@ body {
     }
 }
 
-/* Stat Icon Styles */
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
-
 /* Timeline Styles */
 .timeline {
     position: relative;
@@ -2188,11 +2473,6 @@ canvas {
     
     .dashboard-content {
         padding: 1rem;
-        padding-bottom: 2.5rem;
-    }
-    
-    .page-header {
-        margin-bottom: 1.25rem;
     }
     
     .page-header h2 {
@@ -2203,35 +2483,42 @@ canvas {
         font-size: 0.875rem;
     }
     
-    .header-right {
-        gap: 0.5rem;
+    .btn-profile .profile-img {
+        margin-right: 0;
     }
     
-    .stats-card {
-        padding: 1.25rem;
-    }
-    
-    .stats-card-icon {
-        width: 55px;
-        height: 55px;
-        font-size: 1.5rem;
-    }
-    
-    .stats-card-value {
-        font-size: 1.75rem;
-    }
-    
-    .stats-card-title {
-        font-size: 0.8rem;
-    }
-    
-    .card-custom {
-        padding: 1rem;
+    .header-actions .btn-icon {
+        padding: 0.5rem;
     }
 }
 
 /* Small mobile (less than 576px) */
 @media (max-width: 575px) {
+    .dashboard-content {
+        padding: 0.75rem;
+    }
+    
+    .page-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .stats-card {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-custom {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-icon {
+        font-size: 1.125rem;
+    }
+    
+    .header-actions {
+        gap: 0.25rem;
+    }
+    
     .header-left h5 {
         font-size: 0.875rem;
     }
