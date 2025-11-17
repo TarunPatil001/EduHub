@@ -1,6 +1,40 @@
-/* Auth Page Styles - Clean & Simple Bootstrap Design */
+/**
+ * ============================================================================
+ * EduHub Authentication Pages Stylesheet
+ * ============================================================================
+ * 
+ * Purpose: Styles for all authentication pages (login, register_institute, register_admin)
+ * 
+ * File Structure:
+ * 1. Typography & Custom Fonts
+ * 2. Global Styles & Variables
+ * 3. Layout System (Fixed Left Sidebar)
+ * 4. Gradient Backgrounds
+ * 5. Form Elements (Inputs, Buttons, Alerts)
+ * 6. Card Components
+ * 7. Toast Notifications
+ * 8. Animations & Effects
+ * 9. Responsive Design
+ * 
+ * Color Scheme:
+ * - Primary: #5B4FFF (Purple/Blue) - Main brand color
+ * - Hover: #4839E0 (Darker purple) - Interactive states
+ * - Background: #f8f9fa (Light gray) - Page background
+ * 
+ * Layout Pattern:
+ * - Desktop: Fixed left sidebar (5 columns) + Scrollable right form (7 columns)
+ * - Mobile: Single column, stacked layout
+ * ============================================================================
+ */
 
-/* Custom Roma Font */
+/* ============================================================================
+   1. TYPOGRAPHY & CUSTOM FONTS
+   ============================================================================ */
+
+/**
+ * Custom Roma Font - Used for branding elements (logo, headings)
+ * Provides a distinctive, professional look
+ */
 @font-face {
     font-family: 'Roma';
     src: url('../assets/fonts/RomaFont/ROMA.woff2') format('woff2'),
@@ -8,10 +42,25 @@
          url('../assets/fonts/RomaFont/ROMA.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
+    font-display: swap; /* Ensures text is visible during font load */
 }
 
-/* Global Styles */
+/* Brand logo specific styling */
+.brand-logo {
+    font-family: 'Roma', serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ============================================================================
+   2. GLOBAL STYLES & VARIABLES
+   ============================================================================ */
+
+/**
+ * Body - Base styles for all authentication pages
+ * - Uses Poppins for clean, modern typography
+ * - Sets custom Bootstrap primary color to match brand
+ */
 body {
     font-family: 'Poppins', sans-serif;
     --bs-primary: #5B4FFF;
@@ -20,36 +69,53 @@ body {
     min-height: 100vh;
 }
 
-/* Brand Logo Font */
-.brand-logo {
-    font-family: 'Roma', serif;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
+/* ============================================================================
+   3. LAYOUT SYSTEM - FIXED LEFT SIDEBAR
+   ============================================================================ */
 
-/* Left Side Gradient Background */
+/**
+ * Left Side Gradient Background
+ * - Fixed position stays in place while right side scrolls
+ * - Contains branding and registration steps
+ * - Only visible on desktop (hidden on mobile)
+ */
 .bg-gradient-primary {
     background: linear-gradient(135deg, #5B4FFF 0%, #7B6FFF 50%, #A855F7 100%);
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    width: 41.66667%; /* Bootstrap col-lg-5 width */
+    width: 41.66667%; /* Bootstrap col-lg-5 width (5/12 = 41.66%) */
     overflow-y: auto;
 }
 
-/* Right side container adjustment for fixed left side */
+/**
+ * Right Side Container - Form Area
+ * - Auto margin-left pushes it to the right of fixed sidebar
+ * - Scrollable content area for long forms
+ * - Starts from top to prevent content being cut off
+ */
 .col-lg-7 {
     margin-left: auto;
 }
 
 .col-lg-7.d-flex {
     min-height: 100vh;
-    align-items: flex-start !important;
+    align-items: flex-start !important; /* Aligns content to top */
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
 
+/* ============================================================================
+   4. GRADIENT BACKGROUNDS & DECORATIVE PATTERNS
+   ============================================================================ */
+
+/**
+ * Background Pattern Overlay
+ * - Subtle dot pattern adds visual depth
+ * - Low opacity (0.1) keeps it subtle and non-distracting
+ * - SVG pattern is scalable and lightweight
+ */
 .bg-gradient-primary::before {
     content: '';
     position: absolute;
@@ -60,12 +126,26 @@ body {
     background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
+/**
+ * Content Layering
+ * - Z-index ensures content appears above background pattern
+ * - Relative positioning creates stacking context
+ */
 .bg-gradient-primary > div {
     position: relative;
     z-index: 1;
 }
 
-/* Bootstrap Primary Color Override */
+/* ============================================================================
+   5. BOOTSTRAP COMPONENT OVERRIDES
+   ============================================================================ */
+
+/**
+ * Primary Button Customization
+ * - Overrides Bootstrap's default blue with brand purple
+ * - Maintains all Bootstrap button states (hover, active, focus)
+ * - Uses CSS custom properties for consistency
+ */
 .btn-primary {
     --bs-btn-color: #fff;
     --bs-btn-bg: #5B4FFF;
@@ -79,6 +159,11 @@ body {
     --bs-btn-active-border-color: #4839E0;
 }
 
+/**
+ * Outline Primary Button
+ * - Transparent background with colored border
+ * - Fills with color on hover
+ */
 .btn-outline-primary {
     --bs-btn-color: #5B4FFF;
     --bs-btn-border-color: #5B4FFF;
@@ -91,17 +176,39 @@ body {
     --bs-btn-active-border-color: #5B4FFF;
 }
 
-/* Card Styling */
+/* ============================================================================
+   6. CARD COMPONENTS
+   ============================================================================ */
+
+/**
+ * Card Base Styling
+ * - Rounded corners for modern look
+ * - Smooth shadow transition on hover
+ */
 .card {
     border-radius: 16px;
     transition: box-shadow 0.3s ease;
 }
 
+/**
+ * Card Hover Effect
+ * - Elevates card with enhanced shadow
+ * - Creates depth perception
+ */
 .card:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Form Controls */
+/* ============================================================================
+   7. FORM ELEMENTS
+   ============================================================================ */
+
+/**
+ * Form Control Base Styles
+ * - Consistent border radius across all inputs
+ * - Subtle border color for clean appearance
+ * - Smooth transitions for interactive states
+ */
 .form-control {
     border-radius: 8px;
     border: 1px solid #e0e0e0;
@@ -109,24 +216,43 @@ body {
     transition: all 0.3s ease;
 }
 
+/**
+ * Form Control Focus State
+ * - Brand-colored border on focus
+ * - Subtle shadow for depth
+ * - Improves user experience by clearly showing active field
+ */
 .form-control:focus {
     border-color: #5B4FFF;
     box-shadow: 0 0 0 0.2rem rgba(91, 79, 255, 0.15);
 }
 
+/**
+ * Large Form Controls
+ * - Used for primary inputs (email, password, etc.)
+ * - Larger touch targets for better UX
+ */
 .form-control-lg {
     padding: 0.875rem 1.25rem;
     font-size: 1rem;
 }
 
-/* Form Labels */
+/**
+ * Form Labels
+ * - Dark color for better readability
+ * - Consistent spacing
+ */
 .form-label {
     color: #333;
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
 
-/* Input Group */
+/**
+ * Input Group Buttons
+ * - Used for password visibility toggle
+ * - Matches input border color
+ */
 .input-group .btn-outline-secondary {
     border-color: #e0e0e0;
     color: #666;
@@ -138,7 +264,16 @@ body {
     color: #5B4FFF;
 }
 
-/* Buttons */
+/* ============================================================================
+   8. BUTTONS
+   ============================================================================ */
+
+/**
+ * Button Base Styles
+ * - Consistent border radius
+ * - Medium font weight for readability
+ * - Smooth transitions for all interactive states
+ */
 .btn {
     border-radius: 8px;
     font-weight: 500;
@@ -146,24 +281,49 @@ body {
     transition: all 0.3s ease;
 }
 
+/**
+ * Large Buttons
+ * - Used for primary actions (Sign In, Register, etc.)
+ * - Larger touch targets
+ */
 .btn-lg {
     padding: 0.875rem 1.75rem;
     font-size: 1rem;
 }
 
+/**
+ * Button Hover Effects
+ * - Subtle lift animation (-2px)
+ * - Enhanced shadow for depth
+ * - Applies to both solid and outline variants
+ */
 .btn-primary:hover,
 .btn-outline-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(91, 79, 255, 0.3);
 }
 
-/* Alerts */
+/* ============================================================================
+   9. ALERTS
+   ============================================================================ */
+
+/**
+ * Alert Base Styles
+ * - Rounded corners match overall design
+ * - No border for cleaner look
+ * - Generous padding for readability
+ */
 .alert {
     border-radius: 8px;
     border: none;
     padding: 1rem 1.25rem;
 }
 
+/**
+ * Alert Variants
+ * - Soft background colors for better readability
+ * - High contrast text colors for accessibility
+ */
 .alert-danger {
     background-color: #fee;
     color: #c33;
@@ -174,7 +334,16 @@ body {
     color: #3c3;
 }
 
-/* Links */
+/* ============================================================================
+   10. LINKS
+   ============================================================================ */
+
+/**
+ * Link Styles
+ * - Brand color for consistency
+ * - Smooth color transition
+ * - No underline for modern appearance
+ */
 a {
     color: #5B4FFF;
     transition: color 0.3s ease;
@@ -185,7 +354,16 @@ a:hover {
     color: #4839E0;
 }
 
-/* Responsive Adjustments */
+/* ============================================================================
+   11. RESPONSIVE DESIGN - TABLET & MOBILE
+   ============================================================================ */
+
+/**
+ * Tablet View (max-width: 991.98px)
+ * - Hides fixed left sidebar
+ * - Converts to single column layout
+ * - Adjusts spacing for smaller screens
+ */
 @media (max-width: 991.98px) {
     .min-vh-100 {
         min-height: auto !important;
@@ -196,6 +374,12 @@ a:hover {
     }
 }
 
+/**
+ * Mobile View (max-width: 575.98px)
+ * - Further reduces padding for very small screens
+ * - Adjusts button and input sizes
+ * - Optimizes for touch interaction
+ */
 @media (max-width: 575.98px) {
     .card-body {
         padding: 1.5rem !important;
@@ -212,7 +396,16 @@ a:hover {
     }
 }
 
-/* Animation */
+/* ============================================================================
+   12. ANIMATIONS & KEYFRAMES
+   ============================================================================ */
+
+/**
+ * Fade In Animation
+ * - Smooth entry animation for cards
+ * - Moves element from below (20px) to original position
+ * - Creates professional, polished feel
+ */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -224,10 +417,21 @@ a:hover {
     }
 }
 
+/**
+ * Card Entry Animation
+ * - Applied to all cards on page load
+ * - 0.5s duration for smooth, not jarring effect
+ */
 .card {
     animation: fadeIn 0.5s ease-out;
 }
 
+/**
+ * Float Animation
+ * - Subtle floating effect
+ * - Can be used for decorative elements
+ * - Creates sense of depth and movement
+ */
 @keyframes float {
     0%, 100% {
         transform: translateY(0px) scale(1);
@@ -237,11 +441,27 @@ a:hover {
     }
 }
 
-/* Toast Notification Styles */
+/* ============================================================================
+   13. TOAST NOTIFICATION STYLES
+   ============================================================================ */
+
+/**
+ * Toast Container
+ * - Fixed position at top-right
+ * - Max width prevents toasts from being too wide
+ * - High z-index ensures toasts appear above everything
+ */
 .toast-container {
     max-width: 350px;
 }
 
+/**
+ * Toast Base Styling
+ * - Minimum width for consistency
+ * - Enhanced shadow for visibility
+ * - Rounded corners match design system
+ * - Slide-in animation from right
+ */
 .toast {
     min-width: 280px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -250,6 +470,12 @@ a:hover {
     font-family: 'Poppins', sans-serif;
 }
 
+/**
+ * Slide In Animation
+ * - Toasts slide in from right side
+ * - Quick 0.3s animation for responsiveness
+ * - Fades in simultaneously
+ */
 @keyframes slideInRight {
     from {
         transform: translateX(100%);
@@ -261,6 +487,11 @@ a:hover {
     }
 }
 
+/**
+ * Toast Body
+ * - Generous padding for readability
+ * - Medium font weight for emphasis
+ */
 .toast-body {
     padding: 1rem 1.25rem;
     font-size: 0.95rem;
@@ -268,10 +499,23 @@ a:hover {
     font-weight: 500;
 }
 
+/**
+ * Toast Close Button
+ * - Accessible size for easy dismissal
+ */
 .toast .btn-close {
     padding: 0.5rem;
 }
 
+/**
+ * Toast Icons
+ * - Larger icons for better visibility
+ * - Different icons for different toast types (success, error, etc.)
+ */
 .toast i {
     font-size: 1.1rem;
 }
+
+/* ============================================================================
+   END OF FILE
+   ============================================================================ */

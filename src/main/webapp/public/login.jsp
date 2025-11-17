@@ -62,7 +62,7 @@
                             </div>
 
                             <!-- Login Form -->
-                            <form action="${pageContext.request.contextPath}/dashboard.jsp" method="post">
+                            <form action="${pageContext.request.contextPath}/dashboard.jsp?login=success" method="post">
                                 
                                 <!-- Email/Institute ID Field -->
                                 <div class="mb-3">
