@@ -61,31 +61,6 @@
                                 <p class="text-muted mb-0">Enter your credentials to access your account</p>
                             </div>
 
-                            <!-- Alert Messages -->
-                            <% if(request.getParameter("error") != null) { %>
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle me-2"></i>
-                                    Invalid credentials. Please try again.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            <% } %>
-                            
-                            <% if(request.getParameter("logout") != null) { %>
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    Successfully logged out.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            <% } %>
-                            
-                            <% if(request.getParameter("registered") != null) { %>
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    Registration successful! Please login.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            <% } %>
-
                             <!-- Login Form -->
                             <form action="${pageContext.request.contextPath}/dashboard.jsp" method="post">
                                 
@@ -177,23 +152,36 @@
     <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/toast-notification.js"></script>
+    <script src="${pageContext.request.contextPath}/public/js/toast-notification.js"></script>
     <script>
-        // Password toggle functionality
-        const togglePassword = document.getElementById('togglePassword');
-        const password = document.getElementById('password');
-        const toggleIcon = document.getElementById('toggleIcon');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password toggle functionality
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
 
-        togglePassword.addEventListener('click', function() {
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            
-            if(type === 'password') {
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            } else {
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    
+                    if(type === 'password') {
+                        toggleIcon.classList.remove('fa-eye-slash');
+                        toggleIcon.classList.add('fa-eye');
+                    } else {
+                        toggleIcon.classList.remove('fa-eye');
+                        toggleIcon.classList.add('fa-eye-slash');
+                    }
+                });
+            }
+
+            // Show toast on form submission
+            const loginForm = document.querySelector('form');
+            if (loginForm && typeof showToast === 'function') {
+                loginForm.addEventListener('submit', function(e) {
+                    // Show loading toast
+                    showToast('Signing in...', 'info', 2000);
+                });
             }
         });
     </script>

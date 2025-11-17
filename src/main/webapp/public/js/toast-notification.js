@@ -4,6 +4,14 @@
  */
 
 function showToast(message, type = 'success', duration = 4000) {
+    console.log('showToast called:', message, type, duration);
+    
+    // Ensure Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap is not loaded!');
+        return;
+    }
+    
     const toastContainer = document.getElementById('toastContainer') || createToastContainer();
     
     const toastId = 'toast-' + Date.now();
@@ -36,16 +44,22 @@ function showToast(message, type = 'success', duration = 4000) {
     `;
     
     toastContainer.appendChild(toast);
-    const bsToast = new bootstrap.Toast(toast, {
-        autohide: true,
-        delay: duration
-    });
-    bsToast.show();
     
-    // Remove toast element after it's hidden
-    toast.addEventListener('hidden.bs.toast', function() {
-        toast.remove();
-    });
+    try {
+        const bsToast = new bootstrap.Toast(toast, {
+            autohide: true,
+            delay: duration
+        });
+        bsToast.show();
+        console.log('Toast shown successfully');
+        
+        // Remove toast element after it's hidden
+        toast.addEventListener('hidden.bs.toast', function() {
+            toast.remove();
+        });
+    } catch (error) {
+        console.error('Error showing toast:', error);
+    }
     
     return toastId;
 }
@@ -64,18 +78,23 @@ function createToastContainer() {
 
 // Auto-show toast based on URL parameters
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Toast notification script loaded');
     const urlParams = new URLSearchParams(window.location.search);
+    console.log('URL params:', window.location.search);
     
     if (urlParams.has('registered')) {
+        console.log('Showing registered toast');
         showToast('Registration successful! Please login with your credentials.', 'success');
     }
     
     if (urlParams.has('logout')) {
+        console.log('Showing logout toast');
         showToast('You have been successfully logged out.', 'info');
     }
     
     if (urlParams.has('error')) {
         const errorMsg = urlParams.get('error');
+        console.log('Showing error toast:', errorMsg);
         if (errorMsg === 'invalid') {
             showToast('Invalid credentials. Please try again.', 'danger');
         } else if (errorMsg === 'unauthorized') {
@@ -87,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (urlParams.has('success')) {
         const successMsg = urlParams.get('success');
+        console.log('Showing success toast:', successMsg);
         if (successMsg === 'login') {
             showToast('Login successful! Redirecting...', 'success');
         } else {
