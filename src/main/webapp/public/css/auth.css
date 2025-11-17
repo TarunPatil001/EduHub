@@ -236,3 +236,42 @@ a:hover {
         transform: translateY(-20px) scale(1.05);
     }
 }
+
+/* Toast Notification Styles */
+.toast-container {
+    max-width: 350px;
+}
+
+.toast {
+    min-width: 280px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    animation: slideInRight 0.3s ease-out;
+    font-family: 'Poppins', sans-serif;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast-body {
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.toast .btn-close {
+    padding: 0.5rem;
+}
+
+.toast i {
+    font-size: 1.1rem;
+}
