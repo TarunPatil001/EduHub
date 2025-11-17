@@ -85,27 +85,11 @@
     font-weight: 500;
 }
 
-/* Card Custom */
+/* Card Custom - Custom overflow properties for payroll page */
 .card-custom {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e9ecef;
     width: 100%;
     max-width: 100%;
     overflow: hidden;
-}
-
-.card-custom h5 {
-    color: #212529;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.card-custom h5 i {
-    margin-right: 0.5rem;
-    color: #667eea;
 }
 
 /* Fix button group overflow */
@@ -117,11 +101,6 @@
 .card-custom .btn {
     white-space: nowrap;
     flex-shrink: 0;
-}
-
-/* Required Star */
-.required-star {
-    color: #dc3545;
 }
 
 /* Table Responsive */

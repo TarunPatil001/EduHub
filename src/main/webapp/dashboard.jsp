@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/dashboard/components/ui_component/head.jsp">
+    <jsp:include page="/dashboard/components/head.jsp">
         <jsp:param name="title" value="Dashboard - EduHub"/>
         <jsp:param name="description" value="EduHub Dashboard - Manage your educational institution"/>
     </jsp:include>
@@ -11,14 +11,14 @@
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
+        <jsp:include page="/dashboard/components/sidebar.jsp">
             <jsp:param name="activePage" value="home"/>
         </jsp:include>
         
         <!-- Main Content -->
         <div class="dashboard-main">
             <!-- Header -->
-            <jsp:include page="/dashboard/components/ui_component/header.jsp">
+            <jsp:include page="/dashboard/components/header.jsp">
                 <jsp:param name="pageTitle" value="Dashboard Overview"/>
             </jsp:include>
             
@@ -32,7 +32,7 @@
                 <!-- Stats Cards Row - Primary Metrics -->
                 <div class="row g-3 mb-4">
                     <div class="col-md-6 col-lg-3">
-                        <jsp:include page="/dashboard/components/ui_component/stats-card.jsp">
+                        <jsp:include page="/dashboard/components/stats-card.jsp">
                             <jsp:param name="title" value="Total Students"/>
                             <jsp:param name="value" value="1,234"/>
                             <jsp:param name="icon" value="bi-people-fill"/>
@@ -41,7 +41,7 @@
                         </jsp:include>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <jsp:include page="/dashboard/components/ui_component/stats-card.jsp">
+                        <jsp:include page="/dashboard/components/stats-card.jsp">
                             <jsp:param name="title" value="Total Staff"/>
                             <jsp:param name="value" value="87"/>
                             <jsp:param name="icon" value="bi-person-badge-fill"/>
@@ -50,7 +50,7 @@
                         </jsp:include>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <jsp:include page="/dashboard/components/ui_component/stats-card.jsp">
+                        <jsp:include page="/dashboard/components/stats-card.jsp">
                             <jsp:param name="title" value="Active Courses"/>
                             <jsp:param name="value" value="42"/>
                             <jsp:param name="icon" value="bi-book-fill"/>
@@ -59,7 +59,7 @@
                         </jsp:include>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <jsp:include page="/dashboard/components/ui_component/stats-card.jsp">
+                        <jsp:include page="/dashboard/components/stats-card.jsp">
                             <jsp:param name="title" value="Today's Attendance"/>
                             <jsp:param name="value" value="94.2%"/>
                             <jsp:param name="icon" value="bi-calendar-check-fill"/>
@@ -485,7 +485,7 @@
         </div>
     </div>
     
-    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
 </body>
 </html>

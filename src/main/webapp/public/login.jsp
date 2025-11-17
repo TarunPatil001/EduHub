@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/dashboard/components/ui_component/head.jsp">
+	<jsp:include page="/dashboard/components/head.jsp">
 		<jsp:param name="title" value="Institute Login - EduHub"/>
 		<jsp:param name="description" value="Login to your institute dashboard on EduHub"/>
 	</jsp:include>
@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
+	<jsp:include page="/dashboard/components/navbar.jsp">
 		<jsp:param name="activePage" value="login"/>
 	</jsp:include>
 
@@ -78,7 +78,7 @@
 
 									<form action="${pageContext.request.contextPath}/login" method="post" class="auth-form">
 										<!-- Institute ID / Email -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="text"/>
 											<jsp:param name="id" value="username"/>
 											<jsp:param name="name" value="username"/>
@@ -154,7 +154,7 @@
 		</div>
 	</main>
 
-	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/scripts.jsp"/>
 	
 	<script>
 		function togglePassword(fieldId) {

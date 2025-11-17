@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/dashboard/components/ui_component/head.jsp">
+    <jsp:include page="/dashboard/components/head.jsp">
         <jsp:param name="title" value="Record Payment - Dashboard - EduHub"/>
         <jsp:param name="description" value="Record student fee payment in EduHub"/>
     </jsp:include>
@@ -12,12 +12,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
+        <jsp:include page="/dashboard/components/sidebar.jsp">
             <jsp:param name="activePage" value="record-payment"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/ui_component/header.jsp">
+            <jsp:include page="/dashboard/components/header.jsp">
                 <jsp:param name="pageTitle" value="Record Payment"/>
             </jsp:include>
             
@@ -32,7 +32,7 @@
                     
                     <!-- Back Button -->
                     <div class="back-button-container">
-                        <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                        <jsp:include page="/dashboard/components/back-button.jsp">
                             <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp"/>
                             <jsp:param name="text" value="Back to Fees"/>
                         </jsp:include>
@@ -109,7 +109,7 @@
                                 <h5 class="mb-4"><i class="bi bi-credit-card"></i> Payment Details</h5>
                                 
                                 <div class="row g-3">
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="number"/>
                                         <jsp:param name="id" value="paymentAmount"/>
                                         <jsp:param name="label" value="Payment Amount"/>
@@ -123,7 +123,7 @@
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="date"/>
                                         <jsp:param name="id" value="paymentDate"/>
                                         <jsp:param name="label" value="Payment Date"/>
@@ -134,7 +134,7 @@
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="paymentMethod"/>
                                         <jsp:param name="label" value="Payment Method"/>
@@ -145,7 +145,7 @@
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="receiptNumber"/>
                                         <jsp:param name="label" value="Receipt Number"/>
@@ -161,7 +161,7 @@
                                 <h5 class="mb-4"><i class="bi bi-receipt"></i> Transaction Details</h5>
                                 
                                 <div class="row g-3">
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="transactionId"/>
                                         <jsp:param name="label" value="Transaction ID / Reference Number"/>
@@ -169,7 +169,7 @@
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="bankName"/>
                                         <jsp:param name="label" value="Bank Name"/>
@@ -177,7 +177,7 @@
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="textarea"/>
                                         <jsp:param name="id" value="paymentNotes"/>
                                         <jsp:param name="label" value="Payment Notes"/>
@@ -186,7 +186,7 @@
                                         <jsp:param name="class" value="col-md-12"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="file"/>
                                         <jsp:param name="id" value="paymentProof"/>
                                         <jsp:param name="label" value="Attach Receipt/Proof (Optional)"/>
@@ -268,10 +268,10 @@
     </div>
     
     <!-- Include Reusable Components -->
-    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
-    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/modal.jsp"/>
+    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
     
-    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/record-payment.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/payment-history.js"></script>

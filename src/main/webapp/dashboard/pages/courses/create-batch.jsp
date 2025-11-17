@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/dashboard/components/ui_component/head.jsp">
+    <jsp:include page="/dashboard/components/head.jsp">
         <jsp:param name="title" value="Create Batch - Dashboard - EduHub"/>
         <jsp:param name="description" value="Create new batch in EduHub"/>
     </jsp:include>
@@ -56,12 +56,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
+        <jsp:include page="/dashboard/components/sidebar.jsp">
             <jsp:param name="activePage" value="create-batch"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/ui_component/header.jsp">
+            <jsp:include page="/dashboard/components/header.jsp">
                 <jsp:param name="pageTitle" value="Create Batch"/>
             </jsp:include>
             
@@ -75,7 +75,7 @@
                     
                     <!-- Back Button -->
                     <div class="back-button-container">
-                        <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                        <jsp:include page="/dashboard/components/back-button.jsp">
                             <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/courses/manage-batches.jsp"/>
                             <jsp:param name="text" value="Back to Batches"/>
                         </jsp:include>
@@ -241,10 +241,10 @@
     </div>
 
     <!-- Use existing dashboard components -->
-    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
-    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/modal.jsp"/>
+    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
     
-    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script>
         // Cancel button handler

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/dashboard/components/ui_component/head.jsp">
+	<jsp:include page="/dashboard/components/head.jsp">
 		<jsp:param name="title" value="Setup Institute Profile - Step 3 - EduHub"/>
 		<jsp:param name="description" value="Complete your institute profile setup"/>
 	</jsp:include>
@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
+	<jsp:include page="/dashboard/components/navbar.jsp">
 		<jsp:param name="activePage" value="register"/>
 	</jsp:include>
 
@@ -77,7 +77,7 @@
 									<form action="${pageContext.request.contextPath}/public/login.jsp?registered=true" method="post" class="auth-form" enctype="multipart/form-data">
 										
 										<!-- Institute Address -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="textarea"/>
 											<jsp:param name="id" value="address"/>
 											<jsp:param name="name" value="address"/>
@@ -91,7 +91,7 @@
 
 										<!-- Postal Code & Established Year -->
 										<div class="row">
-											<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:include page="/dashboard/components/input-field.jsp">
 												<jsp:param name="type" value="text"/>
 												<jsp:param name="id" value="postalCode"/>
 												<jsp:param name="name" value="postalCode"/>
@@ -102,7 +102,7 @@
 												<jsp:param name="class" value="col-md-6 form-group"/>
 											</jsp:include>
 											
-											<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:include page="/dashboard/components/input-field.jsp">
 												<jsp:param name="type" value="number"/>
 												<jsp:param name="id" value="establishedYear"/>
 												<jsp:param name="name" value="establishedYear"/>
@@ -117,7 +117,7 @@
 										</div>
 
 										<!-- Institute Website -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="url"/>
 											<jsp:param name="id" value="website"/>
 											<jsp:param name="name" value="website"/>
@@ -128,7 +128,7 @@
 										</jsp:include>
 
 										<!-- Registration Number -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="text"/>
 											<jsp:param name="id" value="registrationNumber"/>
 											<jsp:param name="name" value="registrationNumber"/>
@@ -140,7 +140,7 @@
 										</jsp:include>
 
 										<!-- Student Capacity -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="select"/>
 											<jsp:param name="id" value="studentCapacity"/>
 											<jsp:param name="name" value="studentCapacity"/>
@@ -153,7 +153,7 @@
 										</jsp:include>
 
 										<!-- Institute Logo -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="file"/>
 											<jsp:param name="id" value="logo"/>
 											<jsp:param name="name" value="logo"/>
@@ -165,7 +165,7 @@
 										</jsp:include>
 
 										<!-- Description -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="textarea"/>
 											<jsp:param name="id" value="description"/>
 											<jsp:param name="name" value="description"/>
@@ -188,7 +188,7 @@
 										<!-- Navigation Buttons -->
 										<div class="row g-2 mb-3">
 											<div class="col-6">
-												<jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+												<jsp:include page="/dashboard/components/back-button.jsp">
 													<jsp:param name="url" value="${pageContext.request.contextPath}/public/register_admin.jsp"/>
 													<jsp:param name="text" value="Back"/>
 													<jsp:param name="class" value="w-100"/>
@@ -215,7 +215,7 @@
 		</div>
 	</main>
 
-	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/scripts.jsp"/>
 
 </body>
 </html>

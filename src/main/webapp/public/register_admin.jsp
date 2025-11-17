@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/dashboard/components/ui_component/head.jsp">
+	<jsp:include page="/dashboard/components/head.jsp">
 		<jsp:param name="title" value="Create Admin Account - Step 2 - EduHub"/>
 		<jsp:param name="description" value="Create your institute admin account"/>
 	</jsp:include>
@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
+	<jsp:include page="/dashboard/components/navbar.jsp">
 		<jsp:param name="activePage" value="register"/>
 	</jsp:include>
 
@@ -77,7 +77,7 @@
 									<form action="${pageContext.request.contextPath}/public/register_profile.jsp" method="post" class="auth-form">
 										
 										<!-- Admin Full Name -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="text"/>
 											<jsp:param name="id" value="adminName"/>
 											<jsp:param name="name" value="adminName"/>
@@ -89,7 +89,7 @@
 										</jsp:include>
 
 										<!-- Admin Email -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="email"/>
 											<jsp:param name="id" value="adminEmail"/>
 											<jsp:param name="name" value="adminEmail"/>
@@ -101,7 +101,7 @@
 										</jsp:include>
 
 										<!-- Username -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="text"/>
 											<jsp:param name="id" value="username"/>
 											<jsp:param name="name" value="username"/>
@@ -157,7 +157,7 @@
 										</div>
 
 										<!-- Phone Number -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="tel"/>
 											<jsp:param name="id" value="adminPhone"/>
 											<jsp:param name="name" value="adminPhone"/>
@@ -171,7 +171,7 @@
 										<!-- Navigation Buttons -->
 										<div class="row g-2">
 											<div class="col-6">
-												<jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+												<jsp:include page="/dashboard/components/back-button.jsp">
 													<jsp:param name="url" value="${pageContext.request.contextPath}/public/register_institute.jsp"/>
 													<jsp:param name="text" value="Back"/>
 													<jsp:param name="class" value="btn-lg w-100"/>
@@ -199,7 +199,7 @@
 		</div>
 	</main>
 
-	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/scripts.jsp"/>
 	
 	<script>
 		function togglePassword(fieldId) {

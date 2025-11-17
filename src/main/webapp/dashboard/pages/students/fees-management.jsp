@@ -84,7 +84,7 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/dashboard/components/ui_component/head.jsp">
+    <jsp:include page="/dashboard/components/head.jsp">
         <jsp:param name="title" value="Fees Management - Dashboard - EduHub"/>
         <jsp:param name="description" value="Manage student fees in EduHub"/>
     </jsp:include>
@@ -93,12 +93,12 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
+        <jsp:include page="/dashboard/components/sidebar.jsp">
             <jsp:param name="activePage" value="fees-management"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/ui_component/header.jsp">
+            <jsp:include page="/dashboard/components/header.jsp">
                 <jsp:param name="pageTitle" value="Fees Management"/>
             </jsp:include>
             
@@ -386,10 +386,10 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
     </div>
     
     <!-- Include Reusable Components -->
-    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
-    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/modal.jsp"/>
+    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
     
-    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/fees-management.js"></script>
 </body>

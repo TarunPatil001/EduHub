@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/dashboard/components/ui_component/head.jsp">
+    <jsp:include page="/dashboard/components/head.jsp">
         <jsp:param name="title" value="Add Staff - Dashboard - EduHub"/>
         <jsp:param name="description" value="Add new staff member in EduHub"/>
     </jsp:include>
@@ -249,12 +249,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
+        <jsp:include page="/dashboard/components/sidebar.jsp">
             <jsp:param name="activePage" value="add-staff"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/ui_component/header.jsp">
+            <jsp:include page="/dashboard/components/header.jsp">
                 <jsp:param name="pageTitle" value="Add Staff"/>
             </jsp:include>
             
@@ -268,7 +268,7 @@
                     
                     <!-- Back Button -->
                     <div class="back-button-container">
-                        <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                        <jsp:include page="/dashboard/components/back-button.jsp">
                             <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp"/>
                             <jsp:param name="text" value="Back to Staff"/>
                         </jsp:include>
@@ -747,7 +747,7 @@
                             <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
                                 <i class="bi bi-x-circle"></i> Clear Form
                             </button>
-                            <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                            <jsp:include page="/dashboard/components/back-button.jsp">
                                 <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp"/>
                                 <jsp:param name="text" value="Cancel"/>
                             </jsp:include>
@@ -761,14 +761,14 @@
         </div>
     </div>
     
-    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     
     <!-- Include Reusable Modal Component -->
-    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
+    <jsp:include page="/dashboard/components/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
     
     <script>
         // Photo preview functionality

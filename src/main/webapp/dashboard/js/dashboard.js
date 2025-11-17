@@ -5,7 +5,41 @@
  * - Handle sidebar toggle
  * - Handle responsive behavior
  * - Initialize dashboard components
+ * - Adjust viewport height for mobile devices
  */
+
+// Set CSS custom property for actual viewport height (handles mobile browser address bars)
+function setViewportHeight() {
+    // Get the actual viewport height
+    const vh = window.innerHeight * 0.01;
+    // Set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    
+    // Also set a CSS variable for 100vh equivalent
+    document.documentElement.style.setProperty('--actual-vh', `${window.innerHeight}px`);
+}
+
+// Call on page load
+setViewportHeight();
+
+// Update on resize (debounced for performance)
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(setViewportHeight, 100);
+});
+
+// Update on orientation change (important for mobile devices)
+window.addEventListener('orientationchange', function() {
+    setTimeout(setViewportHeight, 100); // Small delay to ensure correct values
+});
+
+// Update on scroll for iOS Safari (address bar show/hide)
+let scrollTimeout;
+window.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(setViewportHeight, 100);
+}, { passive: true });
 
 document.addEventListener('DOMContentLoaded', function() {
     

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<jsp:include page="/dashboard/components/ui_component/head.jsp">
+	<jsp:include page="/dashboard/components/head.jsp">
 		<jsp:param name="title" value="Register Institute - Step 1 - EduHub"/>
 		<jsp:param name="description" value="Register your institute with EduHub"/>
 	</jsp:include>
@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/dashboard/components/ui_component/navbar.jsp">
+	<jsp:include page="/dashboard/components/navbar.jsp">
 		<jsp:param name="activePage" value="register"/>
 	</jsp:include>
 
@@ -77,7 +77,7 @@
 									<form action="${pageContext.request.contextPath}/public/register_admin.jsp" method="post" class="auth-form">
 										
 										<!-- Institute Name -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="text"/>
 											<jsp:param name="id" value="instituteName"/>
 											<jsp:param name="name" value="instituteName"/>
@@ -89,7 +89,7 @@
 										</jsp:include>
 
 										<!-- Institute Type -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="select"/>
 											<jsp:param name="id" value="instituteType"/>
 											<jsp:param name="name" value="instituteType"/>
@@ -102,7 +102,7 @@
 										</jsp:include>
 
 										<!-- Email -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="email"/>
 											<jsp:param name="id" value="instituteEmail"/>
 											<jsp:param name="name" value="instituteEmail"/>
@@ -114,7 +114,7 @@
 										</jsp:include>
 
 										<!-- Phone -->
-										<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="tel"/>
 											<jsp:param name="id" value="institutePhone"/>
 											<jsp:param name="name" value="institutePhone"/>
@@ -127,7 +127,7 @@
 
 										<!-- Country -->
 										<div class="row">
-											<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:include page="/dashboard/components/input-field.jsp">
 												<jsp:param name="type" value="select"/>
 												<jsp:param name="id" value="country"/>
 												<jsp:param name="name" value="country"/>
@@ -139,7 +139,7 @@
 												<jsp:param name="class" value="col-md-6 form-group"/>
 											</jsp:include>
 											
-											<jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+											<jsp:include page="/dashboard/components/input-field.jsp">
 												<jsp:param name="type" value="text"/>
 												<jsp:param name="id" value="city"/>
 												<jsp:param name="name" value="city"/>
@@ -171,7 +171,7 @@
 		</div>
 	</main>
 
-	<jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+	<jsp:include page="/dashboard/components/scripts.jsp"/>
 
 </body>
 </html>

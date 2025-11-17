@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="/dashboard/components/ui_component/head.jsp">
+    <jsp:include page="/dashboard/components/head.jsp">
         <jsp:param name="title" value="Add Student - Dashboard - EduHub"/>
         <jsp:param name="description" value="Add new student to EduHub"/>
     </jsp:include>
@@ -11,12 +11,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <jsp:include page="/dashboard/components/ui_component/sidebar.jsp">
+        <jsp:include page="/dashboard/components/sidebar.jsp">
             <jsp:param name="activePage" value="add-student"/>
         </jsp:include>
         
         <div class="dashboard-main">
-            <jsp:include page="/dashboard/components/ui_component/header.jsp">
+            <jsp:include page="/dashboard/components/header.jsp">
                 <jsp:param name="pageTitle" value="Add Student"/>
             </jsp:include>
             
@@ -30,7 +30,7 @@
                     
                     <!-- Back Button -->
                     <div class="back-button-container">
-                        <jsp:include page="/dashboard/components/ui_component/back-button.jsp">
+                        <jsp:include page="/dashboard/components/back-button.jsp">
                             <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp"/>
                             <jsp:param name="text" value="Back to Students"/>
                         </jsp:include>
@@ -63,7 +63,7 @@
                                 <h5 class="mb-4"><i class="bi bi-person-fill"></i> Personal Information</h5>
                                 
                                 <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="studentName"/>
                                         <jsp:param name="name" value="studentName"/>
@@ -73,7 +73,7 @@
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="fatherName"/>
                                         <jsp:param name="name" value="fatherName"/>
@@ -83,7 +83,7 @@
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="surname"/>
                                         <jsp:param name="name" value="surname"/>
@@ -95,7 +95,7 @@
                                 </div>
                                 
                                 <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="date"/>
                                         <jsp:param name="id" value="dateOfBirth"/>
                                         <jsp:param name="name" value="dateOfBirth"/>
@@ -105,7 +105,7 @@
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="gender"/>
                                         <jsp:param name="name" value="gender"/>
@@ -116,7 +116,7 @@
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="bloodGroup"/>
                                         <jsp:param name="name" value="bloodGroup"/>
@@ -133,7 +133,7 @@
                                 <h5 class="mb-4"><i class="bi bi-telephone-fill"></i> Contact Information</h5>
                                 
                                 <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="tel"/>
                                         <jsp:param name="id" value="mobileNumber"/>
                                         <jsp:param name="name" value="mobileNumber"/>
@@ -145,7 +145,7 @@
                                     </jsp:include>
                                     
                                     <div class="col-md-4">
-                                        <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                        <jsp:include page="/dashboard/components/input-field.jsp">
                                             <jsp:param name="type" value="tel"/>
                                             <jsp:param name="id" value="whatsappNumber"/>
                                             <jsp:param name="name" value="whatsappNumber"/>
@@ -160,7 +160,7 @@
                                         </div>
                                     </div>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="tel"/>
                                         <jsp:param name="id" value="parentMobile"/>
                                         <jsp:param name="name" value="parentMobile"/>
@@ -173,7 +173,7 @@
                                 </div>
                                 
                                 <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="email"/>
                                         <jsp:param name="id" value="emailId"/>
                                         <jsp:param name="name" value="emailId"/>
@@ -183,7 +183,7 @@
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="instagramId"/>
                                         <jsp:param name="name" value="instagramId"/>
@@ -194,7 +194,7 @@
                                     </jsp:include>
                                     </div>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="linkedinId"/>
                                         <jsp:param name="name" value="linkedinId"/>
@@ -209,7 +209,7 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-geo-alt-fill"></i> Address Information</h5>
                                 
-                                <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                <jsp:include page="/dashboard/components/input-field.jsp">
                                     <jsp:param name="type" value="textarea"/>
                                     <jsp:param name="id" value="permanentAddress"/>
                                     <jsp:param name="name" value="permanentAddress"/>
@@ -236,7 +236,7 @@
                                 <h5 class="mb-4"><i class="bi bi-mortarboard-fill"></i> Educational Information</h5>
                                 
                                 <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="collegeName"/>
                                         <jsp:param name="name" value="collegeName"/>
@@ -246,7 +246,7 @@
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="educationQualification"/>
                                         <jsp:param name="name" value="educationQualification"/>
@@ -265,7 +265,7 @@
                                         <input type="hidden" id="passingYearValue" name="passingYearValue">
                                     </div>
                                     
-                                    <jsp:include page="/dashboard/components/ui_component/input-field.jsp">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="courseEnrolled"/>
                                         <jsp:param name="name" value="courseEnrolled"/>
@@ -487,14 +487,14 @@
         </div>
     </div>
     
-    <jsp:include page="/dashboard/components/ui_component/scripts.jsp"/>
+    <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     
     <!-- Include Reusable Modal Component -->
-    <jsp:include page="/dashboard/components/ui_component/modal.jsp"/>
+    <jsp:include page="/dashboard/components/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/dashboard/components/ui_component/toast-notification.jsp"/>
+    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
     
     <!-- Add Student Page Scripts -->
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/add-student.js"></script>
