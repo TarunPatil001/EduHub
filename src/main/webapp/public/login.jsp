@@ -2,45 +2,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<!-- Include common head elements (meta tags, Bootstrap, icons) -->
 	<jsp:include page="/dashboard/components/head.jsp">
-		<jsp:param name="title" value="Institute Login - EduHub"/>
+		<jsp:param name="title" value="Login - EduHub"/>
 		<jsp:param name="description" value="Login to your institute dashboard on EduHub"/>
 	</jsp:include>
+	
+	<!-- Authentication page styles -->
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/auth.css">
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/dashboard/components/navbar.jsp">
-		<jsp:param name="activePage" value="login"/>
-	</jsp:include>
-
+	<!-- Main content container -->
 	<main class="auth-container">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-12 col-sm-11 col-md-10 col-lg-10 col-xl-9">
-					<div class="auth-card login-card">
+					
+					<!-- Login card -->
+					<div class="auth-card">
 						<div class="row g-0">
+							
 							<!-- Left Side - Branding -->
 							<div class="col-lg-5 auth-brand-side">
 								<div class="auth-brand-content">
+									
+									<!-- Brand logo -->
 									<div class="brand-logo">
-										<h1 class="logo-text">EDUHUB</h1>
+										<h1 class="logo-text">EduHub</h1>
 										<div class="logo-underline"></div>
 									</div>
-									<h2 class="brand-title">Institute Portal Access</h2>
-									<p class="brand-subtitle">Manage your institution's academic operations seamlessly</p>
+									
+									<!-- Brand title and subtitle -->
+									<h2 class="brand-title">Welcome Back</h2>
+									<p class="brand-subtitle">Login to access your institute dashboard</p>
+									
+									<!-- Brand features list -->
 									<div class="brand-features">
 										<div class="feature-item">
-											<i class="bi bi-check-circle-fill"></i>
-											<span>Secure Institute Dashboard</span>
+											<i class="bi bi-shield-check"></i>
+											<span>Secure Authentication</span>
 										</div>
 										<div class="feature-item">
-											<i class="bi bi-check-circle-fill"></i>
-											<span>Student & Staff Management</span>
+											<i class="bi bi-speedometer2"></i>
+											<span>Fast & Reliable</span>
 										</div>
 										<div class="feature-item">
-											<i class="bi bi-check-circle-fill"></i>
-											<span>Real-time Analytics</span>
+											<i class="bi bi-people"></i>
+											<span>Manage Your Institute</span>
 										</div>
 									</div>
 								</div>
@@ -49,12 +58,15 @@
 							<!-- Right Side - Login Form -->
 							<div class="col-lg-7 auth-form-side">
 								<div class="auth-form-content">
+									
+									<!-- Form header -->
 									<div class="form-header">
-										<h3>Welcome Back</h3>
-										<p>Sign in to your institute account</p>
+										<h3>Sign In</h3>
+										<p>Enter your credentials to access your account</p>
 									</div>
 
-									<!-- Error/Success Messages -->
+									<!-- Alert Messages -->
+									<!-- Error message for invalid credentials -->
 									<% if(request.getParameter("error") != null) { %>
 										<div class="alert alert-danger">
 											<i class="bi bi-x-circle-fill"></i>
@@ -62,6 +74,7 @@
 										</div>
 									<% } %>
 									
+									<!-- Success message for logout -->
 									<% if(request.getParameter("logout") != null) { %>
 										<div class="alert alert-success">
 											<i class="bi bi-check-circle-fill"></i>
@@ -69,6 +82,7 @@
 										</div>
 									<% } %>
 									
+									<!-- Success message for registration -->
 									<% if(request.getParameter("registered") != null) { %>
 										<div class="alert alert-success">
 											<i class="bi bi-check-circle-fill"></i>
@@ -76,8 +90,10 @@
 										</div>
 									<% } %>
 
+									<!-- Login form -->
 									<form action="${pageContext.request.contextPath}/login" method="post" class="auth-form">
-										<!-- Institute ID / Email -->
+										
+										<!-- Institute ID / Email Field -->
 										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="text"/>
 											<jsp:param name="id" value="username"/>
@@ -90,7 +106,7 @@
 											<jsp:param name="class" value="form-group"/>
 										</jsp:include>
 
-										<!-- Password -->
+										<!-- Password Field with Toggle Visibility -->
 										<div class="form-group">
 											<label for="password" class="form-label">
 												<i class="bi bi-lock"></i> Password
@@ -105,6 +121,7 @@
 													required
 													autocomplete="current-password"
 												>
+												<!-- Toggle password visibility button -->
 												<button type="button" class="password-toggle" onclick="togglePassword('password')">
 													<i class="bi bi-eye" id="password-icon"></i>
 												</button>
@@ -113,12 +130,14 @@
 
 										<!-- Remember Me & Forgot Password -->
 										<div class="d-flex justify-content-between align-items-center mb-3">
+											<!-- Remember me checkbox -->
 											<div class="form-check">
 												<input class="form-check-input" type="checkbox" id="remember" name="remember">
 												<label class="form-check-label" for="remember">
 													Remember me
 												</label>
 											</div>
+											<!-- Forgot password link -->
 											<a href="#" class="text-primary small fw-bold">Forgot Password?</a>
 										</div>
 
@@ -154,24 +173,11 @@
 		</div>
 	</main>
 
+	<!-- Bootstrap and jQuery scripts -->
 	<jsp:include page="/dashboard/components/scripts.jsp"/>
 	
-	<script>
-		function togglePassword(fieldId) {
-			const field = document.getElementById(fieldId);
-			const icon = document.getElementById(fieldId + '-icon');
-			
-			if (field.type === 'password') {
-				field.type = 'text';
-				icon.classList.remove('bi-eye');
-				icon.classList.add('bi-eye-slash');
-			} else {
-				field.type = 'password';
-				icon.classList.remove('bi-eye-slash');
-				icon.classList.add('bi-eye');
-			}
-		}
-	</script>
+	<!-- Custom JavaScript for password toggle -->
+	<script src="${pageContext.request.contextPath}/public/js/login.js"></script>
 
 </body>
 </html>

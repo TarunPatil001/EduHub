@@ -12,17 +12,32 @@
     <jsp:include page="components/navbar.jsp"/>
 --%>
 
-<nav class="navbar fixed-top border-bottom shadow-sm" style="position: fixed !important; top: 0 !important; z-index: 1030 !important; background: #ffffff !important;">
+<!-- Fixed top navbar with glassmorphism effect -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top glassmorphism-navbar">
 	<div class="container">
-		<a class="navbar-brand logo"
-			href="${pageContext.request.contextPath}/">EduHub</a>
-		<div class="d-flex gap-2">
-			<a class="btn btn-outline-dark btn-sm"
-				href="${pageContext.request.contextPath}/public/login.jsp">Login</a>
-			<a class="btn btn-dark btn-sm"
-				href="${pageContext.request.contextPath}/public/register_institute.jsp">Register</a>
-			<a class="btn btn-primary btn-sm d-none d-md-inline-block"
-				href="${pageContext.request.contextPath}/dashboard.jsp">Dashboard</a>
+		<!-- Brand/logo -->
+		<a class="navbar-brand logo" href="${pageContext.request.contextPath}/">
+			<span class="logo-text">EduHub</span>
+		</a>
+		
+		<!-- Mobile toggle button -->
+		<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<!-- Navbar links -->
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<div class="ms-auto d-flex gap-3 mt-3 mt-md-0 align-items-center">
+				<a class="btn btn-glass btn-sm" href="${pageContext.request.contextPath}/public/login.jsp">
+					<i class="bi bi-box-arrow-in-right me-1"></i> Login
+				</a>
+				<a class="btn btn-glass-primary btn-sm" href="${pageContext.request.contextPath}/public/register_institute.jsp">
+					<i class="bi bi-building-add me-1"></i> Register
+				</a>
+				<a class="btn btn-glass-gradient btn-sm" href="${pageContext.request.contextPath}/dashboard.jsp">
+					<i class="bi bi-speedometer2 me-1"></i> Dashboard
+				</a>
+			</div>
 		</div>
 	</div>
 </nav>

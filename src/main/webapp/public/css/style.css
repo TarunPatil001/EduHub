@@ -34,6 +34,20 @@ body,html {
 	scroll-behavior: smooth;
 }
 
+/* Responsive padding adjustments for different screen sizes */
+@media (max-width: 768px) {
+	body {
+		padding-top: 80px;
+	}
+}
+
+@media (max-width: 576px) {
+	body {
+		padding-top: 75px;
+	}
+}
+
+
 .nav-link.active{
 	font-weight: 500;
 }
@@ -56,132 +70,191 @@ body,html {
 
 /* Mobile navbar optimization */
 @media (max-width: 768px) {
-	:root {
-		--navbar-height: 50px;
-	}
-	
 	.navbar-brand.logo {
 		font-size: 28px;
-	}
-	
-	.navbar {
-		padding: 0.25rem 0 !important;
-	}
-	
-	.navbar .btn {
-		font-size: 0.85rem;
-		padding: 0.4rem 0.8rem;
-		font-weight: 500;
-		min-width: 80px;
-	}
-	
-	.navbar .d-flex {
-		gap: 0.25rem;
-	}
-	
-	.navbar .container {
-		padding-left: 0.75rem;
-		padding-right: 0.75rem;
 	}
 }
 
 @media (max-width: 576px) {
-	:root {
-		--navbar-height: 48px;
-	}
-	
 	.navbar-brand.logo {
 		font-size: 24px;
 	}
-	
-	.navbar {
-		padding: 0.2rem 0 !important;
-	}
-	
-	.navbar .btn {
-		font-size: 0.75rem;
-		padding: 0.35rem 0.6rem;
-		min-width: 70px;
-	}
-	
-	.navbar .d-flex {
-		gap: 0.2rem;
-	}
 }
 
-.navbar {
-	position: fixed !important;
-	top: 0 !important;
-	left: 0 !important;
-	right: 0 !important;
-	width: 100% !important;
-	z-index: 1030 !important;
-	background: #ffffff !important;
+/* Use Bootstrap default navbar and button styling - no custom overrides */
+
+/* ===================================
+   Glassmorphism Navbar Design
+   =================================== */
+
+.glassmorphism-navbar {
+	background: rgba(0, 0, 0, 0.1) !important;
 	backdrop-filter: blur(20px) saturate(180%);
 	-webkit-backdrop-filter: blur(20px) saturate(180%);
-	box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1) !important;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-	padding: 0.5rem 0 !important;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+	padding: 1rem 0;
+	transition: all 0.3s ease;
 }
 
-.navbar .container {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	flex-wrap: nowrap;
+.glassmorphism-navbar.scrolled {
+	background: rgba(255, 255, 255, 0.95) !important;
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.navbar .d-flex {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
+/* Logo Text Styling */
+.logo-text {
+	font-family: 'Roma', serif;
+	font-size: 1.75rem;
+	font-weight: 900;
+	letter-spacing: 2px;
+	background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+	transition: all 0.3s ease;
 }
 
-.navbar-collapse {
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.glassmorphism-navbar.scrolled .logo-text {
+	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
 }
 
-.navbar .btn {
+.logo-text:hover {
+	transform: scale(1.05);
+}
+
+/* Glassmorphism Buttons */
+.btn-glass {
+	background: rgba(255, 255, 255, 0.15);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	color: #ffffff;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
 	transition: all 0.3s ease;
 	font-weight: 600;
-	padding: 0.6rem 1.5rem;
-	font-size: 1rem;
-	min-width: 100px;
+	padding: 0.5rem 1.25rem;
+	border-radius: 10px;
 }
 
-.navbar .btn-outline-dark {
-	border: 2px solid #1e293b;
-	color: #1e293b;
-}
-
-.navbar .btn-outline-dark:hover {
-	background: #1e293b;
-	color: white;
+.btn-glass:hover {
+	background: rgba(255, 255, 255, 0.25);
+	border-color: rgba(255, 255, 255, 0.5);
+	color: #ffffff;
 	transform: translateY(-2px);
-	box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.navbar .btn-dark {
-	background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-	border: none;
+.btn-glass-primary {
+	background: rgba(99, 102, 241, 0.2);
+	border: 1px solid rgba(99, 102, 241, 0.4);
+	color: #ffffff;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all 0.3s ease;
+	font-weight: 600;
+	padding: 0.5rem 1.25rem;
+	border-radius: 10px;
 }
 
-.navbar .btn-dark:hover {
-	background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+.btn-glass-primary:hover {
+	background: rgba(99, 102, 241, 0.35);
+	border-color: rgba(99, 102, 241, 0.6);
+	color: #ffffff;
 	transform: translateY(-2px);
-	box-shadow: 0 4px 12px rgba(30, 41, 59, 0.4);
+	box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
 }
 
-.navbar .btn-primary {
-	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-	border: none;
-	box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+.btn-glass-gradient {
+	background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	color: #ffffff;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all 0.3s ease;
+	font-weight: 600;
+	padding: 0.5rem 1.25rem;
+	border-radius: 10px;
+	position: relative;
+	overflow: hidden;
 }
 
-.navbar .btn-primary:hover {
-	background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+.btn-glass-gradient::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+	transition: left 0.5s;
+}
+
+.btn-glass-gradient:hover::before {
+	left: 100%;
+}
+
+.btn-glass-gradient:hover {
+	background: linear-gradient(135deg, rgba(99, 102, 241, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%);
+	border-color: rgba(255, 255, 255, 0.6);
+	color: #ffffff;
 	transform: translateY(-2px);
-	box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+	box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+/* Navbar toggler for mobile */
+.glassmorphism-navbar .navbar-toggler {
+	background: rgba(255, 255, 255, 0.15);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	padding: 0.5rem 0.75rem;
+	border-radius: 8px;
+}
+
+.glassmorphism-navbar .navbar-toggler:focus {
+	box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.2);
+}
+
+.glassmorphism-navbar .navbar-toggler-icon {
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.glassmorphism-navbar {
+		padding: 0.75rem 0;
+	}
+	
+	.logo-text {
+		font-size: 1.5rem;
+	}
+	
+	.glassmorphism-navbar .navbar-collapse {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		border-radius: 12px;
+		padding: 1rem;
+		margin-top: 1rem;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+	}
+	
+	.btn-glass,
+	.btn-glass-primary,
+	.btn-glass-gradient {
+		width: 100%;
+		text-align: center;
+		margin-bottom: 0.5rem;
+	}
+}
+
+@media (max-width: 576px) {
+	.logo-text {
+		font-size: 1.25rem;
+		letter-spacing: 1px;
+	}
 }
 
 .featured {
@@ -199,33 +272,4 @@ body,html {
 	align-items: center;
 }
 
-
-/* Fix mobile navbar collapse - prevent content movement */
-@media (max-width: 991.98px) {
-	.navbar-collapse {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		right: 0;
-		background-color: #fff;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		padding: 1rem;
-		z-index: 1029;
-	}
-	
-	.navbar-collapse.collapsing {
-		transition: height 0.35s ease;
-	}
-	
-	.navbar {
-		position: relative;
-	}
-	
-	.navbar-nav {
-		padding: 0.5rem 0;
-	}
-	
-	.nav-item {
-		padding: 0.25rem 0;
-	}
-}
+/* Use Bootstrap default navbar collapse behavior - no custom overrides */

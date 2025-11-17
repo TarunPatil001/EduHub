@@ -2,63 +2,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<!-- Include common head elements (meta tags, Bootstrap, icons) -->
 	<jsp:include page="/dashboard/components/head.jsp">
-		<jsp:param name="title" value="Register Institute - Step 1 - EduHub"/>
+		<jsp:param name="title" value="Register Institute - EduHub"/>
 		<jsp:param name="description" value="Register your institute with EduHub"/>
 	</jsp:include>
+	
+	<!-- Authentication page styles -->
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/auth.css">
 </head>
 <body class="auth-page">
 
-	<jsp:include page="/dashboard/components/navbar.jsp">
-		<jsp:param name="activePage" value="register"/>
-	</jsp:include>
-
+	<!-- Main content container -->
 	<main class="auth-container">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-12 col-sm-11 col-md-10 col-lg-10 col-xl-9">
-					<div class="auth-card register-card">
+					
+					<!-- Registration card -->
+					<div class="auth-card">
 						<div class="row g-0">
+							
 							<!-- Left Side - Progress & Info -->
 							<div class="col-lg-5 auth-brand-side">
 								<div class="auth-brand-content">
+									
+									<!-- Brand logo -->
 									<div class="brand-logo">
-										<h1 class="logo-text">EDUHUB</h1>
+										<h1 class="logo-text">EduHub</h1>
 										<div class="logo-underline"></div>
 									</div>
 									
-									<h2 class="brand-title">Institute Registration</h2>
-									<p class="brand-subtitle">Join the future of educational management</p>
+									<!-- Brand title and subtitle -->
+									<h2 class="brand-title">Get Started</h2>
+									<p class="brand-subtitle">Join thousands of institutes managing education seamlessly</p>
 									
 									<!-- Progress Steps -->
 									<div class="registration-progress">
+										
+										<!-- Step 1 - Register Institute (Active) -->
 										<div class="progress-step active">
 											<div class="step-circle">1</div>
 											<div class="step-info">
-												<h6>Register Institute</h6>
+												<h6>Institute Details</h6>
 												<p>Basic information</p>
 											</div>
 										</div>
+										
+										<!-- Step 2 - Admin Account -->
 										<div class="progress-step">
 											<div class="step-circle">2</div>
 											<div class="step-info">
 												<h6>Admin Account</h6>
-												<p>Create admin login</p>
+												<p>Create credentials</p>
 											</div>
 										</div>
+										
+										<!-- Step 3 - Setup Profile -->
 										<div class="progress-step">
 											<div class="step-circle">3</div>
 											<div class="step-info">
-												<h6>Setup Profile</h6>
-												<p>Complete details</p>
-											</div>
-										</div>
-										<div class="progress-step">
-											<div class="step-circle">4</div>
-											<div class="step-info">
-												<h6>Login</h6>
-												<p>Access dashboard</p>
+												<h6>Complete Profile</h6>
+												<p>Additional details</p>
 											</div>
 										</div>
 									</div>
@@ -68,15 +73,18 @@
 							<!-- Right Side - Form -->
 							<div class="col-lg-7 auth-form-side">
 								<div class="auth-form-content">
+									
+									<!-- Form header -->
 									<div class="form-header">
 										<div class="step-badge">Step 1 of 3</div>
 										<h3>Register Your Institute</h3>
 										<p>Enter your institute's basic information to get started</p>
 									</div>
 
+									<!-- Registration form -->
 									<form action="${pageContext.request.contextPath}/public/register_admin.jsp" method="post" class="auth-form">
 										
-										<!-- Institute Name -->
+										<!-- Institute Name Field -->
 										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="text"/>
 											<jsp:param name="id" value="instituteName"/>
@@ -88,7 +96,7 @@
 											<jsp:param name="class" value="form-group"/>
 										</jsp:include>
 
-										<!-- Institute Type -->
+										<!-- Institute Type Selection -->
 										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="select"/>
 											<jsp:param name="id" value="instituteType"/>
@@ -101,7 +109,7 @@
 											<jsp:param name="class" value="form-group"/>
 										</jsp:include>
 
-										<!-- Email -->
+										<!-- Official Email Field -->
 										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="email"/>
 											<jsp:param name="id" value="instituteEmail"/>
@@ -113,7 +121,7 @@
 											<jsp:param name="class" value="form-group"/>
 										</jsp:include>
 
-										<!-- Phone -->
+										<!-- Contact Phone Field -->
 										<jsp:include page="/dashboard/components/input-field.jsp">
 											<jsp:param name="type" value="tel"/>
 											<jsp:param name="id" value="institutePhone"/>
@@ -125,8 +133,9 @@
 											<jsp:param name="class" value="form-group"/>
 										</jsp:include>
 
-										<!-- Country -->
+										<!-- Location Fields - Country and City -->
 										<div class="row">
+											<!-- Country Selection -->
 											<jsp:include page="/dashboard/components/input-field.jsp">
 												<jsp:param name="type" value="select"/>
 												<jsp:param name="id" value="country"/>
@@ -139,6 +148,7 @@
 												<jsp:param name="class" value="col-md-6 form-group"/>
 											</jsp:include>
 											
+											<!-- City Field -->
 											<jsp:include page="/dashboard/components/input-field.jsp">
 												<jsp:param name="type" value="text"/>
 												<jsp:param name="id" value="city"/>
@@ -171,6 +181,7 @@
 		</div>
 	</main>
 
+	<!-- Bootstrap and jQuery scripts -->
 	<jsp:include page="/dashboard/components/scripts.jsp"/>
 
 </body>
