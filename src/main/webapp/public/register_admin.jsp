@@ -2,220 +2,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<!-- Include common head elements (meta tags, Bootstrap, icons) -->
-	<jsp:include page="/dashboard/components/head.jsp">
-		<jsp:param name="title" value="Create Admin Account - EduHub"/>
-		<jsp:param name="description" value="Create your institute admin account"/>
-	</jsp:include>
-	
-	<!-- Authentication page styles -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/auth.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin Account - EduHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth.css">
 </head>
-<body class="auth-page">
+<body>
 
-	<!-- Main content container -->
-	<main class="auth-container">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-12 col-sm-11 col-md-10 col-lg-10 col-xl-9">
-					
-					<!-- Registration card -->
-					<div class="auth-card">
-						<div class="row g-0">
-							
-							<!-- Left Side - Progress & Info -->
-							<div class="col-lg-5 auth-brand-side">
-								<div class="auth-brand-content">
-									
-									<!-- Brand logo -->
-									<div class="brand-logo">
-										<h1 class="logo-text">EduHub</h1>
-										<div class="logo-underline"></div>
-									</div>
-									
-									<!-- Brand title and subtitle -->
-									<h2 class="brand-title">Almost There!</h2>
-									<p class="brand-subtitle">Create your admin credentials to continue</p>
-									
-									<!-- Progress Steps -->
-									<div class="registration-progress">
-										
-										<!-- Step 1 - Register Institute (Completed) -->
-										<div class="progress-step completed">
-											<div class="step-circle"><i class="bi bi-check"></i></div>
-											<div class="step-info">
-												<h6>Institute Details</h6>
-												<p>Completed</p>
-											</div>
-										</div>
-										
-										<!-- Step 2 - Admin Account (Active) -->
-										<div class="progress-step active">
-											<div class="step-circle">2</div>
-											<div class="step-info">
-												<h6>Admin Account</h6>
-												<p>In progress</p>
-											</div>
-										</div>
-										
-										<!-- Step 3 - Setup Profile -->
-										<div class="progress-step">
-											<div class="step-circle">3</div>
-											<div class="step-info">
-												<h6>Complete Profile</h6>
-												<p>Next step</p>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+    <div class="container-fluid vh-100">
+        <div class="row min-vh-100">
+            
+            <!-- Left Side - Branding (Hidden on mobile) -->
+            <div class="col-lg-5 d-none d-lg-flex bg-gradient-primary text-white p-5 align-items-center justify-content-center">
+                <div class="text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-graduation-cap fa-5x mb-3"></i>
+                        <h1 class="display-4 fw-bold brand-logo">EduHub</h1>
+                    </div>
+                    <h2 class="mb-3">Almost There!</h2>
+                    <p class="lead mb-4">Create your admin credentials to continue</p>
+                    
+                    <!-- Registration Steps -->
+                    <div class="d-flex flex-column gap-3 text-start mx-auto" style="max-width: 350px;">
+                        <div class="d-flex align-items-center gap-3 p-3 bg-white bg-opacity-10 rounded">
+                            <div class="bg-white text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <strong>Institute Details</strong>
+                                <small class="d-block opacity-75">Completed</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 p-3 bg-white bg-opacity-10 rounded">
+                            <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <strong>2</strong>
+                            </div>
+                            <div>
+                                <strong>Admin Account</strong>
+                                <small class="d-block opacity-75">Current step</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-							<!-- Right Side - Form -->
-							<div class="col-lg-7 auth-form-side">
-								<div class="auth-form-content">
-									
-									<!-- Form header -->
-									<div class="form-header">
-										<div class="step-badge">Step 2 of 3</div>
-										<h3>Create Admin Account</h3>
-										<p>Set up your institute administrator credentials</p>
-									</div>
+            <!-- Right Side - Registration Form -->
+            <div class="col-lg-7 d-flex align-items-center justify-content-center p-4">
+                <div class="w-100" style="max-width: 600px;">
+                    
+                    <!-- Mobile Logo (Visible only on mobile) -->
+                    <div class="text-center mb-4 d-lg-none">
+                        <i class="fas fa-graduation-cap fa-3x text-primary mb-2"></i>
+                        <h2 class="brand-logo text-primary">EduHub</h2>
+                    </div>
 
-									<!-- Admin registration form -->
-									<form action="${pageContext.request.contextPath}/public/register_profile.jsp" method="post" class="auth-form">
-										
-										<!-- Admin Full Name Field -->
-										<jsp:include page="/dashboard/components/input-field.jsp">
-											<jsp:param name="type" value="text"/>
-											<jsp:param name="id" value="adminName"/>
-											<jsp:param name="name" value="adminName"/>
-											<jsp:param name="icon" value="person"/>
-											<jsp:param name="label" value="Admin Full Name"/>
-											<jsp:param name="placeholder" value="Enter admin's full name"/>
-											<jsp:param name="required" value="true"/>
-											<jsp:param name="class" value="form-group"/>
-										</jsp:include>
+                    <!-- Card -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4 p-md-5">
+                            
+                            <!-- Header -->
+                            <div class="mb-4">
+                                <span class="badge bg-primary mb-2">Step 2 of 2</span>
+                                <h3 class="fw-bold mb-2">Create Admin Account</h3>
+                                <p class="text-muted mb-0">Set up your administrator credentials</p>
+                            </div>
 
-										<!-- Admin Email Field -->
-										<jsp:include page="/dashboard/components/input-field.jsp">
-											<jsp:param name="type" value="email"/>
-											<jsp:param name="id" value="adminEmail"/>
-											<jsp:param name="name" value="adminEmail"/>
-											<jsp:param name="icon" value="envelope"/>
-											<jsp:param name="label" value="Admin Email Address"/>
-											<jsp:param name="placeholder" value="admin@yourinstitute.com"/>
-											<jsp:param name="required" value="true"/>
-											<jsp:param name="class" value="form-group"/>
-										</jsp:include>
+                            <!-- Registration Form -->
+                            <form action="${pageContext.request.contextPath}/public/login.jsp?registered=true" method="post">
+                                
+                                <!-- Full Name -->
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label fw-semibold">
+                                        <i class="fas fa-user me-1"></i> Full Name
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control form-control-lg" 
+                                        id="fullName" 
+                                        name="fullName" 
+                                        placeholder="Enter your full name"
+                                        required
+                                    >
+                                </div>
 
-										<!-- Username Field -->
-										<jsp:include page="/dashboard/components/input-field.jsp">
-											<jsp:param name="type" value="text"/>
-											<jsp:param name="id" value="username"/>
-											<jsp:param name="name" value="username"/>
-											<jsp:param name="icon" value="person-badge"/>
-											<jsp:param name="label" value="Username"/>
-											<jsp:param name="placeholder" value="Choose a unique username"/>
-											<jsp:param name="required" value="true"/>
-											<jsp:param name="pattern" value="[a-zA-Z0-9_]{4,20}"/>
-											<jsp:param name="helperText" value="4-20 characters, letters, numbers, and underscore only"/>
-											<jsp:param name="class" value="form-group"/>
-										</jsp:include>
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label for="adminEmail" class="form-label fw-semibold">
+                                        <i class="fas fa-envelope me-1"></i> Email Address
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        class="form-control form-control-lg" 
+                                        id="adminEmail" 
+                                        name="adminEmail" 
+                                        placeholder="admin@example.com"
+                                        required
+                                    >
+                                </div>
 
-										<!-- Password Field with Toggle Visibility -->
-										<div class="form-group">
-											<label for="password" class="form-label">
-												<i class="bi bi-lock"></i> Password
-											</label>
-											<div class="password-input-wrapper">
-												<input 
-													type="password" 
-													class="form-control" 
-													id="password" 
-													name="password" 
-													placeholder="Create a strong password" 
-													required
-													minlength="8"
-												>
-												<!-- Toggle password visibility button -->
-												<button type="button" class="password-toggle" onclick="togglePassword('password')">
-													<i class="bi bi-eye" id="password-icon"></i>
-												</button>
-											</div>
-											<small class="form-text text-muted">At least 8 characters with uppercase, lowercase, and number</small>
-										</div>
+                                <!-- Username -->
+                                <div class="mb-3">
+                                    <label for="username" class="form-label fw-semibold">
+                                        <i class="fas fa-at me-1"></i> Username
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control form-control-lg" 
+                                        id="username" 
+                                        name="username" 
+                                        placeholder="Choose a username"
+                                        required
+                                    >
+                                    <small class="text-muted">This will be used to login</small>
+                                </div>
 
-										<!-- Confirm Password Field with Toggle Visibility -->
-										<div class="form-group">
-											<label for="confirmPassword" class="form-label">
-												<i class="bi bi-lock-fill"></i> Confirm Password
-											</label>
-											<div class="password-input-wrapper">
-												<input 
-													type="password" 
-													class="form-control" 
-													id="confirmPassword" 
-													name="confirmPassword" 
-													placeholder="Re-enter your password" 
-													required
-												>
-												<!-- Toggle confirm password visibility button -->
-												<button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
-													<i class="bi bi-eye" id="confirmPassword-icon"></i>
-												</button>
-											</div>
-										</div>
+                                <!-- Password -->
+                                <div class="mb-3">
+                                    <label for="password" class="form-label fw-semibold">
+                                        <i class="fas fa-lock me-1"></i> Password
+                                    </label>
+                                    <div class="input-group">
+                                        <input 
+                                            type="password" 
+                                            class="form-control form-control-lg" 
+                                            id="password" 
+                                            name="password" 
+                                            placeholder="Create a strong password"
+                                            required
+                                        >
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                            <i class="fas fa-eye" id="toggleIcon"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">At least 8 characters</small>
+                                </div>
 
-										<!-- Admin Phone Number Field -->
-										<jsp:include page="/dashboard/components/input-field.jsp">
-											<jsp:param name="type" value="tel"/>
-											<jsp:param name="id" value="adminPhone"/>
-											<jsp:param name="name" value="adminPhone"/>
-											<jsp:param name="icon" value="phone"/>
-											<jsp:param name="label" value="Phone Number"/>
-											<jsp:param name="placeholder" value="+1 (555) 000-0000"/>
-											<jsp:param name="required" value="true"/>
-											<jsp:param name="class" value="form-group"/>
-										</jsp:include>
+                                <!-- Confirm Password -->
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label fw-semibold">
+                                        <i class="fas fa-lock me-1"></i> Confirm Password
+                                    </label>
+                                    <div class="input-group">
+                                        <input 
+                                            type="password" 
+                                            class="form-control form-control-lg" 
+                                            id="confirmPassword" 
+                                            name="confirmPassword" 
+                                            placeholder="Re-enter your password"
+                                            required
+                                        >
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                            <i class="fas fa-eye" id="toggleConfirmIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
 
-										<!-- Navigation Buttons - Back and Continue -->
-										<div class="row g-2">
-											<!-- Back button to previous step -->
-											<div class="col-6">
-												<jsp:include page="/dashboard/components/back-button.jsp">
-													<jsp:param name="url" value="${pageContext.request.contextPath}/public/register_institute.jsp"/>
-													<jsp:param name="text" value="Back"/>
-													<jsp:param name="class" value="btn-lg w-100"/>
-												</jsp:include>
-											</div>
-											<!-- Continue button to next step -->
-											<div class="col-6">
-												<button type="submit" class="btn btn-primary btn-lg w-100 auth-submit-btn">
-													Continue
-													<i class="bi bi-arrow-right"></i>
-												</button>
-											</div>
-										</div>
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                    Continue to Profile Setup
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
 
-										<!-- Login Link for existing users -->
-										<div class="auth-footer">
-											<p>Already have an account? <a href="${pageContext.request.contextPath}/public/login.jsp" class="text-primary fw-bold">Sign In</a></p>
-										</div>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</main>
+                                <!-- Back Link -->
+                                <div class="text-center">
+                                    <a href="${pageContext.request.contextPath}/public/register_institute.jsp" class="text-decoration-none text-muted small">
+                                        <i class="fas fa-arrow-left me-1"></i> Back to Institute Details
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<!-- Bootstrap and jQuery scripts -->
-	<jsp:include page="/dashboard/components/scripts.jsp"/>
-	
-	<!-- Custom JavaScript for password toggle and form validation -->
-	<script src="${pageContext.request.contextPath}/public/js/register_admin.js"></script>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="${pageContext.request.contextPath}/public/js/toast-notification.js"></script>
+    <script>
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            toggleIcon.classList.toggle('fa-eye');
+            toggleIcon.classList.toggle('fa-eye-slash');
+        });
+
+        // Confirm password toggle
+        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const toggleConfirmIcon = document.getElementById('toggleConfirmIcon');
+
+        toggleConfirmPassword.addEventListener('click', function() {
+            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPassword.setAttribute('type', type);
+            toggleConfirmIcon.classList.toggle('fa-eye');
+            toggleConfirmIcon.classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 </html>

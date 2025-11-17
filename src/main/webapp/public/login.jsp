@@ -2,182 +2,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<!-- Include common head elements (meta tags, Bootstrap, icons) -->
-	<jsp:include page="/dashboard/components/head.jsp">
-		<jsp:param name="title" value="Login - EduHub"/>
-		<jsp:param name="description" value="Login to your institute dashboard on EduHub"/>
-	</jsp:include>
-	
-	<!-- Authentication page styles -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/auth.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - EduHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth.css">
 </head>
-<body class="auth-page">
+<body>
 
-	<!-- Main content container -->
-	<main class="auth-container">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-12 col-sm-11 col-md-10 col-lg-10 col-xl-9">
-					
-					<!-- Login card -->
-					<div class="auth-card">
-						<div class="row g-0">
-							
-							<!-- Left Side - Branding -->
-							<div class="col-lg-5 auth-brand-side">
-								<div class="auth-brand-content">
-									
-									<!-- Brand logo -->
-									<div class="brand-logo">
-										<h1 class="logo-text">EduHub</h1>
-										<div class="logo-underline"></div>
-									</div>
-									
-									<!-- Brand title and subtitle -->
-									<h2 class="brand-title">Welcome Back</h2>
-									<p class="brand-subtitle">Login to access your institute dashboard</p>
-									
-									<!-- Brand features list -->
-									<div class="brand-features">
-										<div class="feature-item">
-											<i class="bi bi-shield-check"></i>
-											<span>Secure Authentication</span>
-										</div>
-										<div class="feature-item">
-											<i class="bi bi-speedometer2"></i>
-											<span>Fast & Reliable</span>
-										</div>
-										<div class="feature-item">
-											<i class="bi bi-people"></i>
-											<span>Manage Your Institute</span>
-										</div>
-									</div>
-								</div>
-							</div>
+    <div class="container-fluid vh-100">
+        <div class="row min-vh-100">
+            
+            <!-- Left Side - Branding (Hidden on mobile) -->
+            <div class="col-lg-5 d-none d-lg-flex bg-gradient-primary text-white p-5 align-items-center justify-content-center">
+                <div class="text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-graduation-cap fa-5x mb-3"></i>
+                        <h1 class="display-4 fw-bold brand-logo">EduHub</h1>
+                    </div>
+                    <h2 class="mb-3">Welcome Back!</h2>
+                    <p class="lead mb-4">Manage your educational institution with ease</p>
+                    <div class="d-flex flex-column gap-3 text-start mx-auto" style="max-width: 350px;">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fas fa-shield-alt fa-2x"></i>
+                            <span>Secure & Reliable</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fas fa-chart-line fa-2x"></i>
+                            <span>Real-time Analytics</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fas fa-users fa-2x"></i>
+                            <span>Easy Management</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-							<!-- Right Side - Login Form -->
-							<div class="col-lg-7 auth-form-side">
-								<div class="auth-form-content">
-									
-									<!-- Form header -->
-									<div class="form-header">
-										<h3>Sign In</h3>
-										<p>Enter your credentials to access your account</p>
-									</div>
+            <!-- Right Side - Login Form -->
+            <div class="col-lg-7 d-flex align-items-center justify-content-center p-4">
+                <div class="w-100" style="max-width: 480px;">
+                    
+                    <!-- Mobile Logo (Visible only on mobile) -->
+                    <div class="text-center mb-4 d-lg-none">
+                        <i class="fas fa-graduation-cap fa-3x text-primary mb-2"></i>
+                        <h2 class="brand-logo text-primary">EduHub</h2>
+                    </div>
 
-									<!-- Alert Messages -->
-									<!-- Error message for invalid credentials -->
-									<% if(request.getParameter("error") != null) { %>
-										<div class="alert alert-danger">
-											<i class="bi bi-x-circle-fill"></i>
-											<span>Invalid credentials. Please try again.</span>
-										</div>
-									<% } %>
-									
-									<!-- Success message for logout -->
-									<% if(request.getParameter("logout") != null) { %>
-										<div class="alert alert-success">
-											<i class="bi bi-check-circle-fill"></i>
-											<span>Successfully logged out.</span>
-										</div>
-									<% } %>
-									
-									<!-- Success message for registration -->
-									<% if(request.getParameter("registered") != null) { %>
-										<div class="alert alert-success">
-											<i class="bi bi-check-circle-fill"></i>
-											<span>Registration successful! Please login.</span>
-										</div>
-									<% } %>
+                    <!-- Card -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4 p-md-5">
+                            
+                            <!-- Header -->
+                            <div class="mb-4">
+                                <h3 class="fw-bold mb-2">Sign In</h3>
+                                <p class="text-muted mb-0">Enter your credentials to access your account</p>
+                            </div>
 
-									<!-- Login form -->
-									<form action="${pageContext.request.contextPath}/login" method="post" class="auth-form">
-										
-										<!-- Institute ID / Email Field -->
-										<jsp:include page="/dashboard/components/input-field.jsp">
-											<jsp:param name="type" value="text"/>
-											<jsp:param name="id" value="username"/>
-											<jsp:param name="name" value="username"/>
-											<jsp:param name="icon" value="building"/>
-											<jsp:param name="label" value="Institute ID / Email"/>
-											<jsp:param name="placeholder" value="Enter your institute ID or email"/>
-											<jsp:param name="required" value="true"/>
-											<jsp:param name="autocomplete" value="username"/>
-											<jsp:param name="class" value="form-group"/>
-										</jsp:include>
+                            <!-- Login Form -->
+                            <form action="${pageContext.request.contextPath}/dashboard.jsp?login=success" method="post">
+                                
+                                <!-- Email/Institute ID Field -->
+                                <div class="mb-3">
+                                    <label for="username" class="form-label fw-semibold">
+                                        <i class="fas fa-user me-1"></i> Institute ID / Email
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control form-control-lg" 
+                                        id="username" 
+                                        name="username" 
+                                        placeholder="Enter your institute ID or email"
+                                        required
+                                        autocomplete="username"
+                                    >
+                                </div>
 
-										<!-- Password Field with Toggle Visibility -->
-										<div class="form-group">
-											<label for="password" class="form-label">
-												<i class="bi bi-lock"></i> Password
-											</label>
-											<div class="password-input-wrapper">
-												<input 
-													type="password" 
-													class="form-control" 
-													id="password" 
-													name="password" 
-													placeholder="Enter your password" 
-													required
-													autocomplete="current-password"
-												>
-												<!-- Toggle password visibility button -->
-												<button type="button" class="password-toggle" onclick="togglePassword('password')">
-													<i class="bi bi-eye" id="password-icon"></i>
-												</button>
-											</div>
-										</div>
+                                <!-- Password Field -->
+                                <div class="mb-3">
+                                    <label for="password" class="form-label fw-semibold">
+                                        <i class="fas fa-lock me-1"></i> Password
+                                    </label>
+                                    <div class="input-group">
+                                        <input 
+                                            type="password" 
+                                            class="form-control form-control-lg" 
+                                            id="password" 
+                                            name="password" 
+                                            placeholder="Enter your password"
+                                            required
+                                            autocomplete="current-password"
+                                        >
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                            <i class="fas fa-eye" id="toggleIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
 
-										<!-- Remember Me & Forgot Password -->
-										<div class="d-flex justify-content-between align-items-center mb-3">
-											<!-- Remember me checkbox -->
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" id="remember" name="remember">
-												<label class="form-check-label" for="remember">
-													Remember me
-												</label>
-											</div>
-											<!-- Forgot password link -->
-											<a href="#" class="text-primary small fw-bold">Forgot Password?</a>
-										</div>
+                                <!-- Remember Me & Forgot Password -->
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                                        <label class="form-check-label" for="remember">
+                                            Remember me
+                                        </label>
+                                    </div>
+                                    <a href="#" class="text-decoration-none small">Forgot Password?</a>
+                                </div>
 
-										<!-- Submit Button -->
-										<button type="submit" class="btn btn-primary btn-lg w-100 auth-submit-btn">
-											<i class="bi bi-box-arrow-in-right"></i> Sign In
-										</button>
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                                </button>
 
-										<!-- Divider -->
-										<div class="auth-divider">
-											<span>New to EduHub?</span>
-										</div>
+                                <!-- Divider -->
+                                <div class="text-center my-4">
+                                    <span class="text-muted small">Don't have an account?</span>
+                                </div>
 
-										<!-- Registration Link -->
-										<a href="${pageContext.request.contextPath}/public/register_institute.jsp" class="btn btn-outline-primary w-100">
-											<i class="bi bi-building-add"></i> Register New Institute
-										</a>
+                                <!-- Register Link -->
+                                <a href="${pageContext.request.contextPath}/public/register_institute.jsp" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-user-plus me-2"></i> Register New Institute
+                                </a>
 
-										<!-- Login Footer -->
-										<div class="auth-footer">
-											<p class="small text-muted">
-												<i class="bi bi-shield-lock-fill"></i> 
-												Secured with encryption
-											</p>
-										</div>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</main>
+                                <!-- Back to Home -->
+                                <div class="text-center mt-4">
+                                    <a href="${pageContext.request.contextPath}/index.jsp" class="text-decoration-none text-muted small">
+                                        <i class="fas fa-arrow-left me-1"></i> Back to Home
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
-	<!-- Bootstrap and jQuery scripts -->
-	<jsp:include page="/dashboard/components/scripts.jsp"/>
-	
-	<!-- Custom JavaScript for password toggle -->
-	<script src="${pageContext.request.contextPath}/public/js/login.js"></script>
+                    <!-- Footer -->
+                    <div class="text-center mt-4">
+                        <p class="text-muted small mb-0">
+                            <i class="fas fa-shield-alt me-1"></i> Secured with encryption
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="${pageContext.request.contextPath}/public/js/toast-notification.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password toggle functionality
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    
+                    if(type === 'password') {
+                        toggleIcon.classList.remove('fa-eye-slash');
+                        toggleIcon.classList.add('fa-eye');
+                    } else {
+                        toggleIcon.classList.remove('fa-eye');
+                        toggleIcon.classList.add('fa-eye-slash');
+                    }
+                });
+            }
+
+            // Show toast on form submission
+            const loginForm = document.querySelector('form');
+            if (loginForm && typeof showToast === 'function') {
+                loginForm.addEventListener('submit', function(e) {
+                    // Show loading toast
+                    showToast('Signing in...', 'info', 2000);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,457 +1,521 @@
-/* ===================================
-   Modern Authentication Pages Design
-   Clean, Minimalist, Professional
-   =================================== */
+/**
+ * ============================================================================
+ * EduHub Authentication Pages Stylesheet
+ * ============================================================================
+ * 
+ * Purpose: Styles for all authentication pages (login, register_institute, register_admin)
+ * 
+ * File Structure:
+ * 1. Typography & Custom Fonts
+ * 2. Global Styles & Variables
+ * 3. Layout System (Fixed Left Sidebar)
+ * 4. Gradient Backgrounds
+ * 5. Form Elements (Inputs, Buttons, Alerts)
+ * 6. Card Components
+ * 7. Toast Notifications
+ * 8. Animations & Effects
+ * 9. Responsive Design
+ * 
+ * Color Scheme:
+ * - Primary: #5B4FFF (Purple/Blue) - Main brand color
+ * - Hover: #4839E0 (Darker purple) - Interactive states
+ * - Background: #f8f9fa (Light gray) - Page background
+ * 
+ * Layout Pattern:
+ * - Desktop: Fixed left sidebar (5 columns) + Scrollable right form (7 columns)
+ * - Mobile: Single column, stacked layout
+ * ============================================================================
+ */
 
-/* Body and Page Layout */
-body {
-	margin: 0;
-	padding: 0;
-	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 2rem 1rem;
+/* ============================================================================
+   1. TYPOGRAPHY & CUSTOM FONTS
+   ============================================================================ */
+
+/**
+ * Custom Roma Font - Used for branding elements (logo, headings)
+ * Provides a distinctive, professional look
+ */
+@font-face {
+    font-family: 'Roma';
+    src: url('../assets/fonts/RomaFont/ROMA.woff2') format('woff2'),
+         url('../assets/fonts/RomaFont/ROMA.ttf') format('truetype'),
+         url('../assets/fonts/RomaFont/ROMA.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Ensures text is visible during font load */
 }
 
-.auth-page {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 2rem 1rem;
-	position: relative;
-	overflow: hidden;
-}
-
-/* Animated background elements */
-.auth-page::before {
-	content: '';
-	position: absolute;
-	width: 500px;
-	height: 500px;
-	background: rgba(255, 255, 255, 0.1);
-	border-radius: 50%;
-	top: -250px;
-	right: -250px;
-	animation: float 20s infinite ease-in-out;
-}
-
-.auth-page::after {
-	content: '';
-	position: absolute;
-	width: 400px;
-	height: 400px;
-	background: rgba(255, 255, 255, 0.08);
-	border-radius: 50%;
-	bottom: -200px;
-	left: -200px;
-	animation: float 15s infinite ease-in-out reverse;
-}
-
-@keyframes float {
-	0%, 100% { transform: translateY(0px) scale(1); }
-	50% { transform: translateY(-30px) scale(1.1); }
-}
-
-/* Auth Container */
-.auth-container {
-	width: 100%;
-	max-width: 1200px;
-	position: relative;
-	z-index: 10;
-	padding: 0;
-	margin: 0 auto;
-}
-
-/* Auth Card - Modern Glass Design */
-.auth-card {
-	background: rgba(255, 255, 255, 0.95);
-	backdrop-filter: blur(20px);
-	border-radius: 24px;
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-	overflow: hidden;
-	animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-	from {
-		opacity: 0;
-		transform: translateY(30px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-/* Left Side - Brand Section */
-.auth-brand-side {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	color: white;
-	padding: 3rem 2rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-	overflow: hidden;
-}
-
-.auth-brand-side::before {
-	content: '';
-	position: absolute;
-	width: 300px;
-	height: 300px;
-	background: rgba(255, 255, 255, 0.1);
-	border-radius: 50%;
-	top: -100px;
-	right: -100px;
-}
-
-.auth-brand-content {
-	position: relative;
-	z-index: 2;
-	text-align: center;
-}
-
-/* Brand Logo */
+/* Brand logo specific styling */
 .brand-logo {
-	margin-bottom: 2rem;
+    font-family: 'Roma', serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
-.logo-text {
-	font-family: 'Roma', serif;
-	font-size: 3rem;
-	font-weight: 900;
-	letter-spacing: 2px;
-	color: white;
-	text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-	margin: 0;
+/* ============================================================================
+   2. GLOBAL STYLES & VARIABLES
+   ============================================================================ */
+
+/**
+ * Body - Base styles for all authentication pages
+ * - Uses Poppins for clean, modern typography
+ * - Sets custom Bootstrap primary color to match brand
+ */
+body {
+    font-family: 'Poppins', sans-serif;
+    --bs-primary: #5B4FFF;
+    --bs-primary-rgb: 91, 79, 255;
+    background-color: #f8f9fa !important;
+    min-height: 100vh;
 }
 
-.logo-underline {
-	width: 80px;
-	height: 4px;
-	background: white;
-	margin: 1rem auto;
-	border-radius: 2px;
-	opacity: 0.8;
+/* ============================================================================
+   3. LAYOUT SYSTEM - FIXED LEFT SIDEBAR
+   ============================================================================ */
+
+/**
+ * Left Side Gradient Background
+ * - Fixed position stays in place while right side scrolls
+ * - Contains branding and registration steps
+ * - Only visible on desktop (hidden on mobile)
+ */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #5B4FFF 0%, #7B6FFF 50%, #A855F7 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 41.66667%; /* Bootstrap col-lg-5 width (5/12 = 41.66%) */
+    overflow-y: auto;
 }
 
-.brand-title {
-	font-size: 1.75rem;
-	font-weight: 700;
-	margin-bottom: 1rem;
-	color: white;
+/**
+ * Right Side Container - Form Area
+ * - Auto margin-left pushes it to the right of fixed sidebar
+ * - Scrollable content area for long forms
+ * - Starts from top to prevent content being cut off
+ */
+.col-lg-7 {
+    margin-left: auto;
 }
 
-.brand-subtitle {
-	font-size: 1rem;
-	opacity: 0.9;
-	margin-bottom: 2rem;
-	line-height: 1.6;
-	color: white;
+.col-lg-7.d-flex {
+    min-height: 100vh;
+    align-items: flex-start !important; /* Aligns content to top */
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
-/* Brand Features */
-.brand-features {
-	text-align: left;
-	max-width: 350px;
-	margin: 0 auto;
+/* ============================================================================
+   4. GRADIENT BACKGROUNDS & DECORATIVE PATTERNS
+   ============================================================================ */
+
+/**
+ * Background Pattern Overlay
+ * - Subtle dot pattern adds visual depth
+ * - Low opacity (0.1) keeps it subtle and non-distracting
+ * - SVG pattern is scalable and lightweight
+ */
+.bg-gradient-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-.feature-item {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	padding: 0.75rem;
-	margin-bottom: 0.75rem;
-	background: rgba(255, 255, 255, 0.1);
-	border-radius: 12px;
-	backdrop-filter: blur(10px);
-	transition: all 0.3s ease;
+/**
+ * Content Layering
+ * - Z-index ensures content appears above background pattern
+ * - Relative positioning creates stacking context
+ */
+.bg-gradient-primary > div {
+    position: relative;
+    z-index: 1;
 }
 
-.feature-item:hover {
-	background: rgba(255, 255, 255, 0.2);
-	transform: translateX(5px);
+/* ============================================================================
+   5. BOOTSTRAP COMPONENT OVERRIDES
+   ============================================================================ */
+
+/**
+ * Primary Button Customization
+ * - Overrides Bootstrap's default blue with brand purple
+ * - Maintains all Bootstrap button states (hover, active, focus)
+ * - Uses CSS custom properties for consistency
+ */
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #5B4FFF;
+    --bs-btn-border-color: #5B4FFF;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #4839E0;
+    --bs-btn-hover-border-color: #4839E0;
+    --bs-btn-focus-shadow-rgb: 91, 79, 255;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #4839E0;
+    --bs-btn-active-border-color: #4839E0;
 }
 
-.feature-item i {
-	font-size: 1.5rem;
-	color: white;
-	min-width: 30px;
+/**
+ * Outline Primary Button
+ * - Transparent background with colored border
+ * - Fills with color on hover
+ */
+.btn-outline-primary {
+    --bs-btn-color: #5B4FFF;
+    --bs-btn-border-color: #5B4FFF;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #5B4FFF;
+    --bs-btn-hover-border-color: #5B4FFF;
+    --bs-btn-focus-shadow-rgb: 91, 79, 255;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #5B4FFF;
+    --bs-btn-active-border-color: #5B4FFF;
 }
 
-.feature-item span {
-	font-size: 0.95rem;
-	color: white;
+/* ============================================================================
+   6. CARD COMPONENTS
+   ============================================================================ */
+
+/**
+ * Card Base Styling
+ * - Rounded corners for modern look
+ * - Smooth shadow transition on hover
+ */
+.card {
+    border-radius: 16px;
+    transition: box-shadow 0.3s ease;
 }
 
-/* Progress Steps */
-.registration-progress {
-	margin-top: 2rem;
+/**
+ * Card Hover Effect
+ * - Elevates card with enhanced shadow
+ * - Creates depth perception
+ */
+.card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
-.progress-step {
-	display: flex;
-	align-items: flex-start;
-	gap: 1rem;
-	margin-bottom: 1.5rem;
-	opacity: 0.5;
-	transition: all 0.3s ease;
-	position: relative;
+/* ============================================================================
+   7. FORM ELEMENTS
+   ============================================================================ */
+
+/**
+ * Form Control Base Styles
+ * - Consistent border radius across all inputs
+ * - Subtle border color for clean appearance
+ * - Smooth transitions for interactive states
+ */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
 }
 
-.progress-step::before {
-	content: '';
-	position: absolute;
-	left: 20px;
-	top: 45px;
-	width: 2px;
-	height: calc(100% + 10px);
-	background: rgba(255, 255, 255, 0.2);
+/**
+ * Form Control Focus State
+ * - Brand-colored border on focus
+ * - Subtle shadow for depth
+ * - Improves user experience by clearly showing active field
+ */
+.form-control:focus {
+    border-color: #5B4FFF;
+    box-shadow: 0 0 0 0.2rem rgba(91, 79, 255, 0.15);
 }
 
-.progress-step:last-child::before {
-	display: none;
+/**
+ * Large Form Controls
+ * - Used for primary inputs (email, password, etc.)
+ * - Larger touch targets for better UX
+ */
+.form-control-lg {
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
 }
 
-.progress-step.active,
-.progress-step.completed {
-	opacity: 1;
+/**
+ * Form Labels
+ * - Dark color for better readability
+ * - Consistent spacing
+ */
+.form-label {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
 }
 
-.step-circle {
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.2);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: 700;
-	font-size: 1.1rem;
-	flex-shrink: 0;
-	color: white;
+/**
+ * Input Group Buttons
+ * - Used for password visibility toggle
+ * - Matches input border color
+ */
+.input-group .btn-outline-secondary {
+    border-color: #e0e0e0;
+    color: #666;
 }
 
-.progress-step.active .step-circle {
-	background: white;
-	color: #667eea;
-	box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+.input-group .btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #5B4FFF;
+    color: #5B4FFF;
 }
 
-.progress-step.completed .step-circle {
-	background: rgba(255, 255, 255, 0.3);
+/* ============================================================================
+   8. BUTTONS
+   ============================================================================ */
+
+/**
+ * Button Base Styles
+ * - Consistent border radius
+ * - Medium font weight for readability
+ * - Smooth transitions for all interactive states
+ */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
 }
 
-.step-info h6 {
-	margin: 0 0 0.25rem 0;
-	font-size: 1rem;
-	font-weight: 600;
-	color: white;
+/**
+ * Large Buttons
+ * - Used for primary actions (Sign In, Register, etc.)
+ * - Larger touch targets
+ */
+.btn-lg {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
 }
 
-.step-info p {
-	margin: 0;
-	font-size: 0.85rem;
-	color: rgba(255, 255, 255, 0.8);
+/**
+ * Button Hover Effects
+ * - Subtle lift animation (-2px)
+ * - Enhanced shadow for depth
+ * - Applies to both solid and outline variants
+ */
+.btn-primary:hover,
+.btn-outline-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(91, 79, 255, 0.3);
 }
 
-/* Right Side - Form Section */
-.auth-form-side {
-	padding: 3rem 2.5rem;
-	background: white;
+/* ============================================================================
+   9. ALERTS
+   ============================================================================ */
+
+/**
+ * Alert Base Styles
+ * - Rounded corners match overall design
+ * - No border for cleaner look
+ * - Generous padding for readability
+ */
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.25rem;
 }
 
-.auth-form-content {
-	max-width: 450px;
-	margin: 0 auto;
+/**
+ * Alert Variants
+ * - Soft background colors for better readability
+ * - High contrast text colors for accessibility
+ */
+.alert-danger {
+    background-color: #fee;
+    color: #c33;
 }
 
-/* Form Header */
-.form-header {
-	text-align: center;
-	margin-bottom: 2rem;
+.alert-success {
+    background-color: #efe;
+    color: #3c3;
 }
 
-.step-badge {
-	display: inline-block;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	color: white;
-	padding: 0.5rem 1.25rem;
-	border-radius: 20px;
-	font-size: 0.85rem;
-	font-weight: 600;
-	margin-bottom: 1rem;
+/* ============================================================================
+   10. LINKS
+   ============================================================================ */
+
+/**
+ * Link Styles
+ * - Brand color for consistency
+ * - Smooth color transition
+ * - No underline for modern appearance
+ */
+a {
+    color: #5B4FFF;
+    transition: color 0.3s ease;
+    text-decoration: none;
 }
 
-.form-header h3 {
-	font-size: 1.75rem;
-	font-weight: 700;
-	color: #1a202c;
-	margin-bottom: 0.5rem;
+a:hover {
+    color: #4839E0;
 }
 
-.form-header p {
-	color: #718096;
-	font-size: 0.95rem;
+/* ============================================================================
+   11. RESPONSIVE DESIGN - TABLET & MOBILE
+   ============================================================================ */
+
+/**
+ * Tablet View (max-width: 991.98px)
+ * - Hides fixed left sidebar
+ * - Converts to single column layout
+ * - Adjusts spacing for smaller screens
+ */
+@media (max-width: 991.98px) {
+    .min-vh-100 {
+        min-height: auto !important;
+    }
+    
+    .card-body {
+        padding: 2rem !important;
+    }
 }
 
-/* Form Styles */
-.auth-form {
-	margin-top: 1.5rem;
+/**
+ * Mobile View (max-width: 575.98px)
+ * - Further reduces padding for very small screens
+ * - Adjusts button and input sizes
+ * - Optimizes for touch interaction
+ */
+@media (max-width: 575.98px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-control-lg {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
 }
 
-.auth-form .form-group {
-	margin-bottom: 1.25rem;
+/* ============================================================================
+   12. ANIMATIONS & KEYFRAMES
+   ============================================================================ */
+
+/**
+ * Fade In Animation
+ * - Smooth entry animation for cards
+ * - Moves element from below (20px) to original position
+ * - Creates professional, polished feel
+ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.auth-form .form-label {
-	font-weight: 600;
-	color: #2d3748;
-	margin-bottom: 0.5rem;
-	font-size: 0.9rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
+/**
+ * Card Entry Animation
+ * - Applied to all cards on page load
+ * - 0.5s duration for smooth, not jarring effect
+ */
+.card {
+    animation: fadeIn 0.5s ease-out;
 }
 
-.auth-form .form-label i {
-	color: #667eea;
-	font-size: 1rem;
+/**
+ * Float Animation
+ * - Subtle floating effect
+ * - Can be used for decorative elements
+ * - Creates sense of depth and movement
+ */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-20px) scale(1.05);
+    }
 }
 
-/* Password Input Wrapper */
-.password-input-wrapper {
-	position: relative;
+/* ============================================================================
+   13. TOAST NOTIFICATION STYLES
+   ============================================================================ */
+
+/**
+ * Toast Container
+ * - Fixed position at top-right
+ * - Max width prevents toasts from being too wide
+ * - High z-index ensures toasts appear above everything
+ */
+.toast-container {
+    max-width: 350px;
 }
 
-.password-toggle {
-	position: absolute;
-	right: 12px;
-	top: 50%;
-	transform: translateY(-50%);
-	background: none;
-	border: none;
-	color: #718096;
-	cursor: pointer;
-	padding: 0.5rem;
-	transition: color 0.3s ease;
+/**
+ * Toast Base Styling
+ * - Minimum width for consistency
+ * - Enhanced shadow for visibility
+ * - Rounded corners match design system
+ * - Slide-in animation from right
+ */
+.toast {
+    min-width: 280px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    animation: slideInRight 0.3s ease-out;
+    font-family: 'Poppins', sans-serif;
 }
 
-.password-toggle:hover {
-	color: #667eea;
+/**
+ * Slide In Animation
+ * - Toasts slide in from right side
+ * - Quick 0.3s animation for responsiveness
+ * - Fades in simultaneously
+ */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
-/* Divider */
-.auth-divider {
-	display: flex;
-	align-items: center;
-	text-align: center;
-	margin: 1.5rem 0;
-	color: #a0aec0;
-	font-size: 0.85rem;
+/**
+ * Toast Body
+ * - Generous padding for readability
+ * - Medium font weight for emphasis
+ */
+.toast-body {
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    font-weight: 500;
 }
 
-.auth-divider::before,
-.auth-divider::after {
-	content: '';
-	flex: 1;
-	border-bottom: 1px solid #e2e8f0;
+/**
+ * Toast Close Button
+ * - Accessible size for easy dismissal
+ */
+.toast .btn-close {
+    padding: 0.5rem;
 }
 
-.auth-divider span {
-	padding: 0 1rem;
+/**
+ * Toast Icons
+ * - Larger icons for better visibility
+ * - Different icons for different toast types (success, error, etc.)
+ */
+.toast i {
+    font-size: 1.1rem;
 }
 
-/* Auth Footer */
-.auth-footer {
-	text-align: center;
-	margin-top: 1.5rem;
-}
-
-.auth-footer p {
-	color: #718096;
-	margin: 0;
-	font-size: 0.9rem;
-}
-
-.auth-footer a {
-	color: #667eea;
-	text-decoration: none;
-	font-weight: 600;
-	transition: color 0.3s ease;
-}
-
-.auth-footer a:hover {
-	color: #764ba2;
-	text-decoration: underline;
-}
-
-/* Responsive Design */
-@media (max-width: 991px) {
-	.auth-brand-side {
-		padding: 2.5rem 2rem;
-	}
-	
-	.auth-form-side {
-		padding: 2.5rem 2rem;
-	}
-	
-	.logo-text {
-		font-size: 2.5rem;
-	}
-}
-
-@media (max-width: 767px) {
-	body {
-		padding: 1rem;
-	}
-	
-	.auth-page {
-		padding: 1rem;
-	}
-	
-	.auth-card {
-		border-radius: 16px;
-	}
-	
-	.auth-brand-side {
-		padding: 2rem 1.5rem;
-	}
-	
-	.auth-form-side {
-		padding: 2rem 1.5rem;
-	}
-	
-	.logo-text {
-		font-size: 2rem;
-	}
-	
-	.brand-title {
-		font-size: 1.5rem;
-	}
-	
-	.brand-features {
-		display: none;
-	}
-	
-	.registration-progress {
-		display: none;
-	}
-}
-
-@media (max-width: 575px) {
-	.form-header h3 {
-		font-size: 1.5rem;
-	}
-	
-	.auth-form-side {
-		padding: 1.5rem 1rem;
-	}
-}
+/* ============================================================================
+   END OF FILE
+   ============================================================================ */
