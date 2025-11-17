@@ -378,11 +378,6 @@ a:hover {
     border-radius: 50%;
     animation: pulse 4s ease-in-out infinite;
 }
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
-}
 
 .illustration-bg {
     width: 400px;
