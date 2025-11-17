@@ -204,7 +204,10 @@
                                 <button type="submit" class="btn btn-success">
                                     <i class="bi bi-check-circle me-1"></i>Record Payment
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary" id="resetBtn">
+                                <button type="button" class="btn btn-outline-secondary d-flex align-items-center" id="resetBtn" aria-label="Reset filters">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    <span>Reset Filters</span>
+                                </button>
                                     <i class="bi bi-arrow-clockwise me-1"></i>Reset Form
                                 </button>
                                 <a href="${pageContext.request.contextPath}/dashboard/pages/students/fees-management.jsp" class="btn btn-outline-danger">

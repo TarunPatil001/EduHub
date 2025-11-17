@@ -130,10 +130,11 @@
                                     <option value="">All Companies</option>
                                 </select>
                             </div>
-                            <div class="col-lg-1 col-md-6">
+                            <div class="col-lg-2 col-md-6">
                                 <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" 
-                                    id="clearFilters" type="button" aria-label="Reset filters" title="Clear Filters">
-                                    <i class="bi bi-arrow-clockwise"></i>
+                                    id="clearFilters" type="button" aria-label="Reset filters">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    <span>Reset Filters</span>
                                 </button>
                             </div>
                         </div>

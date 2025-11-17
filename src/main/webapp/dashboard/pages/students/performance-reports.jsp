@@ -74,8 +74,9 @@
                 <div class="card-custom mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0"><i class="bi bi-funnel"></i> Filter & Search</h5>
-                        <button class="btn btn-outline-secondary btn-sm" id="resetFiltersBtn" style="display: none;">
-                            <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center" id="resetFiltersBtn" type="button" style="display: none;">
+                            <i class="bi bi-arrow-clockwise me-2"></i>
+                            <span>Reset Filters</span>
                         </button>
                     </div>
                     

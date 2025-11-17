@@ -210,8 +210,11 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
                             </select>
                         </div>
                         <div class="col-lg-2 col-md-12">
-                            <button class="btn btn-outline-secondary w-100" id="resetFilters">
-                                <i class="bi bi-arrow-clockwise"></i> Reset
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" 
+                                id="resetFilters" type="button" aria-label="Reset filters" style="height: 38px;">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                <span>Reset Filters</span>
                             </button>
                         </div>
                     </div>

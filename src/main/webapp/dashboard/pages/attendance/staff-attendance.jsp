@@ -94,8 +94,9 @@
                             <button id="markSelectedPresentBtn" class="btn btn-info btn-sm">
                                 <i class="bi bi-person-check"></i> Selected Present
                             </button>
-                            <button id="resetBtn" class="btn btn-secondary btn-sm">
-                                <i class="bi bi-arrow-counterclockwise"></i> Reset
+                            <button id="resetBtn" class="btn btn-outline-secondary btn-sm d-flex align-items-center" type="button">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                <span>Reset Filters</span>
                             </button>
                         </div>
                         <div class="d-flex gap-3 attendance-stats">

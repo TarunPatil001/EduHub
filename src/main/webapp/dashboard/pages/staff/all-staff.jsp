@@ -263,8 +263,10 @@ pageContext.setAttribute("staffList", staffList);
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn btn-outline-secondary w-100" id="resetFilters">
-                                    <i class="bi bi-arrow-clockwise me-2"></i>Reset
+                                <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" 
+                                    id="resetFilters" type="button" aria-label="Reset filters">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    <span>Reset Filters</span>
                                 </button>
                             </div>
                         </div>

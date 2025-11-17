@@ -22,13 +22,11 @@
             
             <div class="dashboard-content">
                 <div class="page-header-wrapper mb-4">
-                    <!-- Page Heading -->
                     <div class="page-title-container">
                         <h2>Add New Student</h2>
                         <p class="text-muted">Register a new student in the system</p>
                     </div>
                     
-                    <!-- Back Button -->
                     <div class="back-button-container">
                         <jsp:include page="/dashboard/components/back-button.jsp">
                             <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp"/>
@@ -37,8 +35,8 @@
                     </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col-lg-9">
+                <div class="add-student-layout">
+                    <div class="add-student-form-column">
                         <form id="addStudentForm" action="${pageContext.request.contextPath}/api/students/add" method="POST" enctype="multipart/form-data">
                             
                             <!-- Student Photo Upload -->
@@ -192,7 +190,6 @@
                                         <jsp:param name="prepend" value="@"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
-                                    </div>
                                     
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="text"/>
@@ -261,8 +258,7 @@
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label for="passingYear" class="form-label">Passing Year <span class="required-star">*</span></label>
-                                        <input type="text" class="form-control year-picker" id="passingYear" name="passingYear" required placeholder="Click to select year" readonly>
-                                        <input type="hidden" id="passingYearValue" name="passingYearValue">
+                                        <input type="text" class="form-control" id="passingYear" name="passingYear" required placeholder="Click to select year" readonly>
                                     </div>
                                     
                                     <jsp:include page="/dashboard/components/input-field.jsp">
@@ -275,6 +271,7 @@
                                         <jsp:param name="options" value="1|Web Development - Full Stack,2|Data Science - Advanced,3|Mobile App Development,4|Digital Marketing,5|Python Programming"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
+                                    
                                     <div class="col-md-4">
                                         <label for="batchPreference" class="form-label">Batch Preference</label>
                                         <select class="form-select" id="batchPreference" name="batchPreference">
@@ -447,37 +444,43 @@
                     </div>
                     
                     <!-- Sidebar -->
-                    <div class="col-lg-3">
-                        <div class="card-custom mb-3 sticky-bottom-sidebar">
-                            <h6><i class="bi bi-info-circle"></i> Registration Guidelines</h6>
-                            <ul class="small text-muted mb-0">
-                                <li>Fill all required fields marked with <span class="required-star">*</span></li>
-                                <li>Upload clear, legible document scans</li>
-                                <li>Ensure mobile numbers are active</li>
-                                <li>Use a valid email address</li>
-                                <li>Photo should be passport-size</li>
-                                <li>All documents should be in PDF or image format</li>
+                    <div class="add-student-sidebar-column">
+                        <div class="card-custom mb-3">
+                            <h6 class="mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Registration Guidelines
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-2">Fill all required fields marked with <span class="required-star">*</span></li>
+                                <li class="mb-2">Upload clear, legible document scans</li>
+                                <li class="mb-2">Ensure mobile numbers are active</li>
+                                <li class="mb-2">Use a valid email address</li>
+                                <li class="mb-2">Photo should be passport-size</li>
+                                <li class="mb-2">All documents should be in PDF or image format</li>
                             </ul>
                             
-                            <hr>
+                            <hr class="my-3">
                             
-                            <h6 class="mt-3"><i class="bi bi-file-text"></i> Required Documents</h6>
-                            <ul class="small text-muted mb-0">
-                                <li>✓ Aadhar Card</li>
-                                <li>✓ Latest Marksheet</li>
-                                <li>• PAN Card (if available)</li>
-                                <li>• Degree Certificate</li>
-                                <li>• Job Guarantee Document</li>
-                                <li>• Resume/CV</li>
+                            <h6 class="mb-3">
+                                <i class="bi bi-file-text me-2"></i>Required Documents
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-2">✓ Aadhar Card</li>
+                                <li class="mb-2">✓ Latest Marksheet</li>
+                                <li class="mb-2">• PAN Card (if available)</li>
+                                <li class="mb-2">• Degree Certificate</li>
+                                <li class="mb-2">• Job Guarantee Document</li>
+                                <li class="mb-2">• Resume/CV</li>
                             </ul>
                             
-                            <hr>
+                            <hr class="my-3">
                             
-                            <div class="mt-3">
-                                <h6><i class="bi bi-headset"></i> Need Help?</h6>
+                            <div>
+                                <h6 class="mb-3">
+                                    <i class="bi bi-headset me-2"></i>Need Help?
+                                </h6>
                                 <p class="small text-muted mb-2">Contact our admission team for assistance</p>
                                 <a href="#" class="btn btn-sm btn-outline-primary w-100">
-                                    <i class="bi bi-telephone"></i> Contact Support
+                                    <i class="bi bi-telephone me-2"></i>Contact Support
                                 </a>
                             </div>
                         </div>
