@@ -3,26 +3,93 @@
  * Separate JS file for better organization and maintainability
  */
 
-// Photo preview functionality
-document.getElementById('studentPhoto').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
     
-    if (file.size > 2 * 1024 * 1024) {
-        Toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
-        this.value = '';
-        return;
+    // Photo preview functionality
+    const studentPhotoInput = document.getElementById('studentPhoto');
+    if (studentPhotoInput) {
+        studentPhotoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (file.size > 2 * 1024 * 1024) {
+                Toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
+                this.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('photoPlaceholder').style.display = 'none';
+                const preview = document.getElementById('photoPreview');
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
     }
-    
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        document.getElementById('photoPlaceholder').style.display = 'none';
-        const preview = document.getElementById('photoPreview');
-        preview.src = event.target.result;
-        preview.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+
+    // Age validation
+    const dobInput = document.getElementById('dateOfBirth');
+    if (dobInput) {
+        dobInput.addEventListener('change', function() {
+            const age = new Date().getFullYear() - new Date(this.value).getFullYear();
+            
+            if (age < 15) {
+                Toast.error('Student must be at least 15 years old to register. Please enter a valid date of birth.');
+                this.value = '';
+            }
+        });
+    }
+
+    // Phone number validation - Allow only digits and limit to 10
+    ['mobileNumber', 'whatsappNumber', 'parentMobile'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+            });
+        }
+    });
+
+    // Form validation and submission
+    const addStudentForm = document.getElementById('addStudentForm');
+    if (addStudentForm) {
+        addStudentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!this.checkValidity()) {
+                this.classList.add('was-validated');
+                Toast.warning('Please fill in all required fields correctly.');
+                
+                const firstError = this.querySelector(':invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+                return;
+            }
+            
+            showConfirmationModal({
+                title: 'Submit Registration',
+                message: 'Are you sure you want to submit this student registration?<br><br><small class="text-muted">Please verify all information is correct before submitting.</small>',
+                confirmText: 'Yes, Submit',
+                cancelText: 'Review Again',
+                confirmClass: 'btn-success',
+                icon: 'bi-check-circle-fill text-success',
+                onConfirm: function() {
+                    Toast.success('Student registration has been submitted successfully!');
+                    // document.getElementById('addStudentForm').submit(); // Uncomment when backend is ready
+                }
+            });
+        });
+    }
+
+    // Initialize Year Picker
+    initializeYearPicker();
 });
+
 
 /**
  * File upload handler
@@ -141,55 +208,10 @@ function resetForm() {
     });
 }
 
-// Form validation and submission
-document.getElementById('addStudentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    if (!this.checkValidity()) {
-        this.classList.add('was-validated');
-        Toast.warning('Please fill in all required fields correctly.');
-        
-        const firstError = this.querySelector(':invalid');
-        if (firstError) {
-            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            firstError.focus();
-        }
-        return;
-    }
-    
-    showConfirmationModal({
-        title: 'Submit Registration',
-        message: 'Are you sure you want to submit this student registration?<br><br><small class="text-muted">Please verify all information is correct before submitting.</small>',
-        confirmText: 'Yes, Submit',
-        cancelText: 'Review Again',
-        confirmClass: 'btn-success',
-        icon: 'bi-check-circle-fill text-success',
-        onConfirm: function() {
-            Toast.success('Student registration has been submitted successfully!');
-            // document.getElementById('addStudentForm').submit(); // Uncomment when backend is ready
-        }
-    });
-});
-
-// Age validation
-document.getElementById('dateOfBirth').addEventListener('change', function() {
-    const age = new Date().getFullYear() - new Date(this.value).getFullYear();
-    
-    if (age < 15) {
-        Toast.error('Student must be at least 15 years old to register. Please enter a valid date of birth.');
-        this.value = '';
-    }
-});
-
-// Phone number validation - Allow only digits and limit to 10
-['mobileNumber', 'whatsappNumber', 'parentMobile'].forEach(id => {
-    document.getElementById(id).addEventListener('input', function() {
-        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
-    });
-});
-
-// Year Picker Implementation
-(function() {
+/**
+ * Initialize Year Picker
+ */
+function initializeYearPicker() {
     const yearPickerInput = document.getElementById('passingYear');
     
     // Check if the year picker input exists before initializing
@@ -314,20 +336,6 @@ document.getElementById('dateOfBirth').addEventListener('change', function() {
             dropdown.classList.remove('show');
         }
     });
-})();
-        
-        // Update box appearance
-        if (box) {
-            box.style.borderColor = '#198754';
-            box.style.backgroundColor = '#d1e7dd';
-        }
-        
-        // Display file name
-        if (fileName) {
-            fileName.textContent = `✓ ${file.name}`;
-            fileName.style.color = '#198754';
-        }
-    }
 }
 
 /**
