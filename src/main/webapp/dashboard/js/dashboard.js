@@ -92,8 +92,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } else {
                 // Desktop: Collapse sidebar to icon-only mode
+                const isCollapsing = !sidebar.classList.contains('collapsed');
+                
                 sidebar.classList.toggle('collapsed');
                 document.querySelector('.dashboard-main').classList.toggle('expanded');
+                
+                // When collapsing sidebar, close all submenus
+                if (isCollapsing) {
+                    const allSubmenus = document.querySelectorAll('.submenu.show');
+                    allSubmenus.forEach(function(submenu) {
+                        // Use Bootstrap's collapse to close
+                        const bsCollapse = bootstrap.Collapse.getInstance(submenu);
+                        if (bsCollapse) {
+                            bsCollapse.hide();
+                        } else {
+                            submenu.classList.remove('show');
+                        }
+                    });
+                    
+                    // Update aria-expanded attributes
+                    const allSubmenuLinks = document.querySelectorAll('.nav-link.has-submenu');
+                    allSubmenuLinks.forEach(function(link) {
+                        link.setAttribute('aria-expanded', 'false');
+                    });
+                } else {
+                    // When expanding sidebar, open only the active submenu
+                    const activeSubmenuLink = document.querySelector('.nav-link.has-submenu.active');
+                    if (activeSubmenuLink) {
+                        const targetId = activeSubmenuLink.getAttribute('data-bs-target');
+                        if (targetId) {
+                            const activeSubmenu = document.querySelector(targetId);
+                            if (activeSubmenu) {
+                                setTimeout(function() {
+                                    const bsCollapse = new bootstrap.Collapse(activeSubmenu, {
+                                        toggle: true
+                                    });
+                                }, 100);
+                            }
+                        }
+                    }
+                }
                 
                 // Toggle icon
                 if (sidebar.classList.contains('collapsed')) {
@@ -147,6 +185,121 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon.classList.remove('bi-layout-sidebar-inset-reverse');
                 icon.classList.add('bi-layout-sidebar-inset');
             }
+        }
+    });
+    
+    // ========================================================================
+    // EXPAND SIDEBAR WHEN CLICKING SUBMENU ITEMS IN COLLAPSED STATE
+    // ========================================================================
+    
+    /**
+     * When sidebar is collapsed and user clicks on a nav item with submenu,
+     * expand the sidebar to show the submenu items
+     */
+    const submenuLinks = document.querySelectorAll('.nav-link.has-submenu');
+    
+    submenuLinks.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            // Only apply this behavior on desktop when sidebar is collapsed
+            if (window.innerWidth > 991 && sidebar && sidebar.classList.contains('collapsed')) {
+                // Prevent the default collapse toggle
+                event.preventDefault();
+                
+                // Expand the sidebar
+                sidebar.classList.remove('collapsed');
+                document.querySelector('.dashboard-main').classList.remove('expanded');
+                
+                // Update toggle icon
+                if (toggleSidebar) {
+                    const icon = toggleSidebar.querySelector('i');
+                    icon.classList.remove('bi-layout-sidebar-inset-reverse');
+                    icon.classList.add('bi-layout-sidebar-inset');
+                }
+                
+                // Close all other submenus first
+                const allSubmenus = document.querySelectorAll('.submenu.show');
+                allSubmenus.forEach(function(submenu) {
+                    const bsCollapse = bootstrap.Collapse.getInstance(submenu);
+                    if (bsCollapse) {
+                        bsCollapse.hide();
+                    } else {
+                        submenu.classList.remove('show');
+                    }
+                });
+                
+                // After expanding, trigger the clicked submenu to open
+                setTimeout(function() {
+                    const targetId = link.getAttribute('data-bs-target');
+                    if (targetId) {
+                        const submenu = document.querySelector(targetId);
+                        if (submenu) {
+                            // Use Bootstrap's collapse API
+                            const bsCollapse = new bootstrap.Collapse(submenu, {
+                                toggle: true
+                            });
+                        }
+                    }
+                }, 100); // Small delay to ensure sidebar expansion completes
+            } else if (window.innerWidth > 991 && sidebar && !sidebar.classList.contains('collapsed')) {
+                // When sidebar is expanded, close other submenus when opening a new one
+                const targetId = link.getAttribute('data-bs-target');
+                const clickedSubmenu = document.querySelector(targetId);
+                
+                // Only close others if this submenu is currently closed
+                if (clickedSubmenu && !clickedSubmenu.classList.contains('show')) {
+                    const allSubmenus = document.querySelectorAll('.submenu.show');
+                    allSubmenus.forEach(function(submenu) {
+                        if (submenu !== clickedSubmenu) {
+                            const bsCollapse = bootstrap.Collapse.getInstance(submenu);
+                            if (bsCollapse) {
+                                bsCollapse.hide();
+                            }
+                        }
+                    });
+                }
+            }
+            // On mobile, default behavior (Bootstrap collapse) works
+        });
+    });
+    
+    // ========================================================================
+    // INITIALIZE: CLOSE NON-ACTIVE SUBMENUS ON PAGE LOAD
+    // ========================================================================
+    
+    /**
+     * On page load, ensure only the active submenu is open
+     */
+    window.addEventListener('load', function() {
+        // Only apply on desktop
+        if (window.innerWidth > 991 && sidebar && !sidebar.classList.contains('collapsed')) {
+            const activeSubmenuLink = document.querySelector('.nav-link.has-submenu.active');
+            const allSubmenus = document.querySelectorAll('.submenu.show');
+            
+            allSubmenus.forEach(function(submenu) {
+                // Check if this submenu belongs to the active link
+                if (activeSubmenuLink) {
+                    const activeTargetId = activeSubmenuLink.getAttribute('data-bs-target');
+                    const activeSubmenu = document.querySelector(activeTargetId);
+                    
+                    // Close all submenus except the active one
+                    if (submenu !== activeSubmenu) {
+                        const bsCollapse = bootstrap.Collapse.getInstance(submenu);
+                        if (bsCollapse) {
+                            bsCollapse.hide();
+                        } else {
+                            submenu.classList.remove('show');
+                        }
+                    }
+                } else {
+                    // No active submenu, close all
+                    const bsCollapse = bootstrap.Collapse.getInstance(submenu);
+                    if (bsCollapse) {
+                        bsCollapse.hide();
+                    } else {
+                        submenu.classList.remove('show');
+                    }
+                }
+            });
         }
     });
     
