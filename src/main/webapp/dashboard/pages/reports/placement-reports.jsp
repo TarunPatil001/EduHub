@@ -428,7 +428,7 @@
     </div>
 
     <!-- Toast Notification Component -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/common/toast-notification.jsp"/>
     
     <!-- Modal Component -->
     <jsp:include page="/dashboard/components/modal.jsp"/>
