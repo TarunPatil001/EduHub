@@ -7,3 +7,14 @@ services:
     branch: main
     buildCommand: ''
     startCommand: ''
+    envVars:
+      - key: DB_HOST
+        value: sql12.freesqldatabase.com
+      - key: DB_PORT
+        value: 3306
+      - key: DB_NAME
+        value: sql12808777
+      - key: DB_USER
+        value: sql12808777
+      - key: DB_PASSWORD
+        value: PeQJreRtu8

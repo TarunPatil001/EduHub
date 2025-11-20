@@ -42,11 +42,18 @@ public class DBUtil {
 			// Load all values from the properties file into props object
 			props.load(input);
 			
-			 // Assign values from properties file to variables
-	         url = props.getProperty("db.url");
-	         username = props.getProperty("db.username"); 
-	         password = props.getProperty("db.password");
-	         driver = props.getProperty("db.driver");
+			 // Read from environment variables first, fall back to properties file
+			 String dbHost = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : props.getProperty("db.host", "localhost");
+			 String dbPort = System.getenv("DB_PORT") != null ? System.getenv("DB_PORT") : props.getProperty("db.port", "3306");
+			 String dbName = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : props.getProperty("db.name", "eduhub");
+			 
+			 // Build the connection URL
+			 url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=true&serverTimezone=UTC";
+			 
+			 // Username and password from environment or properties
+	         username = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : props.getProperty("db.username", "root"); 
+	         password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : props.getProperty("db.password", "root");
+	         driver = props.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
 	         
 	         /*
 	             * Load the JDBC driver class into memory.
