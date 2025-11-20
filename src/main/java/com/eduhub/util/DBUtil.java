@@ -18,6 +18,9 @@ public class DBUtil {
 	private static String password;
 	private static String driver;
 	
+	// Track if tables have been verified
+	private static boolean tablesVerified = false;
+	
 	 /*
      * STATIC BLOCK:
      * This block runs ONLY ONCE when the class is loaded.
@@ -62,12 +65,153 @@ public class DBUtil {
 	         Class.forName(driver);
 	         logger.info("Database configuration loaded successfully");
 	         logger.info("Database URL: {}", url);
+	         
+	         // Initialize database tables if they don't exist
+	         initializeDatabaseTables();
 			
 		}catch(Exception e) {
 			 logger.error("Failed to load database configuration", e);
 			 throw new RuntimeException("Database initialization failed", e);
 		}
 	}
+	
+	/**
+	 * Initialize database tables if they don't exist
+	 * This method checks if tables exist and creates them if necessary
+	 */
+	private static void initializeDatabaseTables() {
+		Connection conn = null;
+		try {
+			logger.info("Connecting to database for table initialization...");
+			conn = DriverManager.getConnection(url, username, password);
+			logger.info("Database connection established successfully");
+			
+			// Check if institutes table exists
+			boolean institutesExists = tableExists(conn, "institutes");
+			logger.info("Institutes table exists: {}", institutesExists);
+			
+			if (!institutesExists) {
+				logger.warn("Institutes table not found. Creating...");
+				createInstitutesTable(conn);
+				logger.info("Institutes table created successfully");
+			}
+			
+			// Check if users table exists
+			boolean usersExists = tableExists(conn, "users");
+			logger.info("Users table exists: {}", usersExists);
+			
+			if (!usersExists) {
+				logger.warn("Users table not found. Creating...");
+				createUsersTable(conn);
+				logger.info("Users table created successfully");
+			}
+			
+			logger.info("Database tables initialized successfully");
+			
+		} catch (SQLException e) {
+			logger.error("Failed to initialize database tables: " + e.getMessage(), e);
+			logger.error("SQL State: " + e.getSQLState());
+			logger.error("Error Code: " + e.getErrorCode());
+			// Don't throw exception - allow app to start even if table creation fails
+			// This gives admin a chance to manually create tables
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					logger.error("Failed to close connection", e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Check if a table exists in the database
+	 */
+	private static boolean tableExists(Connection conn, String tableName) throws SQLException {
+		// Get database name from connection
+		String databaseName = conn.getCatalog();
+		// Try both with and without database name, and check both lowercase and original case
+		try (var rs = conn.getMetaData().getTables(databaseName, null, tableName, new String[]{"TABLE"})) {
+			if (rs.next()) {
+				return true;
+			}
+		}
+		// Also try with uppercase table name (for case-sensitive systems)
+		try (var rs = conn.getMetaData().getTables(databaseName, null, tableName.toUpperCase(), new String[]{"TABLE"})) {
+			if (rs.next()) {
+				return true;
+			}
+		}
+		// Also try with lowercase table name
+		try (var rs = conn.getMetaData().getTables(databaseName, null, tableName.toLowerCase(), new String[]{"TABLE"})) {
+			if (rs.next()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Create institutes table
+	 */
+	private static void createInstitutesTable(Connection conn) throws SQLException {
+		String sql = "CREATE TABLE institutes (" +
+				"institute_id INT AUTO_INCREMENT PRIMARY KEY, " +
+				"institute_name VARCHAR(255) NOT NULL, " +
+				"institute_type VARCHAR(100) NOT NULL, " +
+				"institute_email VARCHAR(255) NOT NULL UNIQUE, " +
+				"institute_phone VARCHAR(20), " +
+				"address TEXT, " +
+				"city VARCHAR(100), " +
+				"state VARCHAR(100), " +
+				"zip_code VARCHAR(20), " +
+				"country VARCHAR(100), " +
+				"registration_status VARCHAR(50) DEFAULT 'approved', " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"approved_at TIMESTAMP NULL, " +
+				"approved_by INT NULL, " +
+				"rejection_reason TEXT NULL, " +
+				"INDEX idx_institute_email (institute_email), " +
+				"INDEX idx_registration_status (registration_status)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Institutes table created successfully");
+		}
+	}
+	
+	/**
+	 * Create users table
+	 */
+	private static void createUsersTable(Connection conn) throws SQLException {
+		String sql = "CREATE TABLE users (" +
+				"user_id INT AUTO_INCREMENT PRIMARY KEY, " +
+				"institute_id INT NOT NULL, " +
+				"full_name VARCHAR(255) NOT NULL, " +
+				"email VARCHAR(255) NOT NULL UNIQUE, " +
+				"password_hash VARCHAR(255) NOT NULL, " +
+				"phone VARCHAR(20), " +
+				"role VARCHAR(50) NOT NULL DEFAULT 'student', " +
+				"status VARCHAR(50) DEFAULT 'active', " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"last_login TIMESTAMP NULL, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"INDEX idx_email (email), " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_role (role), " +
+				"INDEX idx_status (status)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Users table created successfully");
+		}
+	}
+	
 	
 	/*
      * This method will be called whenever you need a DB connection.
