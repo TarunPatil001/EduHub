@@ -145,9 +145,13 @@
     </nav>
     
     <div class="sidebar-footer">
-        <a href="${pageContext.request.contextPath}/" class="nav-link text-danger">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Logout</span>
-        </a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/auth/logout" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
     </div>
 </aside>
