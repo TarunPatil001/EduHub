@@ -140,7 +140,6 @@
             setTimeout(function() {
                 const currentTheme = getCurrentTheme();
                 updateThemeToggles(currentTheme);
-                console.log('Theme initialization complete. Current theme:', currentTheme);
             }, 100);
         });
     } else {
@@ -152,7 +151,6 @@
         setTimeout(function() {
             const currentTheme = getCurrentTheme();
             updateThemeToggles(currentTheme);
-            console.log('Theme initialization complete (immediate). Current theme:', currentTheme);
         }, 100);
     }
 

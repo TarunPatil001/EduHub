@@ -225,12 +225,6 @@ if (history.scrollRestoration) {
 // DEBUG LOGGING
 // ============================================================================
 
-/**
- * Console log confirmation
- * Helps developers confirm the script has loaded successfully
- */
-console.log("EduHub Landing Page loaded successfully.");
-
 /* ============================================================================
    END OF FILE
    ============================================================================ */
