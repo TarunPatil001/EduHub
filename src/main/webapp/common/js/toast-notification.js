@@ -60,6 +60,22 @@ if (typeof iziToast !== 'undefined') {
     });
 }
 
+// Queue for pending toasts when iziToast is not yet loaded
+var toastQueue = [];
+
+/**
+ * Process queued toasts once iziToast is available
+ */
+function processToastQueue() {
+    if (typeof iziToast !== 'undefined' && toastQueue.length > 0) {
+        console.log('Processing ' + toastQueue.length + ' queued toast(s)');
+        while (toastQueue.length > 0) {
+            var toast = toastQueue.shift();
+            showToast(toast.message, toast.type, toast.options);
+        }
+    }
+}
+
 /**
  * Main toast function - uses iziToast
  */
@@ -67,9 +83,13 @@ function showToast(message, type, durationOrOptions) {
     type = type || 'info';
     durationOrOptions = durationOrOptions || TOAST_CONFIG.defaultDuration;
     
+    // If iziToast is not loaded yet, queue the toast and try again
     if (typeof iziToast === 'undefined') {
-        console.error('iziToast is not loaded! Falling back to alert.');
-        alert(message);
+        console.warn('iziToast not yet loaded, queuing toast:', message);
+        toastQueue.push({ message: message, type: type, options: durationOrOptions });
+        
+        // Try to process queue after a short delay
+        setTimeout(processToastQueue, 100);
         return;
     }
     
@@ -378,12 +398,9 @@ var Toast = {
 };
 
 /**
- * Auto-show toast based on URL parameters
+ * Process URL parameters and show appropriate toast notifications
  */
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('iziToast notification script loaded');
-    console.log('iziToast available:', typeof iziToast !== 'undefined');
-    
+function processUrlParameters() {
     var urlParams = new URLSearchParams(window.location.search);
     var shouldCleanUrl = false;
     
@@ -449,6 +466,39 @@ document.addEventListener('DOMContentLoaded', function() {
         window.history.replaceState({}, document.title, cleanUrl);
         console.log('URL parameters cleared to prevent duplicate toasts on refresh');
     }
-});
+}
 
-console.log('Centralized Toast Notification System (iziToast) loaded successfully');
+/**
+ * Initialize toast system with proper timing
+ */
+function initializeToastSystem() {
+    // Check if iziToast is loaded, if not, wait and retry
+    if (typeof iziToast === 'undefined') {
+        setTimeout(initializeToastSystem, 100);
+        return;
+    }
+    
+    processUrlParameters();
+}
+
+/**
+ * Auto-show toast based on URL parameters
+ * Use multiple event listeners to ensure it works even after idle time
+ */
+if (document.readyState === 'loading') {
+    // Document still loading, use DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', initializeToastSystem);
+} else {
+    // Document already loaded (e.g., after idle time), run immediately
+    initializeToastSystem();
+}
+
+// Also try on window load as a fallback
+window.addEventListener('load', function() {
+    // Only process if not already processed
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('registered') || urlParams.has('logout') || 
+        urlParams.has('error') || urlParams.has('success') || urlParams.has('info')) {
+        initializeToastSystem();
+    }
+});
