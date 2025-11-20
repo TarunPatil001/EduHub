@@ -359,7 +359,7 @@
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/performance-reports.js"></script>
     
     <!-- Include Toast and Modal Components -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/common/toast-notification.jsp"/>
     <jsp:include page="/dashboard/components/modal.jsp"/>
 </body>
 </html>

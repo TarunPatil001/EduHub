@@ -1,4 +1,33 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%!
+    // Helper method to get value from either attribute or parameter
+    public String getFormValue(HttpServletRequest request, String name) {
+        Object attrValue = request.getAttribute(name);
+        String paramValue = request.getParameter(name);
+        
+        if (attrValue != null) {
+            return attrValue.toString();
+        } else if (paramValue != null) {
+            return paramValue;
+        }
+        return "";
+    }
+%>
+<%
+    // Get all form values (from attributes if error forward, or parameters if normal submit)
+    String instituteName = getFormValue(request, "instituteName");
+    String instituteType = getFormValue(request, "instituteType");
+    String instituteEmail = getFormValue(request, "instituteEmail");
+    String institutePhone = getFormValue(request, "institutePhone");
+    String address = getFormValue(request, "address");
+    String city = getFormValue(request, "city");
+    String state = getFormValue(request, "state");
+    String zipCode = getFormValue(request, "zipCode");
+    String country = getFormValue(request, "country");
+    String fullName = getFormValue(request, "fullName");
+    String adminEmail = getFormValue(request, "adminEmail");
+    String adminPhone = getFormValue(request, "adminPhone");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +37,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/auth.css">
 </head>
 <body>
 
@@ -71,7 +100,18 @@
                             </div>
 
                             <!-- Registration Form -->
-                            <form action="${pageContext.request.contextPath}/public/login.jsp?registered=true" method="post">
+                            <form action="${pageContext.request.contextPath}/auth/register" method="post" id="adminForm">
+                                
+                                <!-- Hidden fields from institute form -->
+                                <input type="hidden" name="instituteName" id="instituteName" value="<%= instituteName %>">
+                                <input type="hidden" name="instituteType" id="instituteType" value="<%= instituteType %>">
+                                <input type="hidden" name="instituteEmail" id="instituteEmail" value="<%= instituteEmail %>">
+                                <input type="hidden" name="institutePhone" id="institutePhone" value="<%= institutePhone %>">
+                                <input type="hidden" name="address" id="address" value="<%= address %>">
+                                <input type="hidden" name="city" id="city" value="<%= city %>">
+                                <input type="hidden" name="state" id="state" value="<%= state %>">
+                                <input type="hidden" name="zipCode" id="zipCode" value="<%= zipCode %>">
+                                <input type="hidden" name="country" id="country" value="<%= country %>">
                                 
                                 <!-- Full Name -->
                                 <div class="mb-3">
@@ -84,6 +124,7 @@
                                         id="fullName" 
                                         name="fullName" 
                                         placeholder="Enter your full name"
+                                        value="<%= fullName %>"
                                         required
                                     >
                                 </div>
@@ -99,24 +140,25 @@
                                         id="adminEmail" 
                                         name="adminEmail" 
                                         placeholder="admin@example.com"
+                                        value="<%= adminEmail %>"
                                         required
                                     >
                                 </div>
 
-                                <!-- Username -->
+                                <!-- Phone -->
                                 <div class="mb-3">
-                                    <label for="username" class="form-label fw-semibold">
-                                        <i class="fas fa-at me-1"></i> Username
+                                    <label for="adminPhone" class="form-label fw-semibold">
+                                        <i class="fas fa-phone me-1"></i> Phone Number
                                     </label>
                                     <input 
-                                        type="text" 
+                                        type="tel" 
                                         class="form-control form-control-lg" 
-                                        id="username" 
-                                        name="username" 
-                                        placeholder="Choose a username"
+                                        id="adminPhone" 
+                                        name="adminPhone" 
+                                        placeholder="+1 (555) 000-0000"
+                                        value="<%= adminPhone %>"
                                         required
                                     >
-                                    <small class="text-muted">This will be used to login</small>
                                 </div>
 
                                 <!-- Password -->
@@ -162,8 +204,8 @@
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-                                    Continue to Profile Setup
-                                    <i class="fas fa-arrow-right ms-2"></i>
+                                    Complete Registration
+                                    <i class="fas fa-check ms-2"></i>
                                 </button>
 
                                 <!-- Back Link -->
@@ -180,34 +222,74 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/js/toast-notification.js"></script>
+    
+    <!-- Centralized Toast Notification Component -->
+    <jsp:include page="/common/toast-notification.jsp"/>
+    <script src="${pageContext.request.contextPath}/public/js/register-admin-validation.js"></script>
     <script>
-        // Password toggle functionality
-        const togglePassword = document.getElementById('togglePassword');
-        const password = document.getElementById('password');
-        const toggleIcon = document.getElementById('toggleIcon');
+        document.addEventListener('DOMContentLoaded', function() {
+            <% 
+            String error = (String) request.getAttribute("error");
+            boolean hasError = (error != null && !error.isEmpty());
+            %>
+            
+            // Only show welcome toast if there's NO error (coming from institute form for first time)
+            <% if (!hasError) { %>
+                const instituteName = document.getElementById('instituteName').value;
+                if (instituteName && typeof showToast === 'function') {
+                    showToast('Step 1 completed! Now create your admin account.', 'success', 3000);
+                }
+            <% } %>
 
-        togglePassword.addEventListener('click', function() {
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            toggleIcon.classList.toggle('fa-eye');
-            toggleIcon.classList.toggle('fa-eye-slash');
-        });
+            // Clear form only when navigating back after leaving the page successfully
+            window.addEventListener('pageshow', function(event) {
+                // If page is loaded from browser cache (back button pressed)
+                if (event.persisted) {
+                    console.log('Page loaded from cache, resetting form');
+                    document.getElementById('adminForm').reset();
+                }
+            });
 
-        // Confirm password toggle
-        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-        const confirmPassword = document.getElementById('confirmPassword');
-        const toggleConfirmIcon = document.getElementById('toggleConfirmIcon');
+            // Display backend error if exists
+            <% if (hasError) { %>
+                if (typeof showToast === 'function') {
+                    showToast('<%= error.replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>', 'error', 5000);
+                } else {
+                    console.error('showToast function not available');
+                    alert('<%= error.replace("'", "\\'") %>');
+                }
+            <% } %>
 
-        toggleConfirmPassword.addEventListener('click', function() {
-            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-            confirmPassword.setAttribute('type', type);
-            toggleConfirmIcon.classList.toggle('fa-eye');
-            toggleConfirmIcon.classList.toggle('fa-eye-slash');
+            // Form validation only (no loading toast since page redirects immediately)
+            const adminForm = document.getElementById('adminForm');
+            if (adminForm) {
+                adminForm.addEventListener('submit', function(e) {
+                    // Validate form first
+                    if (!adminForm.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        adminForm.classList.add('was-validated');
+                        if (typeof showToast === 'function') {
+                            showToast('Please fill in all required fields', 'warning', 3000);
+                        }
+                        return false;
+                    }
+                    
+                    // Check password match
+                    const password = document.getElementById('password').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    if (password !== confirmPassword) {
+                        e.preventDefault();
+                        if (typeof showToast === 'function') {
+                            showToast('Passwords do not match!', 'error', 3000);
+                        }
+                        return false;
+                    }
+                    
+                    // Form is valid, let it submit normally (no toast needed as page redirects)
+                });
+            }
         });
     </script>
 </body>

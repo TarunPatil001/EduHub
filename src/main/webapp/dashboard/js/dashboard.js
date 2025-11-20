@@ -44,41 +44,18 @@ window.addEventListener('scroll', function() {
 document.addEventListener('DOMContentLoaded', function() {
     
     // ========================================================================
-    // CHECK FOR LOGIN SUCCESS AND SHOW TOAST
+    // TOAST NOTIFICATIONS
     // ========================================================================
     
     /**
-     * Auto-show toast on successful login
-     * Checks URL parameters and shows appropriate toast notification
+     * Toast notifications are now handled by the centralized system
+     * in /common/js/toast-notification.js
+     * 
+     * URL parameters like ?success=login, ?error=something, ?logout=true
+     * are automatically detected and shown as toasts.
+     * 
+     * No need for duplicate logic here.
      */
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    if (urlParams.has('login') && urlParams.get('login') === 'success') {
-        // Show success toast when user just logged in
-        if (typeof showToast === 'function') {
-            showToast('Welcome! You have successfully logged in.', 'success', 4000);
-        }
-    }
-    
-    // Check for other success/error parameters
-    if (urlParams.has('success')) {
-        const successMsg = urlParams.get('success');
-        if (typeof showToast === 'function') {
-            if (successMsg === 'logout') {
-                // This shouldn't normally happen on dashboard, but handle it
-                window.location.href = '${pageContext.request.contextPath}/public/login.jsp?logout=true';
-            } else {
-                showToast('Operation completed successfully!', 'success');
-            }
-        }
-    }
-    
-    if (urlParams.has('error')) {
-        const errorMsg = urlParams.get('error');
-        if (typeof showToast === 'function') {
-            showToast('An error occurred. Please try again.', 'danger');
-        }
-    }
     
     // ========================================================================
     // SIDEBAR AND OVERLAY SETUP

@@ -1,4 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%!
+    // Helper method to get value from either attribute or parameter
+    public String getFormValue(HttpServletRequest request, String name) {
+        Object attrValue = request.getAttribute(name);
+        String paramValue = request.getParameter(name);
+        
+        if (attrValue != null) {
+            return attrValue.toString();
+        } else if (paramValue != null) {
+            return paramValue;
+        }
+        return "";
+    }
+%>
+<%
+    // Get form values (from attributes if error forward, or parameters if normal submit)
+    String instituteName = getFormValue(request, "instituteName");
+    String instituteType = getFormValue(request, "instituteType");
+    String instituteEmail = getFormValue(request, "instituteEmail");
+    String institutePhone = getFormValue(request, "institutePhone");
+    String address = getFormValue(request, "address");
+    String city = getFormValue(request, "city");
+    String state = getFormValue(request, "state");
+    String zipCode = getFormValue(request, "zipCode");
+    String country = getFormValue(request, "country");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +34,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/auth.css">
 </head>
 <body>
 
@@ -71,7 +97,7 @@
                             </div>
 
                             <!-- Registration Form -->
-                            <form action="${pageContext.request.contextPath}/public/register_admin.jsp" method="post">
+                            <form id="instituteForm" action="${pageContext.request.contextPath}/public/register_admin.jsp" method="post">
                                 
                                 <!-- Institute Name -->
                                 <div class="mb-3">
@@ -84,6 +110,7 @@
                                         id="instituteName" 
                                         name="instituteName" 
                                         placeholder="Enter institute name"
+                                        value="<%= instituteName %>"
                                         required
                                     >
                                 </div>
@@ -95,11 +122,11 @@
                                     </label>
                                     <select class="form-select form-select-lg" id="instituteType" name="instituteType" required>
                                         <option value="">Select institute type</option>
-                                        <option value="school">School</option>
-                                        <option value="college">College</option>
-                                        <option value="university">University</option>
-                                        <option value="training">Training Center</option>
-                                        <option value="coaching">Coaching Institute</option>
+                                        <option value="school" <%= "school".equals(instituteType) ? "selected" : "" %>>School</option>
+                                        <option value="college" <%= "college".equals(instituteType) ? "selected" : "" %>>College</option>
+                                        <option value="university" <%= "university".equals(instituteType) ? "selected" : "" %>>University</option>
+                                        <option value="training" <%= "training".equals(instituteType) ? "selected" : "" %>>Training Center</option>
+                                        <option value="coaching" <%= "coaching".equals(instituteType) ? "selected" : "" %>>Coaching Institute</option>
                                     </select>
                                 </div>
 
@@ -114,6 +141,7 @@
                                         id="instituteEmail" 
                                         name="instituteEmail" 
                                         placeholder="contact@yourinstitute.com"
+                                        value="<%= instituteEmail %>"
                                         required
                                     >
                                 </div>
@@ -129,6 +157,7 @@
                                         id="institutePhone" 
                                         name="institutePhone" 
                                         placeholder="+1 (555) 000-0000"
+                                        value="<%= institutePhone %>"
                                         required
                                     >
                                 </div>
@@ -144,6 +173,7 @@
                                         id="address" 
                                         name="address" 
                                         placeholder="Street address, building number"
+                                        value="<%= address %>"
                                         required
                                     >
                                 </div>
@@ -160,6 +190,7 @@
                                             id="city" 
                                             name="city" 
                                             placeholder="Enter city"
+                                            value="<%= city %>"
                                             required
                                         >
                                     </div>
@@ -173,6 +204,7 @@
                                             id="state" 
                                             name="state" 
                                             placeholder="Enter state/province"
+                                            value="<%= state %>"
                                             required
                                         >
                                     </div>
@@ -189,6 +221,7 @@
                                             id="zipCode" 
                                             name="zipCode" 
                                             placeholder="Enter ZIP/postal code"
+                                            value="<%= zipCode %>"
                                         >
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -197,12 +230,12 @@
                                         </label>
                                         <select class="form-select form-select-lg" id="country" name="country" required>
                                             <option value="">Select country</option>
-                                            <option value="US">United States</option>
-                                            <option value="UK">United Kingdom</option>
-                                            <option value="CA">Canada</option>
-                                            <option value="AU">Australia</option>
-                                            <option value="IN">India</option>
-                                            <option value="other">Other</option>
+                                            <option value="US" <%= "US".equals(country) ? "selected" : "" %>>United States</option>
+                                            <option value="UK" <%= "UK".equals(country) ? "selected" : "" %>>United Kingdom</option>
+                                            <option value="CA" <%= "CA".equals(country) ? "selected" : "" %>>Canada</option>
+                                            <option value="AU" <%= "AU".equals(country) ? "selected" : "" %>>Australia</option>
+                                            <option value="IN" <%= "IN".equals(country) ? "selected" : "" %>>India</option>
+                                            <option value="other" <%= "other".equals(country) ? "selected" : "" %>>Other</option>
                                         </select>
                                     </div>
                                 </div>
@@ -233,10 +266,53 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/js/toast-notification.js"></script>
+    
+    <!-- Centralized Toast Notification Component -->
+    <jsp:include page="/common/toast-notification.jsp"/>
+    <script src="${pageContext.request.contextPath}/public/js/register-institute-validation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear form only when navigating back after leaving the page successfully
+            window.addEventListener('pageshow', function(event) {
+                // If page is loaded from browser cache (back button pressed)
+                if (event.persisted) {
+                    console.log('Page loaded from cache, resetting form');
+                    document.getElementById('instituteForm').reset();
+                }
+            });
+
+            // Display backend error if exists
+            <% 
+            String error = (String) request.getAttribute("error");
+            if (error != null && !error.isEmpty()) { 
+            %>
+                if (typeof showToast === 'function') {
+                    showToast('<%= error.replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>', 'error', 5000);
+                } else {
+                    console.error('showToast function not available');
+                    alert('<%= error.replace("'", "\\'") %>');
+                }
+            <% } %>
+
+            // Form validation only (no toast on submit since page redirects immediately)
+            const instituteForm = document.getElementById('instituteForm');
+            if (instituteForm) {
+                instituteForm.addEventListener('submit', function(e) {
+                    // Validate form first
+                    if (!instituteForm.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        instituteForm.classList.add('was-validated');
+                        if (typeof showToast === 'function') {
+                            showToast('Please fill in all required fields', 'warning', 3000);
+                        }
+                        return false;
+                    }
+                    // Form is valid, let it submit normally (no toast needed as page redirects)
+                });
+            }
+        });
+    </script>
 </body>
 </html>

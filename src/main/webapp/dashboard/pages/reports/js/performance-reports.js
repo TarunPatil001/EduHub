@@ -611,31 +611,9 @@
      * Generate custom report
      */
     function generateReport() {
-        showToast('Info', 'Generating custom report...', 'info');
+        // Use centralized toast system from /common/toast-notification.jsp
+        Toast.info('Generating custom report...');
         // Implement report generation
-    }
-
-    /**
-     * Show toast notification
-     */
-    function showToast(title, message, type = 'info') {
-        // Create toast notification (requires toast component)
-        console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
-        
-        // You can also use Bootstrap toast if available
-        const toastHTML = `
-            <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'primary'} border-0" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <strong>${title}:</strong> ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
-        `;
-        
-        // Show notification in console for now
-        console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
     }
 
     /**

@@ -62,21 +62,21 @@
                             </div>
 
                             <!-- Login Form -->
-                            <form action="${pageContext.request.contextPath}/dashboard.jsp?login=success" method="post">
+                            <form action="${pageContext.request.contextPath}/auth/login" method="post" id="loginForm">
                                 
-                                <!-- Email/Institute ID Field -->
+                                <!-- Email Field -->
                                 <div class="mb-3">
                                     <label for="username" class="form-label fw-semibold">
-                                        <i class="fas fa-user me-1"></i> Institute ID / Email
+                                        <i class="fas fa-envelope me-1"></i> Email Address
                                     </label>
                                     <input 
-                                        type="text" 
+                                        type="email" 
                                         class="form-control form-control-lg" 
                                         id="username" 
                                         name="username" 
-                                        placeholder="Enter your institute ID or email"
+                                        placeholder="Enter your email address"
                                         required
-                                        autocomplete="username"
+                                        autocomplete="email"
                                     >
                                 </div>
 
@@ -148,11 +148,10 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/public/js/toast-notification.js"></script>
+    <!-- Scripts -->
+    
+    <!-- Centralized Toast Notification Component -->
+    <jsp:include page="/common/toast-notification.jsp"/>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Password toggle functionality

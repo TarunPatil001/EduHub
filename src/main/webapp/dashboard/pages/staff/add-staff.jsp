@@ -768,7 +768,7 @@
     <jsp:include page="/dashboard/components/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/common/toast-notification.jsp"/>
     
     <script>
         // Photo preview functionality

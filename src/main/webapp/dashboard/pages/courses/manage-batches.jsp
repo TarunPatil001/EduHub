@@ -582,7 +582,7 @@
     <jsp:include page="/dashboard/components/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <jsp:include page="/common/toast-notification.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

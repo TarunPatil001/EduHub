@@ -1,4 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+    // Security Check - Prevent unauthorized access
+    if (session == null || session.getAttribute("userId") == null) {
+        // User is not logged in, redirect to login page
+        response.sendRedirect(request.getContextPath() + "/public/login.jsp?error=unauthorized");
+        return;
+    }
+    
+    // Get user information from session
+    Integer userId = (Integer) session.getAttribute("userId");
+    String userName = (String) session.getAttribute("userName");
+    String userEmail = (String) session.getAttribute("userEmail");
+    String userRole = (String) session.getAttribute("userRole");
+    Integer instituteId = (Integer) session.getAttribute("instituteId");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -486,7 +501,8 @@
     </div>
     
     <!-- Toast Notification Component -->
-    <jsp:include page="/dashboard/components/toast-notification.jsp"/>
+    <!-- Centralized Toast Notification Component -->
+    <jsp:include page="/common/toast-notification.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

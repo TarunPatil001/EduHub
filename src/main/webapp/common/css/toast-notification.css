@@ -1,0 +1,127 @@
+/**
+ * ============================================================================
+ * EduHub - Centralized Toast Notification Custom Styles
+ * ============================================================================
+ * 
+ * Purpose: Custom styling for iziToast notifications
+ * Location: /common/css/toast-notification.css
+ * 
+ * Features:
+ * - Fully rounded corners on all sides
+ * - Consistent styling across all toast types
+ * - Enhanced visual appearance
+ * - Positioned at top center with proper spacing
+ * ============================================================================
+ */
+
+
+/* Make all iziToast notifications fully rounded - Main container */
+.iziToast {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    width: auto !important;
+    min-width: 50px !important;
+    max-width: 500px !important;
+}
+
+/* Target all possible iziToast elements and layers */
+.iziToast,
+.iziToast-wrapper,
+.iziToast > .iziToast-body,
+.iziToast > .iziToast-cover,
+.iziToast::before,
+.iziToast::after,
+.iziToast-capsule,
+.iziToast > div {
+    border-radius: 50px !important;
+}
+
+/* Specific targeting for background layers */
+.iziToast.iziToast-color-red,
+.iziToast.iziToast-color-green,
+.iziToast.iziToast-color-blue,
+.iziToast.iziToast-color-yellow,
+.iziToast.iziToast-color-dark {
+    border-radius: 50px !important;
+    overflow: hidden !important;
+}
+
+/* Target success, error, info, warning toast types */
+.iziToast-success,
+.iziToast-error,
+.iziToast-info,
+.iziToast-warning,
+.iziToast-question {
+    border-radius: 50px !important;
+    overflow: hidden !important;
+}
+
+/* Ensure the background color layer is rounded */
+.iziToast > .iziToast-body .iziToast-texts {
+    border-radius: 50px !important;
+}
+
+/* Round the progress bar at the bottom */
+.iziToast > .iziToast-progressbar {
+    border-radius: 0 0 12px 12px !important;
+}
+
+.iziToast > .iziToast-progressbar > div {
+    border-radius: 0 0 12px 12px !important;
+}
+
+/* Ensure close button is circular */
+.iziToast > .iziToast-close {
+    border-radius: 50% !important;
+}
+
+/* Ensure icons are circular */
+.iziToast .iziToast-icon {
+    border-radius: 50% !important;
+}
+
+/* For toasts with buttons, ensure they're also rounded */
+.iziToast .iziToast-buttons button {
+    border-radius: 8px !important;
+    margin: 0 4px !important;
+}
+
+/* Add smooth transitions */
+.iziToast {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Force all child elements to inherit rounded corners */
+.iziToast * {
+    box-sizing: border-box !important;
+}
+
+/* Mobile responsive - Position toast 50px from top on mobile devices */
+@media only screen and (max-width: 768px) {
+    .iziToast-wrapper-topCenter {
+        top: 10px !important;
+    }
+    
+    /* Adjust toast width for mobile screens */
+    .iziToast {
+        min-width: 250px !important;
+        max-width: calc(100vw - 40px) !important;
+        margin-left: 20px !important;
+        margin-right: 20px !important;
+    }
+}
+
+/* Extra small mobile devices */
+@media only screen and (max-width: 480px) {
+    .iziToast-wrapper-topCenter {
+        top: 20px !important;
+    }
+    
+    .iziToast {
+        min-width: 200px !important;
+        max-width: calc(100vw - 30px) !important;
+        margin-left: 15px !important;
+        margin-right: 15px !important;
+    }
+}
