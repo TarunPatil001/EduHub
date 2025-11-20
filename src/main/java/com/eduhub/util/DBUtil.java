@@ -45,18 +45,30 @@ public class DBUtil {
 			// Load all values from the properties file into props object
 			props.load(input);
 			
-			 // Read from environment variables first, fall back to properties file
-			 String dbHost = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : props.getProperty("db.host", "localhost");
-			 String dbPort = System.getenv("DB_PORT") != null ? System.getenv("DB_PORT") : props.getProperty("db.port", "3306");
-			 String dbName = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : props.getProperty("db.name", "eduhub");
-			 
-			 // Build the connection URL
-			 url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=true&serverTimezone=UTC";
-			 
-			 // Username and password from environment or properties
-	         username = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : props.getProperty("db.username", "root"); 
-	         password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : props.getProperty("db.password", "root");
-	         driver = props.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
+		 // Read from environment variables first, fall back to properties file
+		 String dbHost = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : props.getProperty("db.host", "localhost");
+		 String dbPort = System.getenv("DB_PORT") != null ? System.getenv("DB_PORT") : props.getProperty("db.port", "3306");
+		 String dbName = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : props.getProperty("db.name", "eduhub");
+		 String sslMode = System.getenv("DB_SSL_MODE") != null ? System.getenv("DB_SSL_MODE") : props.getProperty("db.sslMode", "");
+		 
+		 // Username and password from environment or properties
+         username = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : props.getProperty("db.username", "root"); 
+         password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : props.getProperty("db.password", "root");
+         driver = props.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
+		 
+		 // Build the connection URL in TiDB Cloud format: jdbc:mysql://user:password@host:port/database?params
+		 StringBuilder urlBuilder = new StringBuilder("jdbc:mysql://")
+		     .append(username).append(":").append(password).append("@")
+		     .append(dbHost).append(":").append(dbPort).append("/").append(dbName);
+		 
+		 // Add SSL mode for TiDB Cloud (required parameter)
+		 if (sslMode != null && !sslMode.isEmpty()) {
+		     urlBuilder.append("?sslMode=").append(sslMode);
+		 } else {
+		     urlBuilder.append("?useSSL=true&serverTimezone=UTC");
+		 }
+		 
+		 url = urlBuilder.toString();
 	         
 	         /*
 	             * Load the JDBC driver class into memory.
@@ -154,6 +166,7 @@ public class DBUtil {
 	
 	/**
 	 * Create institutes table
+	 * Optimized for MySQL 8.0+ / TiDB Cloud
 	 */
 	private static void createInstitutesTable(Connection conn) throws SQLException {
 		String sql = "CREATE TABLE institutes (" +
@@ -185,6 +198,7 @@ public class DBUtil {
 	
 	/**
 	 * Create users table
+	 * Optimized for MySQL 8.0+ / TiDB Cloud
 	 */
 	private static void createUsersTable(Connection conn) throws SQLException {
 		String sql = "CREATE TABLE users (" +
@@ -216,9 +230,10 @@ public class DBUtil {
 	/*
      * This method will be called whenever you need a DB connection.
      * It returns a Connection object using the loaded credentials.
+     * For TiDB Cloud, username and password are already embedded in the URL.
      */
 	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(url, username, password);
+		return DriverManager.getConnection(url);
 	}
 
 }

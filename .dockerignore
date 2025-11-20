@@ -1,8 +1,9 @@
 .classpath
 .project
 .settings/
-build/classes/
-src/main/java/
+build/
 *.md
 .git
 .gitignore
+README.md
+LICENSE
