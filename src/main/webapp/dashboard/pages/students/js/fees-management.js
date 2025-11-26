@@ -212,7 +212,7 @@
         currentPage = 1;
         applyFiltersAndDisplay();
         
-        Toast.info('Filters reset successfully');
+        toast('Filters reset successfully', { icon: 'ℹ️' });
     }
 
     // Select All Handler
@@ -296,13 +296,7 @@
         const selectedCheckboxes = document.querySelectorAll('.fee-checkbox:checked');
         
         if (selectedCheckboxes.length === 0) {
-            if (typeof Toast !== 'undefined' && Toast.warning) {
-                Toast.warning('Please select fee records to delete');
-            } else if (typeof showToast === 'function') {
-                showToast('Please select fee records to delete', 'warning');
-            } else {
-                alert('Please select fee records to delete');
-            }
+            toast('Please select fee records to delete', { icon: '⚠️' });
             return;
         }
 
@@ -359,11 +353,7 @@
                     updatePagination();
                     showEmptyState();
                     
-                    if (typeof Toast !== 'undefined' && Toast.success) {
-                        Toast.success(`${recordCount} fee record(s) deleted successfully`);
-                    } else if (typeof showToast === 'function') {
-                        showToast(`${recordCount} fee record(s) deleted successfully`, 'success');
-                    }
+                    toast.success(recordCount + ' fee record(s) deleted successfully');
                 }
             });
         } else {
@@ -669,8 +659,17 @@
             cancelText: 'Cancel',
             confirmClass: 'btn-primary',
             icon: 'bi-envelope text-primary',
-            onConfirm: function() {
-                Toast.success(`Payment reminder sent to ${studentId}`);
+        onConfirm: function() {
+            // Show loading toast
+            const loadingToastId = toast.loading('Sending payment reminder...');
+            
+            // Simulate sending reminder
+            setTimeout(() => {
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
+                    
+                    toast.success('Payment reminder sent to ' + studentId);
+                }, 1000);
             }
         });
     }
@@ -683,7 +682,7 @@
         }).length;
 
         if (pendingCount === 0) {
-            Toast.warning('No students with pending payments found');
+            toast('No students with pending payments found', { icon: '⚠️' });
             return;
         }
 
@@ -694,8 +693,17 @@
             cancelText: 'Cancel',
             confirmClass: 'btn-primary',
             icon: 'bi-envelope text-primary',
-            onConfirm: function() {
-                Toast.success(`Payment reminders sent to ${pendingCount} student${pendingCount > 1 ? 's' : ''}`);
+        onConfirm: function() {
+            // Show loading toast
+            const loadingToastId = toast.loading(`Sending reminders to ${pendingCount} student${pendingCount > 1 ? 's' : ''}...`);
+            
+            // Simulate sending reminders
+            setTimeout(() => {
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
+                    
+                    toast.success('Payment reminders sent to ' + pendingCount + ' student' + (pendingCount > 1 ? 's' : ''));
+                }, 1500);
             }
         });
     }
@@ -707,9 +715,12 @@
         );
 
         if (visibleRows.length === 0) {
-            Toast.warning('No data to export');
+            toast('No data to export', { icon: '⚠️' });
             return;
         }
+
+        // Show loading toast
+        const loadingToastId = toast.loading('Preparing fee data export...');
 
         // Create CSV
         let csv = 'Student ID,Student Name,Course,Total Fee,Paid Amount,Pending,Status,Last Payment,Due Date\n';
@@ -729,9 +740,15 @@
             csv += `"${id}","${name}","${course}","${totalFee}","${paidAmount}","${pending}","${status}","${lastPayment}","${dueDate}"\n`;
         });
 
-        // Download CSV
-        downloadCSV(csv, 'fees-management-export.csv');
-        Toast.success('Fee data exported successfully');
+        // Download CSV with delay to show loading
+        setTimeout(() => {
+            downloadCSV(csv, 'fees-management-export.csv');
+            
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
+            
+            toast.success(`${visibleRows.length} fee records exported successfully`);
+        }, 500);
     }
 
     // Download CSV

@@ -1,0 +1,100 @@
+/**
+ * ============================================================================
+ * EduHub - Centralized Toast Notification Custom Styles
+ * ============================================================================
+ * 
+ * Purpose: Custom styling for hot-toast notifications
+ * Location: /common/css/toast-notification.css
+ * 
+ * Features:
+ * - Fully rounded corners on all sides
+ * - Consistent styling across all toast types
+ * - Enhanced visual appearance
+ * - Positioned at top center with proper spacing
+ * - Automatically removes previous toasts when maxToasts limit is reached
+ * ============================================================================
+ */
+
+/* Custom styling for hot-toast notifications */
+.hot-toast-container {
+    z-index: 9999 !important;
+}
+
+/* Ensure toasts are centered at top */
+.hot-toast-container[data-position="top-center"] {
+    top: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+/* Style individual toast items */
+.hot-toast {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    padding: 12px 20px !important;
+    max-width: 500px !important;
+    min-width: 200px !important;
+}
+
+/* Add smooth transitions */
+.hot-toast {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Style for different toast types */
+.hot-toast.success {
+    background-color: #10b981 !important;
+    color: white !important;
+}
+
+.hot-toast.error {
+    background-color: #ef4444 !important;
+    color: white !important;
+}
+
+.hot-toast.warning {
+    background-color: #f59e0b !important;
+    color: white !important;
+}
+
+.hot-toast.info {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* Mobile responsive */
+@media only screen and (max-width: 768px) {
+    .hot-toast {
+        max-width: 90vw !important;
+        margin: 0 auto !important;
+    }
+    
+    .hot-toast-container[data-position="top-center"] {
+        top: 10px !important;
+    }
+    .iziToast-wrapper-topCenter {
+        top: 10px !important;
+    }
+    
+    /* Adjust toast width for mobile screens */
+    .iziToast {
+        min-width: 250px !important;
+        max-width: calc(100vw - 40px) !important;
+        margin-left: 20px !important;
+        margin-right: 20px !important;
+    }
+}
+
+/* Extra small mobile devices */
+@media only screen and (max-width: 480px) {
+    .iziToast-wrapper-topCenter {
+        top: 20px !important;
+    }
+    
+    .iziToast {
+        min-width: 200px !important;
+        max-width: calc(100vw - 30px) !important;
+        margin-left: 15px !important;
+        margin-right: 15px !important;
+    }
+}

@@ -174,12 +174,44 @@
                 });
             }
 
-            // Show toast on form submission
-            const loginForm = document.querySelector('form');
-            if (loginForm && typeof showToast === 'function') {
+            // Check URL parameters for success/error messages
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Handle registration success message
+            if (urlParams.has('registered') && urlParams.get('registered') === 'true') {
+                const message = urlParams.get('message') || 'Registration successful!';
+                toast.success(decodeURIComponent(message));
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // Handle logout success
+            if (urlParams.has('logout') && urlParams.get('logout') === 'success') {
+                toast.success('Logged out successfully');
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // Handle error messages
+            if (urlParams.has('error')) {
+                const errorMsg = decodeURIComponent(urlParams.get('error'));
+                toast.error(errorMsg);
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            // Handle form submission - simple loading toast
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
                 loginForm.addEventListener('submit', function(e) {
-                    // Show loading toast
-                    showToast('Signing in...', 'info', 2000);
+                    // Show loading toast - will be replaced by success/error after redirect
+                    if (typeof toast !== 'undefined') {
+                        toast.loading('Signing in...');
+                    }
+                    // Let form submit normally to Java servlet
                 });
             }
         });

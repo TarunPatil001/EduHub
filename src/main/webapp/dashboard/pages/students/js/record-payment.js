@@ -26,7 +26,7 @@
         if (window.currentStudentId) {
             refreshPaymentHistory(window.currentStudentId);
         } else {
-            Toast.warning('Please select a student first');
+            toast('Please select a student first', { icon: '⚠️' });
         }
     };
 
@@ -169,7 +169,7 @@
         selectedStudent = students.find(s => s.id === studentId);
         
         if (!selectedStudent) {
-            Toast.error('Student not found');
+            toast.error('Student not found');
             return;
         }
 
@@ -294,7 +294,7 @@
                 }
                 generateReceiptNumber();
                 
-                Toast.info('Form has been reset');
+                toast('Form has been reset', { icon: 'ℹ️' });
             }
         });
     }
@@ -306,7 +306,7 @@
         // Comprehensive validation chain
         const validationResult = performComprehensiveValidation();
         if (!validationResult.isValid) {
-            Toast.error(validationResult.message);
+            toast.error(validationResult.message);
             if (validationResult.focusElement) {
                 validationResult.focusElement.focus();
             }
@@ -500,19 +500,16 @@
 
     // Process Payment
     function processPayment(paymentData) {
-        // Show loading
-        const loading = document.createElement('div');
-        loading.className = 'loading-overlay';
-        loading.innerHTML = '<div class="loading-spinner"></div>';
-        document.body.appendChild(loading);
+        // Show loading toast
+        const loadingToastId = toast.loading('Processing payment...');
 
         // Simulate API call
         setTimeout(() => {
-            // Remove loading
-            document.body.removeChild(loading);
-
             // Update student data (in real app, this would be done by backend)
             updateStudentPaymentData(paymentData);
+
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
 
             // Build success message
             let successMsg = `
@@ -529,7 +526,7 @@
             `;
 
             // Show success message
-            Toast.success(`Payment of ₹${paymentData.amount.toLocaleString('en-IN')} recorded successfully!`);
+            toast.success('Payment of ₹' + paymentData.amount.toLocaleString('en-IN') + ' recorded successfully!');
 
             // Show success modal with receipt
             showSuccessModal({

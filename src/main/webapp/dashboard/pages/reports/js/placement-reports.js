@@ -1051,14 +1051,33 @@ function handleFormSubmit(e) {
             // Update existing record
             const index = state.allRecords.findIndex(r => r.id === state.editingId);
             if (index !== -1) {
-                state.allRecords[index] = { ...state.allRecords[index], ...formData };
-                showSuccess(`✓ Record updated successfully for ${formData.studentName}`);
+                // Show loading toast
+                const loadingToast = toast.loading('Updating record...');
+                
+                setTimeout(() => {
+                    state.allRecords[index] = { ...state.allRecords[index], ...formData };
+                    
+                    // Dismiss loading toast
+                    if (typeof loadingToast === 'function') loadingToast();
+                    
+                    toast.success(`Record updated successfully for ${formData.studentName}`);
+                }, 500);
             }
         } else {
             // Add new record
             const newId = Math.max(...state.allRecords.map(r => r.id), 0) + 1;
-            state.allRecords.push({ id: newId, ...formData });
-            showSuccess(`✓ New placement record added for ${formData.studentName}`);
+            
+            // Show loading toast
+            const loadingToast = toast.loading('Adding new record...');
+            
+            setTimeout(() => {
+                state.allRecords.push({ id: newId, ...formData });
+                
+                // Dismiss loading toast
+                if (typeof loadingToast === 'function') loadingToast();
+                
+                toast.success(`New placement record added for ${formData.studentName}`);
+            }, 500);
         }
         
         state.filteredRecords = [...state.allRecords];
@@ -1367,6 +1386,9 @@ function exportToCSV() {
             r.offerDate, r.joiningDate, r.remarks
         ]);
         
+        // Show loading toast
+        const loadingToast = toast.loading('Preparing CSV export...');
+        
         let csv = headers.join(',') + '\n';
         rows.forEach(row => {
             csv += row.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(',') + '\n';
@@ -1378,10 +1400,13 @@ function exportToCSV() {
         link.download = `placement_records_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
         
-        showSuccess('Data exported successfully');
+        // Dismiss loading toast
+        if (typeof loadingToast === 'function') loadingToast();
+        
+        toast.success(`${state.filteredRecords.length} records exported successfully`);
     } catch (error) {
         console.error('Export error:', error);
-        showError('Error exporting data');
+        toast.error('Error exporting data');
     }
 }
 
@@ -1392,10 +1417,17 @@ function refreshData() {
     if (loadingState) loadingState.style.display = 'block';
     if (errorState) errorState.style.display = 'none';
     
+    // Show loading toast
+    const loadingToast = toast.loading('Refreshing placement data...');
+    
     setTimeout(() => {
         if (loadingState) loadingState.style.display = 'none';
         renderTable();
-        showSuccess('Data refreshed successfully');
+        
+        // Dismiss loading toast
+        if (typeof loadingToast === 'function') loadingToast();
+        
+        toast.success('Data refreshed successfully');
     }, 1000);
 }
 
@@ -1413,22 +1445,22 @@ function showError(message) {
 
 function showSuccess(message) {
     console.log('Success:', message);
-    showToast(message, 'success', 4000);
+    toast.success(message);
 }
 
 function showWarning(message) {
     console.warn('Warning:', message);
-    showToast(message, 'warning', 5000);
+    toast(message, { icon: '⚠️' });
 }
 
 function showError(message) {
     console.error('Error:', message);
-    showToast(message, 'danger', 6000);
+    toast.error(message);
 }
 
 function showInfo(message) {
     console.info('Info:', message);
-    showToast(message, 'info', 4000);
+    toast(message, { icon: 'ℹ️' });
 }
 
 // Helper functions

@@ -51,8 +51,10 @@ function refreshPaymentHistory(studentId) {
     
     if (!historyList) return;
     
-    // Don't show loading state if no student is selected
+    // Show loading toast only if student is selected
+    let loadingToastId = null;
     if (studentId) {
+        loadingToastId = toast.loading('Refreshing payment history...');
         historyList.style.opacity = '0.5';
     }
     
@@ -77,7 +79,11 @@ function refreshPaymentHistory(studentId) {
             loadStudentPaymentHistory(studentId);
             if (historyTitle) historyTitle.textContent = 'Payment History';
             if (refreshBtn) refreshBtn.style.display = 'block';
-            Toast.success('Payment history refreshed');
+            
+            // Dismiss loading toast
+            if (loadingToastId) toast.dismiss(loadingToastId);
+            
+            toast.success('Payment history refreshed');
             historyList.style.opacity = '1';
         }
     }, studentId ? 500 : 0); // No delay if no student selected
@@ -178,7 +184,7 @@ function toggleFullPaymentHistory() {
     const selectedStudentId = document.getElementById('selectedStudentId')?.value;
     
     if (!selectedStudentId) {
-        Toast.warning('Please select a student first');
+        toast('Please select a student first', { icon: '⚠️' });
         return;
     }
     
@@ -354,7 +360,7 @@ function updatePayment(receiptNumber) {
     const reason = document.getElementById('editReason').value;
     
     if (!reason || reason.trim().length < 10) {
-        Toast.error('Please provide a detailed reason for editing (minimum 10 characters)');
+        toast.error('Please provide a detailed reason for editing (minimum 10 characters)');
         return;
     }
     
@@ -365,7 +371,7 @@ function updatePayment(receiptNumber) {
     setTimeout(() => {
         hideLoadingOverlay();
         closeModal();
-        Toast.success('Payment updated successfully');
+        toast.success('Payment updated successfully');
         refreshPaymentHistory();
     }, 1000);
 }
@@ -410,7 +416,7 @@ function deletePayment(receiptNumber) {
                 }
                 
                 hideLoadingOverlay();
-                Toast.success('Payment record deleted successfully');
+                toast.success('Payment record deleted successfully');
                 
                 // Refresh payment history with current student ID
                 if (selectedStudentId && typeof refreshPaymentHistory === 'function') {
@@ -428,7 +434,7 @@ function deletePayment(receiptNumber) {
  * Print receipt
  */
 function printReceipt(receiptNumber) {
-    Toast.info('Opening print preview for ' + receiptNumber);
+    toast('Opening print preview for ' + receiptNumber, { icon: 'ℹ️' });
     // In production, this would open a print-formatted page
 }
 
@@ -436,7 +442,7 @@ function printReceipt(receiptNumber) {
  * Download receipt as PDF
  */
 function downloadReceipt(receiptNumber) {
-    Toast.success('Downloading ' + receiptNumber + '.pdf');
+    toast.success('Downloading ' + receiptNumber + '.pdf');
     // In production, this would generate and download a PDF
 }
 

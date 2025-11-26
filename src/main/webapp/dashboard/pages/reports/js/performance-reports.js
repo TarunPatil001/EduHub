@@ -414,7 +414,14 @@
         if (refreshBtn) {
             refreshBtn.addEventListener('click', function() {
                 this.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i>';
+                
+                // Show loading toast
+                const loadingToast = toast.loading('Refreshing data...');
+                
                 setTimeout(() => {
+                    // Dismiss loading toast
+                    if (typeof loadingToast === 'function') loadingToast();
+                    
                     location.reload();
                 }, 500);
             });
@@ -481,9 +488,17 @@
 
         console.log('Exporting report...', { format, includeCharts, includeStats, includeDetails });
 
+        // Show loading toast
+        const loadingToast = toast.loading('Exporting report...');
+        
         // Simulate export
-        showToast('Success', `Report exported as ${format.toUpperCase()}`, 'success');
-        bootstrap.Modal.getInstance(document.getElementById('exportModal')).hide();
+        setTimeout(() => {
+            // Dismiss loading toast
+            if (typeof loadingToast === 'function') loadingToast();
+            
+            toast.success('Report exported as ' + format.toUpperCase());
+            bootstrap.Modal.getInstance(document.getElementById('exportModal')).hide();
+        }, 1000);
     }
 
     /**
@@ -499,9 +514,19 @@
         };
 
         console.log('Applying filters:', filters);
-        showToast('Info', 'Filters applied successfully', 'info');
         
-        // Reload data with filters (implement API call here)
+        // Show loading toast
+        const loadingToast = toast.loading('Applying filters...');
+        
+        // Simulate filter application
+        setTimeout(() => {
+            // Dismiss loading toast
+            if (typeof loadingToast === 'function') loadingToast();
+            
+            toast.success('Filters applied successfully');
+            
+            // Reload data with filters (implement API call here)
+        }, 800);
     }
 
     /**
@@ -512,7 +537,7 @@
         console.log('Updating trend chart for period:', period);
         
         // Update chart data based on period (implement actual logic)
-        showToast('Info', `Chart updated for ${period} view`, 'info');
+        toast('Chart updated for ' + period + ' view', { icon: 'ℹ️' });
     }
 
     /**
@@ -554,7 +579,7 @@
         const selectedItems = Array.from(document.getElementById('compareItems').selectedOptions).map(o => o.value);
 
         if (selectedItems.length < 2) {
-            showToast('Warning', 'Please select at least 2 items to compare', 'warning');
+            toast('Please select at least 2 items to compare', { icon: '⚠️' });
             return;
         }
 
@@ -611,9 +636,17 @@
      * Generate custom report
      */
     function generateReport() {
-        // Use centralized toast system from /common/toast-notification.jsp
-        Toast.info('Generating custom report...');
-        // Implement report generation
+        // Show loading toast
+        const loadingToast = toast.loading('Generating custom report...');
+        
+        // Simulate report generation
+        setTimeout(() => {
+            // Dismiss loading toast
+            if (typeof loadingToast === 'function') loadingToast();
+            
+            toast.success('Custom report generated successfully');
+            // Implement report generation
+        }, 1500);
     }
 
     /**
@@ -827,8 +860,16 @@
     };
 
     window.downloadReport = function(rollNo) {
-        showToast('Success', `Downloading report for ${rollNo}`, 'success');
-        console.log('Downloading report for:', rollNo);
+        // Show loading toast
+        const loadingToast = toast.loading('Preparing report for download...');
+        
+        setTimeout(() => {
+            // Dismiss loading toast
+            if (typeof loadingToast === 'function') loadingToast();
+            
+            toast.success('Downloading report for ' + rollNo);
+            console.log('Downloading report for:', rollNo);
+        }, 800);
     };
 
     // Initialize performance records on load

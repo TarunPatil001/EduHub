@@ -44,18 +44,58 @@ window.addEventListener('scroll', function() {
 document.addEventListener('DOMContentLoaded', function() {
     
     // ========================================================================
-    // TOAST NOTIFICATIONS
+    // TOAST NOTIFICATIONS - URL Parameter Handling
     // ========================================================================
     
     /**
-     * Toast notifications are now handled by the centralized system
-     * in /common/js/toast-notification.js
-     * 
-     * URL parameters like ?success=login, ?error=something, ?logout=true
-     * are automatically detected and shown as toasts.
-     * 
-     * No need for duplicate logic here.
+     * Handle URL parameters for dashboard-specific notifications
      */
+    function handleURLParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Success messages
+        if (urlParams.has('success')) {
+            const successType = urlParams.get('success');
+            
+            if (successType === 'login') {
+                toast.success('Welcome back!');
+            } else if (successType === 'logout') {
+                toast.success('Logged out successfully');
+            } else if (successType === 'profile_updated') {
+                toast.success('Profile updated!');
+            } else if (successType === 'settings_saved') {
+                toast.success('Settings saved!');
+            }
+            
+            // Clean URL
+            urlParams.delete('success');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+        
+        // Error messages
+        if (urlParams.has('error')) {
+            const errorType = urlParams.get('error');
+            
+            if (errorType === 'unauthorized') {
+                toast.error('Login required');
+            } else if (errorType === 'session_expired') {
+                toast.error('Session expired. Login again.');
+            } else if (errorType === 'access_denied') {
+                toast.error('Access denied');
+            } else {
+                toast.error('Error occurred. Try again.');
+            }
+            
+            // Clean URL
+            urlParams.delete('error');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+    }
+    
+    // Call URL parameter handler
+    handleURLParameters();
     
     // ========================================================================
     // SIDEBAR AND OVERLAY SETUP

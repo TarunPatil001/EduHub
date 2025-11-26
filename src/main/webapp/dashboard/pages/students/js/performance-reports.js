@@ -320,7 +320,7 @@
         // Hide reset button
         hideResetButton();
 
-        Toast.info('Filters reset successfully!');
+        toast('Filters reset successfully!', { icon: 'ℹ️' });
     }
 
     /**
@@ -379,7 +379,7 @@
             refreshBtn.disabled = false;
             
             // Show toast notification using component
-            Toast.success('Data refreshed successfully!');
+            toast.success('Data refreshed successfully!');
         }, 1000);
     }
 
@@ -609,7 +609,7 @@
      * Export student data to PDF (mock)
      */
     window.exportStudentData = function() {
-        Toast.info('PDF export feature coming soon!');
+        toast('PDF export feature coming soon!', { icon: 'ℹ️' });
     };
 
     /**
@@ -854,7 +854,7 @@
         link.click();
         document.body.removeChild(link);
 
-        Toast.success('Data exported successfully!');
+        toast.success('Data exported successfully!');
     }
 
     /**

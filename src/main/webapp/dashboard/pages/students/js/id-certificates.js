@@ -194,9 +194,9 @@
     /**
      * Preview ID card
      */
-    window.previewIdCard = function() {
-        if (!selectedStudent && document.getElementById('idSelectionType').value === 'single') {
-            Toast.warning('Please select a student first');
+    window.previewCertificate = function() {
+        if (!selectedStudent && document.getElementById('certificateSelectionType').value === 'single') {
+            toast('Please select a student first', { icon: '⚠️' });
             return;
         }
 
@@ -328,7 +328,7 @@
         const selectionType = document.getElementById('idSelectionType').value;
         
         if (selectionType === 'single' && !selectedStudent) {
-            Toast.warning('Please select a student first');
+            toast('Please select a student first', { icon: '⚠️' });
             return;
         }
 
@@ -361,12 +361,12 @@
         }
 
         if (count === 0) {
-            Toast.warning('No students selected for ID card generation');
+            toast('No students selected for ID card generation', { icon: '⚠️' });
             return;
         }
 
-        // Show loading
-        Toast.info('Generating ID card(s)...');
+        // Show loading toast
+        const loadingToastId = toast.loading(`Generating ${count} ID card${count > 1 ? 's' : ''}...`);
 
         // Simulate generation
         setTimeout(() => {
@@ -382,8 +382,11 @@
             saveHistory();
             updateHistoryTable();
 
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
+
             // Show success and download
-            Toast.success(`${count} ID card(s) generated successfully!`);
+            toast.success(`${count} ID card${count > 1 ? 's' : ''} generated successfully!`);
             downloadIdCards(studentsToGenerate);
         }, 1500);
     };
@@ -396,18 +399,18 @@
             ? `ID_Card_${students[0].rollNo}.pdf`
             : `ID_Cards_Batch_${new Date().toISOString().split('T')[0]}.pdf`;
         
-        Toast.info(`Downloading: ${fileName}`);
+        toast('Downloading: ' + fileName, { icon: 'ℹ️' });
         // In real implementation, this would generate and download actual PDF
     }
 
     /**
      * Preview certificate
      */
-    window.previewCertificate = function() {
-        const selectionType = document.getElementById('certSelectionType').value;
+        
+        const selectionType = document.getElementById('certificateSelectionType').value;
         
         if (selectionType === 'single' && !selectedStudent) {
-            Toast.warning('Please select a student first');
+            toast('Please select a student first', { icon: '⚠️' });
             return;
         }
 
@@ -540,13 +543,13 @@
         const selectionType = document.getElementById('certSelectionType').value;
         
         if (selectionType === 'single' && !selectedStudent) {
-            Toast.warning('Please select a student first');
+            toast('Please select a student first', { icon: '⚠️' });
             return;
         }
 
         const courseName = document.getElementById('certCourseName').value;
         if (!courseName) {
-            Toast.warning('Please enter course/event name');
+            toast('Please enter course/event name', { icon: '⚠️' });
             return;
         }
 
@@ -557,8 +560,8 @@
             count = sampleStudents.length;
         }
 
-        // Show loading
-        Toast.info('Generating certificate(s)...');
+        // Show loading toast
+        const loadingToastId = toast.loading(`Generating ${count} certificate${count > 1 ? 's' : ''}...`);
 
         // Simulate generation
         setTimeout(() => {
@@ -576,7 +579,10 @@
             saveHistory();
             updateHistoryTable();
 
-            Toast.success(`${count} certificate(s) generated successfully!`);
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
+
+            toast.success(`${count} certificate${count > 1 ? 's' : ''} generated successfully!`);
             downloadCertificate(count);
         }, 1500);
     };
@@ -590,7 +596,7 @@
             ? `Certificate_${selectedStudent.rollNo}.pdf`
             : `Certificates_${certType}_${new Date().toISOString().split('T')[0]}.pdf`;
         
-        Toast.info(`Downloading: ${fileName}`);
+        toast('Downloading: ' + fileName, { icon: 'ℹ️' });
         // In real implementation, this would generate and download actual PDF
     }
 
@@ -636,7 +642,7 @@
      */
     window.downloadHistoryItem = function(index) {
         const entry = generationHistory[index];
-        Toast.success(`Downloading ${entry.type} for ${entry.students}`);
+        toast.success('Downloading ' + entry.type + ' for ' + entry.students);
     };
 
     /**
@@ -647,7 +653,7 @@
             generationHistory.splice(index, 1);
             saveHistory();
             updateHistoryTable();
-            Toast.success('History entry deleted');
+            toast.success('History entry deleted');
         }
     };
 
@@ -659,7 +665,7 @@
             generationHistory = [];
             saveHistory();
             updateHistoryTable();
-            Toast.success('History cleared successfully');
+            toast.success('History cleared successfully');
         }
     };
 
@@ -689,10 +695,14 @@
      * Refresh data
      */
     window.refreshData = function() {
-        Toast.info('Refreshing data...');
+        const loadingToastId = toast.loading('Refreshing data...');
         setTimeout(() => {
             loadHistory();
-            Toast.success('Data refreshed successfully');
+            
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
+            
+            toast.success('Data refreshed successfully');
         }, 500);
     };
 

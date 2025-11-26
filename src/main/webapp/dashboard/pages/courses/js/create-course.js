@@ -175,6 +175,9 @@
         const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating Course...';
+        
+        // Show loading toast
+        const loadingToast = toast.loading('Creating course...');
 
         // Collect form data
         const formData = new FormData(form);
@@ -204,6 +207,9 @@
         setTimeout(() => {
             console.log('Course Data:', courseData);
             
+            // Dismiss loading toast
+            if (typeof loadingToast === 'function') loadingToast();
+            
             showSuccessModal({
                 title: 'Course Created Successfully!',
                 message: `
@@ -228,7 +234,7 @@
                         el.classList.remove('is-valid');
                     });
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                    showToast('You can create another course or go back to courses list', 'info');
+                    toast('You can create another course or go back to courses list', { icon: 'ℹ️' });
                 }
             });
 

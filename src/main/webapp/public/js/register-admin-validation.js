@@ -15,8 +15,7 @@
  * - Shows toast notifications for errors
  * 
  * Dependencies:
- *   - Toastify.js (for toast notifications)
- *   - toast-notification.js (for showToast function)
+ *   - hot-toast (loaded from CDN via toast-notification.jsp)
  * ============================================================================
  */
 
@@ -71,7 +70,7 @@ function validateAdminForm(e) {
     if (!fullName || !adminEmail || !adminPhone || !passwordValue || !confirmPasswordValue) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Missing required fields');
-        showToast('Please fill in all required fields', 'warning');
+        toast.error('Fill in all required fields');
         return false; // Keep form data
     }
 
@@ -79,7 +78,7 @@ function validateAdminForm(e) {
     if (fullName.length < 2 || fullName.length > 255) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Full name length');
-        showToast('Full name must be between 2 and 255 characters', 'warning');
+        toast.error('Name must be 2-255 characters');
         return false; // Keep form data
     }
 
@@ -87,7 +86,7 @@ function validateAdminForm(e) {
     if (!fullName.includes(' ')) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Full name format');
-        showToast('Please enter your full name (first and last name)', 'warning');
+        toast.error('Enter first and last name');
         return false; // Keep form data
     }
 
@@ -95,7 +94,7 @@ function validateAdminForm(e) {
     if (!isValidEmail(adminEmail)) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Invalid email');
-        showToast('Please enter a valid email address', 'warning');
+        toast.error('Invalid email address');
         return false; // Keep form data
     }
 
@@ -103,7 +102,7 @@ function validateAdminForm(e) {
     if (!isValidPhone(adminPhone)) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Invalid phone');
-        showToast('Please enter a valid phone number (at least 10 digits)', 'warning');
+        toast.error('Invalid phone number');
         return false; // Keep form data
     }
 
@@ -111,7 +110,7 @@ function validateAdminForm(e) {
     if (passwordValue.length < 8) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Password too short');
-        showToast('Password must be at least 8 characters long', 'warning');
+        toast.error('Password must be 8+ characters');
         return false; // Keep form data
     }
 
@@ -119,7 +118,7 @@ function validateAdminForm(e) {
     if (!isStrongPassword(passwordValue)) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Password not strong enough');
-        showToast('Password must contain both letters and numbers', 'warning');
+        toast.error('Password needs letters & numbers');
         return false; // Keep form data
     }
 
@@ -127,13 +126,13 @@ function validateAdminForm(e) {
     if (passwordValue !== confirmPasswordValue) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Passwords do not match');
-        showToast('Passwords do not match', 'warning');
+        toast.error('Passwords do not match');
         return false; // Keep form data
     }
 
     // ALL VALIDATIONS PASSED - Allow form submission
     console.log('Validation passed, allowing form submission');
-    showToast('Creating your account...', 'info', 2000);
+    // Toast will be shown by the inline script in register_admin.jsp
     
     // Form will submit to backend
     // After successful registration, backend will redirect to login page

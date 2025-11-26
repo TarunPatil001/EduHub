@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!file) return;
             
             if (file.size > 2 * 1024 * 1024) {
-                Toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
+                toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
                 this.value = '';
                 return;
             }
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const age = new Date().getFullYear() - new Date(this.value).getFullYear();
             
             if (age < 15) {
-                Toast.error('Student must be at least 15 years old to register. Please enter a valid date of birth.');
+                toast.error('Student must be at least 15 years old to register. Please enter a valid date of birth.');
                 this.value = '';
             }
         });
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!this.checkValidity()) {
                 this.classList.add('was-validated');
-                Toast.warning('Please fill in all required fields correctly.');
+                toast('Please fill in all required fields correctly.', { icon: '⚠️' });
                 
                 const firstError = this.querySelector(':invalid');
                 if (firstError) {
@@ -79,8 +79,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmClass: 'btn-success',
                 icon: 'bi-check-circle-fill text-success',
                 onConfirm: function() {
-                    Toast.success('Student registration has been submitted successfully!');
-                    // document.getElementById('addStudentForm').submit(); // Uncomment when backend is ready
+                    // Show loading toast
+                    const loadingToastId = toast.loading('Submitting student registration...');
+                    
+                    // Simulate form submission
+                    setTimeout(() => {
+                        // Dismiss loading toast
+                        toast.dismiss(loadingToastId);
+                        
+                        toast.success('Student registration has been submitted successfully!');
+                        // document.getElementById('addStudentForm').submit(); // Uncomment when backend is ready
+                    }, 1000);
                 }
             });
         });
@@ -102,7 +111,7 @@ function handleFileUpload(input, boxId, fileNameId) {
     if (!file) return;
     
     if (file.size > 5 * 1024 * 1024) {
-        Toast.error('File size should not exceed 5MB. Please select a smaller file.');
+        toast.error('File size should not exceed 5MB. Please select a smaller file.');
         input.value = '';
         return;
     }
@@ -203,7 +212,7 @@ function resetForm() {
             // Scroll to top of form
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            Toast.success('The form has been reset successfully.');
+            toast.success('The form has been reset successfully.');
         }
     });
 }
@@ -347,7 +356,7 @@ function copyAddress() {
     
     if (permanentAddress && currentAddress) {
         currentAddress.value = permanentAddress.value;
-        Toast.info('Address copied successfully');
+        toast('Address copied successfully', { icon: 'ℹ️' });
     }
 }
 
@@ -381,7 +390,7 @@ function resetForm() {
         // Reset to default status
         initializeFormDefaults();
         
-        Toast.info('Form reset successfully');
+        toast('Form reset successfully', { icon: 'ℹ️' });
     }
 }
 
@@ -393,7 +402,7 @@ function previewPhoto(input) {
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            Toast.success('Photo uploaded successfully');
+            toast.success('Photo uploaded successfully');
         };
         
         reader.readAsDataURL(input.files[0]);

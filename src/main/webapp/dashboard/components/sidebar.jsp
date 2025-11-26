@@ -147,7 +147,7 @@
     <div class="sidebar-footer">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/auth/logout" class="nav-link text-danger">
+                <a href="${pageContext.request.contextPath}/auth/logout" class="nav-link text-danger" id="sidebarLogoutBtn">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Logout</span>
                 </a>

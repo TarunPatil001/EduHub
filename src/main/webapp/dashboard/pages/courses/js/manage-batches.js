@@ -3,6 +3,62 @@
  * Handles filtering, searching, and batch management functionality
  */
 
+// Handle URL Parameters for Toast Notifications on Page Load
+(function() {
+    'use strict';
+    
+    // Check for URL parameters when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        handleURLParameters();
+    });
+    
+    function handleURLParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Success messages
+        if (urlParams.has('success')) {
+            const successType = urlParams.get('success');
+            
+            if (successType === 'created') {
+                toast.success('Batch created successfully!');
+            } else if (successType === 'updated') {
+                toast.success('Batch updated successfully!');
+            } else if (successType === 'deleted') {
+                toast.success('Batch deleted successfully!');
+            } else if (successType === 'started') {
+                toast.success('Batch started successfully!');
+            } else if (successType === 'completed') {
+                toast.success('Batch marked as completed!');
+            }
+            
+            // Clean URL
+            urlParams.delete('success');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+        
+        // Error messages
+        if (urlParams.has('error')) {
+            const errorType = urlParams.get('error');
+            
+            if (errorType === 'notfound') {
+                toast.error('Batch not found');
+            } else if (errorType === 'failed') {
+                toast.error('Operation failed. Please try again.');
+            } else if (errorType === 'duplicate') {
+                toast.error('Batch with this code already exists');
+            } else {
+                toast.error('An error occurred. Please try again.');
+            }
+            
+            // Clean URL
+            urlParams.delete('error');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+    }
+})();
+
  // Filter batches based on status, search, course, and instructor
 function applyFilters() {
     const statusFilter = document.querySelector('[data-filter].active')?.getAttribute('data-filter') || 'all';
@@ -105,13 +161,31 @@ document.querySelectorAll('.btn-outline-danger').forEach(btn => {
             confirmClass: 'btn-danger',
             icon: 'bi-trash text-danger',
             onConfirm: function() {
+                // Show loading toast
+                const loadingToastId = toast.loading('Deleting batch...');
+                
                 card.style.opacity = '0.5';
                 setTimeout(function() {
-                    card.remove();
-                    updateTabCounts();
-                    applyFilters();
-                    showToastWithIcon('Batch deleted successfully', 'success', 3000);
-                }, 300);
+                    try {
+                        card.remove();
+                        
+                        // Update tab counts if function exists
+                        if (typeof updateTabCounts === 'function') {
+                            updateTabCounts();
+                        }
+                        
+                        applyFilters();
+                        
+                        toast.success(`Batch "${batchTitle}" deleted successfully`);
+                    } catch (error) {
+                        console.error('Error deleting batch:', error);
+                        toast.error('Error deleting batch. Please try again.');
+                        card.style.opacity = '1';
+                    } finally {
+                        // Always dismiss loading toast, regardless of success or failure
+                        toast.dismiss(loadingToastId);
+                    }
+                }, 800);
             }
         });
     });

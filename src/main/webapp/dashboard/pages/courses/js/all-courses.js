@@ -51,6 +51,52 @@
         updateStats();
         renderTable();
         renderPagination();
+        handleURLParameters(); // Handle URL parameters for notifications
+    }
+    
+    // Handle URL Parameters for Toast Notifications
+    function handleURLParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Success messages
+        if (urlParams.has('success')) {
+            const successType = urlParams.get('success');
+            
+            if (successType === 'created') {
+                toast.success('Course created successfully!');
+            } else if (successType === 'updated') {
+                toast.success('Course updated successfully!');
+            } else if (successType === 'deleted') {
+                toast.success('Course deleted successfully!');
+            } else if (successType === 'published') {
+                toast.success('Course published successfully!');
+            }
+            
+            // Clean URL
+            urlParams.delete('success');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+        
+        // Error messages
+        if (urlParams.has('error')) {
+            const errorType = urlParams.get('error');
+            
+            if (errorType === 'notfound') {
+                toast.error('Course not found');
+            } else if (errorType === 'failed') {
+                toast.error('Operation failed. Please try again.');
+            } else if (errorType === 'duplicate') {
+                toast.error('Course with this code already exists');
+            } else {
+                toast.error('An error occurred. Please try again.');
+            }
+            
+            // Clean URL
+            urlParams.delete('error');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
     }
 
     // Bind Events
@@ -407,10 +453,10 @@
         
         // Reapply filters (which will show all courses)
         applyFilters();
-        
+
         // Show toast notification
-        if (typeof showToast === 'function') {
-            showToast('Filters have been reset', 'success');
+        if (typeof toast !== 'undefined') {
+            toast.success('Filters have been reset');
         }
     }
 
@@ -445,8 +491,8 @@
     window.viewCourse = function(courseId) {
         const course = allCourses.find(c => c && c.id === courseId);
         if (!course) {
-            if (typeof showToast === 'function') {
-                showToast('Course not found', 'error');
+            if (typeof toast !== 'undefined') {
+                toast.error('Course not found');
             }
             return;
         }
@@ -477,15 +523,18 @@
     window.editCourse = function(courseId) {
         const course = allCourses.find(c => c && c.id === courseId);
         if (!course) {
-            if (typeof showToast === 'function') {
-                showToast('Course not found', 'error');
+            if (typeof toast !== 'undefined') {
+                toast.error('Course not found');
             }
             return;
         }
 
         // In production, redirect to edit page
-        if (typeof showToast === 'function') {
-            showToast(`Edit functionality for "${escapeHtml(course.name)}" will be implemented soon`, 'info');
+        if (typeof toast !== 'undefined') {
+            toast('Edit functionality for "' + escapeHtml(course.name) + '" will be implemented soon', {
+                icon: 'ℹ️',
+                duration: 3000
+            });
         }
     };
 
@@ -561,8 +610,8 @@
             .filter(id => !isNaN(id));
         
         if (courseIds.length === 0) {
-            if (typeof showToast === 'function') {
-                showToast('Please select courses to delete', 'warning');
+            if (typeof toast !== 'undefined') {
+                toast.error('Please select courses to delete');
             } else {
                 alert('Please select courses to delete');
             }
@@ -600,20 +649,24 @@
                     renderTable();
                     renderPagination();
                     
-                    if (typeof showToast === 'function') {
-                        showToast(`${courseIds.length} course(s) deleted successfully`, 'success');
+                    if (typeof toast !== 'undefined') {
+                        toast.success(courseIds.length + ' course(s) deleted successfully');
                     }
                 }
             });
         } else {
             // Fallback to confirm dialog
-            if (confirm(`Are you sure you want to delete ${courseIds.length} course(s)? This action cannot be undone.`)) {
+            if (confirm('Are you sure you want to delete ' + courseIds.length + ' course(s)? This action cannot be undone.')) {
                 allCourses = allCourses.filter(course => course && !courseIds.includes(course.id));
                 applyFilters();
                 updateStats();
                 renderTable();
                 renderPagination();
-                alert(`${courseIds.length} course(s) deleted successfully`);
+                if (typeof toast !== 'undefined') {
+                    toast.success(courseIds.length + ' course(s) deleted successfully');
+                } else {
+                    alert(courseIds.length + ' course(s) deleted successfully');
+                }
             }
         }
     }
@@ -622,8 +675,8 @@
     window.handleDeleteCourse = function(courseId) {
         const course = allCourses.find(c => c && c.id === courseId);
         if (!course) {
-            if (typeof showToast === 'function') {
-                showToast('Course not found', 'error');
+            if (typeof toast !== 'undefined') {
+                toast.error('Course not found');
             }
             return;
         }
@@ -637,7 +690,115 @@
                     updateStats();
                     renderTable();
                     renderPagination();
-                    alert(`Course deleted successfully`);
+                    if (typeof toast !== 'undefined') {
+                        toast.success('Course deleted successfully');
+                    } else {
+                        alert('Course deleted successfully');
+                    }
+                }
+            }
+            return;
+        }
+
+        showConfirmationModal({
+            title: 'Delete Course',
+            message: 'Are you sure you want to delete <strong>' + escapeHtml(course.name) + '</strong>?<br><br>This action cannot be undone.',
+            confirmText: 'Yes, Delete',
+            cancelText: 'Cancel',
+            confirmClass: 'btn-danger',
+            onConfirm: function() {
+                // Close the modal manually first
+                closeConfirmationModal();
+                
+                // STEP 1: Save the IDs of currently checked courses (excluding the one being deleted)
+                const checkedCourseIds = Array.from(document.querySelectorAll('.course-checkbox:checked'))
+                    .map(cb => parseInt(cb.dataset.courseId))
+                    .filter(id => !isNaN(id) && id !== courseId);
+                
+                // STEP 2: Remove the course from data
+                const index = allCourses.findIndex(c => c && c.id === courseId);
+                if (index !== -1) {
+                    const deletedCourseName = allCourses[index].name;
+                    allCourses.splice(index, 1);
+                    
+                    // STEP 3: Reapply filters to update filteredCourses
+                    applyFilters();
+                    
+                    // STEP 4: Check if current page is now empty and adjust if needed
+                    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+                    if (currentPage > totalPages && totalPages > 0) {
+                        currentPage = totalPages;
+                    }
+                    if (currentPage < 1 && filteredCourses.length > 0) {
+                        currentPage = 1;
+                    }
+                    
+                    // STEP 5: Update stats and re-render
+                    updateStats();
+                    renderTable();
+                    renderPagination();
+                    
+                    // STEP 6: After DOM updates, restore the checked state of remaining courses
+                    setTimeout(() => {
+                        checkedCourseIds.forEach(id => {
+                            const checkbox = document.querySelector('.course-checkbox[data-course-id="' + id + '"]');
+                            if (checkbox) {
+                                checkbox.checked = true;
+                                const row = checkbox.closest('tr');
+                                if (row) {
+                                    row.classList.add('row-selected');
+                                }
+                            }
+                        });
+                        
+                        // STEP 7: Update the button count to reflect the remaining checked items
+                        updateBulkDeleteButton();
+                        updateSelectAllState();
+                    }, 50);
+                    
+                    if (typeof toast !== 'undefined') {
+                        toast.success('Course "' + escapeHtml(deletedCourseName) + '" deleted successfully');
+                    }
+                }
+            }
+            });
+        } else {
+            // Fallback to confirm dialog
+            if (confirm('Are you sure you want to delete ' + courseIds.length + ' course(s)? This action cannot be undone.')) {
+                allCourses = allCourses.filter(course => course && !courseIds.includes(course.id));
+                applyFilters();
+                updateStats();
+                renderTable();
+                renderPagination();
+                if (typeof toast !== 'undefined') {
+                    toast.success(courseIds.length + ' course(s) deleted successfully');
+                }
+            }
+        }
+    }
+
+    // Handle Single Delete
+    window.handleDeleteCourse = function(courseId) {
+        const course = allCourses.find(c => c && c.id === courseId);
+        if (!course) {
+            if (typeof toast !== 'undefined') {
+                toast.error('Course not found');
+            }
+            return;
+        }
+
+        if (typeof showConfirmationModal !== 'function') {
+            if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+                const index = allCourses.findIndex(c => c && c.id === courseId);
+                if (index !== -1) {
+                    allCourses.splice(index, 1);
+                    applyFilters();
+                    updateStats();
+                    renderTable();
+                    renderPagination();
+                    if (typeof toast !== 'undefined') {
+                        toast.success('Course deleted successfully');
+                    }
                 }
             }
             return;
@@ -697,10 +858,10 @@
                         // STEP 7: Update the button count to reflect the remaining checked items
                         updateBulkDeleteButton();
                         updateSelectAllState();
-                    }, 100);
+                    renderPagination();
                     
-                    if (typeof showToast === 'function') {
-                        showToast(`Course "${escapeHtml(deletedCourseName)}" deleted successfully`, 'success');
+                    if (typeof toast !== 'undefined') {
+                        toast.success(`Course "${escapeHtml(deletedCourseName)}" deleted successfully`);
                     }
                 }
             }

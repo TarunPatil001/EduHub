@@ -13,8 +13,7 @@
  * - Shows toast notifications for errors
  * 
  * Dependencies:
- *   - Toastify.js (for toast notifications)
- *   - toast-notification.js (for showToast function)
+ *   - hot-toast (loaded from CDN via toast-notification.jsp)
  * ============================================================================
  */
 
@@ -62,7 +61,7 @@ function validateInstituteForm(e) {
         !address || !city || !state || !country) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Missing required fields');
-        showToast('Please fill in all required fields', 'warning');
+        toast.error('Fill in all required fields');
         return false; // Keep form data
     }
 
@@ -70,7 +69,7 @@ function validateInstituteForm(e) {
     if (instituteName.length < 3 || instituteName.length > 255) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Institute name length');
-        showToast('Institute name must be between 3 and 255 characters', 'warning');
+        toast.error('Institute name must be 3-255 characters');
         return false; // Keep form data
     }
 
@@ -78,7 +77,7 @@ function validateInstituteForm(e) {
     if (!isValidEmail(instituteEmail)) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Invalid email');
-        showToast('Please enter a valid email address', 'warning');
+        toast.error('Invalid email address');
         return false; // Keep form data
     }
 
@@ -86,7 +85,7 @@ function validateInstituteForm(e) {
     if (!isValidPhone(institutePhone)) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Invalid phone');
-        showToast('Please enter a valid phone number (at least 10 digits)', 'warning');
+        toast.error('Invalid phone number');
         return false; // Keep form data
     }
 
@@ -94,7 +93,7 @@ function validateInstituteForm(e) {
     if (address.length < 5) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: Address too short');
-        showToast('Please enter a complete address', 'warning');
+        toast.error('Enter complete address');
         return false; // Keep form data
     }
 
@@ -102,7 +101,7 @@ function validateInstituteForm(e) {
     if (city.length < 2) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: City name too short');
-        showToast('Please enter a valid city name', 'warning');
+        toast.error('Invalid city name');
         return false; // Keep form data
     }
 
@@ -110,17 +109,13 @@ function validateInstituteForm(e) {
     if (state.length < 2) {
         e.preventDefault(); // STOP form submission
         console.log('Validation failed: State name too short');
-        showToast('Please enter a valid state/province', 'warning');
+        toast.error('Invalid state/province');
         return false; // Keep form data
     }
 
-    // ALL VALIDATIONS PASSED - Allow form submission
-    console.log('Validation passed, allowing form submission');
-    showToast('Processing institute details...', 'info', 2000);
-    
-    // Form will submit naturally and navigate to next page
-    // Browser will clear form data after navigation
-    return true; // Allow form submission
+    // All validations passed - form will submit and redirect to admin page
+    console.log('Validation passed, form will submit');
+    return true;
 }
 
 /**

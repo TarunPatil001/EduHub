@@ -287,15 +287,15 @@
             String error = (String) request.getAttribute("error");
             if (error != null && !error.isEmpty()) { 
             %>
-                if (typeof showToast === 'function') {
-                    showToast('<%= error.replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>', 'error', 5000);
+                if (typeof toast !== 'undefined') {
+                    toast.error('<%= error.replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>');
                 } else {
-                    console.error('showToast function not available');
+                    console.error('toast function not available');
                     alert('<%= error.replace("'", "\\'") %>');
                 }
             <% } %>
 
-            // Form validation only (no toast on submit since page redirects immediately)
+            // Form validation with toast.error for validation failures
             const instituteForm = document.getElementById('instituteForm');
             if (instituteForm) {
                 instituteForm.addEventListener('submit', function(e) {
@@ -304,12 +304,12 @@
                         e.preventDefault();
                         e.stopPropagation();
                         instituteForm.classList.add('was-validated');
-                        if (typeof showToast === 'function') {
-                            showToast('Please fill in all required fields', 'warning', 3000);
+                        if (typeof toast !== 'undefined') {
+                            toast.error('Fill in all required fields');
                         }
                         return false;
                     }
-                    // Form is valid, let it submit normally (no toast needed as page redirects)
+                    // Form is valid, let it submit normally (redirects to next page)
                 });
             }
         });

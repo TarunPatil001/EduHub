@@ -75,7 +75,7 @@ function setDefaultDate() {
         const todayDate = new Date(today);
         
         if (selectedDate > todayDate) {
-            showToast('Cannot select future dates', 'warning');
+            toast('Cannot select future dates', { icon: '⚠️' });
             this.value = today;
         }
     });
@@ -273,7 +273,13 @@ function markStaffStatus(staffId, status) {
     
     const staff = allStaff.find(s => s.id === staffId);
     const statusIcon = status === 'Present' ? '✓' : '✗';
-    showToast(`${statusIcon} ${staff.name} marked as ${status}`, status === 'Present' ? 'success' : 'warning');
+    const toastFn = status === 'Present' ? toast.success : toast;
+    const message = statusIcon + ' ' + staff.name + ' marked as ' + status;
+    if (status === 'Present') {
+        toastFn(message);
+    } else {
+        toastFn(message, { icon: '⚠️' });
+    }
 }
 
 // Auto-tick opposite status staff for quick bulk marking
@@ -360,7 +366,7 @@ function updateSelectAllCheckbox() {
 
 function markAllPresent() {
     if (filteredStaff.length === 0) {
-        showToast('No staff members to mark', 'warning');
+        toast('No staff members to mark', { icon: '⚠️' });
         return;
     }
     
@@ -377,14 +383,14 @@ function markAllPresent() {
             });
             
             loadStaffData();
-            showToast(`Marked ${filteredStaff.length} staff member(s) as Present`, 'success');
+            toast.success('Marked ' + filteredStaff.length + ' staff member(s) as Present');
         }
     });
 }
 
 function markAllAbsent() {
     if (filteredStaff.length === 0) {
-        showToast('No staff members to mark', 'warning');
+        toast('No staff members to mark', { icon: '⚠️' });
         return;
     }
     
@@ -401,7 +407,7 @@ function markAllAbsent() {
             });
             
             loadStaffData();
-            showToast(`Marked ${filteredStaff.length} staff member(s) as Absent`, 'warning');
+            toast('Marked ' + filteredStaff.length + ' staff member(s) as Absent', { icon: '⚠️' });
         }
     });
 }
@@ -434,7 +440,7 @@ function markSelectedPresent() {
             });
             
             loadStaffData();
-            showToast(`✓ ${selectedCount} marked Present, ${othersCount} marked Absent`, 'success');
+            toast.success('✓ ' + selectedCount + ' marked Present, ' + othersCount + ' marked Absent');
         }
     });
 }
@@ -467,7 +473,7 @@ function markSelectedAbsent() {
             });
             
             loadStaffData();
-            showToast(`✓ ${selectedCount} marked Absent, ${othersCount} marked Present`, 'success');
+            toast.success('✓ ' + selectedCount + ' marked Absent, ' + othersCount + ' marked Present');
         }
     });
 }
@@ -685,6 +691,9 @@ function saveAttendance() {
                 saveBtn.innerHTML = '<i class="bi bi-hourglass-split spinner-border spinner-border-sm me-2"></i> Saving...';
             }
             
+            // Show loading toast
+            const loadingToastId = toast.loading('Saving staff attendance...');
+            
             // Prepare data for API
             const saveData = {
                 date: date,
@@ -713,6 +722,9 @@ function saveAttendance() {
                 return response.json();
             })
             .then(data => {
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
+                
                 // Success - show success modal
                 showSuccessModal({
                     title: 'Attendance Saved Successfully!',
@@ -729,6 +741,9 @@ function saveAttendance() {
                     `
                 });
                 
+                // Show success toast
+                toast.success(`Attendance saved: ${present} present, ${absent} absent`);
+                
                 // Reset attendance data after successful save
                 attendanceData = {};
                 loadStaffData();
@@ -741,6 +756,9 @@ function saveAttendance() {
             })
             .catch(error => {
                 console.error('Error saving attendance:', error);
+                
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
                 
                 // For now, simulate successful save since backend may not be ready
                 // TODO: Remove this simulation when backend is implemented
@@ -765,6 +783,9 @@ function saveAttendance() {
                     `
                 });
                 
+                // Show success toast with info about simulation
+                toast.success('Attendance saved (simulated mode)');
+                
                 // Reset attendance data
                 attendanceData = {};
                 loadStaffData();
@@ -782,14 +803,17 @@ function exportToCSV() {
     const date = document.getElementById('dateInput').value;
     
     if (!date) {
-        showToast('Please select a date first', 'warning');
+        toast('Please select a date first', { icon: '⚠️' });
         return;
     }
     
     if (Object.keys(attendanceData).length === 0) {
-        showToast('No attendance data to export', 'warning');
+        toast('No attendance data to export', { icon: '⚠️' });
         return;
     }
+    
+    // Show loading toast
+    const loadingToastId = toast.loading('Preparing export...');
     
     try {
         // Prepare CSV data
@@ -814,10 +838,17 @@ function exportToCSV() {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         
-        showToast(`Attendance exported successfully! (${Object.keys(attendanceData).length} records)`, 'success');
+        // Dismiss loading toast
+        toast.dismiss(loadingToastId);
+        
+        toast.success(`Attendance exported: ${Object.keys(attendanceData).length} records`);
     } catch (error) {
         console.error('Export error:', error);
-        showToast('Failed to export attendance data', 'danger');
+        
+        // Dismiss loading toast
+        toast.dismiss(loadingToastId);
+        
+        toast.error('Failed to export attendance data');
     }
 }
 

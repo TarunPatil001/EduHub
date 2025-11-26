@@ -226,7 +226,6 @@
     
     <!-- Centralized Toast Notification Component -->
     <jsp:include page="/common/toast-notification.jsp"/>
-    <script src="${pageContext.request.contextPath}/public/js/register-admin-validation.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             <% 
@@ -234,11 +233,37 @@
             boolean hasError = (error != null && !error.isEmpty());
             %>
             
-            // Only show welcome toast if there's NO error (coming from institute form for first time)
+            // Password toggle functionality
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (togglePassword && password && toggleIcon) {
+                togglePassword.addEventListener('click', function() {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    toggleIcon.classList.toggle('fa-eye');
+                    toggleIcon.classList.toggle('fa-eye-slash');
+                });
+            }
+
+            // Confirm password toggle functionality
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const toggleConfirmIcon = document.getElementById('toggleConfirmIcon');
+            if (toggleConfirmPassword && confirmPassword && toggleConfirmIcon) {
+                toggleConfirmPassword.addEventListener('click', function() {
+                    const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    confirmPassword.setAttribute('type', type);
+                    toggleConfirmIcon.classList.toggle('fa-eye');
+                    toggleConfirmIcon.classList.toggle('fa-eye-slash');
+                });
+            }
+            
+            // Show welcome toast if there's NO error (coming from institute form for first time)
             <% if (!hasError) { %>
                 const instituteName = document.getElementById('instituteName').value;
-                if (instituteName && typeof showToast === 'function') {
-                    showToast('Step 1 completed! Now create your admin account.', 'success', 3000);
+                if (instituteName && typeof toast !== 'undefined') {
+                    toast.success('Step 1 complete! Create admin account.');
                 }
             <% } %>
 
@@ -253,15 +278,15 @@
 
             // Display backend error if exists
             <% if (hasError) { %>
-                if (typeof showToast === 'function') {
-                    showToast('<%= error.replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>', 'error', 5000);
+                if (typeof toast !== 'undefined') {
+                    toast.error('<%= error.replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>');
                 } else {
-                    console.error('showToast function not available');
+                    console.error('toast function not available');
                     alert('<%= error.replace("'", "\\'") %>');
                 }
             <% } %>
 
-            // Form validation only (no loading toast since page redirects immediately)
+            // Form validation and submission
             const adminForm = document.getElementById('adminForm');
             if (adminForm) {
                 adminForm.addEventListener('submit', function(e) {
@@ -270,8 +295,8 @@
                         e.preventDefault();
                         e.stopPropagation();
                         adminForm.classList.add('was-validated');
-                        if (typeof showToast === 'function') {
-                            showToast('Please fill in all required fields', 'warning', 3000);
+                        if (typeof toast !== 'undefined') {
+                            toast.error('Fill in all required fields');
                         }
                         return false;
                     }
@@ -281,13 +306,17 @@
                     const confirmPassword = document.getElementById('confirmPassword').value;
                     if (password !== confirmPassword) {
                         e.preventDefault();
-                        if (typeof showToast === 'function') {
-                            showToast('Passwords do not match!', 'error', 3000);
+                        if (typeof toast !== 'undefined') {
+                            toast.error('Passwords do not match!');
                         }
                         return false;
                     }
                     
-                    // Form is valid, let it submit normally (no toast needed as page redirects)
+                    // Show loading toast - will be replaced by success/error after redirect
+                    if (typeof toast !== 'undefined') {
+                        toast.loading('Creating your account...');
+                    }
+                    // Let form submit normally to Java servlet
                 });
             }
         });

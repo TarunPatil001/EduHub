@@ -682,7 +682,7 @@
                         updateSelectAllState();
                     }, 50);
                     
-                    showToastWithIcon(`${staffName} deleted successfully`, 'success');
+                    toast.success(staffName + ' deleted successfully');
                 }
             }
         });
@@ -694,7 +694,7 @@
         
         // Edge Case 1: No selection
         if (selectedCheckboxes.length === 0) {
-            showToastWithIcon('Please select staff members to delete', 'warning');
+            toast('Please select staff members to delete', { icon: '⚠️' });
             return;
         }
 
@@ -765,7 +765,7 @@
                 updateBulkActionButtons();
                 updateSelectAllState();
                 
-                showToastWithIcon(`${staffCount} staff member(s) deleted successfully`, 'success');
+                toast.success(staffCount + ' staff member(s) deleted successfully');
             }
         });
     }
@@ -778,12 +778,12 @@
         );
 
         if (visibleRows.length === 0) {
-            showToastWithIcon('No data to export', 'warning');
+            toast('No data to export', { icon: '⚠️' });
             return;
         }
 
         // Show loading toast
-        showToast('Preparing export...', 'info', 2000);
+        const loadingToastId = toast.loading('Preparing export...');
 
         // Create CSV
         let csv = 'Staff ID,Name,Email,Phone,Role,Department,Qualification,Experience,Employment Type,Join Date,Salary,Status\n';
@@ -809,7 +809,11 @@
         // Download CSV with slight delay to show loading
         setTimeout(() => {
             downloadCSV(csv, `staff-export-${new Date().toISOString().split('T')[0]}.csv`);
-            showToastWithIcon(`${visibleRows.length} staff records exported successfully`, 'success');
+            
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
+            
+            toast.success(`${visibleRows.length} staff records exported successfully`);
         }, 500);
     }
 

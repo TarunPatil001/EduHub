@@ -31,6 +31,52 @@
         attachEventListeners();
         updatePagination();
         showEmptyState(); // Show empty state if no students
+        handleURLParameters(); // Handle URL parameters for notifications
+    }
+    
+    // Handle URL Parameters for Toast Notifications
+    function handleURLParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Success messages
+        if (urlParams.has('success')) {
+            const successType = urlParams.get('success');
+            
+            if (successType === 'added') {
+                toast.success('Student added successfully!');
+            } else if (successType === 'updated') {
+                toast.success('Student updated successfully!');
+            } else if (successType === 'deleted') {
+                toast.success('Student deleted successfully!');
+            } else if (successType === 'imported') {
+                toast.success('Students imported successfully!');
+            }
+            
+            // Clean URL
+            urlParams.delete('success');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+        
+        // Error messages
+        if (urlParams.has('error')) {
+            const errorType = urlParams.get('error');
+            
+            if (errorType === 'notfound') {
+                toast.error('Student not found');
+            } else if (errorType === 'failed') {
+                toast.error('Operation failed. Please try again.');
+            } else if (errorType === 'duplicate') {
+                toast.error('Student with this email already exists');
+            } else {
+                toast.error('An error occurred. Please try again.');
+            }
+            
+            // Clean URL
+            urlParams.delete('error');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
     }
 
     // Event Listeners
@@ -675,7 +721,7 @@
                         updateSelectAllState();
                     }, 50);
                     
-                    showToast(`Student "${studentName}" deleted successfully`, 'success');
+                    toast.success(`Student "${studentName}" deleted successfully`);
                 }
             }
         });
@@ -686,8 +732,8 @@
         const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
         
         if (selectedCheckboxes.length === 0) {
-            if (typeof showToast === 'function') {
-                showToast('Please select students to delete', 'warning');
+            if (typeof toast !== 'undefined') {
+                toast.error('Please select students to delete');
             } else {
                 alert('Please select students to delete');
             }
@@ -746,8 +792,8 @@
                     updatePagination();
                     showEmptyState();
                     
-                    if (typeof showToast === 'function') {
-                        showToast(`${studentCount} student(s) deleted successfully`, 'success');
+                    if (typeof toast !== 'undefined') {
+                        toast.success(`${studentCount} student(s) deleted successfully`);
                     }
                 }
             });
@@ -791,9 +837,12 @@
         );
 
         if (visibleRows.length === 0) {
-            showToast('Warning', 'No data to export', 'warning');
+            toast('No data to export', { icon: '⚠️' });
             return;
         }
+
+        // Show loading toast
+        const loadingToastId = toast.loading('Preparing student data export...');
 
         // Create CSV
         let csv = 'Student ID,Name,Email,Phone,Course,Grade,Attendance,Status\n';
@@ -812,9 +861,15 @@
             csv += `"${id}","${name}","${email}","${phone}","${course}","${grade}","${attendance}","${status}"\n`;
         });
 
-        // Download CSV
-        downloadCSV(csv, 'students-export.csv');
-        showToast('Success', 'Data exported successfully', 'success');
+        // Download CSV with delay to show loading
+        setTimeout(() => {
+            downloadCSV(csv, 'students-export.csv');
+            
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
+            
+            toast.success(`${visibleRows.length} student records exported successfully`);
+        }, 500);
     }
 
     // Download CSV

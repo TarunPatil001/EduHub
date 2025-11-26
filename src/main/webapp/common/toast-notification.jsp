@@ -1,58 +1,70 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%--
   ============================================================================
-  EduHub - Centralized Toast Notification Component (iziToast)
+  EduHub - Centralized Toast Notification Component (hot-toast)
   ============================================================================
   
   Purpose: 
     - Single source of truth for toast notifications across the entire application
     - Works in public pages, dashboard pages, and all other sections
-    - Uses iziToast library for beautiful, modern toast notifications
+    - Uses hot-toast library for beautiful, modern toast notifications
   
   Usage:
     1. Include this component ONCE in your page:
        <jsp:include page="/common/toast-notification.jsp"/>
     
     2. Call toast functions in your JavaScript:
-       showToast('Message', 'success');
-       Toast.success('Operation successful!');
-       Toast.error('An error occurred!');
-       Toast.warning('Warning message!');
-       Toast.info('Information message!');
+       toast('Hello World!');
+       toast.success('Operation successful!');
+       toast.error('Something went wrong!');
+       toast.loading('Processing...');
   
-  Toast Types:
-    - success (green)
-    - error/danger (red)
-    - warning (yellow/orange)
-    - info (blue)
-    - question (purple)
+  Toast API:
+    - toast(message, options) - Default toast
+    - toast.success(message, options) - Success toast
+    - toast.error(message, options) - Error toast
+    - toast.loading(message, options) - Loading toast
+    - toast.promise(promise, messages, options) - Promise handling
+    - toast.dismiss(id?) - Dismiss specific or all toasts
+    - toast.config(options) - Configure defaults
+    
+  Options:
+    - icon: string (emoji or custom icon)
+    - duration: number (ms, 0 = no auto-dismiss)
+    - style: string (custom inline CSS)
+    - className: string (custom CSS class)
+    
+  Positions: top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
     
   Dependencies:
-    - iziToast (loaded from CDN)
+    - hot-toast (loaded from CDN)
     
-  Location:
-    /common/toast-notification.jsp
-    /common/js/toast-notification.js
-    /common/css/toast-notification.css
-    
-  Benefits of Centralization:
-    ✓ Single file to maintain
+  Benefits:
+    ✓ Ready to use - no additional setup needed
     ✓ Consistent behavior across all pages
     ✓ Beautiful animations and modern UI
-    ✓ Reduces code duplication
-    ✓ Better performance (no duplicate loading)
+    ✓ Automatically removes previous toasts (max 5)
     ✓ Mobile responsive with customizable positions
   ============================================================================
 --%>
 
-<!-- iziToast CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
+<!-- hot-toast CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/TarunPatil001/hot-toast@v1.0.0/lib/toast.css">
 
-<!-- iziToast JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
+<!-- hot-toast JavaScript -->
+<script src="https://cdn.jsdelivr.net/gh/TarunPatil001/hot-toast@v1.0.0/lib/toast.js"></script>
 
-<!-- Centralized Toast Notification JavaScript -->
-<script src="${pageContext.request.contextPath}/common/js/toast-notification.js"></script>
-
-<!-- Centralized Toast Notification Custom Styles -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/common/css/toast-notification.css">
+<!-- Configure hot-toast -->
+<script>
+    // Configure toast with centralized settings
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof toast !== 'undefined' && typeof toast.config === 'function') {
+            toast.config({
+                position: 'top-center',    // Position of toasts
+                duration: 4000,            // Duration in milliseconds
+                maxToasts: 5,              // Maximum visible toasts
+                reverseOrder: false        // Stack order (false = newest on top)
+            });
+        }
+    });
+</script>

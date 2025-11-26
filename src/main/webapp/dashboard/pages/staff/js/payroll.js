@@ -270,7 +270,7 @@ function createStaffRow(staff) {
             updateStatistics();
             
             // Show success notification
-            showToast(`Status changed from ${capitalizeFirst(oldStatus)} to ${capitalizeFirst(newStatus)} for ${staff.name}`, 'success');
+            toast.success('Status changed from ' + capitalizeFirst(oldStatus) + ' to ' + capitalizeFirst(newStatus) + ' for ' + staff.name);
         });
     });
     
@@ -669,7 +669,7 @@ function saveSalaryChanges() {
         const editSalaryModal = bootstrap.Modal.getInstance(document.getElementById('editSalaryModal'));
         editSalaryModal.hide();
         
-        showToast(`Salary updated for ${staff.name}`, 'success');
+        toast.success('Salary updated for ' + staff.name);
     }
 }
 
@@ -688,7 +688,7 @@ function markAsPaid(staffId) {
         onConfirm: function() {
             staff.status = 'paid';
             loadPayrollData();
-            showToast(`${staff.name} marked as paid`, 'success');
+            toast.success(staff.name + ' marked as paid');
         }
     });
 }
@@ -697,7 +697,7 @@ function markAsPaid(staffId) {
 function markSelectedAsPaid() {
     const selected = getSelectedStaffIds();
     if (selected.length === 0) {
-        showToast('Please select staff members first', 'warning');
+        toast('Please select staff members first', { icon: '⚠️' });
         return;
     }
     
@@ -709,13 +709,22 @@ function markSelectedAsPaid() {
         confirmClass: 'btn-success',
         icon: 'bi-check-circle text-success',
         onConfirm: function() {
-            selected.forEach(staffId => {
-                const staff = allStaff.find(s => s.id === staffId);
-                if (staff) staff.status = 'paid';
-            });
+            // Show loading toast
+            const loadingToastId = toast.loading(`Updating payment status for ${selected.length} staff member(s)...`);
             
-            loadPayrollData();
-            showToast(`${selected.length} staff member(s) marked as paid`, 'success');
+            setTimeout(() => {
+                selected.forEach(staffId => {
+                    const staff = allStaff.find(s => s.id === staffId);
+                    if (staff) staff.status = 'paid';
+                });
+                
+                loadPayrollData();
+                
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
+                
+                toast.success(`${selected.length} staff member(s) marked as paid`);
+            }, 800);
         }
     });
 }
@@ -724,7 +733,7 @@ function markSelectedAsPaid() {
 function sendPayslips() {
     const selected = getSelectedStaffIds();
     if (selected.length === 0) {
-        showToast('Please select staff members first', 'warning');
+        toast('Please select staff members first', { icon: '⚠️' });
         return;
     }
     
@@ -736,8 +745,16 @@ function sendPayslips() {
         confirmClass: 'btn-info',
         icon: 'bi-envelope text-info',
         onConfirm: function() {
+            // Show loading toast
+            const loadingToastId = toast.loading(`Sending payslips to ${selected.length} staff member(s)...`);
+            
             // Simulate sending
-            showToast(`Payslips sent to ${selected.length} staff member(s)`, 'success');
+            setTimeout(() => {
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
+                
+                toast.success(`Payslips sent to ${selected.length} staff member(s)`);
+            }, 1200);
         }
     });
 }
@@ -747,7 +764,7 @@ function processPayroll() {
     const pendingStaff = filteredStaff.filter(s => s.status === 'pending');
     
     if (pendingStaff.length === 0) {
-        showToast('No pending payroll to process', 'info');
+        toast('No pending payroll to process', { icon: 'ℹ️' });
         return;
     }
     
@@ -759,12 +776,21 @@ function processPayroll() {
         confirmClass: 'btn-primary',
         icon: 'bi-arrow-repeat text-primary',
         onConfirm: function() {
-            pendingStaff.forEach(staff => {
-                staff.status = 'processing';
-            });
+            // Show loading toast
+            const loadingToastId = toast.loading(`Processing payroll for ${pendingStaff.length} staff member(s)...`);
             
-            loadPayrollData();
-            showToast(`Payroll processing started for ${pendingStaff.length} staff member(s)`, 'success');
+            setTimeout(() => {
+                pendingStaff.forEach(staff => {
+                    staff.status = 'processing';
+                });
+                
+                loadPayrollData();
+                
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
+                
+                toast.success(`Payroll processing started for ${pendingStaff.length} staff member(s)`);
+            }, 1000);
         }
     });
 }
@@ -779,8 +805,16 @@ function generateAllPayslips() {
         confirmClass: 'btn-success',
         icon: 'bi-file-earmark-text text-success',
         onConfirm: function() {
-            showToast(`Generating payslips for ${filteredStaff.length} staff members...`, 'success');
-            // Implement actual generation logic
+            // Show loading toast
+            const loadingToastId = toast.loading(`Generating payslips for ${filteredStaff.length} staff members...`);
+            
+            setTimeout(() => {
+                // Dismiss loading toast
+                toast.dismiss(loadingToastId);
+                
+                toast.success(`${filteredStaff.length} payslips generated successfully`);
+                // Implement actual generation logic
+            }, 1500);
         }
     });
 }
@@ -790,25 +824,33 @@ function exportPayrollReport() {
     const month = monthSelect.options[monthSelect.selectedIndex].text;
     const year = yearSelect.value;
     
-    let csv = `Payroll Report - ${month} ${year}\n\n`;
-    csv += 'Emp ID,Name,Department,Designation,Basic Salary,Allowances,Deductions,Net Salary,Status\n';
+    // Show loading toast
+    const loadingToastId = toast.loading('Preparing payroll export...');
     
-    filteredStaff.forEach(staff => {
-        const netSalary = staff.basicSalary + staff.allowances - staff.deductions;
-        csv += `${staff.empId},"${staff.name}",${staff.department},${staff.designation},${staff.basicSalary},${staff.allowances},${staff.deductions},${netSalary},${staff.status}\n`;
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `payroll_${month}_${year}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    showToast('Payroll report exported successfully', 'success');
+    setTimeout(() => {
+        let csv = `Payroll Report - ${month} ${year}\n\n`;
+        csv += 'Emp ID,Name,Department,Designation,Basic Salary,Allowances,Deductions,Net Salary,Status\n';
+        
+        filteredStaff.forEach(staff => {
+            const netSalary = staff.basicSalary + staff.allowances - staff.deductions;
+            csv += `${staff.empId},"${staff.name}",${staff.department},${staff.designation},${staff.basicSalary},${staff.allowances},${staff.deductions},${netSalary},${staff.status}\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `payroll_${month}_${year}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Dismiss loading toast
+        toast.dismiss(loadingToastId);
+        
+        toast.success(`Payroll report exported successfully for ${month} ${year}`);
+    }, 800);
 }
 
 // Clear Filters
@@ -833,7 +875,7 @@ function clearFilters() {
     filterStaff();
     
     // Show notification
-    showToast('All filters have been reset', 'info');
+    toast('All filters have been reset', { icon: 'ℹ️' });
 }
 
 // Helper Functions
@@ -1112,7 +1154,7 @@ function downloadPayslip() {
     
     printWindow.document.close();
     
-    showToast('Payslip opened in new window for download/print', 'success');
+    toast.success('Payslip opened in new window for download/print');
 }
 
 // Email Payslip
@@ -1137,7 +1179,7 @@ function emailPayslip() {
         icon: 'bi-envelope text-info',
         onConfirm: function() {
             // Simulate email sending
-            showToast(`Payslip emailed successfully to ${staff.name}`, 'success');
+            toast.success('Payslip emailed successfully to ' + staff.name);
             
             // Close the payslip modal
             const payslipModal = bootstrap.Modal.getInstance(document.getElementById('payslipModal'));

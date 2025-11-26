@@ -414,7 +414,7 @@
     // Mark All
     function markAll(status) {
         if (students.length === 0) {
-            showToast('Please select a class first', 'warning');
+            toast('Please select a class first', { icon: '⚠️' });
             return;
         }
 
@@ -443,7 +443,7 @@
                 selectAll.checked = false;
                 selectAll.indeterminate = false;
                 updateStats();
-                showToast(`All students marked as ${status}`, 'success');
+                toast.success('All students marked as ' + status);
             }
         });
     }
@@ -453,7 +453,7 @@
         const checked = Array.from(document.querySelectorAll('.student-check:checked'));
         
         if (checked.length === 0) {
-            showToast('Please select at least one student', 'warning');
+            toast('Please select at least one student', { icon: '⚠️' });
             return;
         }
 
@@ -488,7 +488,7 @@
                 selectAll.checked = false;
                 selectAll.indeterminate = false;
                 updateStats();
-                showToast(`${selectedCount} marked as ${selectedStatus}, ${othersCount} as ${othersStatus}`, 'success');
+                toast.success(selectedCount + ' marked as ' + selectedStatus + ', ' + othersCount + ' as ' + othersStatus);
             }
         });
     }
@@ -513,23 +513,26 @@
         selectAll.checked = false;
         selectAll.indeterminate = false;
         updateStats();
-        showToast('Attendance reset to all absent', 'info');
+        toast('Attendance reset to all absent', { icon: 'ℹ️' });
     }
 
     // Save
     function save() {
         if (!classSelect.value) {
-            showToast('Please select a class', 'warning');
+            toast('Please select a class', { icon: '⚠️' });
             return;
         }
 
         if (students.length === 0) {
-            showToast('No students to save', 'warning');
+            toast('No students to save', { icon: '⚠️' });
             return;
         }
 
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+        
+        // Show loading toast
+        const loadingToastId = toast.loading('Saving attendance data...');
 
         // Simulate API call
         setTimeout(() => {
@@ -543,6 +546,9 @@
                 day: 'numeric'
             });
 
+            // Dismiss loading toast
+            toast.dismiss(loadingToastId);
+            
             showSuccessModal({
                 title: 'Attendance Saved!',
                 message: `Attendance for <strong>${className}</strong> on <strong>${date}</strong> has been saved successfully.<br><br>
@@ -555,6 +561,9 @@
 
             saveBtn.disabled = false;
             saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Attendance';
+            
+            // Show success toast
+            toast.success(`Attendance saved: ${present} present, ${absent} absent`);
         }, 1000);
     }
 
@@ -603,7 +612,7 @@
     // Export CSV
     function exportCSV() {
         if (students.length === 0) {
-            showToast('No data to export', 'warning');
+            toast('No data to export', { icon: '⚠️' });
             return;
         }
 
@@ -622,7 +631,7 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        showToast('Attendance exported successfully', 'success');
+        toast.success('Attendance exported successfully');
     }
 
     // Update Stats
