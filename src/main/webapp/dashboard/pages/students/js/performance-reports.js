@@ -270,7 +270,7 @@
         updateStatistics();
         
         if (showNotification) {
-            showToast('Filters applied successfully!', 'success');
+            toast.success('Filters applied successfully!');
         }
     }
 

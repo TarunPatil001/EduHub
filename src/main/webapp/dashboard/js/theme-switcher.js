@@ -51,8 +51,8 @@
         
         // Create a simple visual feedback
         const message = `${newTheme === THEME_DARK ? 'Dark' : 'Light'} mode enabled`;
-        if (typeof showToast === 'function') {
-            showToast(message, 'info', 2000);
+        if (typeof toast === 'function') {
+            toast(message, { icon: newTheme === THEME_DARK ? '🌙' : '☀️', duration: 2000 });
         } else {
             // Simple console feedback
             console.log(message);

@@ -415,7 +415,7 @@ function markAllAbsent() {
 function markSelectedPresent() {
     const selected = getSelectedStaffIds();
     if (selected.length === 0) {
-        showToast('Please select staff members first', 'warning');
+        toast('Please select staff members first', { icon: '⚠️' });
         return;
     }
     
@@ -448,7 +448,7 @@ function markSelectedPresent() {
 function markSelectedAbsent() {
     const selected = getSelectedStaffIds();
     if (selected.length === 0) {
-        showToast('Please select staff members first', 'warning');
+        toast('Please select staff members first', { icon: '⚠️' });
         return;
     }
     
@@ -485,7 +485,7 @@ function getSelectedStaffIds() {
 
 function resetAttendance() {
     if (Object.keys(attendanceData).length === 0) {
-        showToast('No attendance data to reset', 'info');
+        toast('No attendance data to reset', { icon: 'ℹ️' });
         return;
     }
     
@@ -503,7 +503,7 @@ function resetAttendance() {
                 selectAllCheckbox.checked = false;
             }
             loadStaffData();
-            showToast('Attendance data has been reset', 'info');
+            toast('Attendance data has been reset', { icon: 'ℹ️' });
         }
     });
 }
@@ -623,13 +623,13 @@ function saveAttendance() {
     const date = dateInput ? dateInput.value : '';
     
     if (!date) {
-        showToast('Please select a date', 'warning');
+        toast('Please select a date', { icon: '⚠️' });
         return;
     }
     
     const markedCount = Object.keys(attendanceData).length;
     if (markedCount === 0) {
-        showToast('Please mark attendance before saving', 'warning');
+        toast('Please mark attendance before saving', { icon: '⚠️' });
         return;
     }
     
@@ -858,6 +858,6 @@ function formatDate(dateString) {
 }
 
 // Note: Toast and Modal functions are provided by dashboard components
-// showToast() is from toast-notification.js
+// toast is from hot-toast library
 // showConfirmationModal() is from modal.jsp
 

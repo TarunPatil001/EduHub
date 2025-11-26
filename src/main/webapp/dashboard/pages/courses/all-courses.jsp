@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,9 +99,9 @@
                                 <label class="form-label">Category</label>
                                 <select class="form-select" id="categoryFilter">
                                     <option value="all">All Categories</option>
-                                    <option value="science">Science</option>
                                     <option value="technology">Technology</option>
                                     <option value="mathematics">Mathematics</option>
+                                    <option value="science">Science</option>
                                     <option value="arts">Arts</option>
                                     <option value="commerce">Commerce</option>
                                     <option value="language">Language</option>
@@ -215,7 +216,7 @@
 
     <!-- Use existing dashboard components -->
     <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

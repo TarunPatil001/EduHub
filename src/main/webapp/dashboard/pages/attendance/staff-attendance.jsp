@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +51,7 @@
                                 <option value="">All Departments</option>
                                 <option value="teaching">Teaching</option>
                                 <option value="administration">Administration</option>
-                                <option value="it">IT & Support</option>
+                                <option value="it">IT Support</option>
                                 <option value="management">Management</option>
                                 <option value="accounts">Accounts</option>
                                 <option value="library">Library</option>
@@ -180,7 +181,7 @@
 
     <!-- Use existing dashboard components -->
     <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

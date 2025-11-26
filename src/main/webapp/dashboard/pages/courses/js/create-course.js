@@ -74,7 +74,7 @@
             if (end <= start) {
                 endDate.classList.add('is-invalid');
                 endDate.classList.remove('is-valid');
-                showToast('End date must be after start date', 'warning');
+                toast('End date must be after start date', { icon: '⚠️' });
                 return false;
             } else {
                 endDate.classList.remove('is-invalid');
@@ -126,12 +126,12 @@
                 icon: 'bi-exclamation-triangle-fill text-warning',
                 onConfirm: function() {
                     resetForm();
-                    showToast('Form has been reset', 'info');
+                    toast('Form has been reset', { icon: 'ℹ️' });
                 }
             });
         } else {
             resetForm();
-            showToast('Form has been reset', 'info');
+            toast('Form has been reset', { icon: 'ℹ️' });
         }
     }
 
@@ -160,7 +160,7 @@
 
         // Validate form
         if (!validateForm()) {
-            showToast('Please fill in all required fields correctly', 'warning');
+            toast('Please fill in all required fields correctly', { icon: '⚠️' });
             // Scroll to first invalid field
             const firstInvalid = form.querySelector('.is-invalid');
             if (firstInvalid) {
@@ -248,7 +248,7 @@
     // - showConfirmationModal() for confirmations
     // - showSuccessModal() for success messages
     // - showErrorModal() for error messages
-    // - showToast() for toast notifications
+    // - showToast() for toast notifications (deprecated, use toast.success/error)
 
     // Start
     if (document.readyState === 'loading') {

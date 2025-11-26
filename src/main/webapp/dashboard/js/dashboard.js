@@ -549,9 +549,8 @@ function hideLoading() {
 }
 
 /**
- * Note: Toast notification functions have been moved to
- * /dashboard/components/toast-notification.jsp
- * Include that component in your page to use showToast() function
+ * Note: Toast notification functions are provided by hot-toast library
+ * Include /components/toast-dependencies.jsp in your page to use toast() function
  */
 
 // Load theme switcher script dynamically

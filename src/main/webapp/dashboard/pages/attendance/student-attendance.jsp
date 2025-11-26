@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,12 +49,10 @@
                             <label for="classSelect" class="form-label">Class / Section <span class="required-star">*</span></label>
                             <select id="classSelect" class="form-select">
                                 <option value="">Select Class</option>
-                                <option value="class-10a">Class 10-A</option>
-                                <option value="class-10b">Class 10-B</option>
-                                <option value="class-11a">Class 11-A</option>
-                                <option value="class-11b">Class 11-B</option>
-                                <option value="class-12a">Class 12-A</option>
-                                <option value="class-12b">Class 12-B</option>
+                                <% if(application.getAttribute("classes") != null) {
+                                    for(String item : (List<String>)application.getAttribute("classes")) { %>
+                                    <option value="<%=item%>"><%=item%></option>
+                                <% } } %>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -168,7 +167,7 @@
 
     <!-- Use existing dashboard components -->
     <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

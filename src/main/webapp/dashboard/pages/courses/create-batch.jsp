@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,18 +201,19 @@
                                         <label for="modeOfConduct" class="form-label">Mode of Conduct <span class="text-danger">*</span></label>
                                         <select class="form-select" id="modeOfConduct" name="modeOfConduct" required>
                                             <option value="">Select Mode</option>
-                                            <option value="online">Online</option>
-                                            <option value="offline">Offline</option>
-                                            <option value="hybrid">Hybrid</option>
+                                            <% if(application.getAttribute("modesOfConduct") != null) {
+                                                for(String item : (List<String>)application.getAttribute("modesOfConduct")) { %>
+                                                <option value="<%=item%>"><%=item%></option>
+                                            <% } } %>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="batchStatus" class="form-label">Status <span class="text-danger">*</span></label>
                                         <select class="form-select" id="batchStatus" name="batchStatus" required>
-                                            <option value="upcoming" selected>Upcoming</option>
-                                            <option value="active">Active</option>
-                                            <option value="completed">Completed</option>
-                                            <option value="cancelled">Cancelled</option>
+                                            <% if(application.getAttribute("batchStatuses") != null) {
+                                                for(String item : (List<String>)application.getAttribute("batchStatuses")) { %>
+                                                <option value="<%=item%>"><%=item%></option>
+                                            <% } } %>
                                         </select>
                                     </div>
                                 </div>
@@ -242,7 +244,7 @@
 
     <!-- Use existing dashboard components -->
     <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

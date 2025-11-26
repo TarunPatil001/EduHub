@@ -1,4 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%
+    // Helper to build options string for input-field component
+    StringBuilder categoryOptions = new StringBuilder();
+    if(application.getAttribute("courseCategories") != null) {
+        List<String> list = (List<String>)application.getAttribute("courseCategories");
+        for(int i=0; i<list.size(); i++) {
+            categoryOptions.append(list.get(i)).append("|").append(list.get(i));
+            if(i < list.size() - 1) categoryOptions.append(",");
+        }
+    }
+
+    StringBuilder levelOptions = new StringBuilder();
+    if(application.getAttribute("courseLevels") != null) {
+        List<String> list = (List<String>)application.getAttribute("courseLevels");
+        for(int i=0; i<list.size(); i++) {
+            levelOptions.append(list.get(i)).append("|").append(list.get(i));
+            if(i < list.size() - 1) levelOptions.append(",");
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,7 +96,7 @@
                                         <jsp:param name="label" value="Category"/>
                                         <jsp:param name="placeholder" value="Select Category"/>
                                         <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="science|Science,technology|Technology,mathematics|Mathematics,arts|Arts,commerce|Commerce,language|Language"/>
+                                        <jsp:param name="options" value="<%=categoryOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                     
@@ -86,7 +107,7 @@
                                         <jsp:param name="label" value="Level"/>
                                         <jsp:param name="placeholder" value="Select Level"/>
                                         <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="beginner|Beginner,intermediate|Intermediate,advanced|Advanced"/>
+                                        <jsp:param name="options" value="<%=levelOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                 </div>
@@ -109,10 +130,10 @@
                                     <div class="col-md-4">
                                         <label for="durationUnit" class="form-label">Duration Unit <span class="required-star">*</span></label>
                                         <select class="form-select" id="durationUnit" name="durationUnit" required>
-                                            <option value="days">Days</option>
-                                            <option value="weeks">Weeks</option>
-                                            <option value="months" selected>Months</option>
-                                            <option value="years">Years</option>
+                                            <% if(application.getAttribute("durationUnits") != null) {
+                                                for(String item : (List<String>)application.getAttribute("durationUnits")) { %>
+                                                <option value="<%=item%>"><%=item%></option>
+                                            <% } } %>
                                         </select>
                                     </div>
                                     <div class="col-md-4">
@@ -131,8 +152,10 @@
                                         <label for="status" class="form-label">Status <span class="required-star">*</span></label>
                                         <select class="form-select" id="status" name="status" required>
                                             <option value="">Select Status</option>
-                                            <option value="active" selected>Active</option>
-                                            <option value="inactive">Inactive</option>
+                                            <% if(application.getAttribute("courseStatuses") != null) {
+                                                for(String item : (List<String>)application.getAttribute("courseStatuses")) { %>
+                                                <option value="<%=item%>"><%=item%></option>
+                                            <% } } %>
                                         </select>
                                         <small class="text-muted">Active courses can have batches created for them</small>
                                     </div>
@@ -168,7 +191,7 @@
 
     <!-- Use existing dashboard components -->
     <jsp:include page="/dashboard/components/modal.jsp"/>
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

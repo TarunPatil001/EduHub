@@ -921,7 +921,7 @@
     // - showConfirmationModal() for confirmations
     // - showSuccessModal() for success messages
     // - showErrorModal() for error messages
-    // - showToast() for toast notifications
+    // - showToast() for toast notifications (deprecated, use toast.success/error)
 
     // Start
     if (document.readyState === 'loading') {

@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <%!
     // Helper method to get value from either attribute or parameter
     public String getFormValue(HttpServletRequest request, String name) {
@@ -122,11 +123,12 @@
                                     </label>
                                     <select class="form-select form-select-lg" id="instituteType" name="instituteType" required>
                                         <option value="">Select institute type</option>
-                                        <option value="school" <%= "school".equals(instituteType) ? "selected" : "" %>>School</option>
-                                        <option value="college" <%= "college".equals(instituteType) ? "selected" : "" %>>College</option>
-                                        <option value="university" <%= "university".equals(instituteType) ? "selected" : "" %>>University</option>
-                                        <option value="training" <%= "training".equals(instituteType) ? "selected" : "" %>>Training Center</option>
-                                        <option value="coaching" <%= "coaching".equals(instituteType) ? "selected" : "" %>>Coaching Institute</option>
+                                        <% if(application.getAttribute("instituteTypes") != null) {
+                                            for(String item : (List<String>)application.getAttribute("instituteTypes")) { 
+                                                String selected = item.equals(instituteType) ? "selected" : "";
+                                        %>
+                                            <option value="<%=item%>" <%=selected%>><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
 
@@ -230,12 +232,12 @@
                                         </label>
                                         <select class="form-select form-select-lg" id="country" name="country" required>
                                             <option value="">Select country</option>
-                                            <option value="US" <%= "US".equals(country) ? "selected" : "" %>>United States</option>
-                                            <option value="UK" <%= "UK".equals(country) ? "selected" : "" %>>United Kingdom</option>
-                                            <option value="CA" <%= "CA".equals(country) ? "selected" : "" %>>Canada</option>
-                                            <option value="AU" <%= "AU".equals(country) ? "selected" : "" %>>Australia</option>
-                                            <option value="IN" <%= "IN".equals(country) ? "selected" : "" %>>India</option>
-                                            <option value="other" <%= "other".equals(country) ? "selected" : "" %>>Other</option>
+                                            <% if(application.getAttribute("countries") != null) {
+                                                for(String item : (List<String>)application.getAttribute("countries")) { 
+                                                    String selected = item.equals(country) ? "selected" : "";
+                                            %>
+                                                <option value="<%=item%>" <%=selected%>><%=item%></option>
+                                            <% } } %>
                                         </select>
                                     </div>
                                 </div>
@@ -269,7 +271,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Centralized Toast Notification Component -->
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     <script src="${pageContext.request.contextPath}/public/js/register-institute-validation.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

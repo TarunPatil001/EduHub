@@ -48,6 +48,10 @@ body {
     --light-color: #F8F9FA;
     --sidebar-bg: #1E293B;
     --sidebar-text: #CBD5E1;
+    
+    /* Toast Notification Colors (Light Mode) */
+    --toast-bg: rgba(255, 255, 255, 0.8);
+    --toast-text: #1a1a1a;
     --sidebar-active: var(--primary-color);
     
     /* Viewport height variables for cross-browser support */
@@ -81,6 +85,11 @@ body {
     --hover-bg: #2A3342;
     --sidebar-bg: #151A27;
     --sidebar-text: #CBD5E1;
+    
+    /* Toast Notification Colors (Dark Mode) */
+    --toast-bg: rgba(0, 0, 0, 0.8);
+    --toast-text: #ffffff;
+    --glow-color: #00ff9d; /* The neon glow color */
     
     /* Adjusted accent colors for dark mode */
     --primary-color: #3B82F6;
@@ -732,34 +741,7 @@ select:focus {
     color: var(--text-secondary);
 }
 
-/* Dark mode for profile dropdown menu */
-[data-theme="dark"] .header-profile .dropdown-menu {
-    background-color: var(--card-bg);
-    border-color: var(--border-color);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-}
-
-[data-theme="dark"] .header-profile .dropdown-item {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .header-profile .dropdown-item:hover {
-    background-color: var(--hover-bg);
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .header-profile .dropdown-item.text-danger {
-    color: var(--danger-color) !important;
-}
-
-[data-theme="dark"] .header-profile .dropdown-item.text-danger:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--danger-color) !important;
-}
-
-[data-theme="dark"] .header-profile .dropdown-divider {
-    border-color: var(--border-color);
-}
+/* Dark mode for profile dropdown menu - Removed to use new unified styles */
 
 /* Dark mode for sidebar improvements */
 [data-theme="dark"] .sidebar-nav .nav-link {
@@ -2038,14 +2020,61 @@ strong, b {
     transition: background-color 0.2s;
 }
 
-.btn-profile:hover {
-    background-color: var(--light-color);
+/* Profile Dropdown Design */
+.header-profile .btn-profile {
+    display: flex;
+    align-items: center;
+    background: var(--content-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 4px 16px 4px 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
 }
 
-.btn-profile img {
+.header-profile .btn-profile:hover {
+    background: var(--hover-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.header-profile .btn-profile .avatar-container {
     width: 36px;
     height: 36px;
     border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.header-profile .btn-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header-profile .btn-profile .profile-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.header-profile .btn-profile .profile-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.header-profile .btn-profile i.bi-chevron-down {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.header-profile.show .btn-profile i.bi-chevron-down {
+    transform: rotate(180deg);
 }
 
 /* Dropdown Menu Styles */
@@ -2057,6 +2086,99 @@ strong, b {
     min-width: 200px;
     z-index: 1050;
     margin-top: 0.5rem;
+}
+
+/* Profile Dropdown Specifics */
+.profile-dropdown-menu {
+    width: 260px;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    margin-top: 10px !important;
+    background: var(--content-bg);
+}
+
+.profile-header {
+    padding: 20px;
+    background: var(--hover-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-name-large {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.profile-email {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+}
+
+.profile-role {
+    font-size: 0.7rem;
+    color: var(--primary-color);
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(13, 110, 253, 0.1);
+    border-radius: 4px;
+}
+
+.profile-dropdown-menu .dropdown-item {
+    padding: 12px 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.profile-dropdown-menu .dropdown-item:hover {
+    background: var(--hover-bg);
+    border-left-color: var(--primary-color);
+    padding-left: 25px;
+}
+
+.profile-dropdown-menu .dropdown-item i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+}
+
+.profile-dropdown-menu .dropdown-item:hover i {
+    color: var(--primary-color);
+}
+
+.profile-dropdown-menu .dropdown-item.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.profile-dropdown-menu .dropdown-item.text-danger i {
+    color: var(--danger-color);
+}
+
+.profile-dropdown-menu .dropdown-item.text-danger:hover {
+    background: rgba(220, 53, 69, 0.05);
+    border-left-color: var(--danger-color);
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .profile-header {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .profile-role {
+    background: rgba(59, 130, 246, 0.2);
 }
 
 .dropdown-header {

@@ -67,6 +67,10 @@ body {
     --bs-primary-rgb: 91, 79, 255;
     background-color: #f8f9fa !important;
     min-height: 100vh;
+    
+    /* Toast Notification Colors (Light Mode) */
+    --toast-bg: rgba(255, 255, 255, 0.8);
+    --toast-text: #1a1a1a;
 }
 
 /* ============================================================================

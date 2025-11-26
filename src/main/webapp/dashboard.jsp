@@ -502,7 +502,7 @@
     
     <!-- Toast Notification Component -->
     <!-- Centralized Toast Notification Component -->
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>

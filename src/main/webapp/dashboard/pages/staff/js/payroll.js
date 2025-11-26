@@ -898,7 +898,7 @@ function downloadPayslip() {
     const staff = allStaff.find(s => s.id === staffId);
     
     if (!staff) {
-        showToast('Staff not found', 'error');
+        toast.error('Staff not found');
         return;
     }
     
@@ -1163,7 +1163,7 @@ function emailPayslip() {
     const staff = allStaff.find(s => s.id === staffId);
     
     if (!staff) {
-        showToast('Staff not found', 'error');
+        toast.error('Staff not found');
         return;
     }
     

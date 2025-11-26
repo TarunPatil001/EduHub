@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -334,10 +335,10 @@
                                     </label>
                                     <select class="form-select" id="gender" name="gender" required>
                                         <option value="">Select Gender</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
-                                        <option value="Prefer not to say">Prefer not to say</option>
+                                        <% if(application.getAttribute("genders") != null) {
+                                            for(String item : (List<String>)application.getAttribute("genders")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                             </div>
@@ -356,14 +357,10 @@
                                     </label>
                                     <select class="form-select" id="bloodGroup" name="bloodGroup">
                                         <option value="">Select Blood Group</option>
-                                        <option value="A+">A+</option>
-                                        <option value="A-">A-</option>
-                                        <option value="B+">B+</option>
-                                        <option value="B-">B-</option>
-                                        <option value="AB+">AB+</option>
-                                        <option value="AB-">AB-</option>
-                                        <option value="O+">O+</option>
-                                        <option value="O-">O-</option>
+                                        <% if(application.getAttribute("bloodGroups") != null) {
+                                            for(String item : (List<String>)application.getAttribute("bloodGroups")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                                 
@@ -373,10 +370,10 @@
                                     </label>
                                     <select class="form-select" id="maritalStatus" name="maritalStatus">
                                         <option value="">Select Status</option>
-                                        <option value="Single">Single</option>
-                                        <option value="Married">Married</option>
-                                        <option value="Divorced">Divorced</option>
-                                        <option value="Widowed">Widowed</option>
+                                        <% if(application.getAttribute("maritalStatuses") != null) {
+                                            for(String item : (List<String>)application.getAttribute("maritalStatuses")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                             </div>
@@ -408,16 +405,10 @@
                                     </label>
                                     <select class="form-select" id="role" name="role" required>
                                         <option value="">Select Role</option>
-                                        <option value="Teacher">Teacher</option>
-                                        <option value="HR">HR Manager</option>
-                                        <option value="Placement Coordinator">Placement Coordinator</option>
-                                        <option value="Accountant">Accountant</option>
-                                        <option value="Librarian">Librarian</option>
-                                        <option value="Lab Assistant">Lab Assistant</option>
-                                        <option value="Support Staff">Support Staff</option>
-                                        <option value="Administrative Officer">Administrative Officer</option>
-                                        <option value="IT Support">IT Support</option>
-                                        <option value="Other">Other</option>
+                                        <% if(application.getAttribute("roles") != null) {
+                                            for(String item : (List<String>)application.getAttribute("roles")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                                 
@@ -427,16 +418,10 @@
                                     </label>
                                     <select class="form-select" id="department" name="department" required>
                                         <option value="">Select Department</option>
-                                        <option value="Computer Science">Computer Science</option>
-                                        <option value="Electronics">Electronics</option>
-                                        <option value="Mechanical">Mechanical</option>
-                                        <option value="Civil">Civil</option>
-                                        <option value="Administration">Administration</option>
-                                        <option value="Human Resources">Human Resources</option>
-                                        <option value="Accounts">Accounts</option>
-                                        <option value="Library">Library</option>
-                                        <option value="Placement">Placement</option>
-                                        <option value="IT Support">IT Support</option>
+                                        <% if(application.getAttribute("departments") != null) {
+                                            for(String item : (List<String>)application.getAttribute("departments")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                             </div>
@@ -455,10 +440,10 @@
                                     </label>
                                     <select class="form-select" id="employmentType" name="employmentType" required>
                                         <option value="">Select Type</option>
-                                        <option value="Full-Time">Full-Time</option>
-                                        <option value="Part-Time">Part-Time</option>
-                                        <option value="Contract">Contract</option>
-                                        <option value="Temporary">Temporary</option>
+                                        <% if(application.getAttribute("employmentTypes") != null) {
+                                            for(String item : (List<String>)application.getAttribute("employmentTypes")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                                 
@@ -477,11 +462,10 @@
                                     </label>
                                     <select class="form-select" id="workShift" name="workShift">
                                         <option value="">Select Shift</option>
-                                        <option value="Morning">Morning (6 AM - 2 PM)</option>
-                                        <option value="Day">Day (9 AM - 5 PM)</option>
-                                        <option value="Evening">Evening (2 PM - 10 PM)</option>
-                                        <option value="Night">Night (10 PM - 6 AM)</option>
-                                        <option value="Flexible">Flexible</option>
+                                        <% if(application.getAttribute("workShifts") != null) {
+                                            for(String item : (List<String>)application.getAttribute("workShifts")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                                 
@@ -581,12 +565,10 @@
                                     </label>
                                     <select class="form-select" id="highestQualification" name="highestQualification" required>
                                         <option value="">Select Qualification</option>
-                                        <option value="High School">High School</option>
-                                        <option value="Diploma">Diploma</option>
-                                        <option value="Bachelor's Degree">Bachelor's Degree</option>
-                                        <option value="Master's Degree">Master's Degree</option>
-                                        <option value="PhD">PhD</option>
-                                        <option value="Other">Other</option>
+                                        <% if(application.getAttribute("qualifications") != null) {
+                                            for(String item : (List<String>)application.getAttribute("qualifications")) { %>
+                                            <option value="<%=item%>"><%=item%></option>
+                                        <% } } %>
                                     </select>
                                 </div>
                                 
@@ -768,7 +750,7 @@
     <jsp:include page="/dashboard/components/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <script>
         // Photo preview functionality
@@ -777,7 +759,7 @@
             if (!file) return;
             
             if (file.size > 2 * 1024 * 1024) {
-                showToast('Photo size should not exceed 2MB. Please select a smaller file.', 'danger');
+                toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
                 this.value = '';
                 return;
             }
@@ -797,7 +779,7 @@
                 photoFileName.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + file.name;
                 
                 // Show success toast
-                showToast('Profile photo uploaded successfully', 'success');
+                toast.success('Profile photo uploaded successfully');
             };
             reader.readAsDataURL(file);
         });
@@ -836,7 +818,7 @@
                     });
                     
                     // Show success toast
-                    showToast('Form has been reset successfully', 'success');
+                    toast.success('Form has been reset successfully');
                 }
             });
         }
@@ -847,7 +829,7 @@
             if (!file) return;
             
             if (file.size > 5 * 1024 * 1024) {
-                showToast('Resume file size should not exceed 5MB. Please select a smaller file.', 'danger');
+                toast.error('Resume file size should not exceed 5MB. Please select a smaller file.');
                 this.value = '';
                 return;
             }
@@ -856,7 +838,7 @@
             const label = this.nextElementSibling;
             fileDisplay.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + file.name;
             label.classList.add('has-photo');
-            showToast('Resume uploaded successfully', 'success');
+            toast.success('Resume uploaded successfully');
         });
         
         document.getElementById('idProof').addEventListener('change', function() {
@@ -864,7 +846,7 @@
             if (!file) return;
             
             if (file.size > 2 * 1024 * 1024) {
-                showToast('ID Proof file size should not exceed 2MB. Please select a smaller file.', 'danger');
+                toast.error('ID Proof file size should not exceed 2MB. Please select a smaller file.');
                 this.value = '';
                 return;
             }
@@ -873,7 +855,7 @@
             const label = this.nextElementSibling;
             fileDisplay.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + file.name;
             label.classList.add('has-photo');
-            showToast('ID Proof uploaded successfully', 'success');
+            toast.success('ID Proof uploaded successfully');
         });
         
         // Form Validation
@@ -927,7 +909,7 @@
             });
             
             // Show success toast as well
-            showToast('Staff member added successfully!', 'success');
+            toast.success('Staff member added successfully!');
         });
     </script>
 </body>

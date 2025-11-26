@@ -98,6 +98,14 @@
     --gradient-primary: linear-gradient(135deg, #5B4FFF 0%, #A855F7 100%);
     --gradient-secondary: linear-gradient(135deg, #FF6B9D 0%, #FF9500 100%);
     --gradient-hero: linear-gradient(135deg, #5B4FFF 0%, #7B6FFF 50%, #A855F7 100%);
+    
+    /* Toast Notification Colors (Light Mode) */
+    --toast-bg: rgba(255, 255, 255, 0.8);
+    --toast-text: #1a1a1a;
+    
+    /* Toast Notification Colors (Light Mode) */
+    --toast-bg: rgba(255, 255, 255, 0.8);
+    --toast-text: #1a1a1a;
     --gradient-cta: linear-gradient(135deg, #4839E0 0%, #5B4FFF 50%, #7B6FFF 100%);
     --gradient-card: linear-gradient(135deg, #00C9FF 0%, #5B4FFF 100%);
 }

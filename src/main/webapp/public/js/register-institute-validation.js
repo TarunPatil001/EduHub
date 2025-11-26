@@ -13,7 +13,7 @@
  * - Shows toast notifications for errors
  * 
  * Dependencies:
- *   - hot-toast (loaded from CDN via toast-notification.jsp)
+ *   - hot-toast (loaded from CDN via toast-dependencies.jsp)
  * ============================================================================
  */
 

@@ -832,8 +832,8 @@
         document.body.removeChild(link);
     }
 
-    // Toast notifications are now handled by the toast-notification.js component
-    // Functions available: showToast(message, type, duration) and showToastWithIcon(message, type, duration)
+    // Toast notifications are now handled by the hot-toast library
+    // Functions available: toast.success(), toast.error(), toast.loading(), etc.
 
     // Get Context Path
     function getContextPath() {

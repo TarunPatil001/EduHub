@@ -449,7 +449,7 @@ pageContext.setAttribute("students", students);
 	<jsp:include page="/dashboard/components/modal.jsp"/>
 	
 	<!-- Include Toast Notification Component -->
-	<jsp:include page="/common/toast-notification.jsp"/>
+	<jsp:include page="/components/toast-dependencies.jsp"/>
 
 	<jsp:include page="/dashboard/components/scripts.jsp" />
 	<script

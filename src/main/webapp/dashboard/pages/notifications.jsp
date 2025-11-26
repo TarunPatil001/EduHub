@@ -381,7 +381,7 @@
             const item = button.closest('.notification-item-full');
             item.classList.remove('unread');
             button.remove();
-            showToast('Notification marked as read', 'success');
+            toast.success('Notification marked as read');
         }
         
         // Mark all as read
@@ -392,7 +392,7 @@
                 const readBtn = item.querySelector('.notification-actions button[title="Mark as read"]');
                 if (readBtn) readBtn.remove();
             });
-            showToast('All notifications marked as read', 'success');
+            toast.success('All notifications marked as read');
         }
         
         // Delete notification
@@ -403,7 +403,7 @@
             setTimeout(() => {
                 item.remove();
                 checkEmpty();
-                showToast('Notification deleted', 'info');
+                toast('Notification deleted', { icon: '🗑️' });
             }, 300);
         }
         
@@ -418,7 +418,7 @@
                 setTimeout(() => {
                     items.forEach(item => item.remove());
                     checkEmpty();
-                    showToast('All notifications cleared', 'info');
+                    toast('All notifications cleared', { icon: '🗑️' });
                 }, 300);
             }
         }

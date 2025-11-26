@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,32 +97,30 @@
                                 <label for="filterStatus" class="form-label fw-semibold">Status</label>
                                 <select class="form-select" id="filterStatus" aria-label="Filter by status">
                                     <option value="">All Status</option>
-                                    <option value="placed">Placed</option>
-                                    <option value="offered">Offered</option>
-                                    <option value="joined">Joined</option>
-                                    <option value="declined">Declined</option>
-                                    <option value="pending">Pending</option>
+                                    <% if(application.getAttribute("placementStatuses") != null) {
+                                        for(String item : (List<String>)application.getAttribute("placementStatuses")) { %>
+                                        <option value="<%=item%>"><%=item%></option>
+                                    <% } } %>
                                 </select>
                             </div>
                             <div class="col-lg-2 col-md-6">
                                 <label for="filterDepartment" class="form-label fw-semibold">Department</label>
                                 <select class="form-select" id="filterDepartment" aria-label="Filter by department">
                                     <option value="">All Departments</option>
-                                    <option value="Computer Science">Computer Science</option>
-                                    <option value="Electronics">Electronics</option>
-                                    <option value="Mechanical">Mechanical</option>
-                                    <option value="Civil">Civil</option>
-                                    <option value="MBA">MBA</option>
+                                    <% if(application.getAttribute("departments") != null) {
+                                        for(String item : (List<String>)application.getAttribute("departments")) { %>
+                                        <option value="<%=item%>"><%=item%></option>
+                                    <% } } %>
                                 </select>
                             </div>
                             <div class="col-lg-2 col-md-6">
                                 <label for="filterBatch" class="form-label fw-semibold">Batch</label>
                                 <select class="form-select" id="filterBatch" aria-label="Filter by batch">
                                     <option value="">All Years</option>
-                                    <option value="2025-26">2025-26</option>
-                                    <option value="2024-25">2024-25</option>
-                                    <option value="2023-24">2023-24</option>
-                                    <option value="2022-23">2022-23</option>
+                                    <% if(application.getAttribute("batchYears") != null) {
+                                        for(String item : (List<String>)application.getAttribute("batchYears")) { %>
+                                        <option value="<%=item%>"><%=item%></option>
+                                    <% } } %>
                                 </select>
                             </div>
                             <div class="col-lg-2 col-md-6">
@@ -428,7 +427,7 @@
     </div>
 
     <!-- Toast Notification Component -->
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <!-- Modal Component -->
     <jsp:include page="/dashboard/components/modal.jsp"/>

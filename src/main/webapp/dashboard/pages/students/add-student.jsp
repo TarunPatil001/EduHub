@@ -1,4 +1,34 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%
+    // Helper to build options string for input-field component
+    StringBuilder genderOptions = new StringBuilder();
+    if(application.getAttribute("genders") != null) {
+        List<String> list = (List<String>)application.getAttribute("genders");
+        for(int i=0; i<list.size(); i++) {
+            genderOptions.append(list.get(i)).append("|").append(list.get(i));
+            if(i < list.size() - 1) genderOptions.append(",");
+        }
+    }
+
+    StringBuilder bloodGroupOptions = new StringBuilder();
+    if(application.getAttribute("bloodGroups") != null) {
+        List<String> list = (List<String>)application.getAttribute("bloodGroups");
+        for(int i=0; i<list.size(); i++) {
+            bloodGroupOptions.append(list.get(i)).append("|").append(list.get(i));
+            if(i < list.size() - 1) bloodGroupOptions.append(",");
+        }
+    }
+
+    StringBuilder qualificationOptions = new StringBuilder();
+    if(application.getAttribute("qualifications") != null) {
+        List<String> list = (List<String>)application.getAttribute("qualifications");
+        for(int i=0; i<list.size(); i++) {
+            qualificationOptions.append(list.get(i)).append("|").append(list.get(i));
+            if(i < list.size() - 1) qualificationOptions.append(",");
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,7 +140,7 @@
                                         <jsp:param name="label" value="Gender"/>
                                         <jsp:param name="placeholder" value="Select Gender"/>
                                         <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="male|Male,female|Female,other|Other"/>
+                                        <jsp:param name="options" value="<%=genderOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
@@ -120,7 +150,7 @@
                                         <jsp:param name="name" value="bloodGroup"/>
                                         <jsp:param name="label" value="Blood Group"/>
                                         <jsp:param name="placeholder" value="Select Blood Group"/>
-                                        <jsp:param name="options" value="A+|A+,A-|A-,B+|B+,B-|B-,AB+|AB+,AB-|AB-,O+|O+,O-|O-"/>
+                                        <jsp:param name="options" value="<%=bloodGroupOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                 </div>
@@ -250,7 +280,7 @@
                                         <jsp:param name="label" value="Education Qualification"/>
                                         <jsp:param name="placeholder" value="Select Qualification"/>
                                         <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="10th|10th Standard,12th|12th Standard,diploma|Diploma,bachelor|Bachelor's Degree,master|Master's Degree,phd|PhD,other|Other"/>
+                                        <jsp:param name="options" value="<%=qualificationOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                     </jsp:include>
                                 </div>
@@ -276,9 +306,10 @@
                                         <label for="batchPreference" class="form-label">Batch Preference</label>
                                         <select class="form-select" id="batchPreference" name="batchPreference">
                                             <option value="">Select Batch Mode</option>
-                                            <option value="online">Online</option>
-                                            <option value="offline">Offline</option>
-                                            <option value="hybrid">Hybrid</option>
+                                            <% if(application.getAttribute("modesOfConduct") != null) {
+                                                for(String item : (List<String>)application.getAttribute("modesOfConduct")) { %>
+                                                <option value="<%=item%>"><%=item%></option>
+                                            <% } } %>
                                         </select>
                                     </div>
                                 </div>
@@ -497,7 +528,7 @@
     <jsp:include page="/dashboard/components/modal.jsp"/>
     
     <!-- Include Toast Notification Component -->
-    <jsp:include page="/common/toast-notification.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <!-- Add Student Page Scripts -->
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/add-student.js"></script>

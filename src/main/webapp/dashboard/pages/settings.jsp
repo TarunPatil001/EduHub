@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -315,11 +316,10 @@
                                         <label for="instituteType" class="form-label">Institute Type</label>
                                         <select class="form-select" id="instituteType">
                                             <option value="">Select type</option>
-                                            <option value="school">School</option>
-                                            <option value="college">College</option>
-                                            <option value="university">University</option>
-                                            <option value="training_center">Training Center</option>
-                                            <option value="coaching_institute">Coaching Institute</option>
+                                            <% if(application.getAttribute("instituteTypes") != null) {
+                                                for(String item : (List<String>)application.getAttribute("instituteTypes")) { %>
+                                                <option value="<%=item%>"><%=item%></option>
+                                            <% } } %>
                                         </select>
                                     </div>
                                     
@@ -342,10 +342,10 @@
                                             <label for="country" class="form-label">Country</label>
                                             <select class="form-select" id="country">
                                                 <option value="">Select country</option>
-                                                <option value="US">United States</option>
-                                                <option value="UK">United Kingdom</option>
-                                                <option value="CA">Canada</option>
-                                                <option value="IN">India</option>
+                                                <% if(application.getAttribute("countries") != null) {
+                                                    for(String item : (List<String>)application.getAttribute("countries")) { %>
+                                                    <option value="<%=item%>"><%=item%></option>
+                                                <% } } %>
                                             </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
@@ -625,6 +625,7 @@
     </div>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
+    <jsp:include page="/components/toast-dependencies.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script>
         // Settings page navigation
