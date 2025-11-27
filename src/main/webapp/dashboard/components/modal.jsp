@@ -50,6 +50,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modalCancelBtn">Cancel</button>
+                <button type="button" class="btn btn-light" id="modalExtraBtn">Extra</button>
                 <button type="button" class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
             </div>
         </div>
@@ -101,28 +102,66 @@
 <script>
     // Reusable Confirmation Modal Function
     function showConfirmationModal(options) {
+        console.log('showConfirmationModal called with options:', options);
+        
+        if (typeof bootstrap === 'undefined') {
+            console.error('Bootstrap is not defined! Cannot show modal.');
+            alert(options.message || 'Confirm action?'); // Fallback
+            if (options.onConfirm) options.onConfirm();
+            return;
+        }
+
         const defaults = {
             title: 'Confirm Action',
             message: 'Are you sure you want to proceed?',
             confirmText: 'Confirm',
             cancelText: 'Cancel',
+            extraBtnText: null,
             confirmClass: 'btn-primary',
+            extraBtnClass: 'btn-light',
+            showCancel: true,
             icon: 'bi-question-circle-fill text-warning',
             onConfirm: function() {},
-            onCancel: function() {}
+            onCancel: function() {},
+            onExtraBtn: function() {}
         };
         
         const settings = Object.assign({}, defaults, options);
         
         // Set modal content
-        document.getElementById('modalTitle').textContent = settings.title;
-        document.getElementById('modalMessage').innerHTML = settings.message;
-        document.getElementById('modalCancelBtn').innerHTML = settings.cancelText;
+        const titleEl = document.getElementById('modalTitle');
+        const messageEl = document.getElementById('modalMessage');
+        
+        if (!titleEl || !messageEl) {
+            console.error('Modal elements not found in DOM');
+            return;
+        }
+
+        titleEl.textContent = settings.title;
+        messageEl.innerHTML = settings.message;
+        
+        const cancelBtn = document.getElementById('modalCancelBtn');
+        if (settings.showCancel === false) {
+            cancelBtn.style.display = 'none';
+        } else {
+            cancelBtn.style.display = 'inline-block';
+            cancelBtn.innerHTML = settings.cancelText;
+        }
+
         document.getElementById('modalConfirmBtn').innerHTML = settings.confirmText;
+        
+        const extraBtn = document.getElementById('modalExtraBtn');
+        if (settings.extraBtnText) {
+            extraBtn.innerHTML = settings.extraBtnText;
+            extraBtn.className = 'btn ' + settings.extraBtnClass;
+            extraBtn.style.display = 'inline-block';
+        } else {
+            extraBtn.style.display = 'none';
+        }
         
         // Update icon
         const iconElement = document.querySelector('#confirmationModalLabel i');
-        iconElement.className = 'bi ' + settings.icon;
+        if (iconElement) iconElement.className = 'bi ' + settings.icon;
         
         // Update confirm button class
         const confirmBtn = document.getElementById('modalConfirmBtn');
@@ -132,9 +171,13 @@
         const modalElement = document.getElementById('confirmationModal');
         
         // Dispose of any existing instance first
-        let existingInstance = bootstrap.Modal.getInstance(modalElement);
-        if (existingInstance) {
-            existingInstance.dispose();
+        try {
+            let existingInstance = bootstrap.Modal.getInstance(modalElement);
+            if (existingInstance) {
+                existingInstance.dispose();
+            }
+        } catch (e) {
+            console.warn('Error disposing modal instance:', e);
         }
         
         // Create new instance
@@ -154,9 +197,14 @@
         const oldCancelBtn = document.getElementById('modalCancelBtn');
         const newCancelBtn = oldCancelBtn.cloneNode(true);
         oldCancelBtn.parentNode.replaceChild(newCancelBtn, oldCancelBtn);
+
+        const oldExtraBtn = document.getElementById('modalExtraBtn');
+        const newExtraBtn = oldExtraBtn.cloneNode(true);
+        oldExtraBtn.parentNode.replaceChild(newExtraBtn, oldExtraBtn);
         
         // Add new event listeners to the cloned buttons
         newConfirmBtn.addEventListener('click', function() {
+            console.log('Modal confirmed');
             const result = settings.onConfirm();
             // Only close modal if onConfirm doesn't return false
             if (result !== false) {
@@ -167,13 +215,27 @@
         });
         
         newCancelBtn.addEventListener('click', function() {
+            console.log('Modal cancelled');
             settings.onCancel();
             if (window.currentConfirmationModal) {
                 window.currentConfirmationModal.hide();
             }
         });
+
+        if (settings.extraBtnText) {
+            newExtraBtn.addEventListener('click', function() {
+                console.log('Modal extra button clicked');
+                const result = settings.onExtraBtn();
+                if (result !== false) {
+                    if (window.currentConfirmationModal) {
+                        window.currentConfirmationModal.hide();
+                    }
+                }
+            });
+        }
         
         // Show modal
+        console.log('Showing modal...');
         modal.show();
     }
     
@@ -260,5 +322,10 @@
     
     .modal-backdrop.show {
         opacity: 0.6;
+        z-index: 1050;
+    }
+    
+    .modal {
+        z-index: 1055;
     }
 </style>

@@ -26,6 +26,26 @@
             if (typeof toast !== 'undefined' && typeof toast.config === 'function') {
                 toast.config(config);
             }
+
+            // Check for pending toast messages from sessionStorage
+            const pendingToast = sessionStorage.getItem('pendingToast');
+            if (pendingToast) {
+                try {
+                    const toastData = JSON.parse(pendingToast);
+                    if (toastData && toastData.message && toastData.type) {
+                        // Small delay to ensure UI is ready
+                        setTimeout(() => {
+                            if (typeof toast !== 'undefined' && toast[toastData.type]) {
+                                toast[toastData.type](toastData.message);
+                            }
+                        }, 300);
+                    }
+                } catch (e) {
+                    console.error('Error parsing pending toast:', e);
+                }
+                // Clear the message so it doesn't show again
+                sessionStorage.removeItem('pendingToast');
+            }
         });
     })();
 </script>

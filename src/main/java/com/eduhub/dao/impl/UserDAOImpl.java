@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of UserDAO interface
@@ -103,6 +105,22 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
     
+    @Override
+    public List<User> getAllAdminAccounts() throws SQLException {
+        String sql = "SELECT * FROM users WHERE role = 'admin'";
+        List<User> adminUsers = new ArrayList<>();
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                adminUsers.add(mapResultSetToUser(rs));
+            }
+        }
+        return adminUsers;
+    }
+    
     // Note: Activation methods removed - users are automatically active upon creation
     
     @Override
@@ -160,6 +178,23 @@ public class UserDAOImpl implements UserDAO {
         return false;
     }
     
+    @Override
+    public void updateUser(User user) throws SQLException {
+        String sql = "UPDATE users SET full_name = ?, email = ?, phone = ? WHERE user_id = ?";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, user.getFullName());
+            pstmt.setString(2, user.getEmail());
+            pstmt.setString(3, user.getPhone());
+            pstmt.setInt(4, user.getUserId());
+            
+            pstmt.executeUpdate();
+            logger.info("User updated successfully for user ID: {}", user.getUserId());
+        }
+    }
+
     /**
      * Helper method to map ResultSet to User object
      */

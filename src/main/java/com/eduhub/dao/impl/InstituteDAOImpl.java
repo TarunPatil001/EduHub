@@ -110,6 +110,31 @@ public class InstituteDAOImpl implements InstituteDAO {
         return false;
     }
     
+    @Override
+    public boolean updateInstitute(Institute institute) throws SQLException {
+        String sql = "UPDATE institutes SET institute_name = ?, institute_type = ?, institute_email = ?, " +
+                    "institute_phone = ?, address = ?, city = ?, state = ?, zip_code = ?, country = ?, " +
+                    "updated_at = CURRENT_TIMESTAMP WHERE institute_id = ?";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, institute.getInstituteName());
+            pstmt.setString(2, institute.getInstituteType());
+            pstmt.setString(3, institute.getInstituteEmail());
+            pstmt.setString(4, institute.getInstitutePhone());
+            pstmt.setString(5, institute.getAddress());
+            pstmt.setString(6, institute.getCity());
+            pstmt.setString(7, institute.getState());
+            pstmt.setString(8, institute.getZipCode());
+            pstmt.setString(9, institute.getCountry());
+            pstmt.setInt(10, institute.getInstituteId());
+            
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
+    
     /**
      * Helper method to map ResultSet to Institute object
      */

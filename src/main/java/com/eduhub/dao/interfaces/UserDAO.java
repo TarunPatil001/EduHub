@@ -41,6 +41,13 @@ public interface UserDAO {
      */
     User getAdminByInstituteId(int instituteId) throws SQLException;
     
+    /**
+     * Get all admin accounts
+     * @return List of admin users
+     * @throws SQLException if database error occurs
+     */
+    List<User> getAllAdminAccounts() throws SQLException;
+    
     // Note: Activation methods removed - users are automatically active upon creation
     
     /**
@@ -66,4 +73,11 @@ public interface UserDAO {
      * @throws SQLException if database error occurs
      */
     boolean emailExists(String email) throws SQLException;
+
+    /**
+     * Update user details
+     * @param user User object with updated details
+     * @throws SQLException if database error occurs
+     */
+    void updateUser(User user) throws SQLException;
 }

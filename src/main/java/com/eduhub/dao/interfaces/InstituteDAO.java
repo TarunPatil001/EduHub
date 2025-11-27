@@ -42,4 +42,12 @@ public interface InstituteDAO {
      * @throws SQLException if database error occurs
      */
     boolean emailExists(String email) throws SQLException;
+    
+    /**
+     * Update institute details
+     * @param institute Institute object with updated details
+     * @return true if update successful
+     * @throws SQLException if database error occurs
+     */
+    boolean updateInstitute(Institute institute) throws SQLException;
 }
