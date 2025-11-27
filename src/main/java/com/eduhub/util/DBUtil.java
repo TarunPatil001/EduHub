@@ -45,30 +45,54 @@ public class DBUtil {
 			// Load all values from the properties file into props object
 			props.load(input);
 			
-		 // Read from environment variables first, fall back to properties file
-		 String dbHost = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : props.getProperty("db.host", "localhost");
-		 String dbPort = System.getenv("DB_PORT") != null ? System.getenv("DB_PORT") : props.getProperty("db.port", "3306");
-		 String dbName = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : props.getProperty("db.name", "eduhub");
-		 String sslMode = System.getenv("DB_SSL_MODE") != null ? System.getenv("DB_SSL_MODE") : props.getProperty("db.sslMode", "");
+			// Determine environment: Check System Env first, then properties, default to local
+			String env = System.getenv("APP_ENVIRONMENT");
+			if (env == null) {
+				env = props.getProperty("app.environment", "local");
+			}
+			
+			logger.info("Initializing Database in {} mode", env);
+			
+			String prefix = "local.";
+			if ("production".equalsIgnoreCase(env)) {
+				prefix = "prod.";
+			}
+
+			// Read configuration with fallback: System Env -> Property with prefix -> Default
+			String dbHost = System.getenv("DB_HOST");
+			if (dbHost == null) dbHost = props.getProperty(prefix + "db.host", "localhost");
+
+			String dbPort = System.getenv("DB_PORT");
+			if (dbPort == null) dbPort = props.getProperty(prefix + "db.port", "3306");
+
+			String dbName = System.getenv("DB_NAME");
+			if (dbName == null) dbName = props.getProperty(prefix + "db.name", "eduhub");
+
+			String sslMode = System.getenv("DB_SSL_MODE");
+			if (sslMode == null) sslMode = props.getProperty(prefix + "db.sslMode", "");
+
+			username = System.getenv("DB_USER");
+			if (username == null) username = props.getProperty(prefix + "db.username", "root");
+
+			password = System.getenv("DB_PASSWORD");
+			if (password == null) password = props.getProperty(prefix + "db.password", "root");
+
+			driver = props.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
 		 
-		 // Username and password from environment or properties
-         username = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : props.getProperty("db.username", "root"); 
-         password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : props.getProperty("db.password", "root");
-         driver = props.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
+			// Build the connection URL
+			// Standard MySQL format: jdbc:mysql://host:port/database
+			StringBuilder urlBuilder = new StringBuilder("jdbc:mysql://")
+					.append(dbHost).append(":").append(dbPort).append("/").append(dbName);
 		 
-		 // Build the connection URL in TiDB Cloud format: jdbc:mysql://user:password@host:port/database?params
-		 StringBuilder urlBuilder = new StringBuilder("jdbc:mysql://")
-		     .append(username).append(":").append(password).append("@")
-		     .append(dbHost).append(":").append(dbPort).append("/").append(dbName);
+			// Add SSL mode parameters
+			if (sslMode != null && !sslMode.isEmpty() && !sslMode.equalsIgnoreCase("false")) {
+				urlBuilder.append("?sslMode=").append(sslMode);
+			} else {
+				// For localhost/dev, usually disable SSL and allow public key retrieval
+				urlBuilder.append("?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC");
+			}
 		 
-		 // Add SSL mode for TiDB Cloud (required parameter)
-		 if (sslMode != null && !sslMode.isEmpty()) {
-		     urlBuilder.append("?sslMode=").append(sslMode);
-		 } else {
-		     urlBuilder.append("?useSSL=true&serverTimezone=UTC");
-		 }
-		 
-		 url = urlBuilder.toString();
+			url = urlBuilder.toString();
 	         
 	         /*
 	             * Load the JDBC driver class into memory.
@@ -233,7 +257,7 @@ public class DBUtil {
      * For TiDB Cloud, username and password are already embedded in the URL.
      */
 	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(url);
+		return DriverManager.getConnection(url, username, password);
 	}
 
 }
