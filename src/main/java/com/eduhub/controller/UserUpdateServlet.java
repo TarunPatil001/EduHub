@@ -27,7 +27,7 @@ public class UserUpdateServlet extends HttpServlet {
             return;
         }
 
-        Integer userId = (Integer) session.getAttribute("userId");
+        String userId = (String) session.getAttribute("userId");
         String fullName = req.getParameter("fullName");
         String email = req.getParameter("email");
         String phone = req.getParameter("phone");

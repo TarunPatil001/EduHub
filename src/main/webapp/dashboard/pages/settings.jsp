@@ -6,6 +6,7 @@
 <%@ page import="com.eduhub.model.User" %>
 <%@ page import="com.eduhub.dao.impl.UserDAOImpl" %>
 <%@ page import="com.eduhub.dao.interfaces.UserDAO" %>
+<%@ page import="com.eduhub.util.DropdownData" %>
 <%
     // Security Check
     if (session == null || session.getAttribute("userId") == null) {
@@ -15,7 +16,7 @@
 
     // Get institute details
     Institute institute = null;
-    Integer instituteId = (Integer) session.getAttribute("instituteId");
+    String instituteId = (String) session.getAttribute("instituteId");
     
     if (instituteId != null) {
         try {
@@ -33,19 +34,46 @@
     
     // Get current user details
     User currentUser = null;
-    Integer currentUserId = (Integer) session.getAttribute("userId");
+    String currentUserId = (String) session.getAttribute("userId");
     if (currentUserId != null) {
         try {
             UserDAO userDAO = new UserDAOImpl();
             currentUser = userDAO.getUserById(currentUserId);
+            if (currentUser != null) {
+                System.out.println("DEBUG: settings.jsp - User found: " + currentUser.getFullName());
+                System.out.println("DEBUG: settings.jsp - Photo URL from DB: " + currentUser.getProfilePhotoUrl());
+            } else {
+                System.out.println("DEBUG: settings.jsp - User not found for ID: " + currentUserId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("DEBUG: settings.jsp - Error fetching user: " + e.getMessage());
         }
     }
     if (currentUser == null) {
         currentUser = new User(); // Avoid null pointers
     }
+    
+    // Determine active section from request parameter
+    String activeSection = request.getParameter("section");
+    if (activeSection == null || activeSection.trim().isEmpty()) {
+        activeSection = "profile-section";
+    }
+    String statusParam = request.getParameter("status");
+    String messageParam = request.getParameter("message");
+    
+    // Calculate Initials
+    String userInitials = "U";
+    if (currentUser != null && currentUser.getFullName() != null && !currentUser.getFullName().isEmpty()) {
+        String[] names = currentUser.getFullName().trim().split("\\s+");
+        if (names.length >= 2) {
+            userInitials = (names[0].substring(0, 1) + names[names.length - 1].substring(0, 1)).toUpperCase();
+        } else if (names.length == 1) {
+            userInitials = names[0].substring(0, 1).toUpperCase();
+        }
+    }
 %>
+<!-- DEBUG INFO: UserID=<%= currentUserId %>, PhotoURL=<%= currentUser.getProfilePhotoUrl() %> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -293,6 +321,85 @@
                 font-size: 1.1rem;
             }
         }
+
+        .photo-upload-container {
+            text-align: center;
+        }
+        .photo-preview {
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #ccc;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .photo-preview:hover {
+            border-color: var(--primary-color);
+            background: var(--light-color);
+        }
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-placeholder {
+            color: #6c757d;
+            text-align: center;
+        }
+        [data-theme="dark"] .photo-preview {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+        }
+        [data-theme="dark"] .photo-preview:hover {
+            border-color: var(--primary-color);
+            background: var(--hover-bg);
+        }
+        [data-theme="dark"] .photo-placeholder {
+            color: var(--text-secondary);
+        }
+        
+        /* New styles for Admin Account Section */
+        .hover-opacity-100:hover {
+            opacity: 1 !important;
+        }
+        .transition-opacity {
+            transition: opacity 0.2s ease-in-out;
+        }
+        .object-fit-cover {
+            object-fit: cover;
+        }
+        @media (min-width: 768px) {
+            .border-end-md {
+                border-right: 1px solid #dee2e6;
+            }
+        }
+        [data-theme="dark"] .photo-preview-container {
+            border-color: var(--card-bg) !important;
+            outline-color: var(--border-color) !important;
+        }
+        [data-theme="dark"] .photo-placeholder {
+            background-color: #2d3748 !important;
+            color: var(--text-secondary) !important;
+        }
+        [data-theme="dark"] .border-end-md {
+            border-right-color: var(--border-color);
+        }
+        
+        /* Password toggle button fixed size */
+        .password-toggle-btn {
+            width: 46px !important;
+            margin-bottom: 0 !important;
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -320,23 +427,23 @@
                     <!-- Settings Navigation -->
                     <div class="col-lg-3">
                         <nav class="settings-nav">
-                            <button type="button" class="nav-link active" data-section="profile-section">
+                            <button type="button" class="nav-link <%= "profile-section".equals(activeSection) ? "active" : "" %>" data-section="profile-section">
                                 <i class="bi bi-building"></i>
                                 <span>Institute Profile</span>
                             </button>
-                            <button type="button" class="nav-link" data-section="admin-accounts-section">
+                            <button type="button" class="nav-link <%= "admin-accounts-section".equals(activeSection) ? "active" : "" %>" data-section="admin-accounts-section">
                                 <i class="bi bi-person-circle"></i>
                                 <span>Admin Accounts</span>
                             </button>
-                            <button type="button" class="nav-link" data-section="security-section">
+                            <button type="button" class="nav-link <%= "security-section".equals(activeSection) ? "active" : "" %>" data-section="security-section">
                                 <i class="bi bi-shield-lock"></i>
                                 <span>Security</span>
                             </button>
-                            <button type="button" class="nav-link" data-section="preferences">
+                            <button type="button" class="nav-link <%= "preferences".equals(activeSection) ? "active" : "" %>" data-section="preferences">
                                 <i class="bi bi-sliders"></i>
                                 <span>Preferences</span>
                             </button>
-                            <button type="button" class="nav-link" data-section="notifications">
+                            <button type="button" class="nav-link <%= "notifications".equals(activeSection) ? "active" : "" %>" data-section="notifications">
                                 <i class="bi bi-bell"></i>
                                 <span>Notifications</span>
                             </button>
@@ -345,238 +452,292 @@
                     
                     <!-- Settings Content -->
                     <div class="col-lg-9">
-                        <div id="profile-section" class="settings-section active">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Institute Profile</h5>
+                        <div id="profile-section" class="settings-section <%= "profile-section".equals(activeSection) ? "active" : "" %>">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-transparent border-bottom py-3">
+                                    <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Institute Profile</h5>
                                 </div>
-                                <div class="card-body">
-                                    <div class="settings-group">
-                                        <h6>Basic Information</h6>
+                                <div class="card-body p-4">
+                                    <form action="${pageContext.request.contextPath}/api/institute/update" method="POST">
+                                    <input type="hidden" name="section" value="profile-section">
+                                    
+                                    <div class="settings-group mb-4">
+                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Basic Information</h6>
                                         
-                                        <div class="mb-3">
-                                            <label for="instituteName" class="form-label">Institute Name</label>
-                                            <input type="text" class="form-control" id="instituteName" placeholder="Enter institute name" value="<%= institute.getInstituteName() != null ? institute.getInstituteName() : "" %>">
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="instituteType" class="form-label">Institute Type</label>
-                                            <select class="form-select" id="instituteType">
-                                                <option value="">Select type</option>
-                                                <% 
-                                                String currentType = institute.getInstituteType();
-                                                if (currentType != null) currentType = currentType.trim();
-                                                boolean typeFound = false;
-                                                
-                                                if(application.getAttribute("instituteTypes") != null) {
-                                                    for(String item : (List<String>)application.getAttribute("instituteTypes")) { 
-                                                        boolean isSelected = item.equals(currentType);
-                                                        if (isSelected) typeFound = true;
-                                                %>
-                                                    <option value="<%=item%>" <%= isSelected ? "selected" : "" %>><%=item%></option>
-                                                <% } } 
-                                                
-                                                // If the value from DB is not in the list, show it anyway
-                                                if (currentType != null && !currentType.isEmpty() && !typeFound) {
-                                                %>
-                                                    <option value="<%=currentType%>" selected><%=currentType%></option>
-                                                <% } %>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="instituteEmail" class="form-label">Official Email</label>
-                                            <input type="email" class="form-control" id="instituteEmail" placeholder="contact@institute.com" value="<%= institute.getInstituteEmail() != null ? institute.getInstituteEmail() : "" %>">
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="institutePhone" class="form-label">Contact Phone</label>
-                                            <input type="tel" class="form-control" id="institutePhone" placeholder="+1 (555) 000-0000" value="<%= institute.getInstitutePhone() != null ? institute.getInstitutePhone() : "" %>">
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <label for="instituteName" class="form-label">Institute Name</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-mortarboard"></i></span>
+                                                    <input type="text" class="form-control" id="instituteName" name="instituteName" placeholder="Enter institute name" value="<%= institute.getInstituteName() != null ? institute.getInstituteName() : "" %>">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="instituteType" class="form-label">Institute Type</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-grid"></i></span>
+                                                    <select class="form-select" id="instituteType" name="instituteType">
+                                                        <option value="">Select type</option>
+                                                        <% 
+                                                        String currentType = institute.getInstituteType();
+                                                        if (currentType != null) currentType = currentType.trim();
+                                                        
+                                                        for (String type : DropdownData.INSTITUTE_TYPES) {
+                                                            String selected = type.equals(currentType) ? "selected" : "";
+                                                        %>
+                                                            <option value="<%= type %>" <%= selected %>><%= type %></option>
+                                                        <% 
+                                                        }
+                                                        %>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label for="institutePhone" class="form-label">Contact Phone</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                                    <input type="tel" class="form-control" id="institutePhone" name="institutePhone" placeholder="+1 (555) 000-0000" value="<%= institute.getInstitutePhone() != null ? institute.getInstitutePhone() : "" %>">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-12">
+                                                <label for="instituteEmail" class="form-label">Official Email</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                                    <input type="email" class="form-control" id="instituteEmail" name="instituteEmail" placeholder="contact@institute.com" value="<%= institute.getInstituteEmail() != null ? institute.getInstituteEmail() : "" %>">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     
+                                    <hr class="my-4">
+
                                     <div class="settings-group">
-                                        <h6>Location</h6>
+                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Location Details</h6>
                                         
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <label for="address" class="form-label">Address</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-geo-alt"></i></span>
+                                                    <textarea class="form-control" id="address" name="address" rows="2" placeholder="Street address"><%= institute.getAddress() != null ? institute.getAddress() : "" %></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label for="city" class="form-label">City</label>
+                                                <input type="text" class="form-control" id="city" name="city" placeholder="City" value="<%= institute.getCity() != null ? institute.getCity() : "" %>">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="zipCode" class="form-label">ZIP/Postal Code</label>
+                                                <input type="text" class="form-control" id="zipCode" name="zipCode" placeholder="ZIP code" value="<%= institute.getZipCode() != null ? institute.getZipCode() : "" %>">
+                                            </div>
+
+                                            <div class="col-md-6">
                                                 <label for="country" class="form-label">Country</label>
-                                                <select class="form-select" id="country">
+                                                <select class="form-select" id="country" name="country">
                                                     <option value="">Select country</option>
                                                     <% 
                                                     String currentCountry = institute.getCountry();
                                                     if (currentCountry != null) currentCountry = currentCountry.trim();
-                                                    boolean countryFound = false;
                                                     
-                                                    if(application.getAttribute("countries") != null) {
-                                                        for(String item : (List<String>)application.getAttribute("countries")) { 
-                                                            boolean isSelected = item.equals(currentCountry);
-                                                            if (isSelected) countryFound = true;
+                                                    for (String country : DropdownData.COUNTRIES) {
+                                                        String selected = country.equals(currentCountry) ? "selected" : "";
                                                     %>
-                                                        <option value="<%=item%>" <%= isSelected ? "selected" : "" %>><%=item%></option>
-                                                    <% } } 
-                                                    
-                                                    // If the value from DB is not in the list, show it anyway
-                                                    if (currentCountry != null && !currentCountry.isEmpty() && !countryFound) {
+                                                        <option value="<%= country %>" <%= selected %>><%= country %></option>
+                                                    <% 
+                                                    }
                                                     %>
-                                                        <option value="<%=currentCountry%>" selected><%=currentCountry%></option>
-                                                    <% } %>
                                                 </select>
                                             </div>
-                                            <div class="col-md-6 mb-3">
+                                            <div class="col-md-6">
                                                 <label for="state" class="form-label">State/Province</label>
-                                                <input type="text" class="form-control" id="state" placeholder="Enter state" value="<%= institute.getState() != null ? institute.getState() : "" %>">
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="address" class="form-label">Address (Optional)</label>
-                                            <textarea class="form-control" id="address" rows="2" placeholder="Street address"><%= institute.getAddress() != null ? institute.getAddress() : "" %></textarea>
-                                        </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="city" class="form-label">City (Optional)</label>
-                                                <input type="text" class="form-control" id="city" placeholder="City" value="<%= institute.getCity() != null ? institute.getCity() : "" %>">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="zipCode" class="form-label">ZIP/Postal Code (Optional)</label>
-                                                <input type="text" class="form-control" id="zipCode" placeholder="ZIP code" value="<%= institute.getZipCode() != null ? institute.getZipCode() : "" %>">
+                                                <input type="text" class="form-control" id="state" name="state" placeholder="Enter state" value="<%= institute.getState() != null ? institute.getState() : "" %>">
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    <button class="btn btn-primary" id="saveInstituteBtn">
-                                        <i class="bi bi-save"></i> Update Institute Profile
-                                    </button>
+                                    <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary px-4" id="saveInstituteBtn">
+                                            <i class="bi bi-check-lg me-2"></i>Save Changes
+                                        </button>
+                                    </div>
+                                    </form>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div id="admin-accounts-section" class="settings-section">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Admin Account</h5>
+                        </div>                        <div id="admin-accounts-section" class="settings-section <%= "admin-accounts-section".equals(activeSection) ? "active" : "" %>">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-transparent border-bottom py-3">
+                                    <h5 class="card-title mb-0"><i class="bi bi-person-badge me-2"></i>Admin Account Profile</h5>
                                 </div>
-                                <div class="card-body">
-                                    <p class="card-text">Manage your personal administrator account details.</p>
-                                    <div class="settings-group">
-                                        <h6>Personal Information</h6>
-                                        <div class="mb-3">
-                                            <label for="adminFullName" class="form-label">Full Name</label>
-                                            <input type="text" class="form-control" id="adminFullName" placeholder="Enter full name" value="<%= currentUser.getFullName() != null ? currentUser.getFullName() : "" %>">
+                                <div class="card-body p-4">
+                                    <form id="adminAccountForm" action="${pageContext.request.contextPath}/api/users/updateProfile" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="userId" value="<%= currentUser.getUserId() %>">
+                                        <input type="hidden" name="section" value="admin-accounts-section">
+                                        
+                                        <div class="row g-4">
+                                            <!-- Profile Photo Column -->
+                                            <div class="col-md-4 text-center border-end-md">
+                                                <div class="profile-photo-section">
+                                                    <div class="position-relative d-inline-block mb-3">
+                                                        <div class="photo-preview-container rounded-circle shadow-sm" style="width: 160px; height: 160px; overflow: hidden; position: relative; border: 4px solid #fff; box-shadow: 0 0 0 1px #dee2e6, 0 .125rem .25rem rgba(0,0,0,.075); border-radius: 50% !important; -webkit-mask-image: -webkit-radial-gradient(white, black); mask-image: radial-gradient(white, black);">
+                                                            <% 
+                                                                String photoUrl = currentUser.getProfilePhotoUrl();
+                                                                if (photoUrl != null) {
+                                                                    photoUrl = photoUrl.replace("\\", "/");
+                                                                }
+                                                                boolean hasPhoto = photoUrl != null && !photoUrl.isEmpty();
+                                                            %>
+                                                            <div class="photo-placeholder d-flex flex-column align-items-center justify-content-center h-100 bg-light text-secondary" id="photoPlaceholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; <%= hasPhoto ? "display: none;" : "" %>">
+                                                                <span class="display-4 fw-bold"><%= userInitials %></span>
+                                                            </div>
+                                                            <img id="photoPreview" 
+                                                                 src="${pageContext.request.contextPath}/<%= hasPhoto ? photoUrl : "" %>?t=<%= System.currentTimeMillis() %>" 
+                                                                 class="w-100 h-100 object-fit-cover" 
+                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; <%= hasPhoto ? "" : "display: none;" %>" 
+                                                                 alt="Admin Photo"
+                                                                 onerror="this.style.display='none'; document.getElementById('photoPlaceholder').style.display='flex';"
+                                                                 onload="this.style.display='block'; document.getElementById('photoPlaceholder').style.display='none';">
+                                                            
+                                                            <!-- Overlay on hover -->
+                                                            <div class="photo-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white opacity-0 hover-opacity-100 transition-opacity" onclick="document.getElementById('adminPhoto').click()" style="z-index: 5; cursor: pointer; clip-path: circle(50% at 50% 50%);">
+                                                                <i class="bi bi-camera-fill fs-3"></i>
+                                                            </div>
+                                                            
+                                                            <!-- Loading Overlay -->
+                                                            <div id="photoLoadingOverlay" class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center" style="display: none !important; z-index: 10;">
+                                                                <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
+                                                                    <span class="visually-hidden">Loading...</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <input type="file" id="adminPhoto" name="adminPhoto" accept="image/*" class="d-none">
+                                                    <h6 class="mb-1"><%= currentUser.getFullName() != null ? currentUser.getFullName() : "Admin User" %></h6>
+                                                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3">Administrator</span>
+                                                    <p class="small text-muted mt-2">Allowed: JPG, PNG (Max 2MB)</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Form Fields Column -->
+                                            <div class="col-md-8 ps-md-4">
+                                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Personal Information</h6>
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-12">
+                                                        <label for="adminFullName" class="form-label">Full Name</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                                            <input type="text" class="form-control" id="adminFullName" name="fullName" placeholder="Enter your full name" value="<%= currentUser.getFullName() != null ? currentUser.getFullName() : "" %>">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-12">
+                                                        <label for="adminEmail" class="form-label">Email Address</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                                            <input type="email" class="form-control" id="adminEmail" name="email" value="<%= currentUser.getEmail() != null ? currentUser.getEmail() : "" %>" placeholder="Enter email address">
+                                                        </div>
+                                                        <div class="form-text"><i class="bi bi-info-circle me-1"></i>Email address is used for login.</div>
+                                                    </div>
+                                                    
+                                                    <div class="col-12">
+                                                        <label for="adminPhone" class="form-label">Phone Number</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                                            <input type="tel" class="form-control" id="adminPhone" name="phone" placeholder="Enter phone number" value="<%= currentUser.getPhone() != null ? currentUser.getPhone() : "" %>">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                                                    <button type="submit" class="btn btn-primary px-4" id="saveAccountBtn">
+                                                        <i class="bi bi-check-lg me-2"></i>Save Changes
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="adminEmail" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="adminEmail" placeholder="Enter email" value="<%= currentUser.getEmail() != null ? currentUser.getEmail() : "" %>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="adminPhone" class="form-label">Phone Number</label>
-                                            <input type="tel" class="form-control" id="adminPhone" placeholder="Enter phone number" value="<%= currentUser.getPhone() != null ? currentUser.getPhone() : "" %>">
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-primary" id="saveAccountBtn">
-                                        <i class="bi bi-save"></i> Update Account
-                                    </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="security-section" class="settings-section">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Security Settings</h5>
+                        <div id="security-section" class="settings-section <%= "security-section".equals(activeSection) ? "active" : "" %>">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-transparent border-bottom py-3">
+                                    <h5 class="card-title mb-0"><i class="bi bi-shield-lock me-2"></i>Security Settings</h5>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body p-4">
                                     <div class="settings-group">
-                                        <h6>Change Password</h6>
-                                        
-                                        <div class="mb-3">
-                                            <label for="currentPassword" class="form-label">Current Password</label>
-                                            <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="newPassword" class="form-label">New Password</label>
-                                            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
-                                            <small class="form-text text-muted">At least 8 characters with uppercase, lowercase, and number</small>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-                                            <input type="password" class="form-control" id="confirmNewPassword" placeholder="Re-enter new password">
-                                        </div>
-                                        
-                                        <button class="btn btn-primary">
-                                            <i class="bi bi-key"></i> Change Password
-                                        </button>
+                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Change Password</h6>
+                                        <form id="changePasswordForm" action="${pageContext.request.contextPath}/api/users/changePassword" method="POST">
+                                            <input type="hidden" name="userId" value="<%= currentUserId %>">
+                                            
+                                            <div class="mb-3">
+                                                <label for="currentPassword" class="form-label">Current Password</label>
+                                                <div class="input-group flex-nowrap">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
+                                                    <button class="btn btn-outline-secondary password-toggle-btn" type="button" onclick="togglePassword('currentPassword')"><i class="bi bi-eye"></i></button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="newPassword" class="form-label">New Password</label>
+                                                <div class="input-group flex-nowrap">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" required>
+                                                    <button class="btn btn-outline-secondary password-toggle-btn" type="button" onclick="togglePassword('newPassword')"><i class="bi bi-eye"></i></button>
+                                                </div>
+                                                <div class="form-text text-muted small mt-1">
+                                                    <i class="bi bi-info-circle me-1"></i>Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-4">
+                                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                                <div class="input-group flex-nowrap">
+                                                    <span class="input-group-text bg-light"><i class="bi bi-check-circle"></i></span>
+                                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Re-enter new password" required>
+                                                    <button class="btn btn-outline-secondary password-toggle-btn" type="button" onclick="togglePassword('confirmPassword')"><i class="bi bi-eye"></i></button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-primary px-4">
+                                                    <i class="bi bi-check-lg me-2"></i>Update Password
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                     
+                                    <hr class="my-4">
+                                    
                                     <div class="settings-group">
-                                        <h6>Session Management</h6>
-                                        
-                                        <div class="setting-item">
-                                            <div class="setting-info">
-                                                <h6>Current Device</h6>
-                                                <p><i class="bi bi-laptop"></i> Windows PC - Last active: Just now</p>
+                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Session Management</h6>
+                                        <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded border">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-white p-2 rounded-circle shadow-sm me-3 text-primary">
+                                                    <i class="bi bi-laptop fs-4"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">Current Session</h6>
+                                                    <p class="mb-0 small text-muted">Active now • IP: <%= request.getRemoteAddr() %></p>
+                                                </div>
                                             </div>
-                                            <span class="badge bg-success">Active</span>
+                                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
                                         </div>
-                                        
-                                        <button class="btn btn-outline-danger mt-3">
-                                            <i class="bi bi-box-arrow-right"></i> Sign out from all devices
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Preferences Settings -->
-                        <div id="preferences" class="settings-section">
+                        <div id="preferences" class="settings-section <%= "preferences".equals(activeSection) ? "active" : "" %>">
                             <div class="card-custom">
                                 <h5 class="mb-4"><i class="bi bi-sliders"></i> Preferences</h5>
-                                
-                                <div class="settings-group">
-                                    <h6>Language & Region</h6>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Language</h6>
-                                            <p>Select your preferred language</p>
-                                        </div>
-                                        <select class="form-select" style="max-width: 200px;">
-                                            <option selected>English (US)</option>
-                                            <option>Spanish</option>
-                                            <option>French</option>
-                                            <option>Hindi</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Timezone</h6>
-                                            <p>Your current timezone</p>
-                                        </div>
-                                        <select class="form-select" style="max-width: 250px;">
-                                            <option selected>(GMT-5:00) Eastern Time</option>
-                                            <option>(GMT-8:00) Pacific Time</option>
-                                            <option>(GMT+5:30) India Standard Time</option>
-                                            <option>(GMT+0:00) UTC</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Date Format</h6>
-                                            <p>How dates are displayed</p>
-                                        </div>
-                                        <select class="form-select" style="max-width: 200px;">
-                                            <option selected>MM/DD/YYYY</option>
-                                            <option>DD/MM/YYYY</option>
-                                            <option>YYYY-MM-DD</option>
-                                        </select>
-                                    </div>
-                                </div>
                                 
                                 <div class="settings-group">
                                     <h6>Display Settings</h6>
@@ -590,26 +751,12 @@
                                             <input class="form-check-input" type="checkbox" role="switch" id="darkMode">
                                         </div>
                                     </div>
-                                    
-                                    <div class="setting-item">
-                                        <div class="setting-info">
-                                            <h6>Compact View</h6>
-                                            <p>Reduce spacing for more content</p>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="compactView">
-                                        </div>
-                                    </div>
                                 </div>
-                                
-                                <button class="btn btn-primary">
-                                    <i class="bi bi-save"></i> Save Preferences
-                                </button>
                             </div>
                         </div>
                         
                         <!-- Notification Settings -->
-                        <div id="notifications" class="settings-section">
+                        <div id="notifications" class="settings-section <%= "notifications".equals(activeSection) ? "active" : "" %>">
                             <div class="card-custom">
                                 <h5 class="mb-4"><i class="bi bi-bell"></i> Notification Settings</h5>
                                 
@@ -681,9 +828,11 @@
                                     </div>
                                 </div>
                                 
-                                <button class="btn btn-primary">
-                                    <i class="bi bi-save"></i> Save Notification Settings
-                                </button>
+                                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                                    <button class="btn btn-primary px-4">
+                                        <i class="bi bi-check-lg me-2"></i>Save Changes
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -692,201 +841,51 @@
         </div>
     </div>
     
+    <jsp:include page="/dashboard/components/modal.jsp" />
+    <jsp:include page="/components/toast-dependencies.jsp" />
     <jsp:include page="/dashboard/components/scripts.jsp"/>
-    <jsp:include page="/components/toast-dependencies.jsp"/>
-    <jsp:include page="/dashboard/components/modal.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script>
-        // --- Form State Management ---
-        const formState = {};
+        // --- Unsaved Changes Confirmation ---
+        let isDirty = false;
 
-        function captureInitialState(sectionId) {
-            formState[sectionId] = { initialState: {}, isDirty: false };
-            const section = document.getElementById(sectionId);
-            if (!section) return;
-            
-            const inputs = section.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                if (input.id) {
-                    formState[sectionId].initialState[input.id] = input.type === 'checkbox' ? input.checked : input.value;
-                }
-            });
+        function setDirty() {
+            isDirty = true;
         }
 
-        function checkDirtyState(sectionId) {
-            if (!formState[sectionId]) return;
-            let dirty = false;
-            const section = document.getElementById(sectionId);
-            if (!section) return;
-            
-            const inputs = section.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                if (input.id) {
-                    const initialValue = formState[sectionId].initialState[input.id];
-                    const currentValue = input.type === 'checkbox' ? input.checked : input.value;
-                    if (initialValue !== undefined && initialValue !== currentValue) {
-                        dirty = true;
-                    }
-                }
-            });
-            formState[sectionId].isDirty = dirty;
-        }
-        
-        function isAnyFormDirty() {
-            return Object.values(formState).some(state => state && state.isDirty);
+        function resetDirty() {
+            isDirty = false;
         }
 
-        function revertChanges(sectionId) {
-            if (!formState[sectionId] || !formState[sectionId].initialState) return;
-            const section = document.getElementById(sectionId);
-            if (!section) return;
-            
-            const inputs = section.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                if (input.id) {
-                    const initialValue = formState[sectionId].initialState[input.id];
-                    if (initialValue !== undefined) {
-                        if (input.type === 'checkbox') {
-                            input.checked = initialValue;
-                        } else {
-                            input.value = initialValue;
-                        }
-                    }
-                }
-            });
-            formState[sectionId].isDirty = false;
-        }
+        // Add listeners to all inputs in settings sections (inside or outside forms)
+        document.querySelectorAll('.settings-section input, .settings-section textarea, .settings-section select').forEach(input => {
+            input.addEventListener('input', setDirty);
+            input.addEventListener('change', setDirty);
+        });
 
-        // --- API Call Functions ---
-        function saveInstituteProfile(onSuccess, showToast = true) {
-            const btn = document.getElementById('saveInstituteBtn');
-            const originalText = btn.innerHTML;
+        // Handle form submissions to reset dirty state
+        document.querySelectorAll('.settings-section form').forEach(form => {
+            form.addEventListener('submit', resetDirty);
+        });
+
+        // --- Toggle Password Visibility ---
+        window.togglePassword = function(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = event.currentTarget.querySelector('i');
             
-            const data = {
-                instituteName: document.getElementById('instituteName').value,
-                instituteType: document.getElementById('instituteType').value,
-                instituteEmail: document.getElementById('instituteEmail').value,
-                institutePhone: document.getElementById('institutePhone').value,
-                country: document.getElementById('country').value,
-                state: document.getElementById('state').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                zipCode: document.getElementById('zipCode').value
-            };
-            
-            if (!data.instituteName || !data.instituteEmail) {
-                toast.error('Institute Name and Email are required.');
-                return;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
             }
-            
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-            
-            const formData = new URLSearchParams(data);
+        };
 
-            fetch('${pageContext.request.contextPath}/api/institute/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 'success') {
-                    if (showToast) {
-                        toast.success(result.message);
-                    } else {
-                        sessionStorage.setItem('pendingToast', JSON.stringify({
-                            type: 'success',
-                            message: result.message
-                        }));
-                    }
-                    captureInitialState('profile-section'); // Recapture state on success
-                    if (onSuccess) onSuccess();
-                } else {
-                    toast.error(result.message || 'Failed to update profile.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                toast.error('An unexpected error occurred.');
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            });
-        }
-
-        function saveAccountProfile(onSuccess, showToast = true) {
-            const btn = document.getElementById('saveAccountBtn');
-            const originalText = btn.innerHTML;
-            
-            const data = {
-                fullName: document.getElementById('adminFullName').value,
-                email: document.getElementById('adminEmail').value,
-                phone: document.getElementById('adminPhone').value
-            };
-            
-            if (!data.fullName || !data.email) {
-                toast.error('Full Name and Email are required.');
-                return;
-            }
-            
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-            
-            const formData = new URLSearchParams(data);
-
-            fetch('${pageContext.request.contextPath}/api/user/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 'success') {
-                    if (showToast) {
-                        toast.success(result.message);
-                    } else {
-                        sessionStorage.setItem('pendingToast', JSON.stringify({
-                            type: 'success',
-                            message: result.message
-                        }));
-                    }
-                    captureInitialState('admin-accounts-section'); // Recapture state
-                    if (onSuccess) onSuccess();
-                } else {
-                    toast.error(result.message || 'Failed to update account.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                toast.error('An unexpected error occurred.');
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            });
-        }
-
-        // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', function() {
-            const managedSections = ['profile-section', 'admin-accounts-section'];
-
-            // Initial setup
-            managedSections.forEach(id => {
-                captureInitialState(id);
-                const section = document.getElementById(id);
-                if (section) {
-                    section.addEventListener('input', () => checkDirtyState(id));
-                    section.addEventListener('change', () => checkDirtyState(id));
-                }
-            });
-
-            // Save button listeners
-            document.getElementById('saveInstituteBtn').addEventListener('click', () => saveInstituteProfile());
-            document.getElementById('saveAccountBtn').addEventListener('click', () => saveAccountProfile());
-
-            // Settings page navigation
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Settings Navigation (Click Handling) ---
             const navLinks = document.querySelectorAll('.settings-nav .nav-link');
             const sections = document.querySelectorAll('.settings-section');
             
@@ -895,109 +894,297 @@
                 if (!sectionId) return;
                 
                 const targetSection = document.getElementById(sectionId);
-                if (!targetSection) {
-                    console.error('Target section not found:', sectionId);
-                    return;
-                }
+                if (!targetSection) return;
                 
                 navLinks.forEach(l => l.classList.remove('active'));
                 sections.forEach(s => s.classList.remove('active'));
                 
                 link.classList.add('active');
                 targetSection.classList.add('active');
+
+                // Update URL to reflect current section without reloading
+                const newUrl = window.location.pathname + "?section=" + sectionId;
+                window.history.pushState({path: newUrl}, '', newUrl);
             }
 
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const clickedLink = this;
+                    const targetLink = this;
                     
-                    if (clickedLink.classList.contains('active')) return;
-
-                    const dirtySectionId = managedSections.find(id => formState[id] && formState[id].isDirty);
-
-                    if (dirtySectionId) {
-                        const sectionName = dirtySectionId === 'profile-section' ? 'Institute Profile' : 'Admin Account';
-                        
+                    if (isDirty) {
                         showConfirmationModal({
                             title: 'Unsaved Changes',
-                            message: 'You have unsaved changes in the ' + sectionName + '. Do you want to save them before leaving?',
-                            confirmText: 'Save Changes',
-                            cancelText: 'Discard Changes',
-                            extraBtnText: null,
+                            message: 'You have unsaved changes. Do you want to save or discard them?',
+                            confirmText: 'Save',
+                            confirmClass: 'btn-success',
+                            extraBtnText: 'Discard',
+                            extraBtnClass: 'btn-danger',
+                            showCancel: false,
                             onConfirm: () => {
-                                const saveFunction = dirtySectionId === 'profile-section' ? saveInstituteProfile : saveAccountProfile;
-                                saveFunction(() => {
-                                    if (formState[dirtySectionId]) formState[dirtySectionId].isDirty = false;
-                                    if (window.currentConfirmationModal) window.currentConfirmationModal.hide();
-                                    switchSection(clickedLink);
+                                return handleSaveAndNavigate(targetLink, () => {
+                                    switchSection(targetLink);
+                                    toast.success('Settings saved successfully');
                                 });
-                                return false; // Keep modal open
                             },
-                            onCancel: () => {
-                                revertChanges(dirtySectionId);
-                                switchSection(clickedLink);
+                            onExtraBtn: () => {
+                                handleDiscardAndNavigate(targetLink, () => switchSection(targetLink));
                             }
                         });
                     } else {
-                        switchSection(clickedLink);
+                        switchSection(targetLink);
                     }
                 });
             });
-
-            // Global Link Navigation Protection
+            
+            // --- Global Navigation Interception ---
             document.addEventListener('click', function(e) {
                 const link = e.target.closest('a');
-                if (!link) return;
+                // If it's not a link, or it's a link inside the settings-nav (which are buttons anyway), ignore.
+                if (!link || link.closest('.settings-nav')) return;
                 
-                // Ignore if it's a tab toggle or internal link or javascript
-                if (link.getAttribute('data-section') || (link.getAttribute('href') && link.getAttribute('href').startsWith('#')) || link.href.includes('javascript:')) return;
-                
-                // Check if dirty
-                const dirtySectionId = managedSections.find(id => formState[id] && formState[id].isDirty);
-                if (!dirtySectionId) return;
-                
-                e.preventDefault();
-                const targetUrl = link.href;
-                const sectionName = dirtySectionId === 'profile-section' ? 'Institute Profile' : 'Admin Account';
-                
-                showConfirmationModal({
-                    title: 'Unsaved Changes',
-                    message: 'You have unsaved changes in the ' + sectionName + '. Do you want to save them before leaving?',
-                    confirmText: 'Save & Leave',
-                    cancelText: 'Discard & Leave',
-                    extraBtnText: null,
-                    onConfirm: () => {
-                        const saveFunction = dirtySectionId === 'profile-section' ? saveInstituteProfile : saveAccountProfile;
-                        saveFunction(() => {
-                            if (formState[dirtySectionId]) formState[dirtySectionId].isDirty = false;
-                            if (window.currentConfirmationModal) window.currentConfirmationModal.hide();
-                            canNavigate = true;
-                            window.location.href = targetUrl;
-                        }, false); // Pass false to suppress immediate toast and use sessionStorage
-                        return false; // Keep modal open
-                    },
-                    onCancel: () => {
-                        // No need to revert, just leave
-                        canNavigate = true;
-                        window.location.href = targetUrl;
-                    }
-                });
-            });
-            
-            // Browser/Tab Close Protection
-            window.addEventListener('beforeunload', function(e) {
-                if (isAnyFormDirty() && !canNavigate) {
+                // If it's a link that navigates away
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+                if (isDirty) {
                     e.preventDefault();
-                    e.returnValue = ''; // Required for Chrome
+                    const targetUrl = link.href;
+                    
+                    showConfirmationModal({
+                        title: 'Unsaved Changes',
+                        message: 'You have unsaved changes. Do you want to save or discard them?',
+                        confirmText: 'Save',
+                        confirmClass: 'btn-success',
+                        extraBtnText: 'Discard',
+                        extraBtnClass: 'btn-danger',
+                        showCancel: false,
+                        onConfirm: () => {
+                            return handleSaveAndNavigate(link, () => {
+                                sessionStorage.setItem('pendingToastType', JSON.stringify({
+                                    message: 'Settings saved successfully',
+                                    type: 'success'
+                                }));
+                                window.location.href = targetUrl;
+                            });
+                        },
+                        onExtraBtn: () => {
+                            handleDiscardAndNavigate(link, () => window.location.href = targetUrl);
+                        }
+                    });
                 }
             });
-            
-            // Handle hash on load
-            if (window.location.hash) {
-                const targetLink = document.querySelector(`[data-section="${window.location.hash.substring(1)}"]`);
-                if (targetLink) switchSection(targetLink);
+
+            function handleDiscardAndNavigate(target, navigationCallback) {
+                const activeSection = document.querySelector('.settings-section.active');
+                const form = activeSection ? activeSection.querySelector('form') : null;
+                if (form) {
+                    form.reset();
+                }
+                
+                // Reset photo preview if it exists
+                const photoPreview = document.getElementById('photoPreview');
+                const photoPlaceholder = document.getElementById('photoPlaceholder');
+                if (photoPreview && photoPlaceholder) {
+                    photoPreview.src = originalPhotoSrc;
+                    photoPreview.style.display = originalPhotoDisplay;
+                    photoPlaceholder.style.display = originalPlaceholderDisplay;
+                }
+
+                // Also reset any non-form inputs if needed, or just rely on page reload for navigation
+                // For section switching, we might need to manually reset inputs if they are not in a form
+                if (activeSection) {
+                     activeSection.querySelectorAll('input, select, textarea').forEach(input => {
+                         // Simple reset for inputs not in form (if any)
+                         if (!input.form) {
+                             if (input.type === 'checkbox' || input.type === 'radio') {
+                                 input.checked = input.defaultChecked;
+                             } else {
+                                 input.value = input.defaultValue;
+                             }
+                         }
+                     });
+                }
+
+                resetDirty();
+                navigationCallback();
             }
+
+            function handleSaveAndNavigate(target, navigationCallback) {
+                const activeSection = document.querySelector('.settings-section.active');
+                const form = activeSection ? activeSection.querySelector('form') : null;
+                
+                if (form) {
+                    // Show loading state on the Save button in modal
+                    const confirmBtn = document.getElementById('modalConfirmBtn');
+                    const originalText = confirmBtn.innerHTML;
+                    confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+                    confirmBtn.disabled = true;
+
+                    const formData = new FormData(form);
+                    let fetchOptions = {
+                        method: 'POST',
+                        redirect: 'follow'
+                    };
+
+                    if (form.enctype === 'multipart/form-data') {
+                        fetchOptions.body = formData;
+                    } else {
+                        const params = new URLSearchParams();
+                        for (const pair of formData.entries()) {
+                            params.append(pair[0], pair[1]);
+                        }
+                        fetchOptions.body = params;
+                        fetchOptions.headers = {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        };
+                    }
+
+                    fetch(form.action, fetchOptions)
+                        .then(response => {
+                            const url = new URL(response.url);
+                            const status = url.searchParams.get('status');
+                            
+                            if (status === 'success') {
+                                // Update header image if we have a new preview and it's the admin account form
+                                if (form.id === 'adminAccountForm') {
+                                    const headerImg = document.getElementById('headerProfileImg');
+                                    const photoPreview = document.getElementById('photoPreview');
+                                    if (headerImg && photoPreview && photoPreview.style.display !== 'none') {
+                                        headerImg.src = photoPreview.src;
+                                    }
+                                }
+                                
+                                resetDirty();
+                                navigationCallback();
+                                // Close modal manually since we returned false
+                                if (window.currentConfirmationModal) {
+                                    window.currentConfirmationModal.hide();
+                                }
+                            } else {
+                                const message = url.searchParams.get('message') || 'Failed to save changes.';
+                                toast.error(message);
+                                if (window.currentConfirmationModal) {
+                                    window.currentConfirmationModal.hide();
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error saving:', error);
+                            toast.error('An error occurred while saving.');
+                            if (window.currentConfirmationModal) {
+                                window.currentConfirmationModal.hide();
+                            }
+                        })
+                        .finally(() => {
+                            if (confirmBtn) {
+                                confirmBtn.innerHTML = originalText;
+                                confirmBtn.disabled = false;
+                            }
+                        });
+                        
+                    return false; // Keep modal open
+                } else {
+                    // No form found (e.g. Preferences), just proceed as if saved (or maybe we should block?)
+                    // For now, assume success
+                    resetDirty();
+                    navigationCallback();
+                    return true; // Close modal
+                }
+            }
+            
+            // --- Browser Navigation Interception (Back/Refresh) ---
+            window.addEventListener('beforeunload', function(e) {
+                if (isDirty) {
+                    e.preventDefault();
+                    e.returnValue = ''; // Chrome requires returnValue to be set
+                }
+            });
+
+            // --- Profile Photo Preview ---
+            const adminPhotoInput = document.getElementById('adminPhoto');
+            const photoPreview = document.getElementById('photoPreview');
+            const photoPlaceholder = document.getElementById('photoPlaceholder');
+            
+            // Store original state for discard functionality
+            let originalPhotoSrc = '';
+            let originalPhotoDisplay = '';
+            let originalPlaceholderDisplay = '';
+            
+            if (photoPreview) {
+                originalPhotoSrc = photoPreview.src;
+                originalPhotoDisplay = photoPreview.style.display;
+            }
+            if (photoPlaceholder) {
+                originalPlaceholderDisplay = photoPlaceholder.style.display;
+            }
+            
+            if (adminPhotoInput && photoPreview) {
+                adminPhotoInput.addEventListener('change', function(e) {
+                    const file = this.files[0];
+                    if (file) {
+                        // Validate file type
+                        if (!file.type.startsWith('image/')) {
+                            toast.error('Please select an image file.');
+                            this.value = ''; // Clear input
+                            return;
+                        }
+                        
+                        // Validate file size (2MB)
+                        if (file.size > 2 * 1024 * 1024) {
+                            toast.error('Image size should be less than 2MB.');
+                            this.value = ''; // Clear input
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            photoPreview.src = e.target.result;
+                            photoPreview.style.display = 'block';
+                            if (photoPlaceholder) {
+                                photoPlaceholder.style.display = 'none';
+                            }
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // --- Password Form Validation ---
+            const changePasswordForm = document.getElementById('changePasswordForm');
+            if(changePasswordForm) {
+                changePasswordForm.addEventListener('submit', function(e) {
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+                    if (newPassword !== confirmPassword) {
+                        e.preventDefault();
+                        toast.error("New password and confirm password do not match.");
+                        return;
+                    }
+                    
+                    if (!passwordRegex.test(newPassword)) {
+                        e.preventDefault();
+                        toast.error("Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character (e.g., Cc@12345).");
+                        return;
+                    }
+                });
+            }
+            
+            // --- Server-Side Triggered Toasts & URL Cleanup ---
+            <% if (statusParam != null && messageParam != null) { %>
+                <% if ("success".equals(statusParam)) { %>
+                    toast.success("<%= messageParam %>");
+                <% } else if ("error".equals(statusParam)) { %>
+                    toast.error("<%= messageParam %>");
+                <% } %>
+                
+                // Clean URL but keep section param if needed
+                const cleanUrl = window.location.pathname + "?section=<%= activeSection %>";
+                window.history.replaceState({}, document.title, cleanUrl);
+            <% } %>
         });
     </script>
     <script src="${pageContext.request.contextPath}/dashboard/js/theme-switcher.js"></script>

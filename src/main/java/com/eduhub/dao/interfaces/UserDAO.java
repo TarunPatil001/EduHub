@@ -15,7 +15,7 @@ public interface UserDAO {
      * @return Generated user ID
      * @throws SQLException if database error occurs
      */
-    int createUser(User user) throws SQLException;
+    String createUser(User user) throws SQLException;
     
     /**
      * Get user by ID
@@ -23,7 +23,7 @@ public interface UserDAO {
      * @return User object or null if not found
      * @throws SQLException if database error occurs
      */
-    User getUserById(int userId) throws SQLException;
+    User getUserById(String userId) throws SQLException;
     
     /**
      * Get user by email
@@ -39,7 +39,7 @@ public interface UserDAO {
      * @return User object or null if not found
      * @throws SQLException if database error occurs
      */
-    User getAdminByInstituteId(int instituteId) throws SQLException;
+    User getAdminByInstituteId(String instituteId) throws SQLException;
     
     /**
      * Get all admin accounts
@@ -64,7 +64,7 @@ public interface UserDAO {
      * @param userId User ID
      * @throws SQLException if database error occurs
      */
-    void updateLastLogin(int userId) throws SQLException;
+    void updateLastLogin(String userId) throws SQLException;
     
     /**
      * Check if email already exists
@@ -79,5 +79,14 @@ public interface UserDAO {
      * @param user User object with updated details
      * @throws SQLException if database error occurs
      */
-    void updateUser(User user) throws SQLException;
+    boolean updateUser(User user) throws SQLException;
+
+    /**
+     * Update user password
+     * @param userId User ID
+     * @param newPasswordHash New hashed password
+     * @return true if successful
+     * @throws SQLException if database error occurs
+     */
+    boolean updatePassword(String userId, String newPasswordHash) throws SQLException;
 }

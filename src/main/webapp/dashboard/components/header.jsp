@@ -4,6 +4,7 @@
     String headerUserName = (String) session.getAttribute("userName");
     String headerUserEmail = (String) session.getAttribute("userEmail");
     String headerUserRole = (String) session.getAttribute("userRole");
+    String headerUserPhotoUrl = (String) session.getAttribute("userPhotoUrl");
     
     // Default values if session attributes are null
     if (headerUserName == null) headerUserName = "User";
@@ -117,7 +118,17 @@
         <div class="header-profile dropdown">
             <button class="btn-profile" data-bs-toggle="dropdown">
                 <div class="avatar-container">
-                    <img src="https://ui-avatars.com/api/?name=<%= headerUserName.replace(" ", "+") %>&background=0D6EFD&color=fff" alt="Profile">
+                    <% 
+                        if (headerUserPhotoUrl != null && !headerUserPhotoUrl.isEmpty()) { 
+                            headerUserPhotoUrl = headerUserPhotoUrl.replace("\\", "/");
+                    %>
+                        <img src="${pageContext.request.contextPath}/<%= headerUserPhotoUrl %>?t=<%= System.currentTimeMillis() %>" 
+                             alt="Profile" 
+                             id="headerProfileImg"
+                             onerror="this.src='https://ui-avatars.com/api/?name=<%= headerUserName.replace(" ", "+") %>&background=0D6EFD&color=fff';">
+                    <% } else { %>
+                        <img src="https://ui-avatars.com/api/?name=<%= headerUserName.replace(" ", "+") %>&background=0D6EFD&color=fff" alt="Profile" id="headerProfileImg">
+                    <% } %>
                 </div>
                 <div class="profile-info d-none d-md-block">
                     <span class="profile-name"><%= headerUserName %></span>

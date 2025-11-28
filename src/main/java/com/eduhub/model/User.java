@@ -7,14 +7,15 @@ import java.sql.Timestamp;
  */
 public class User {
     
-    private int userId;
-    private int instituteId;
+    private String userId;
+    private String instituteId;
     private String fullName;
     private String email;
     private String passwordHash;
     private String phone;
     private String role; // super_admin, admin, teacher, student, staff
     private String status; // pending, active, inactive, suspended
+    private String profilePhotoUrl;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp lastLogin;
@@ -22,7 +23,7 @@ public class User {
     // Constructors
     public User() {}
     
-    public User(int instituteId, String fullName, String email, String passwordHash, 
+    public User(String instituteId, String fullName, String email, String passwordHash, 
                 String phone, String role) {
         this.instituteId = instituteId;
         this.fullName = fullName;
@@ -34,19 +35,19 @@ public class User {
     }
     
     // Getters and Setters
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
     
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
     
-    public int getInstituteId() {
+    public String getInstituteId() {
         return instituteId;
     }
     
-    public void setInstituteId(int instituteId) {
+    public void setInstituteId(String instituteId) {
         this.instituteId = instituteId;
     }
     
@@ -98,6 +99,14 @@ public class User {
         this.status = status;
     }
     
+    public String getProfilePhotoUrl() {
+        return profilePhotoUrl;
+    }
+
+    public void setProfilePhotoUrl(String profilePhotoUrl) {
+        this.profilePhotoUrl = profilePhotoUrl;
+    }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -131,6 +140,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
                 ", status='" + status + '\'' +
+                ", profilePhotoUrl='" + profilePhotoUrl + '\'' +
                 '}';
     }
 }

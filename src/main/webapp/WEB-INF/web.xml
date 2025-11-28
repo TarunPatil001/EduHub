@@ -46,7 +46,7 @@
     <servlet-name>Register</servlet-name>
     <url-pattern>/register</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>Dashboard</servlet-name>
     <jsp-file>/dashboard.jsp</jsp-file>

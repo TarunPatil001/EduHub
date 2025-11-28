@@ -4,6 +4,9 @@ import com.eduhub.exception.RegistrationException;
 import com.eduhub.model.Institute;
 import com.eduhub.model.User;
 
+import javax.servlet.http.Part;
+import java.io.IOException;
+
 /**
  * Service interface for Institute Registration operations
  */
@@ -20,6 +23,26 @@ public interface RegistrationService {
      */
     RegistrationResult registerInstituteWithAdmin(Institute institute, User admin) throws RegistrationException;
     
+    /**
+     * Saves the user's profile photo to a specific application path with hierarchical structure.
+     *
+     * @param filePart The file part from the multipart request.
+     * @param userId The ID of the user (used for folder structure).
+     * @param appPath The real path of the application context.
+     * @return The URL or path to the saved photo.
+     * @throws IOException If an I/O error occurs.
+     */
+    String saveUserProfilePhoto(Part filePart, String userId, String appPath) throws IOException;
+
+    /**
+     * Deletes the admin's profile photo.
+     *
+     * @param photoUrl The URL or path of the photo to delete.
+     * @param appPath The real path of the application context.
+     */
+    void deleteProfilePhoto(String photoUrl, String appPath);
+
+
     // Note: Approval and rejection methods removed - institutes are automatically approved upon registration
     
     /**
@@ -35,23 +58,23 @@ public interface RegistrationService {
      * Inner class to hold registration result
      */
     class RegistrationResult {
-        private int instituteId;
-        private int userId;
+        private String instituteId;
+        private String userId;
         private boolean success;
         private String message;
         
-        public RegistrationResult(int instituteId, int userId, boolean success, String message) {
+        public RegistrationResult(String instituteId, String userId, boolean success, String message) {
             this.instituteId = instituteId;
             this.userId = userId;
             this.success = success;
             this.message = message;
         }
         
-        public int getInstituteId() {
+        public String getInstituteId() {
             return instituteId;
         }
         
-        public int getUserId() {
+        public String getUserId() {
             return userId;
         }
         

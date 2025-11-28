@@ -42,10 +42,10 @@ public class LogoutServlet extends HttpServlet {
         
         if (session != null) {
             // Get user info before invalidating session
-            Integer userId = (Integer) session.getAttribute("userId");
+            String userId = (String) session.getAttribute("userId");
             String userEmail = (String) session.getAttribute("userEmail");
             String userName = (String) session.getAttribute("userName");
-            Integer instituteId = (Integer) session.getAttribute("instituteId");
+            String instituteId = (String) session.getAttribute("instituteId");
             
             logger.info("User logout - Email: {}, ID: {}, Institute: {}", 
                 userEmail, userId, instituteId);

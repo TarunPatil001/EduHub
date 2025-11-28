@@ -28,7 +28,7 @@
             }
 
             // Check for pending toast messages from sessionStorage
-            const pendingToast = sessionStorage.getItem('pendingToast');
+            const pendingToast = sessionStorage.getItem('pendingToastType');
             if (pendingToast) {
                 try {
                     const toastData = JSON.parse(pendingToast);
@@ -44,7 +44,7 @@
                     console.error('Error parsing pending toast:', e);
                 }
                 // Clear the message so it doesn't show again
-                sessionStorage.removeItem('pendingToast');
+                sessionStorage.removeItem('pendingToastType');
             }
         });
     })();

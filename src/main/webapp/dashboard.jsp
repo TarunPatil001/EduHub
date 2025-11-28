@@ -8,11 +8,11 @@
     }
     
     // Get user information from session
-    Integer userId = (Integer) session.getAttribute("userId");
+    String userId = (String) session.getAttribute("userId");
     String userName = (String) session.getAttribute("userName");
     String userEmail = (String) session.getAttribute("userEmail");
     String userRole = (String) session.getAttribute("userRole");
-    Integer instituteId = (Integer) session.getAttribute("instituteId");
+    String instituteId = (String) session.getAttribute("instituteId");
 %>
 <!DOCTYPE html>
 <html lang="en">

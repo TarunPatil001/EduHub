@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Clean URL
             urlParams.delete('success');
-            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash;
             window.history.replaceState({}, '', newUrl);
         }
         
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Clean URL
             urlParams.delete('error');
-            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash;
             window.history.replaceState({}, '', newUrl);
         }
     }

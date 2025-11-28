@@ -75,7 +75,7 @@
             });
 
             // Function to save profile
-            const saveProfile = (onSuccess) => {
+            const saveProfile = () => {
                 // Here you would typically handle the form submission via AJAX
                 console.log('Saving profile...');
                 
@@ -87,9 +87,6 @@
                         message: 'Your profile information has been updated successfully.',
                         onClose: () => {
                             isDirty = false; // Reset dirty flag after saving
-                            if (onSuccess && typeof onSuccess === 'function') {
-                                onSuccess();
-                            }
                         }
                     });
                 }, 500);

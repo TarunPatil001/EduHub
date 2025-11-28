@@ -3,6 +3,8 @@ package com.eduhub.controller;
 import com.eduhub.dao.impl.InstituteDAOImpl;
 import com.eduhub.dao.interfaces.InstituteDAO;
 import com.eduhub.model.Institute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +19,7 @@ import java.sql.SQLException;
 @WebServlet("/api/institute/*")
 public class InstituteServlet extends HttpServlet {
     
+    private static final Logger logger = LoggerFactory.getLogger(InstituteServlet.class);
     private InstituteDAO instituteDAO;
     
     @Override
@@ -46,7 +49,7 @@ public class InstituteServlet extends HttpServlet {
         }
     }
     
-    private void handleUpdateInstitute(HttpServletRequest request, HttpServletResponse response, PrintWriter out) {
+    private void handleUpdateInstitute(HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -54,7 +57,7 @@ public class InstituteServlet extends HttpServlet {
             return;
         }
         
-        Integer instituteId = (Integer) session.getAttribute("instituteId");
+        String instituteId = (String) session.getAttribute("instituteId");
         if (instituteId == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.print("{\"status\":\"error\",\"message\":\"Institute ID not found in session\"}");
@@ -87,22 +90,40 @@ public class InstituteServlet extends HttpServlet {
             
             // Perform update
             boolean success = instituteDAO.updateInstitute(updatedData);
+            String section = request.getParameter("section");
+            if (section == null || section.isEmpty()) {
+                section = "profile-section";
+            }
+            String redirectUrl;
             
             if (success) {
-                out.print("{\"status\":\"success\",\"message\":\"Institute profile updated successfully\"}");
+                logger.info("Institute profile updated successfully for ID: {}", instituteId);
+                redirectUrl = request.getContextPath() + "/dashboard/pages/settings.jsp?status=success&message=Institute+profile+updated+successfully";
             } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                out.print("{\"status\":\"error\",\"message\":\"Failed to update institute profile\"}");
+                logger.error("Failed to update institute profile for ID: {}", instituteId);
+                redirectUrl = request.getContextPath() + "/dashboard/pages/settings.jsp?status=error&message=Failed+to+update+institute+profile";
             }
             
+            if (section != null && !section.isEmpty()) {
+                redirectUrl += "&section=" + section + "#" + section;
+            }
+            
+            response.sendRedirect(redirectUrl);
+            
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print("{\"status\":\"error\",\"message\":\"Database error: " + e.getMessage().replace("\"", "\\\"") + "\"}");
+            logger.error("Database error updating institute profile", e);
+            String section = request.getParameter("section");
+            if (section == null || section.isEmpty()) {
+                section = "profile-section";
+            }
+            response.sendRedirect(request.getContextPath() + "/dashboard/pages/settings.jsp?status=error&message=Database+error&section=" + section + "#" + section);
         } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"status\":\"error\",\"message\":\"Invalid request data\"}");
+            logger.error("Unexpected error updating institute profile", e);
+            String section = request.getParameter("section");
+            if (section == null || section.isEmpty()) {
+                section = "profile-section";
+            }
+            response.sendRedirect(request.getContextPath() + "/dashboard/pages/settings.jsp?status=error&message=Invalid+request+data&section=" + section + "#" + section);
         }
     }
 }

@@ -5,20 +5,20 @@ package com.eduhub.exception;
  */
 public class InstituteNotFoundException extends RegistrationException {
     
-    private int instituteId;
+    private String instituteId;
     
-    public InstituteNotFoundException(int instituteId) {
+    public InstituteNotFoundException(String instituteId) {
         super("INSTITUTE_NOT_FOUND", 
-              String.format("Institute with ID %d not found", instituteId));
+              String.format("Institute with ID %s not found", instituteId));
         this.instituteId = instituteId;
     }
     
-    public InstituteNotFoundException(String email) {
+    public InstituteNotFoundException(String email, boolean isEmail) {
         super("INSTITUTE_NOT_FOUND", 
               String.format("Institute with email '%s' not found", email));
     }
     
-    public int getInstituteId() {
+    public String getInstituteId() {
         return instituteId;
     }
 }

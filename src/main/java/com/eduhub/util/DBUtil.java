@@ -129,17 +129,22 @@ public class DBUtil {
 			if (!institutesExists) {
 				logger.warn("Institutes table not found. Creating...");
 				createInstitutesTable(conn);
+				institutesExists = true; // Assume creation was successful if no exception was thrown
 				logger.info("Institutes table created successfully");
 			}
 			
-			// Check if users table exists
-			boolean usersExists = tableExists(conn, "users");
-			logger.info("Users table exists: {}", usersExists);
-			
-			if (!usersExists) {
-				logger.warn("Users table not found. Creating...");
-				createUsersTable(conn);
-				logger.info("Users table created successfully");
+			// Only proceed to create users table if institutes table exists
+			if (institutesExists) {
+				boolean usersExists = tableExists(conn, "users");
+				logger.info("Users table exists: {}", usersExists);
+				
+				if (!usersExists) {
+					logger.warn("Users table not found. Creating...");
+					createUsersTable(conn);
+					logger.info("Users table created successfully");
+				}
+			} else {
+				logger.error("Skipping users table creation because institutes table does not exist.");
 			}
 			
 			logger.info("Database tables initialized successfully");
@@ -194,7 +199,7 @@ public class DBUtil {
 	 */
 	private static void createInstitutesTable(Connection conn) throws SQLException {
 		String sql = "CREATE TABLE institutes (" +
-				"institute_id INT AUTO_INCREMENT PRIMARY KEY, " +
+				"institute_id VARCHAR(36) PRIMARY KEY, " +
 				"institute_name VARCHAR(255) NOT NULL, " +
 				"institute_type VARCHAR(100) NOT NULL, " +
 				"institute_email VARCHAR(255) NOT NULL UNIQUE, " +
@@ -208,7 +213,7 @@ public class DBUtil {
 				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
 				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
 				"approved_at TIMESTAMP NULL, " +
-				"approved_by INT NULL, " +
+				"approved_by VARCHAR(36) NULL, " +
 				"rejection_reason TEXT NULL, " +
 				"INDEX idx_institute_email (institute_email), " +
 				"INDEX idx_registration_status (registration_status)" +
@@ -226,14 +231,15 @@ public class DBUtil {
 	 */
 	private static void createUsersTable(Connection conn) throws SQLException {
 		String sql = "CREATE TABLE users (" +
-				"user_id INT AUTO_INCREMENT PRIMARY KEY, " +
-				"institute_id INT NOT NULL, " +
+				"user_id VARCHAR(36) PRIMARY KEY, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
 				"full_name VARCHAR(255) NOT NULL, " +
 				"email VARCHAR(255) NOT NULL UNIQUE, " +
 				"password_hash VARCHAR(255) NOT NULL, " +
 				"phone VARCHAR(20), " +
 				"role VARCHAR(50) NOT NULL DEFAULT 'student', " +
 				"status VARCHAR(50) DEFAULT 'active', " +
+				"profile_photo_url VARCHAR(255) NULL, " +
 				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
 				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
 				"last_login TIMESTAMP NULL, " +

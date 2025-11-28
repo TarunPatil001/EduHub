@@ -100,7 +100,7 @@
                             </div>
 
                             <!-- Registration Form -->
-                            <form action="${pageContext.request.contextPath}/auth/register" method="post" id="adminForm">
+                            <form action="${pageContext.request.contextPath}/auth/register" method="post" id="adminForm" enctype="multipart/form-data">
                                 
                                 <!-- Hidden fields from institute form -->
                                 <input type="hidden" name="instituteName" id="instituteName" value="<%= instituteName %>">
@@ -113,6 +113,26 @@
                                 <input type="hidden" name="zipCode" id="zipCode" value="<%= zipCode %>">
                                 <input type="hidden" name="country" id="country" value="<%= country %>">
                                 
+                                <!-- Profile Photo Upload -->
+                                <div class="text-center mb-4">
+                                    <div class="position-relative d-inline-block">
+                                        <div class="photo-preview-container rounded-circle shadow-sm mx-auto" onclick="document.getElementById('adminPhoto').click()" style="width: 120px; height: 120px; overflow: hidden; cursor: pointer; position: relative; border: 3px solid #fff; outline: 1px solid #dee2e6; background-color: #f8f9fa;">
+                                            <div class="photo-placeholder d-flex flex-column align-items-center justify-content-center h-100 text-secondary" id="photoPlaceholder">
+                                                <i class="fas fa-camera fa-2x mb-1"></i>
+                                                <small style="font-size: 10px;">Upload</small>
+                                            </div>
+                                            <img id="photoPreview" src="" class="w-100 h-100 object-fit-cover" style="display: none; object-fit: cover;" alt="Admin Photo">
+                                        </div>
+                                        <div class="position-absolute bottom-0 end-0">
+                                            <button type="button" class="btn btn-sm btn-primary rounded-circle shadow-sm" onclick="document.getElementById('adminPhoto').click()" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-plus fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="adminPhoto" name="adminPhoto" accept="image/*" class="d-none">
+                                    <div class="form-text small mt-2">Profile Photo (Optional)</div>
+                                </div>
+
                                 <!-- Full Name -->
                                 <div class="mb-3">
                                     <label for="fullName" class="form-label fw-semibold">
@@ -226,12 +246,33 @@
     
     <!-- Centralized Toast Notification Component -->
     <jsp:include page="/components/toast-dependencies.jsp"/>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             <% 
             String error = (String) request.getAttribute("error");
             boolean hasError = (error != null && !error.isEmpty());
             %>
+
+            // Photo preview functionality
+            const adminPhotoInput = document.getElementById('adminPhoto');
+            const photoPreview = document.getElementById('photoPreview');
+            const photoPlaceholder = document.getElementById('photoPlaceholder');
+
+            if (adminPhotoInput && photoPreview && photoPlaceholder) {
+                adminPhotoInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            photoPreview.src = e.target.result;
+                            photoPreview.style.display = 'block';
+                            photoPlaceholder.style.display = 'none';
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
             
             // Password toggle functionality
             const togglePassword = document.getElementById('togglePassword');

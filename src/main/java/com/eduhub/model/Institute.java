@@ -7,7 +7,7 @@ import java.sql.Timestamp;
  */
 public class Institute {
     
-    private int instituteId;
+    private String instituteId;
     private String instituteName;
     private String instituteType;
     private String instituteEmail;
@@ -21,7 +21,7 @@ public class Institute {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp approvedAt;
-    private Integer approvedBy;
+    private String approvedBy;
     private String rejectionReason;
     
     // Constructors
@@ -43,11 +43,11 @@ public class Institute {
     }
     
     // Getters and Setters
-    public int getInstituteId() {
+    public String getInstituteId() {
         return instituteId;
     }
     
-    public void setInstituteId(int instituteId) {
+    public void setInstituteId(String instituteId) {
         this.instituteId = instituteId;
     }
     
@@ -155,11 +155,11 @@ public class Institute {
         this.approvedAt = approvedAt;
     }
     
-    public Integer getApprovedBy() {
+    public String getApprovedBy() {
         return approvedBy;
     }
     
-    public void setApprovedBy(Integer approvedBy) {
+    public void setApprovedBy(String approvedBy) {
         this.approvedBy = approvedBy;
     }
     

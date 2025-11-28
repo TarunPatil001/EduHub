@@ -105,6 +105,7 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("userName", user.getFullName());
             session.setAttribute("userRole", user.getRole());
             session.setAttribute("instituteId", user.getInstituteId());
+            session.setAttribute("userPhotoUrl", user.getProfilePhotoUrl()); // Add photo URL to session
             session.setMaxInactiveInterval(7 * 24 * 60 * 60);  // 7 days
             
             logger.info("Login successful for user: {} (ID: {}, Role: {}, Institute: {})", 

@@ -48,9 +48,9 @@ public class AuthenticationFilter implements Filter {
         
         if (isLoggedIn) {
             // User is authenticated, allow access
-            Integer userId = (Integer) session.getAttribute("userId");
+            String userId = (String) session.getAttribute("userId");
             String userEmail = (String) session.getAttribute("userEmail");
-            Integer instituteId = (Integer) session.getAttribute("instituteId");
+            String instituteId = (String) session.getAttribute("instituteId");
             
             logger.debug("Authenticated user {} (ID: {}, Institute: {}) accessing: {}", 
                 userEmail, userId, instituteId, requestURI);

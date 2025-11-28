@@ -48,3 +48,6 @@ Thumbs.db
 
 # Database config (if containing passwords)
 src/main/resources/db.properties
+
+# User uploads
+src/main/webapp/uploads/

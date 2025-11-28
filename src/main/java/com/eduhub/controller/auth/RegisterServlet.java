@@ -14,16 +14,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.nio.file.Paths;
+
+import java.util.UUID;
 
 /**
  * Servlet for handling institute registration with admin
  */
 @WebServlet("/auth/register")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
+    maxFileSize = 1024 * 1024 * 10, // 10MB
+    maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
 public class RegisterServlet extends HttpServlet {
     
     private static final Logger logger = LoggerFactory.getLogger(RegisterServlet.class);
@@ -61,6 +71,29 @@ public class RegisterServlet extends HttpServlet {
         String confirmPassword = null;
         
         try {
+            // Generate User ID early for photo upload path
+            String userId = UUID.randomUUID().toString();
+            
+            // Handle file upload first
+            Part filePart = request.getPart("adminPhoto");
+            String photoUrl = null;
+            if (filePart != null && filePart.getSize() > 0) {
+                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // Sanitize
+                if (ValidationUtil.isNotEmpty(fileName)) {
+                    try {
+                        // Get the real path of the application context
+                        String appPath = request.getServletContext().getRealPath("");
+                        photoUrl = registrationService.saveUserProfilePhoto(filePart, userId, appPath);
+                        logger.info("Admin photo uploaded successfully. Path: {}", photoUrl);
+                    } catch (IOException e) {
+                        logger.error("Failed to save admin photo", e);
+                        // Decide if this is a critical error. For now, we'll just log it and continue.
+                        request.setAttribute("error", "Could not upload profile photo. Please try again.");
+                        // Forward back to the form
+                    }
+                }
+            }
+
             // Get and sanitize institute data from request
             instituteName = ValidationUtil.sanitizeInput(request.getParameter("instituteName"));
             
@@ -197,14 +230,18 @@ public class RegisterServlet extends HttpServlet {
             logger.info("Creating Admin user object and hashing password...");
             String hashedPassword = PasswordUtil.hashPassword(password);
             User admin = new User();
+            admin.setUserId(userId); // Set the pre-generated ID
             admin.setFullName(fullName);
             admin.setEmail(adminEmail);
-            admin.setPasswordHash(hashedPassword);
             admin.setPhone(adminPhone);
-            admin.setRole("admin");
+            admin.setPasswordHash(hashedPassword);
+            admin.setRole("ADMIN"); // Set default role for admin
+            if (photoUrl != null) {
+                admin.setProfilePhotoUrl(photoUrl);
+            }
             logger.info("Admin user object created successfully");
             
-            // Register institute with admin
+            // Perform registration
             logger.info("Calling registration service to insert data into database...");
             RegistrationService.RegistrationResult result = 
                 registrationService.registerInstituteWithAdmin(institute, admin);

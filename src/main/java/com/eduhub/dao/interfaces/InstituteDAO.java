@@ -15,7 +15,7 @@ public interface InstituteDAO {
      * @return Generated institute ID
      * @throws SQLException if database error occurs
      */
-    int createInstitute(Institute institute) throws SQLException;
+    String createInstitute(Institute institute) throws SQLException;
     
     /**
      * Get institute by ID
@@ -23,7 +23,7 @@ public interface InstituteDAO {
      * @return Institute object or null if not found
      * @throws SQLException if database error occurs
      */
-    Institute getInstituteById(int instituteId) throws SQLException;
+    Institute getInstituteById(String instituteId) throws SQLException;
     
     /**
      * Get institute by email
