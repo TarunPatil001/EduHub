@@ -51,3 +51,6 @@ src/main/resources/db.properties
 
 # User uploads
 src/main/webapp/uploads/
+
+# Properties files
+*.properties

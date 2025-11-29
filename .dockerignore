@@ -7,3 +7,5 @@ build/
 .gitignore
 README.md
 LICENSE
+# User uploads
+src/main/webapp/uploads/

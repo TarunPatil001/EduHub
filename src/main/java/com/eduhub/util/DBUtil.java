@@ -37,17 +37,16 @@ public class DBUtil {
              */
 			InputStream input = DBUtil.class.getClassLoader().getResourceAsStream("db.properties");
 			
-			if (input == null) {
-				 // If file not found → stop program with error
-				throw new RuntimeException("Unable to find db.properties");
+			if (input != null) {
+				// Load all values from the properties file into props object
+				props.load(input);
+			} else {
+				logger.warn("db.properties not found. Relying on environment variables.");
 			}
 			
-			// Load all values from the properties file into props object
-			props.load(input);
-			
 			// Determine environment: Check System Env first, then properties, default to local
-			String env = System.getenv("APP_ENVIRONMENT");
-			if (env == null) {
+			String env = System.getenv("app.environment");
+			if (env == null || env.trim().isEmpty()) {
 				env = props.getProperty("app.environment", "local");
 			}
 			
@@ -58,24 +57,14 @@ public class DBUtil {
 				prefix = "prod.";
 			}
 
-			// Read configuration with fallback: System Env -> Property with prefix -> Default
-			String dbHost = System.getenv("DB_HOST");
-			if (dbHost == null) dbHost = props.getProperty(prefix + "db.host", "localhost");
-
-			String dbPort = System.getenv("DB_PORT");
-			if (dbPort == null) dbPort = props.getProperty(prefix + "db.port", "3306");
-
-			String dbName = System.getenv("DB_NAME");
-			if (dbName == null) dbName = props.getProperty(prefix + "db.name", "eduhub");
-
-			String sslMode = System.getenv("DB_SSL_MODE");
-			if (sslMode == null) sslMode = props.getProperty(prefix + "db.sslMode", "");
-
-			username = System.getenv("DB_USER");
-			if (username == null) username = props.getProperty(prefix + "db.username", "root");
-
-			password = System.getenv("DB_PASSWORD");
-			if (password == null) password = props.getProperty(prefix + "db.password", "root");
+			// Helper function to get value with priority: Env -> Property -> Default
+			// Also handles empty strings in properties by treating them as null
+			String dbHost = getValue(props, prefix + "db.host", "DB_HOST", "localhost");
+			String dbPort = getValue(props, prefix + "db.port", "DB_PORT", "3306");
+			String dbName = getValue(props, prefix + "db.name", "DB_NAME", "eduhub");
+			String sslMode = getValue(props, prefix + "db.sslMode", "DB_SSL_MODE", "");
+			username = getValue(props, prefix + "db.username", "DB_USER", "root");
+			password = getValue(props, prefix + "db.password", "DB_PASSWORD", "root");
 
 			driver = props.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
 		 
@@ -109,6 +98,36 @@ public class DBUtil {
 			 logger.error("Failed to load database configuration", e);
 			 throw new RuntimeException("Database initialization failed", e);
 		}
+	}
+	
+	/**
+	 * Helper method to get configuration value with priority:
+	 * 1. System Environment Variable (e.g. DB_HOST)
+	 * 2. System Environment Variable with prefix (e.g. prod.db.host)
+	 * 3. Property from file (e.g. prod.db.host)
+	 * 4. Default value
+	 */
+	private static String getValue(Properties props, String propKey, String envKey, String defaultValue) {
+		// 1. Check specific environment variable (e.g. DB_HOST)
+		String value = System.getenv(envKey);
+		if (value != null && !value.trim().isEmpty()) {
+			return value;
+		}
+		
+		// 2. Check prefixed environment variable (e.g. prod.db.host)
+		value = System.getenv(propKey);
+		if (value != null && !value.trim().isEmpty()) {
+			return value;
+		}
+		
+		// 3. Check property from file
+		value = props.getProperty(propKey);
+		if (value != null && !value.trim().isEmpty()) {
+			return value;
+		}
+		
+		// 4. Return default
+		return defaultValue;
 	}
 	
 	/**

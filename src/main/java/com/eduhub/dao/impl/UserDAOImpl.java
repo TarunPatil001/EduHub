@@ -3,6 +3,7 @@ package com.eduhub.dao.impl;
 import com.eduhub.dao.interfaces.UserDAO;
 import com.eduhub.model.User;
 import com.eduhub.util.DBUtil;
+import com.eduhub.util.PasswordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

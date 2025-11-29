@@ -26,6 +26,12 @@
                 </fileset>
             </classpath>
         </javac>
+        <!-- Copy resources (like db.properties) to classes directory -->
+        <copy todir="${classes.dir}">
+            <fileset dir="src/main/resources">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
     </target>
     
     <!-- Create WAR file -->
