@@ -116,14 +116,19 @@
         </div>
         
         <div class="header-profile dropdown">
-            <button class="btn-profile" data-bs-toggle="dropdown">
-                <div class="avatar-container">
+            <button class="btn-profile" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="avatar-container" 
+                     data-bs-toggle="tooltip" 
+                     data-bs-placement="bottom" 
+                     data-bs-html="true" 
+                     data-bs-custom-class="profile-tooltip"
+                     data-bs-offset="-40,12"
+                     title="<div class='text-start'><div class='profile-tooltip-role'><%= displayRole %> Account</div><div class='profile-tooltip-name'><%= headerUserName %></div><div class='profile-tooltip-email'><%= headerUserEmail %></div></div>">
                     <% 
                         if (headerUserPhotoUrl != null && !headerUserPhotoUrl.isEmpty()) { 
-                            headerUserPhotoUrl = headerUserPhotoUrl.replace("\\", "/");
                             String imgSrc = headerUserPhotoUrl;
-                            if (!headerUserPhotoUrl.startsWith("http")) {
-                                imgSrc = request.getContextPath() + "/" + headerUserPhotoUrl;
+                            if (imgSrc.startsWith("/")) {
+                                imgSrc = request.getContextPath() + imgSrc;
                             }
                     %>
                         <img src="<%= imgSrc %>?t=<%= System.currentTimeMillis() %>" 
@@ -134,10 +139,6 @@
                         <img src="https://ui-avatars.com/api/?name=<%= headerUserName.replace(" ", "+") %>&background=0D6EFD&color=fff" alt="Profile" id="headerProfileImg">
                     <% } %>
                 </div>
-                <div class="profile-info d-none d-md-block">
-                    <span class="profile-name"><%= headerUserName %></span>
-                </div>
-                <i class="bi bi-chevron-down ms-2"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-end profile-dropdown-menu">
                 <div class="dropdown-header profile-header">
@@ -154,7 +155,6 @@
                     <i class="bi bi-box-arrow-right"></i> Logout
                 </a>
             </div>
-        </div>
     </div>
 </header>
 
