@@ -121,8 +121,12 @@
                     <% 
                         if (headerUserPhotoUrl != null && !headerUserPhotoUrl.isEmpty()) { 
                             headerUserPhotoUrl = headerUserPhotoUrl.replace("\\", "/");
+                            String imgSrc = headerUserPhotoUrl;
+                            if (!headerUserPhotoUrl.startsWith("http")) {
+                                imgSrc = request.getContextPath() + "/" + headerUserPhotoUrl;
+                            }
                     %>
-                        <img src="${pageContext.request.contextPath}/<%= headerUserPhotoUrl %>?t=<%= System.currentTimeMillis() %>" 
+                        <img src="<%= imgSrc %>?t=<%= System.currentTimeMillis() %>" 
                              alt="Profile" 
                              id="headerProfileImg"
                              onerror="this.src='https://ui-avatars.com/api/?name=<%= headerUserName.replace(" ", "+") %>&background=0D6EFD&color=fff';">

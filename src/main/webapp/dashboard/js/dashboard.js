@@ -52,12 +52,15 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function handleURLParameters() {
         const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
         
         // Success messages
         if (urlParams.has('success')) {
             const successType = urlParams.get('success');
             
-            if (successType === 'login') {
+            if (message) {
+                toast.success(message);
+            } else if (successType === 'login') {
                 toast.success('Welcome back!');
             } else if (successType === 'logout') {
                 toast.success('Logged out successfully');
@@ -65,10 +68,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 toast.success('Profile updated!');
             } else if (successType === 'settings_saved') {
                 toast.success('Settings saved!');
+            } else if (successType === 'course_created') {
+                toast.success('Course created successfully!');
             }
             
             // Clean URL
             urlParams.delete('success');
+            urlParams.delete('message');
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash;
             window.history.replaceState({}, '', newUrl);
         }
@@ -77,7 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (urlParams.has('error')) {
             const errorType = urlParams.get('error');
             
-            if (errorType === 'unauthorized') {
+            if (message) {
+                toast.error(message);
+            } else if (errorType === 'unauthorized') {
                 toast.error('Login required');
             } else if (errorType === 'session_expired') {
                 toast.error('Session expired. Login again.');
@@ -89,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Clean URL
             urlParams.delete('error');
+            urlParams.delete('message');
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash;
             window.history.replaceState({}, '', newUrl);
         }

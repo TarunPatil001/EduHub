@@ -1,7 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="com.eduhub.util.DropdownData" %>
+<%@ page import="com.eduhub.model.Course" %>
+<%@ page import="com.eduhub.service.interfaces.CourseService" %>
+<%@ page import="com.eduhub.service.impl.CourseServiceImpl" %>
 <%
+    String courseId = request.getParameter("id");
+    String instituteId = (String) session.getAttribute("instituteId");
+    Course course = null;
+    
+    if (courseId != null && !courseId.trim().isEmpty() && instituteId != null) {
+        CourseService courseService = new CourseServiceImpl();
+        // Use the secure method that checks institute ownership
+        course = courseService.getCourseById(courseId, instituteId);
+    }
+
+    // Redirect if course not found
+    if (course == null) {
+        response.sendRedirect(request.getContextPath() + "/dashboard/pages/courses/all-courses.jsp?error=notfound");
+        return;
+    }
+
     // Helper to build options string for input-field component
     StringBuilder categoryOptions = new StringBuilder();
     for(String item : DropdownData.COURSE_CATEGORIES) {
@@ -26,34 +45,41 @@
         statusOptions.append(item).append("|").append(item).append(",");
     }
     if(statusOptions.length() > 0) statusOptions.setLength(statusOptions.length() - 1);
+    
+    // Parse duration to separate value and unit
+    String durationValue = String.valueOf(course.getDurationValue());
+    String durationUnit = course.getDurationUnit();
 %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <jsp:include page="/dashboard/components/head.jsp">
-        <jsp:param name="title" value="Create Course - Dashboard - EduHub"/>
-        <jsp:param name="description" value="Create new course in EduHub"/>
+        <jsp:param name="title" value="Edit Course - Dashboard - EduHub"/>
+        <jsp:param name="description" value="Edit course details in EduHub"/>
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/courses/css/create-course.css">
+    <script>
+        var contextPath = '${pageContext.request.contextPath}';
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
         <jsp:include page="/dashboard/components/sidebar.jsp">
-            <jsp:param name="activePage" value="create-course"/>
+            <jsp:param name="activePage" value="all-courses"/>
         </jsp:include>
         
         <div class="dashboard-main">
             <jsp:include page="/dashboard/components/header.jsp">
-                <jsp:param name="pageTitle" value="Create Course"/>
+                <jsp:param name="pageTitle" value="Edit Course"/>
             </jsp:include>
             
             <div class="dashboard-content">
                 <div class="page-header-wrapper mb-4">
                     <!-- Page Heading -->
                     <div class="page-title-container">
-                        <h2>Create New Course</h2>
-                        <p class="text-muted">Fill in the course details below</p>
+                        <h2>Edit Course</h2>
+                        <p class="text-muted">Update the course details below</p>
                     </div>
                     
                     <!-- Back Button -->
@@ -67,7 +93,8 @@
                 
                 <div class="create-course-layout">
                     <div class="create-course-form-column">
-                        <form id="createCourseForm" action="${pageContext.request.contextPath}/api/courses/create" method="POST">
+                        <form id="editCourseForm" action="${pageContext.request.contextPath}/api/courses/update" method="POST">
+                            <input type="hidden" name="id" value="<%= course.getCourseId() %>">
                             
                             <!-- Basic Information -->
                             <div class="card-custom mb-4">
@@ -83,6 +110,7 @@
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                         <jsp:param name="icon" value="upc-scan"/>
+                                        <jsp:param name="value" value="<%= course.getCourseCode() %>"/>
                                     </jsp:include>
                                     
                                     <jsp:include page="/dashboard/components/input-field.jsp">
@@ -94,6 +122,7 @@
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                         <jsp:param name="icon" value="book"/>
+                                        <jsp:param name="value" value="<%= course.getCourseName() %>"/>
                                     </jsp:include>
                                 </div>
                                 
@@ -108,6 +137,7 @@
                                         <jsp:param name="options" value="<%=categoryOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                         <jsp:param name="icon" value="tags"/>
+                                        <jsp:param name="value" value="<%= course.getCategory() %>"/>
                                     </jsp:include>
                                     
                                     <jsp:include page="/dashboard/components/input-field.jsp">
@@ -120,6 +150,7 @@
                                         <jsp:param name="options" value="<%=levelOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                         <jsp:param name="icon" value="bar-chart"/>
+                                        <jsp:param name="value" value="<%= course.getLevel() %>"/>
                                     </jsp:include>
                                 </div>
                                 
@@ -133,6 +164,7 @@
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="rows" value="4"/>
                                         <jsp:param name="icon" value="file-text"/>
+                                        <jsp:param name="value" value="<%= course.getDescription() %>"/>
                                     </jsp:include>
                                 </div>
                             </div>
@@ -152,6 +184,7 @@
                                         <jsp:param name="min" value="1"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                         <jsp:param name="icon" value="clock"/>
+                                        <jsp:param name="value" value="<%= durationValue %>"/>
                                     </jsp:include>
 
                                     <jsp:include page="/dashboard/components/input-field.jsp">
@@ -164,6 +197,7 @@
                                         <jsp:param name="options" value="<%=durationUnitOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                         <jsp:param name="icon" value="hourglass-split"/>
+                                        <jsp:param name="value" value="<%= durationUnit %>"/>
                                     </jsp:include>
 
                                     <jsp:include page="/dashboard/components/input-field.jsp">
@@ -176,6 +210,7 @@
                                         <jsp:param name="step" value="100"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                         <jsp:param name="icon" value="currency-rupee"/>
+                                        <jsp:param name="value" value="<%= course.getFee() %>"/>
                                     </jsp:include>
                                 </div>
                             </div>
@@ -196,6 +231,7 @@
                                         <jsp:param name="class" value="col-md-6"/>
                                         <jsp:param name="helperText" value="Active courses can have batches created for them"/>
                                         <jsp:param name="icon" value="toggle-on"/>
+                                        <jsp:param name="value" value="<%= course.getStatus() %>"/>
                                     </jsp:include>
 
                                     <jsp:include page="/dashboard/components/input-field.jsp">
@@ -206,11 +242,8 @@
                                         <jsp:param name="options" value="yes|Yes,no|No"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                         <jsp:param name="icon" value="award"/>
+                                        <jsp:param name="value" value='<%= course.isCertificateOffered() ? "yes" : "no" %>'/>
                                     </jsp:include>
-                                </div>
-                                
-                                <div class="alert alert-info mb-0">
-                                    <i class="bi bi-info-circle"></i> <strong>Note:</strong> After creating the course, you can create batches with specific schedules, instructors, and timing in the "Create Batch" section.
                                 </div>
                             </div>
                             
@@ -219,11 +252,8 @@
                                 <a href="${pageContext.request.contextPath}/dashboard/pages/courses/all-courses.jsp" class="btn btn-outline-secondary px-4" id="cancelBtn">
                                     <i class="bi bi-x-circle"></i> Cancel
                                 </a>
-                                <button type="button" class="btn btn-outline-primary px-4" id="resetBtn">
-                                    <i class="bi bi-arrow-clockwise"></i> Reset
-                                </button>
                                 <button type="submit" class="btn btn-primary px-5">
-                                    <i class="bi bi-check-circle-fill"></i> Create Course
+                                    <i class="bi bi-check-circle-fill"></i> Update Course
                                 </button>
                             </div>
                         </form>
@@ -233,25 +263,12 @@
                     <div class="create-course-sidebar-column">
                         <div class="card-custom mb-3">
                             <h6 class="mb-3">
-                                <i class="bi bi-info-circle me-2"></i>Course Guidelines
+                                <i class="bi bi-info-circle me-2"></i>Editing Guidelines
                             </h6>
                             <ul class="small text-muted mb-0 ps-3">
-                                <li class="mb-2">Fill all required fields marked with <span class="required-star">*</span></li>
-                                <li class="mb-2">Course Code must be unique</li>
-                                <li class="mb-2">Provide a clear and concise description</li>
-                                <li class="mb-2">Set appropriate duration and fee</li>
-                                <li class="mb-2">Ensure status is 'Active' for immediate use</li>
-                            </ul>
-                            
-                            <hr class="my-3">
-                            
-                            <h6 class="mb-3">
-                                <i class="bi bi-lightbulb me-2"></i>Tips
-                            </h6>
-                            <ul class="small text-muted mb-0 ps-3">
-                                <li class="mb-2">Use standard naming conventions</li>
-                                <li class="mb-2">Categorize courses correctly for better filtering</li>
-                                <li class="mb-2">Double-check fee structure</li>
+                                <li class="mb-2">Update only necessary fields</li>
+                                <li class="mb-2">Course Code should remain unique</li>
+                                <li class="mb-2">Changing status may affect active batches</li>
                             </ul>
                             
                             <hr class="my-3">
@@ -278,6 +295,6 @@
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
-    <script src="${pageContext.request.contextPath}/dashboard/pages/courses/js/create-course.js"></script>
+    <script src="${pageContext.request.contextPath}/dashboard/pages/courses/js/edit-course.js"></script>
 </body>
 </html>

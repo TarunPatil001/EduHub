@@ -99,6 +99,27 @@
     </div>
 </div>
 
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-dark" id="detailsModalLabel">
+                    <i class="bi bi-info-circle-fill text-primary"></i>
+                    <span id="detailsModalTitle">Details</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                <!-- Content will be injected here -->
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Reusable Confirmation Modal Function
     function showConfirmationModal(options) {
@@ -279,6 +300,38 @@
         
         // Add onClose event
         document.getElementById('errorModal').addEventListener('hidden.bs.modal', function() {
+            settings.onClose();
+        }, { once: true });
+    }
+
+    // Details Modal Function
+    function showDetailsModal(options) {
+        const defaults = {
+            title: 'Details',
+            content: '',
+            size: 'modal-lg', // modal-sm, modal-lg, modal-xl
+            onClose: function() {}
+        };
+        
+        const settings = Object.assign({}, defaults, options);
+        
+        document.getElementById('detailsModalTitle').textContent = settings.title;
+        document.getElementById('detailsModalBody').innerHTML = settings.content;
+        
+        const modalEl = document.getElementById('detailsModal');
+        const dialogEl = modalEl.querySelector('.modal-dialog');
+        
+        // Reset size classes
+        dialogEl.classList.remove('modal-sm', 'modal-lg', 'modal-xl');
+        if (settings.size) {
+            dialogEl.classList.add(settings.size);
+        }
+        
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+        
+        // Add onClose event
+        modalEl.addEventListener('hidden.bs.modal', function() {
             settings.onClose();
         }, { once: true });
     }

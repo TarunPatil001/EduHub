@@ -590,12 +590,20 @@
                                                                     photoUrl = photoUrl.replace("\\", "/");
                                                                 }
                                                                 boolean hasPhoto = photoUrl != null && !photoUrl.isEmpty();
+                                                                String displayUrl = "";
+                                                                if (hasPhoto) {
+                                                                    if (photoUrl.startsWith("http")) {
+                                                                        displayUrl = photoUrl;
+                                                                    } else {
+                                                                        displayUrl = request.getContextPath() + "/" + photoUrl;
+                                                                    }
+                                                                }
                                                             %>
                                                             <div class="photo-placeholder d-flex flex-column align-items-center justify-content-center h-100 bg-light text-secondary" id="photoPlaceholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; <%= hasPhoto ? "display: none;" : "" %>">
                                                                 <span class="display-4 fw-bold"><%= userInitials %></span>
                                                             </div>
                                                             <img id="photoPreview" 
-                                                                 src="${pageContext.request.contextPath}/<%= hasPhoto ? photoUrl : "" %>?t=<%= System.currentTimeMillis() %>" 
+                                                                 src="<%= displayUrl %>?t=<%= System.currentTimeMillis() %>" 
                                                                  class="w-100 h-100 object-fit-cover" 
                                                                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; <%= hasPhoto ? "" : "display: none;" %>" 
                                                                  alt="Admin Photo"

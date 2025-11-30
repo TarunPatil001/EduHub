@@ -162,8 +162,18 @@ public class DBUtil {
 					createUsersTable(conn);
 					logger.info("Users table created successfully");
 				}
+
+				// Check if courses table exists
+				boolean coursesExists = tableExists(conn, "courses");
+				logger.info("Courses table exists: {}", coursesExists);
+				
+				if (!coursesExists) {
+					logger.warn("Courses table not found. Creating...");
+					createCoursesTable(conn);
+					logger.info("Courses table created successfully");
+				}
 			} else {
-				logger.error("Skipping users table creation because institutes table does not exist.");
+				logger.error("Skipping users and courses table creation because institutes table does not exist.");
 			}
 			
 			logger.info("Database tables initialized successfully");
@@ -272,6 +282,38 @@ public class DBUtil {
 		try (var stmt = conn.createStatement()) {
 			stmt.executeUpdate(sql);
 			logger.info("Users table created successfully");
+		}
+	}
+
+	/**
+	 * Create courses table
+	 * Optimized for MySQL 8.0+ / TiDB Cloud
+	 */
+	private static void createCoursesTable(Connection conn) throws SQLException {
+		String sql = "CREATE TABLE courses (" +
+				"course_id VARCHAR(36) PRIMARY KEY, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"course_code VARCHAR(50) NOT NULL, " +
+				"course_name VARCHAR(100) NOT NULL, " +
+				"category VARCHAR(50), " +
+				"level VARCHAR(20), " +
+				"description TEXT, " +
+				"duration_value INT, " +
+				"duration_unit VARCHAR(20), " +
+				"fee DECIMAL(10, 2), " +
+				"status VARCHAR(20) DEFAULT 'Active', " +
+				"certificate_offered BOOLEAN DEFAULT FALSE, " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"UNIQUE KEY unique_course_code (institute_id, course_code), " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_status (status)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Courses table created successfully");
 		}
 	}
 	

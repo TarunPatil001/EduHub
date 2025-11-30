@@ -11,6 +11,9 @@ import com.eduhub.model.Institute;
 import com.eduhub.model.User;
 import com.eduhub.service.interfaces.RegistrationService;
 import com.eduhub.util.DBUtil;
+import com.eduhub.util.CloudinaryUtil;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -47,33 +51,44 @@ public class RegistrationServiceImpl implements RegistrationService {
             return;
         }
 
-        // Normalize path separators
-        String normalizedPath = photoUrl.replace("/", File.separator).replace("\\", File.separator);
-
-        // 1. Delete from Source Directory
-        String baseSourceDir = "C:/Users/tarun/Desktop/FC-PP-138/Backend/Project/EduHub/src/main/webapp";
-        File sourceFile = new File(baseSourceDir, normalizedPath);
-        
-        if (sourceFile.exists()) {
-            if (sourceFile.delete()) {
-                logger.info("Deleted old photo from source: {}", sourceFile.getAbsolutePath());
-            } else {
-                logger.warn("Failed to delete old photo from source: {}", sourceFile.getAbsolutePath());
-            }
-        } else {
-             logger.warn("Old photo not found in source: {}", sourceFile.getAbsolutePath());
-        }
-
-        // 2. Delete from Runtime Directory
-        if (appPath != null && !appPath.isEmpty()) {
-            File runtimeFile = new File(appPath, normalizedPath);
-            if (runtimeFile.exists()) {
-                if (runtimeFile.delete()) {
-                    logger.info("Deleted old photo from runtime: {}", runtimeFile.getAbsolutePath());
+        try {
+            // Extract public_id from the URL
+            // Example URL: https://res.cloudinary.com/demo/image/upload/v1570979139/eduhub/users/123/profile/abc.jpg
+            // We need: eduhub/users/123/profile/abc
+            
+            String publicId = null;
+            if (photoUrl.contains("/upload/")) {
+                int uploadIndex = photoUrl.indexOf("/upload/");
+                String pathAfterUpload = photoUrl.substring(uploadIndex + 8); // Skip "/upload/"
+                
+                // Skip version if present (e.g., v1570979139/)
+                if (pathAfterUpload.startsWith("v")) {
+                    int slashIndex = pathAfterUpload.indexOf("/");
+                    if (slashIndex > 0) {
+                        pathAfterUpload = pathAfterUpload.substring(slashIndex + 1);
+                    }
+                }
+                
+                // Remove extension
+                int dotIndex = pathAfterUpload.lastIndexOf(".");
+                if (dotIndex > 0) {
+                    publicId = pathAfterUpload.substring(0, dotIndex);
                 } else {
-                    logger.warn("Failed to delete old photo from runtime: {}", runtimeFile.getAbsolutePath());
+                    publicId = pathAfterUpload;
                 }
             }
+
+            if (publicId != null) {
+                Cloudinary cloudinary = CloudinaryUtil.getCloudinary();
+                if (cloudinary != null) {
+                    cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+                    logger.info("Deleted photo from Cloudinary: {}", publicId);
+                } else {
+                    logger.warn("Cloudinary not initialized, skipping delete for: {}", photoUrl);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to delete photo from Cloudinary: {}", photoUrl, e);
         }
     }
 
@@ -191,61 +206,51 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public String saveUserProfilePhoto(Part filePart, String userId, String appPath) throws IOException {
+        // Security Check: Validate file type
+        String contentType = filePart.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            logger.warn("Invalid file type uploaded: {}", contentType);
+            throw new IOException("Invalid file type. Only images are allowed.");
+        }
+
+        Cloudinary cloudinary = CloudinaryUtil.getCloudinary();
+        if (cloudinary == null) {
+            logger.error("Cloudinary not configured. Cannot upload photo.");
+            throw new IOException("Cloudinary configuration missing");
+        }
+
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // Sanitize
-        String fileExtension = "";
-        int i = fileName.lastIndexOf('.');
-        if (i > 0) {
-            fileExtension = fileName.substring(i);
-        }
-        
-        // Generate a unique file name to prevent conflicts
-        String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
-        
-        // Base upload directory
-        String baseUploadDir = "C:/Users/tarun/Desktop/FC-PP-138/Backend/Project/EduHub/src/main/webapp/uploads";
-        
-        // 1. Save to Source Directory (Persistence)
-        // Structure: uploads/users/{userId}/profile/
-        String relativePath = "users" + File.separator + userId + File.separator + "profile";
-        String sourceUploadDir = baseUploadDir + File.separator + relativePath;
-        
-        File sourceDirFile = new File(sourceUploadDir);
-        if (!sourceDirFile.exists()) {
-            sourceDirFile.mkdirs();
-        }
-        
-        File sourceFile = new File(sourceUploadDir, uniqueFileName);
         
         // Create a temp file to hold the upload content
-        java.nio.file.Path tempFile = Files.createTempFile("upload_", uniqueFileName);
+        java.nio.file.Path tempFile = Files.createTempFile("upload_", "_" + fileName);
         try (InputStream input = filePart.getInputStream()) {
             Files.copy(input, tempFile, StandardCopyOption.REPLACE_EXISTING);
         }
         
-        // Copy from temp file to source directory
-        Files.copy(tempFile, sourceFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        
-        // 2. Save to Runtime Directory (Immediate Availability)
-        if (appPath != null && !appPath.isEmpty()) {
-            String runtimeUploadDir = appPath + File.separator + "uploads" + File.separator + relativePath;
-            File runtimeDirFile = new File(runtimeUploadDir);
-            if (!runtimeDirFile.exists()) {
-                runtimeDirFile.mkdirs();
-            }
-            
-            File runtimeFile = new File(runtimeUploadDir, uniqueFileName);
-            Files.copy(tempFile, runtimeFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            logger.info("Saved photo to runtime path: {}", runtimeFile.getAbsolutePath());
-        }
-        
-        // Clean up temp file
         try {
-            Files.delete(tempFile);
-        } catch (IOException e) {
-            logger.warn("Failed to delete temp file: {}", tempFile);
+            // Upload to Cloudinary
+            // Folder structure: eduhub/users/{userId}/profile
+            Map uploadResult = cloudinary.uploader().upload(tempFile.toFile(), ObjectUtils.asMap(
+                "folder", "eduhub/users/" + userId + "/profile",
+                "public_id", UUID.randomUUID().toString(),
+                "overwrite", true,
+                "resource_type", "auto"
+            ));
+            
+            String secureUrl = (String) uploadResult.get("secure_url");
+            logger.info("Photo uploaded to Cloudinary: {}", secureUrl);
+            return secureUrl;
+            
+        } catch (Exception e) {
+            logger.error("Failed to upload photo to Cloudinary", e);
+            throw new IOException("Cloudinary upload failed", e);
+        } finally {
+            // Clean up temp file
+            try {
+                Files.delete(tempFile);
+            } catch (IOException e) {
+                logger.warn("Failed to delete temp file: {}", tempFile);
+            }
         }
-        
-        // Return a web-accessible path (using forward slashes for URL)
-        return "uploads/users/" + userId + "/profile/" + uniqueFileName;
     }
 }

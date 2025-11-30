@@ -2,27 +2,12 @@
 (function() {
     'use strict';
 
-    // Demo Data - Replace with actual API calls
-    const demoData = [
-        { id: 1, code: 'CS-101', name: 'Computer Science', category: 'technology', level: 'beginner', duration: '6 months', maxStudents: 40, fee: 5000, modeOfConduct: 'online', startDate: '2025-12-01', endDate: '2026-06-01', teacher: 'Dr. Rajesh Kumar', status: 'active' },
-        { id: 2, code: 'MATH-201', name: 'Advanced Mathematics', category: 'mathematics', level: 'advanced', duration: '5 months', maxStudents: 30, fee: 6000, modeOfConduct: 'offline', startDate: '2025-11-15', endDate: '2026-04-15', teacher: 'Prof. Anjali Singh', status: 'active' },
-        { id: 3, code: 'PHY-101', name: 'Physics Fundamentals', category: 'science', level: 'beginner', duration: '6 months', maxStudents: 50, fee: 5500, modeOfConduct: 'hybrid', startDate: '2025-12-10', endDate: '2026-06-10', teacher: 'Dr. Priya Sharma', status: 'active' },
-        { id: 4, code: 'ENG-101', name: 'English Literature', category: 'arts', level: 'intermediate', duration: '4 months', maxStudents: 40, fee: 4000, modeOfConduct: 'online', startDate: '2025-11-20', endDate: '2026-03-20', teacher: 'Ms. Kavita Desai', status: 'active' },
-        { id: 5, code: 'CHEM-201', name: 'Organic Chemistry', category: 'science', level: 'advanced', duration: '6 months', maxStudents: 30, fee: 7000, modeOfConduct: 'offline', startDate: '2025-12-05', endDate: '2026-06-05', teacher: 'Dr. Suresh Reddy', status: 'active' },
-        { id: 6, code: 'ACC-101', name: 'Accounting Principles', category: 'commerce', level: 'beginner', duration: '5 months', maxStudents: 40, fee: 4500, modeOfConduct: 'hybrid', startDate: '2025-11-25', endDate: '2026-04-25', teacher: 'CA. Neha Agarwal', status: 'active' },
-        { id: 7, code: 'HIN-101', name: 'Hindi Language', category: 'language', level: 'beginner', duration: '4 months', maxStudents: 30, fee: 3000, modeOfConduct: 'online', startDate: '2025-12-01', endDate: '2026-04-01', teacher: 'Mrs. Sunita Verma', status: 'active' },
-        { id: 8, code: 'BIO-201', name: 'Biology Advanced', category: 'science', level: 'advanced', duration: '6 months', maxStudents: 40, fee: 6500, modeOfConduct: 'offline', startDate: '2025-12-15', endDate: '2026-06-15', teacher: 'Dr. Sonal Kapoor', status: 'active' },
-        { id: 9, code: 'ECO-101', name: 'Economics', category: 'commerce', level: 'intermediate', duration: '5 months', maxStudents: 50, fee: 5000, modeOfConduct: 'hybrid', startDate: '2025-11-18', endDate: '2026-04-18', teacher: 'Dr. Amit Verma', status: 'active' },
-        { id: 10, code: 'ART-101', name: 'Fine Arts', category: 'arts', level: 'beginner', duration: '3 months', maxStudents: 20, fee: 3500, modeOfConduct: 'offline', startDate: '2025-11-10', endDate: '2026-02-10', teacher: 'Ms. Pooja Iyer', status: 'inactive' },
-        { id: 11, code: 'HIST-201', name: 'World History', category: 'arts', level: 'intermediate', duration: '5 months', maxStudents: 30, fee: 4000, modeOfConduct: 'online', startDate: '2025-12-01', endDate: '2026-05-01', teacher: 'Mr. Ramesh Kumar', status: 'active' },
-        { id: 12, code: 'GEO-101', name: 'Geography', category: 'science', level: 'beginner', duration: '4 months', maxStudents: 40, fee: 4500, modeOfConduct: 'hybrid', startDate: '2025-11-22', endDate: '2026-03-22', teacher: 'Dr. Meera Nair', status: 'active' }
-    ];
-
     // State
-    let allCourses = [...demoData];
+    let allCourses = [];
     let filteredCourses = [];
     let currentPage = 1;
     let itemsPerPage = 10;
+    let totalItems = 0;
 
     // DOM Elements
     const searchInput = document.getElementById('searchInput');
@@ -46,12 +31,111 @@
 
     // Initialize
     function init() {
-        filteredCourses = [...allCourses];
         bindEvents();
-        updateStats();
-        renderTable();
-        renderPagination();
+        fetchCourses();
+        fetchStats(); // Fetch stats separately
         handleURLParameters(); // Handle URL parameters for notifications
+    }
+
+    // Fetch Stats from API
+    function fetchStats() {
+        const basePath = (typeof contextPath !== 'undefined') ? contextPath : '';
+        // Add timestamp to prevent caching
+        const apiUrl = `${basePath}/api/courses/stats?t=${new Date().getTime()}`;
+        
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch stats');
+                return response.json();
+            })
+            .then(data => {
+                if (totalCoursesEl) totalCoursesEl.textContent = data.totalCourses || 0;
+                if (activeCoursesEl) activeCoursesEl.textContent = data.activeCourses || 0;
+                if (totalStudentsEl) totalStudentsEl.textContent = data.totalStudents || 0;
+                if (totalTeachersEl) totalTeachersEl.textContent = data.totalTeachers || 0;
+            })
+            .catch(error => {
+                console.error('Error fetching stats:', error);
+            });
+    }
+
+    // Fetch Courses from API
+    function fetchCourses(page = 1, limit = 10) {
+        // Use contextPath defined in JSP if available, otherwise fallback to relative path logic
+        const basePath = (typeof contextPath !== 'undefined') ? contextPath : '';
+        
+        // Get filter values
+        const searchTerm = searchInput ? searchInput.value.trim() : '';
+        const category = categoryFilter ? categoryFilter.value : 'all';
+        const level = levelFilter ? levelFilter.value : 'all';
+        const status = statusFilter ? statusFilter.value : 'all';
+        
+        const queryParams = new URLSearchParams({
+            page: page,
+            limit: limit,
+            search: searchTerm,
+            category: category,
+            level: level,
+            status: status,
+            t: new Date().getTime() // Prevent caching
+        });
+        
+        const apiUrl = `${basePath}/api/courses/list?${queryParams.toString()}`;
+
+        console.log('Fetching courses from:', apiUrl);
+
+        fetch(apiUrl)
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (response.status === 401) {
+                    // Session expired or not logged in
+                    window.location.href = `${basePath}/public/login.jsp?error=session_expired`;
+                    throw new Error('Unauthorized');
+                }
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Courses data received:', data);
+                
+                // Handle new response structure
+                if (data.courses && data.pagination) {
+                    allCourses = data.courses;
+                    currentPage = data.pagination.currentPage;
+                    itemsPerPage = data.pagination.itemsPerPage;
+                    totalItems = data.pagination.totalItems;
+                } else {
+                    // Fallback for backward compatibility or if structure is different
+                    allCourses = Array.isArray(data) ? data : [];
+                    totalItems = allCourses.length;
+                }
+                
+                filteredCourses = [...allCourses];
+                // updateStats(); // Removed client-side stats update
+                renderTable();
+                renderPagination();
+            })
+            .catch(error => {
+                console.error('Error fetching courses:', error);
+                
+                // Don't show toast if we're redirecting
+                if (error.message === 'Unauthorized') return;
+
+                if (typeof toast !== 'undefined') {
+                    toast.error(`Failed to load courses: ${error.message}`);
+                }
+                
+                // Show empty state if fetch fails
+                const emptyState = document.getElementById('emptyState');
+                const tableContainer = document.getElementById('coursesTableContainer');
+                const paginationFooter = document.getElementById('paginationFooter');
+                
+                if (emptyState) emptyState.style.display = 'block';
+                if (tableContainer) tableContainer.style.display = 'none';
+                if (paginationFooter) paginationFooter.style.display = 'none';
+            });
     }
     
     // Handle URL Parameters for Toast Notifications
@@ -76,6 +160,9 @@
             urlParams.delete('success');
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
             window.history.replaceState({}, '', newUrl);
+
+            // Update stats immediately as data has changed
+            fetchStats();
         }
         
         // Error messages
@@ -113,35 +200,16 @@
 
     // Handle Search
     function handleSearch() {
-        applyFilters();
+        // Debounce search to avoid too many requests
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => {
+            applyFilters();
+        }, 300);
     }
 
     // Apply Filters
     function applyFilters() {
-        if (!searchInput || !categoryFilter || !levelFilter || !statusFilter) {
-            console.error('Filter elements not found');
-            return;
-        }
-
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const category = categoryFilter.value;
-        const level = levelFilter.value;
-        const status = statusFilter.value;
-
-        filteredCourses = allCourses.filter(course => {
-            const matchesSearch = searchTerm === '' ||
-                (course.name && course.name.toLowerCase().includes(searchTerm)) ||
-                (course.code && course.code.toLowerCase().includes(searchTerm)) ||
-                (course.teacher && course.teacher.toLowerCase().includes(searchTerm));
-
-            const matchesCategory = category === 'all' || course.category === category;
-            const matchesLevel = level === 'all' || course.level === level;
-            const matchesStatus = status === 'all' || course.status === status;
-
-            return matchesSearch && matchesCategory && matchesLevel && matchesStatus;
-        });
-
-        // Reset to first page
+        // Reset to first page when filters change
         currentPage = 1;
         
         // Clear selections when filters change
@@ -150,8 +218,7 @@
             selectAllCheckbox.indeterminate = false;
         }
         
-        renderTable();
-        renderPagination();
+        fetchCourses(currentPage, itemsPerPage);
     }
 
     // Update Stats
@@ -197,18 +264,9 @@
         if (tableContainer) tableContainer.style.display = 'block';
         if (paginationFooter) paginationFooter.style.display = 'block';
 
-        // Validate current page is within bounds
-        const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-        if (currentPage > totalPages && totalPages > 0) {
-            currentPage = totalPages;
-        }
-        if (currentPage < 1) {
-            currentPage = 1;
-        }
-
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginatedCourses = filteredCourses.slice(startIndex, endIndex);
+        // With server-side pagination, filteredCourses IS the current page data
+        // No need to slice
+        const paginatedCourses = filteredCourses;
 
         tableBody.innerHTML = paginatedCourses.map(course => {
             // Safely escape and validate all course properties
@@ -218,11 +276,14 @@
             const safeCategory = course.category || 'unknown';
             const safeLevel = course.level || 'unknown';
             const safeDuration = escapeHtml(course.duration || 'N/A');
-            const safeMaxStudents = course.maxStudents || 0;
             const safeFee = course.fee || 0;
-            const safeMode = course.modeOfConduct || 'unknown';
-            const safeTeacher = escapeHtml(course.teacher || 'Not Assigned');
             const safeStatus = course.status || 'inactive';
+            const safeCertificate = course.certificateOffered ? 'Yes' : 'No';
+            
+            // Generate class names (lowercase and hyphenated)
+            const categoryClass = safeCategory.toLowerCase().replace(/\s+/g, '-');
+            const levelClass = safeLevel.toLowerCase().replace(/\s+/g, '-');
+            const statusClass = safeStatus.toLowerCase().replace(/\s+/g, '-');
 
             return `
             <tr data-course-id="${safeId}">
@@ -233,25 +294,21 @@
                 </td>
                 <td><span class="course-code">${safeCode}</span></td>
                 <td><span class="course-name">${safeName}</span></td>
-                <td><span class="category-badge category-${safeCategory}">${capitalize(safeCategory)}</span></td>
-                <td><span class="level-badge level-${safeLevel}">${capitalize(safeLevel)}</span></td>
+                <td><span class="category-badge category-${categoryClass}">${capitalize(safeCategory)}</span></td>
+                <td><span class="level-badge level-${levelClass}">${capitalize(safeLevel)}</span></td>
                 <td>${safeDuration}</td>
-                <td>${safeMaxStudents}</td>
                 <td>₹${safeFee.toLocaleString()}</td>
-                <td><span class="mode-badge mode-${safeMode}">${capitalize(safeMode)}</span></td>
-                <td>${formatDate(course.startDate)}</td>
-                <td>${formatDate(course.endDate)}</td>
-                <td>${safeTeacher}</td>
-                <td><span class="status-badge status-${safeStatus}">${capitalize(safeStatus)}</span></td>
+                <td>${safeCertificate}</td>
+                <td><span class="status-badge status-${statusClass}">${capitalize(safeStatus)}</span></td>
                 <td>
                     <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary view-btn" onclick="viewCourse(${safeId})" title="View Details">
+                        <button class="btn btn-sm btn-outline-primary view-btn" onclick="viewCourse('${safeId}')" title="View Details">
                             <i class="bi bi-eye"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-success edit-btn" onclick="editCourse(${safeId})" title="Edit Course">
+                        <button class="btn btn-sm btn-outline-success edit-btn" onclick="editCourse('${safeId}')" title="Edit Course">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger delete-btn" onclick="handleDeleteCourse(${safeId})" title="Delete Course">
+                        <button class="btn btn-sm btn-outline-danger delete-btn" onclick="handleDeleteCourse('${safeId}')" title="Delete Course">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -304,18 +361,18 @@
         }
 
         const startItem = (currentPage - 1) * itemsPerPage + 1;
-        const endItem = Math.min(currentPage * itemsPerPage, filteredCourses.length);
+        const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
         showingStartEl.textContent = startItem.toString();
         showingEndEl.textContent = endItem.toString();
-        totalEntriesEl.textContent = filteredCourses.length.toString();
+        totalEntriesEl.textContent = totalItems.toString();
     }
 
     // Render Pagination
     function renderPagination() {
         if (!paginationContainer) return;
 
-        const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
 
         if (totalPages <= 1) {
             paginationContainer.innerHTML = '';
@@ -332,20 +389,19 @@
         }
 
         const startItem = (currentPage - 1) * itemsPerPage + 1;
-        const endItem = Math.min(currentPage * itemsPerPage, filteredCourses.length);
+        const endItem = Math.min(currentPage * itemsPerPage, totalItems);
         if (pageInfo) {
-            pageInfo.textContent = `Showing ${startItem}-${endItem} of ${filteredCourses.length} courses`;
+            pageInfo.textContent = `Showing ${startItem}-${endItem} of ${totalItems} courses`;
         }
 
-        let paginationHTML = '<ul class="pagination">';
+        let paginationHTML = '<div class="btn-group" role="group" aria-label="Pagination">';
 
         // Previous button
         paginationHTML += `
-            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                <a class="page-link" href="#" data-page="${currentPage - 1}">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            </li>
+            <button type="button" class="btn btn-outline-secondary btn-sm ${currentPage === 1 ? 'disabled' : ''}" 
+                data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="bi bi-chevron-left"></i>
+            </button>
         `;
 
         const maxVisiblePages = 5;
@@ -357,42 +413,42 @@
         }
 
         if (startPage > 1) {
-            paginationHTML += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
+            paginationHTML += `<button type="button" class="btn btn-outline-primary btn-sm" data-page="1">1</button>`;
             if (startPage > 2) {
-                paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                paginationHTML += `<button type="button" class="btn btn-outline-secondary btn-sm disabled" disabled>...</button>`;
             }
         }
 
         for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? 'btn-primary' : 'btn-outline-primary';
             paginationHTML += `
-                <li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <a class="page-link" href="#" data-page="${i}">${i}</a>
-                </li>
+                <button type="button" class="btn ${activeClass} btn-sm" data-page="${i}">${i}</button>
             `;
         }
 
         if (endPage < totalPages) {
             if (endPage < totalPages - 1) {
-                paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                paginationHTML += `<button type="button" class="btn btn-outline-secondary btn-sm disabled" disabled>...</button>`;
             }
-            paginationHTML += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`;
+            paginationHTML += `<button type="button" class="btn btn-outline-primary btn-sm" data-page="${totalPages}">${totalPages}</button>`;
         }
 
         // Next button
         paginationHTML += `
-            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="#" data-page="${currentPage + 1}">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
+            <button type="button" class="btn btn-outline-secondary btn-sm ${currentPage === totalPages ? 'disabled' : ''}" 
+                data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="bi bi-chevron-right"></i>
+            </button>
         `;
 
-        paginationHTML += '</ul>';
+        paginationHTML += '</div>';
         paginationContainer.innerHTML = paginationHTML;
 
-        paginationContainer.querySelectorAll('.page-link').forEach(link => {
-            link.addEventListener('click', function(e) {
+        paginationContainer.querySelectorAll('button[data-page]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
+                if (this.disabled || this.classList.contains('disabled')) return;
+                
                 const page = parseInt(this.dataset.page);
                 if (page && page !== currentPage && page >= 1 && page <= totalPages) {
                     goToPage(page);
@@ -404,8 +460,7 @@
     // Go to Page
     function goToPage(page) {
         currentPage = page;
-        renderTable();
-        renderPagination();
+        fetchCourses(page, itemsPerPage);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -419,26 +474,10 @@
             return;
         }
 
-        // Calculate which item the user is currently viewing
-        const currentFirstItem = (currentPage - 1) * itemsPerPage + 1;
-        
-        // Update items per page
         itemsPerPage = newItemsPerPage;
+        currentPage = 1; // Reset to first page
         
-        // Calculate new page to maintain roughly the same position
-        currentPage = Math.ceil(currentFirstItem / itemsPerPage);
-        
-        // Validate new page is within bounds
-        const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-        if (currentPage > totalPages && totalPages > 0) {
-            currentPage = totalPages;
-        }
-        if (currentPage < 1) {
-            currentPage = 1;
-        }
-
-        renderTable();
-        renderPagination();
+        fetchCourses(currentPage, itemsPerPage);
     }
 
     // Reset Filters
@@ -497,7 +536,114 @@
             return;
         }
 
-        if (typeof showSuccessModal === 'function') {
+        const safeCategory = course.category || 'unknown';
+        const safeLevel = course.level || 'unknown';
+        const safeStatus = course.status || 'inactive';
+        
+        const categoryClass = safeCategory.toLowerCase().replace(/\s+/g, '-');
+        const levelClass = safeLevel.toLowerCase().replace(/\s+/g, '-');
+        const statusClass = safeStatus.toLowerCase().replace(/\s+/g, '-');
+
+        if (typeof showDetailsModal === 'function') {
+            showDetailsModal({
+                title: 'Course Details',
+                size: 'modal-lg',
+                content: `
+                    <div class="course-details-container">
+                        <!-- Compact Header -->
+                        <div class="compact-header">
+                            <div class="compact-title">
+                                <h3>${escapeHtml(course.name || 'N/A')}</h3>
+                                <span class="compact-code"><i class="bi bi-upc-scan me-2"></i>${escapeHtml(course.code || 'N/A')}</span>
+                            </div>
+                            <span class="status-badge status-${statusClass} px-3 py-2" style="font-size: 0.85rem;">
+                                ${capitalize(safeStatus)}
+                            </span>
+                        </div>
+
+                        <!-- Detail Grid -->
+                        <div class="detail-grid">
+                            <!-- Category -->
+                            <div class="detail-card">
+                                <div class="detail-icon-box text-primary">
+                                    <i class="bi bi-folder2-open"></i>
+                                </div>
+                                <div class="detail-info">
+                                    <div class="detail-label">Category</div>
+                                    <div class="detail-value">
+                                        <span class="category-badge category-${categoryClass} border-0 p-0 bg-transparent text-dark">
+                                            ${capitalize(safeCategory)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Level -->
+                            <div class="detail-card">
+                                <div class="detail-icon-box text-info">
+                                    <i class="bi bi-bar-chart"></i>
+                                </div>
+                                <div class="detail-info">
+                                    <div class="detail-label">Level</div>
+                                    <div class="detail-value">
+                                        <span class="level-badge level-${levelClass} border-0 p-0 bg-transparent text-dark">
+                                            ${capitalize(safeLevel)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Duration -->
+                            <div class="detail-card">
+                                <div class="detail-icon-box text-warning">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                                <div class="detail-info">
+                                    <div class="detail-label">Duration</div>
+                                    <div class="detail-value">${escapeHtml(course.duration || 'N/A')}</div>
+                                </div>
+                            </div>
+
+                            <!-- Fee -->
+                            <div class="detail-card">
+                                <div class="detail-icon-box text-success">
+                                    <i class="bi bi-currency-rupee"></i>
+                                </div>
+                                <div class="detail-info">
+                                    <div class="detail-label">Course Fee</div>
+                                    <div class="detail-value">₹${(course.fee || 0).toLocaleString()}</div>
+                                </div>
+                            </div>
+
+                            <!-- Certificate -->
+                            <div class="detail-card">
+                                <div class="detail-icon-box text-danger">
+                                    <i class="bi bi-award"></i>
+                                </div>
+                                <div class="detail-info">
+                                    <div class="detail-label">Certificate</div>
+                                    <div class="detail-value ${course.certificateOffered ? 'text-success' : 'text-muted'}">
+                                        ${course.certificateOffered ? 'Available' : 'Not Available'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status (Redundant but fills grid) -->
+                            <div class="detail-card">
+                                <div class="detail-icon-box text-secondary">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <div class="detail-info">
+                                    <div class="detail-label">Current Status</div>
+                                    <div class="detail-value">${capitalize(safeStatus)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            });
+        } else if (typeof showSuccessModal === 'function') {
+            // Fallback to old modal if new one isn't available yet (caching issues)
             showSuccessModal({
                 title: 'Course Details',
                 message: `
@@ -529,13 +675,9 @@
             return;
         }
 
-        // In production, redirect to edit page
-        if (typeof toast !== 'undefined') {
-            toast('Edit functionality for "' + escapeHtml(course.name) + '" will be implemented soon', {
-                icon: 'ℹ️',
-                duration: 3000
-            });
-        }
+        // Use contextPath defined in JSP if available, otherwise fallback to relative path logic
+        const basePath = (typeof contextPath !== 'undefined') ? contextPath : '';
+        window.location.href = `${basePath}/dashboard/pages/courses/edit-course.jsp?id=${courseId}`;
     };
 
     // Handle Select All Checkbox
@@ -559,6 +701,13 @@
         });
         
         updateBulkDeleteButton();
+
+        // Provide feedback to user
+        if (isChecked && checkboxes.length > 0) {
+            if (typeof toast !== 'undefined') {
+                toast.info(`Selected all ${checkboxes.length} courses on this page`);
+            }
+        }
     }
 
     // Update Bulk Delete Button
@@ -606,8 +755,8 @@
         // Get checked course IDs directly from DOM
         const checkedCheckboxes = document.querySelectorAll('.course-checkbox:checked');
         const courseIds = Array.from(checkedCheckboxes)
-            .map(cb => parseInt(cb.dataset.courseId))
-            .filter(id => !isNaN(id));
+            .map(cb => cb.dataset.courseId)
+            .filter(id => id);
         
         if (courseIds.length === 0) {
             if (typeof toast !== 'undefined') {
@@ -629,157 +778,90 @@
                     // Close the modal manually
                     closeConfirmationModal();
                     
-                    // Remove courses from data
-                    allCourses = allCourses.filter(course => course && !courseIds.includes(course.id));
+                    // Use contextPath defined in JSP if available, otherwise fallback to relative path logic
+                    const basePath = (typeof contextPath !== 'undefined') ? contextPath : '';
+                    const apiUrl = `${basePath}/api/courses/delete`;
                     
-                    // Reapply filters to update filteredCourses
-                    applyFilters();
+                    // Show loading state if possible, or just proceed
                     
-                    // Adjust current page if needed
-                    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-                    if (currentPage > totalPages && totalPages > 0) {
-                        currentPage = totalPages;
-                    }
-                    if (currentPage < 1 && filteredCourses.length > 0) {
-                        currentPage = 1;
-                    }
-                    
-                    // Update view
-                    updateStats();
-                    renderTable();
-                    renderPagination();
-                    
-                    if (typeof toast !== 'undefined') {
-                        toast.success(courseIds.length + ' course(s) deleted successfully');
-                    }
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `ids=${courseIds.join(',')}`
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Re-fetch courses to update the list and pagination
+                            fetchCourses(currentPage, itemsPerPage);
+                            // Update stats immediately
+                            fetchStats();
+                            
+                            if (typeof toast !== 'undefined') {
+                                toast.success(data.message || 'Courses deleted successfully');
+                            }
+                        } else {
+                            throw new Error(data.message || 'Failed to delete courses');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting courses:', error);
+                        if (typeof toast !== 'undefined') {
+                            toast.error('Failed to delete courses. Please try again.');
+                        } else {
+                            alert('Failed to delete courses. Please try again.');
+                        }
+                    });
                 }
             });
         } else {
             // Fallback to confirm dialog
             if (confirm('Are you sure you want to delete ' + courseIds.length + ' course(s)? This action cannot be undone.')) {
-                allCourses = allCourses.filter(course => course && !courseIds.includes(course.id));
-                applyFilters();
-                updateStats();
-                renderTable();
-                renderPagination();
-                if (typeof toast !== 'undefined') {
-                    toast.success(courseIds.length + ' course(s) deleted successfully');
-                } else {
-                    alert(courseIds.length + ' course(s) deleted successfully');
-                }
-            }
-        }
-    }
+                // Use contextPath defined in JSP if available, otherwise fallback to relative path logic
+                const basePath = (typeof contextPath !== 'undefined') ? contextPath : '';
+                const apiUrl = `${basePath}/api/courses/delete`;
 
-    // Handle Single Delete
-    window.handleDeleteCourse = function(courseId) {
-        const course = allCourses.find(c => c && c.id === courseId);
-        if (!course) {
-            if (typeof toast !== 'undefined') {
-                toast.error('Course not found');
-            }
-            return;
-        }
-
-        if (typeof showConfirmationModal !== 'function') {
-            if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
-                const index = allCourses.findIndex(c => c && c.id === courseId);
-                if (index !== -1) {
-                    allCourses.splice(index, 1);
-                    applyFilters();
-                    updateStats();
-                    renderTable();
-                    renderPagination();
-                    if (typeof toast !== 'undefined') {
-                        toast.success('Course deleted successfully');
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `ids=${courseIds.join(',')}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchCourses(currentPage, itemsPerPage);
+                        fetchStats(); // Update stats immediately
+                        if (typeof toast !== 'undefined') {
+                            toast.success(data.message);
+                        } else {
+                            alert(data.message);
+                        }
                     } else {
-                        alert('Course deleted successfully');
+                        alert('Failed to delete courses');
                     }
-                }
-            }
-            return;
-        }
-
-        showConfirmationModal({
-            title: 'Delete Course',
-            message: 'Are you sure you want to delete <strong>' + escapeHtml(course.name) + '</strong>?<br><br>This action cannot be undone.',
-            confirmText: 'Yes, Delete',
-            cancelText: 'Cancel',
-            confirmClass: 'btn-danger',
-            onConfirm: function() {
-                // Close the modal manually first
-                closeConfirmationModal();
-                
-                // STEP 1: Save the IDs of currently checked courses (excluding the one being deleted)
-                const checkedCourseIds = Array.from(document.querySelectorAll('.course-checkbox:checked'))
-                    .map(cb => parseInt(cb.dataset.courseId))
-                    .filter(id => !isNaN(id) && id !== courseId);
-                
-                // STEP 2: Remove the course from data
-                const index = allCourses.findIndex(c => c && c.id === courseId);
-                if (index !== -1) {
-                    const deletedCourseName = allCourses[index].name;
-                    allCourses.splice(index, 1);
-                    
-                    // STEP 3: Reapply filters to update filteredCourses
-                    applyFilters();
-                    
-                    // STEP 4: Check if current page is now empty and adjust if needed
-                    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-                    if (currentPage > totalPages && totalPages > 0) {
-                        currentPage = totalPages;
-                    }
-                    if (currentPage < 1 && filteredCourses.length > 0) {
-                        currentPage = 1;
-                    }
-                    
-                    // STEP 5: Update stats and re-render
-                    updateStats();
-                    renderTable();
-                    renderPagination();
-                    
-                    // STEP 6: After DOM updates, restore the checked state of remaining courses
-                    setTimeout(() => {
-                        checkedCourseIds.forEach(id => {
-                            const checkbox = document.querySelector('.course-checkbox[data-course-id="' + id + '"]');
-                            if (checkbox) {
-                                checkbox.checked = true;
-                                const row = checkbox.closest('tr');
-                                if (row) {
-                                    row.classList.add('row-selected');
-                                }
-                            }
-                        });
-                        
-                        // STEP 7: Update the button count to reflect the remaining checked items
-                        updateBulkDeleteButton();
-                        updateSelectAllState();
-                    }, 50);
-                    
-                    if (typeof toast !== 'undefined') {
-                        toast.success('Course "' + escapeHtml(deletedCourseName) + '" deleted successfully');
-                    }
-                }
-            }
-            });
-        } else {
-            // Fallback to confirm dialog
-            if (confirm('Are you sure you want to delete ' + courseIds.length + ' course(s)? This action cannot be undone.')) {
-                allCourses = allCourses.filter(course => course && !courseIds.includes(course.id));
-                applyFilters();
-                updateStats();
-                renderTable();
-                renderPagination();
-                if (typeof toast !== 'undefined') {
-                    toast.success(courseIds.length + ' course(s) deleted successfully');
-                }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting courses');
+                });
             }
         }
     }
 
+
+
     // Handle Single Delete
     window.handleDeleteCourse = function(courseId) {
-        const course = allCourses.find(c => c && c.id === courseId);
+        const course = allCourses.find(c => c && String(c.id) === String(courseId));
         if (!course) {
             if (typeof toast !== 'undefined') {
                 toast.error('Course not found');
@@ -787,85 +869,67 @@
             return;
         }
 
-        if (typeof showConfirmationModal !== 'function') {
-            if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
-                const index = allCourses.findIndex(c => c && c.id === courseId);
-                if (index !== -1) {
-                    allCourses.splice(index, 1);
-                    applyFilters();
-                    updateStats();
-                    renderTable();
-                    renderPagination();
-                    if (typeof toast !== 'undefined') {
-                        toast.success('Course deleted successfully');
-                    }
-                }
-            }
-            return;
-        }
+        const deleteAction = function() {
+            // Use contextPath defined in JSP if available, otherwise fallback to relative path logic
+            const basePath = (typeof contextPath !== 'undefined') ? contextPath : '';
+            const apiUrl = `${basePath}/api/courses/delete`;
 
-        showConfirmationModal({
-            title: 'Delete Course',
-            message: `Are you sure you want to delete <strong>${escapeHtml(course.name)}</strong>?<br><br>This action cannot be undone.`,
-            confirmText: 'Yes, Delete',
-            cancelText: 'Cancel',
-            confirmClass: 'btn-danger',
-            onConfirm: function() {
-                // Close the modal manually first
-                closeConfirmationModal();
-                
-                // STEP 1: Save the IDs of currently checked courses (excluding the one being deleted)
-                const checkedCourseIds = Array.from(document.querySelectorAll('.course-checkbox:checked'))
-                    .map(cb => parseInt(cb.dataset.courseId))
-                    .filter(id => !isNaN(id) && id !== courseId);
-                
-                // STEP 2: Remove the course from data
-                const index = allCourses.findIndex(c => c && c.id === courseId);
-                if (index !== -1) {
-                    const deletedCourseName = allCourses[index].name;
-                    allCourses.splice(index, 1);
-                    
-                    // STEP 3: Reapply filters to update filteredCourses
-                    applyFilters();
-                    
-                    // STEP 4: Check if current page is now empty and adjust if needed
-                    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-                    if (currentPage > totalPages && totalPages > 0) {
-                        currentPage = totalPages;
-                    }
-                    if (currentPage < 1 && filteredCourses.length > 0) {
-                        currentPage = 1;
-                    }
-                    
-                    // STEP 5: Update stats and re-render
-                    updateStats();
-                    renderTable();
-                    renderPagination();
-                    
-                    // STEP 6: After DOM updates, restore the checked state of remaining courses
-                    setTimeout(() => {
-                        checkedCourseIds.forEach(id => {
-                            const checkbox = document.querySelector(`.course-checkbox[data-course-id="${id}"]`);
-                            if (checkbox) {
-                                checkbox.checked = true;
-                                const row = checkbox.closest('tr');
-                                if (row) {
-                                    row.classList.add('row-selected');
-                                }
-                            }
-                        });
-                        
-                        // STEP 7: Update the button count to reflect the remaining checked items
-                        updateBulkDeleteButton();
-                        updateSelectAllState();
-                    renderPagination();
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `ids=${courseId}`
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Re-fetch courses to update the list and pagination
+                    fetchCourses(currentPage, itemsPerPage);
+                    // Update stats immediately
+                    fetchStats();
                     
                     if (typeof toast !== 'undefined') {
-                        toast.success(`Course "${escapeHtml(deletedCourseName)}" deleted successfully`);
+                        toast.success(data.message || `Course deleted successfully`);
+                    } else {
+                        alert(data.message || 'Course deleted successfully');
                     }
+                } else {
+                    throw new Error(data.message || 'Failed to delete course');
                 }
+            })
+            .catch(error => {
+                console.error('Error deleting course:', error);
+                if (typeof toast !== 'undefined') {
+                    toast.error('Failed to delete course. Please try again.');
+                } else {
+                    alert('Failed to delete course. Please try again.');
+                }
+            });
+        };
+
+        if (typeof showConfirmationModal === 'function') {
+            showConfirmationModal({
+                title: 'Delete Course',
+                message: `Are you sure you want to delete <strong>${escapeHtml(course.name)}</strong>?<br><br>This action cannot be undone.`,
+                confirmText: 'Yes, Delete',
+                cancelText: 'Cancel',
+                confirmClass: 'btn-danger',
+                onConfirm: function() {
+                    closeConfirmationModal();
+                    deleteAction();
+                }
+            });
+        } else {
+            if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+                deleteAction();
             }
-        });
+        }
     };
     
     // Helper function to manually close confirmation modal

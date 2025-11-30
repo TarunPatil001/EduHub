@@ -1,33 +1,46 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
+<%@ page import="com.eduhub.util.DropdownData" %>
 <%
     // Helper to build options string for input-field component
     StringBuilder genderOptions = new StringBuilder();
-    if(application.getAttribute("genders") != null) {
-        List<String> list = (List<String>)application.getAttribute("genders");
-        for(int i=0; i<list.size(); i++) {
-            genderOptions.append(list.get(i)).append("|").append(list.get(i));
-            if(i < list.size() - 1) genderOptions.append(",");
-        }
+    for(String item : DropdownData.GENDERS) {
+        genderOptions.append(item).append("|").append(item).append(",");
     }
+    if(genderOptions.length() > 0) genderOptions.setLength(genderOptions.length() - 1);
 
     StringBuilder bloodGroupOptions = new StringBuilder();
-    if(application.getAttribute("bloodGroups") != null) {
-        List<String> list = (List<String>)application.getAttribute("bloodGroups");
-        for(int i=0; i<list.size(); i++) {
-            bloodGroupOptions.append(list.get(i)).append("|").append(list.get(i));
-            if(i < list.size() - 1) bloodGroupOptions.append(",");
-        }
+    for(String item : DropdownData.BLOOD_GROUPS) {
+        bloodGroupOptions.append(item).append("|").append(item).append(",");
     }
+    if(bloodGroupOptions.length() > 0) bloodGroupOptions.setLength(bloodGroupOptions.length() - 1);
 
     StringBuilder qualificationOptions = new StringBuilder();
-    if(application.getAttribute("qualifications") != null) {
-        List<String> list = (List<String>)application.getAttribute("qualifications");
-        for(int i=0; i<list.size(); i++) {
-            qualificationOptions.append(list.get(i)).append("|").append(list.get(i));
-            if(i < list.size() - 1) qualificationOptions.append(",");
-        }
+    for(String item : DropdownData.QUALIFICATIONS) {
+        qualificationOptions.append(item).append("|").append(item).append(",");
     }
+    if(qualificationOptions.length() > 0) qualificationOptions.setLength(qualificationOptions.length() - 1);
+
+    StringBuilder specializationOptions = new StringBuilder();
+    for(String item : DropdownData.SPECIALIZATIONS) {
+        specializationOptions.append(item).append("|").append(item).append(",");
+    }
+    if(specializationOptions.length() > 0) specializationOptions.setLength(specializationOptions.length() - 1);
+
+    StringBuilder courseOptions = new StringBuilder();
+    for(String item : DropdownData.COURSES) {
+        courseOptions.append(item).append("|").append(item).append(",");
+    }
+    if(courseOptions.length() > 0) courseOptions.setLength(courseOptions.length() - 1);
+
+    // Build document types JSON for JavaScript
+    StringBuilder documentTypesJson = new StringBuilder("[");
+    for(int i = 0; i < DropdownData.DOCUMENT_TYPES.size(); i++) {
+        String[] parts = DropdownData.DOCUMENT_TYPES.get(i).split("\\|");
+        documentTypesJson.append("{ \"value\": \"").append(parts[0]).append("\", \"label\": \"").append(parts[1]).append("\" }");
+        if(i < DropdownData.DOCUMENT_TYPES.size() - 1) documentTypesJson.append(", ");
+    }
+    documentTypesJson.append("]");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +50,7 @@
         <jsp:param name="description" value="Add new student to EduHub"/>
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/students/css/add-student.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/students/css/add-student.css?v=<%=System.currentTimeMillis()%>">
 </head>
 <body>
     <div class="dashboard-container">
@@ -53,7 +66,7 @@
             <div class="dashboard-content">
                 <div class="page-header-wrapper mb-4">
                     <div class="page-title-container">
-                        <h2>Add New Student</h2>
+                        <h2>Add New Student Registration</h2>
                         <p class="text-muted">Register a new student in the system</p>
                     </div>
                     
@@ -69,90 +82,95 @@
                     <div class="add-student-form-column">
                         <form id="addStudentForm" action="${pageContext.request.contextPath}/api/students/add" method="POST" enctype="multipart/form-data">
                             
-                            <!-- Student Photo Upload -->
+                            <!-- Basic Profile & Personal Information -->
                             <div class="card-custom mb-4">
-                                <h5 class="mb-3"><i class="bi bi-camera"></i> Student Photo</h5>
-                                <div class="photo-upload-container">
-                                    <div class="photo-preview" onclick="document.getElementById('studentPhoto').click()">
-                                        <div class="photo-placeholder" id="photoPlaceholder">
-                                            <i class="bi bi-person-circle" style="font-size: 60px;"></i>
-                                            <p class="mb-0 small mt-2" style="font-weight: 500;">Click to Upload</p>
-                                            <p class="mb-0" style="font-size: 0.75rem; color: #6c757d;">Student Photo</p>
+                                <h5 class="mb-4"><i class="bi bi-person-badge-fill"></i> Basic Profile</h5>
+                                
+                                <div class="row align-items-center">
+                                    <!-- Photo Upload Column -->
+                                    <div class="col-lg-auto col-md-auto d-flex flex-column align-items-center mb-4 mb-md-0 pe-lg-5 border-end-lg">
+                                        <div class="photo-upload-section">
+                                            <div class="photo-preview" onclick="document.getElementById('studentPhoto').click()">
+                                                <div class="photo-placeholder" id="photoPlaceholder">
+                                                    <i class="bi bi-camera-fill"></i>
+                                                    <span class="small fw-bold">Upload</span>
+                                                </div>
+                                                <img id="photoPreview" style="display: none;" alt="Student Photo">
+                                            </div>
+                                            <input type="file" id="studentPhoto" name="studentPhoto" accept="image/*" style="display: none;">
+                                            <div class="upload-hint text-center">
+                                                JPG/PNG &bull; Max 2MB
+                                            </div>
                                         </div>
-                                        <img id="photoPreview" style="display: none;" alt="Student Photo">
                                     </div>
-                                    <input type="file" id="studentPhoto" name="studentPhoto" accept="image/*" style="display: none;">
-                                    <p class="small text-muted mt-2 mb-0">Upload a passport-size photo (JPG, PNG - Max 2MB)</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Personal Information -->
-                            <div class="card-custom mb-4">
-                                <h5 class="mb-4"><i class="bi bi-person-fill"></i> Personal Information</h5>
-                                
-                                <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/input-field.jsp">
-                                        <jsp:param name="type" value="text"/>
-                                        <jsp:param name="id" value="studentName"/>
-                                        <jsp:param name="name" value="studentName"/>
-                                        <jsp:param name="label" value="Student Name"/>
-                                        <jsp:param name="placeholder" value="Enter first name"/>
-                                        <jsp:param name="required" value="true"/>
-                                        <jsp:param name="class" value="col-md-4"/>
-                                    </jsp:include>
                                     
-                                    <jsp:include page="/dashboard/components/input-field.jsp">
-                                        <jsp:param name="type" value="text"/>
-                                        <jsp:param name="id" value="fatherName"/>
-                                        <jsp:param name="name" value="fatherName"/>
-                                        <jsp:param name="label" value="Father's Name"/>
-                                        <jsp:param name="placeholder" value="Enter father's name"/>
-                                        <jsp:param name="required" value="true"/>
-                                        <jsp:param name="class" value="col-md-4"/>
-                                    </jsp:include>
-                                    
-                                    <jsp:include page="/dashboard/components/input-field.jsp">
-                                        <jsp:param name="type" value="text"/>
-                                        <jsp:param name="id" value="surname"/>
-                                        <jsp:param name="name" value="surname"/>
-                                        <jsp:param name="label" value="Surname"/>
-                                        <jsp:param name="placeholder" value="Enter surname"/>
-                                        <jsp:param name="required" value="true"/>
-                                        <jsp:param name="class" value="col-md-4"/>
-                                    </jsp:include>
-                                </div>
-                                
-                                <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/input-field.jsp">
-                                        <jsp:param name="type" value="date"/>
-                                        <jsp:param name="id" value="dateOfBirth"/>
-                                        <jsp:param name="name" value="dateOfBirth"/>
-                                        <jsp:param name="label" value="Date of Birth"/>
-                                        <jsp:param name="required" value="true"/>
-                                        <jsp:param name="max" value="2010-12-31"/>
-                                        <jsp:param name="class" value="col-md-4"/>
-                                    </jsp:include>
-                                    
-                                    <jsp:include page="/dashboard/components/input-field.jsp">
-                                        <jsp:param name="type" value="select"/>
-                                        <jsp:param name="id" value="gender"/>
-                                        <jsp:param name="name" value="gender"/>
-                                        <jsp:param name="label" value="Gender"/>
-                                        <jsp:param name="placeholder" value="Select Gender"/>
-                                        <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="<%=genderOptions.toString()%>"/>
-                                        <jsp:param name="class" value="col-md-4"/>
-                                    </jsp:include>
-                                    
-                                    <jsp:include page="/dashboard/components/input-field.jsp">
-                                        <jsp:param name="type" value="select"/>
-                                        <jsp:param name="id" value="bloodGroup"/>
-                                        <jsp:param name="name" value="bloodGroup"/>
-                                        <jsp:param name="label" value="Blood Group"/>
-                                        <jsp:param name="placeholder" value="Select Blood Group"/>
-                                        <jsp:param name="options" value="<%=bloodGroupOptions.toString()%>"/>
-                                        <jsp:param name="class" value="col-md-4"/>
-                                    </jsp:include>
+                                    <!-- Personal Details Column -->
+                                    <div class="col-lg col-md">
+                                        <div class="row mb-3">
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="text"/>
+                                                <jsp:param name="id" value="studentName"/>
+                                                <jsp:param name="name" value="studentName"/>
+                                                <jsp:param name="label" value="Student Name"/>
+                                                <jsp:param name="placeholder" value="First Name"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="class" value="col-md-4"/>
+                                            </jsp:include>
+                                            
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="text"/>
+                                                <jsp:param name="id" value="fatherName"/>
+                                                <jsp:param name="name" value="fatherName"/>
+                                                <jsp:param name="label" value="Father's Name"/>
+                                                <jsp:param name="placeholder" value="Father's Name"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="class" value="col-md-4"/>
+                                            </jsp:include>
+                                            
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="text"/>
+                                                <jsp:param name="id" value="surname"/>
+                                                <jsp:param name="name" value="surname"/>
+                                                <jsp:param name="label" value="Surname"/>
+                                                <jsp:param name="placeholder" value="Last Name"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="class" value="col-md-4"/>
+                                            </jsp:include>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="date"/>
+                                                <jsp:param name="id" value="dateOfBirth"/>
+                                                <jsp:param name="name" value="dateOfBirth"/>
+                                                <jsp:param name="label" value="Date of Birth"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="max" value="2010-12-31"/>
+                                                <jsp:param name="class" value="col-md-4"/>
+                                            </jsp:include>
+                                            
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="select"/>
+                                                <jsp:param name="id" value="gender"/>
+                                                <jsp:param name="name" value="gender"/>
+                                                <jsp:param name="label" value="Gender"/>
+                                                <jsp:param name="placeholder" value="Select Gender"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="options" value="<%=genderOptions.toString()%>"/>
+                                                <jsp:param name="class" value="col-md-4"/>
+                                            </jsp:include>
+                                            
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="select"/>
+                                                <jsp:param name="id" value="bloodGroup"/>
+                                                <jsp:param name="name" value="bloodGroup"/>
+                                                <jsp:param name="label" value="Blood Group"/>
+                                                <jsp:param name="placeholder" value="Select Group"/>
+                                                <jsp:param name="options" value="<%=bloodGroupOptions.toString()%>"/>
+                                                <jsp:param name="class" value="col-md-4"/>
+                                            </jsp:include>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -182,9 +200,9 @@
                                             <jsp:param name="required" value="true"/>
                                             <jsp:param name="pattern" value="[0-9]{10}"/>
                                         </jsp:include>
-                                        <div class="form-check mt-1">
+                                        <div class="form-check mt-2">
                                             <input class="form-check-input" type="checkbox" id="sameAsMobile" onchange="copySameAsMobile()">
-                                            <label class="form-check-label small" for="sameAsMobile">Same as mobile</label>
+                                            <label class="form-check-label small text-muted" for="sameAsMobile">Same as mobile</label>
                                         </div>
                                     </div>
                                     
@@ -215,7 +233,7 @@
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="instagramId"/>
                                         <jsp:param name="name" value="instagramId"/>
-                                        <jsp:param name="label" value="Instagram Account ID"/>
+                                        <jsp:param name="label" value="Instagram ID"/>
                                         <jsp:param name="placeholder" value="username"/>
                                         <jsp:param name="prepend" value="@"/>
                                         <jsp:param name="class" value="col-md-4"/>
@@ -225,7 +243,7 @@
                                         <jsp:param name="type" value="text"/>
                                         <jsp:param name="id" value="linkedinId"/>
                                         <jsp:param name="name" value="linkedinId"/>
-                                        <jsp:param name="label" value="LinkedIn Account ID"/>
+                                        <jsp:param name="label" value="LinkedIn Profile"/>
                                         <jsp:param name="placeholder" value="linkedin.com/in/..."/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
@@ -236,25 +254,31 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-geo-alt-fill"></i> Address Information</h5>
                                 
-                                <jsp:include page="/dashboard/components/input-field.jsp">
-                                    <jsp:param name="type" value="textarea"/>
-                                    <jsp:param name="id" value="permanentAddress"/>
-                                    <jsp:param name="name" value="permanentAddress"/>
-                                    <jsp:param name="label" value="Permanent Address"/>
-                                    <jsp:param name="placeholder" value="Enter complete permanent address"/>
-                                    <jsp:param name="required" value="true"/>
-                                    <jsp:param name="rows" value="3"/>
-                                    <jsp:param name="class" value="mb-3"/>
-                                </jsp:include>
-                                
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <label for="currentAddress" class="form-label mb-0">Current Address <span class="required-star">*</span></label>
-                                        <a href="javascript:void(0)" class="same-as-permanent" onclick="copyPermanentAddress()">
-                                            <i class="bi bi-files"></i> Same as Permanent Address
-                                        </a>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label for="permanentAddress" class="form-label mb-0">Permanent Address <span class="required-star">*</span></label>
+                                                <!-- Invisible placeholder to match height of 'Copy Permanent' button -->
+                                                <span class="same-as-permanent" style="visibility: hidden; pointer-events: none;">
+                                                    <i class="bi bi-files"></i> Copy Permanent
+                                                </span>
+                                            </div>
+                                            <textarea class="form-control" id="permanentAddress" name="permanentAddress" rows="4" required placeholder="Enter complete permanent address"></textarea>
+                                        </div>
                                     </div>
-                                    <textarea class="form-control" id="currentAddress" name="currentAddress" rows="3" required placeholder="Enter complete current address"></textarea>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label for="currentAddress" class="form-label mb-0">Current Address <span class="required-star">*</span></label>
+                                                <a href="javascript:void(0)" class="same-as-permanent" onclick="copyPermanentAddress()">
+                                                    <i class="bi bi-files"></i> Copy Permanent
+                                                </a>
+                                            </div>
+                                            <textarea class="form-control" id="currentAddress" name="currentAddress" rows="4" required placeholder="Enter complete current address"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -270,27 +294,48 @@
                                         <jsp:param name="label" value="College Name"/>
                                         <jsp:param name="placeholder" value="Enter college/university name"/>
                                         <jsp:param name="required" value="true"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="educationQualification"/>
                                         <jsp:param name="name" value="educationQualification"/>
-                                        <jsp:param name="label" value="Education Qualification"/>
+                                        <jsp:param name="label" value="Qualification"/>
                                         <jsp:param name="placeholder" value="Select Qualification"/>
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="options" value="<%=qualificationOptions.toString()%>"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="specialization"/>
+                                        <jsp:param name="name" value="specialization"/>
+                                        <jsp:param name="label" value="Specialization"/>
+                                        <jsp:param name="placeholder" value="Select Specialization"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=specializationOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                 </div>
                                 
-                                <div class="row g-3">
+                                <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label for="passingYear" class="form-label">Passing Year <span class="required-star">*</span></label>
-                                        <input type="text" class="form-control" id="passingYear" name="passingYear" required placeholder="Click to select year" readonly>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
+                                            <input type="text" class="form-control" id="passingYear" name="passingYear" required placeholder="Select Year" readonly>
+                                        </div>
                                     </div>
-                                    
+                                </div>
+                            </div>
+                            
+                            <!-- Enrollment Details -->
+                            <div class="card-custom mb-4">
+                                <h5 class="mb-4"><i class="bi bi-journal-check"></i> Enrollment Details</h5>
+                                
+                                <div class="row mb-3">
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="courseEnrolled"/>
@@ -298,7 +343,7 @@
                                         <jsp:param name="label" value="Course to Enroll"/>
                                         <jsp:param name="placeholder" value="Select Course"/>
                                         <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="1|Web Development - Full Stack,2|Data Science - Advanced,3|Mobile App Development,4|Digital Marketing,5|Python Programming"/>
+                                        <jsp:param name="options" value="<%=courseOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
@@ -306,22 +351,19 @@
                                         <label for="batchPreference" class="form-label">Batch Preference</label>
                                         <select class="form-select" id="batchPreference" name="batchPreference">
                                             <option value="">Select Batch Mode</option>
-                                            <% if(application.getAttribute("modesOfConduct") != null) {
-                                                for(String item : (List<String>)application.getAttribute("modesOfConduct")) { %>
+                                            <% for(String item : DropdownData.MODES_OF_CONDUCT) { %>
                                                 <option value="<%=item%>"><%=item%></option>
-                                            <% } } %>
+                                            <% } %>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row g-3 mt-1">
+
                                     <div class="col-md-4">
                                         <label for="studentStatus" class="form-label">Student Status <span class="required-star">*</span></label>
                                         <select class="form-select" id="studentStatus" name="studentStatus" required>
                                             <option value="">Select Status</option>
-                                            <option value="Active" selected>Active</option>
-                                            <option value="Inactive">Inactive</option>
-                                            <option value="Suspended">Suspended</option>
-                                            <option value="Graduated">Graduated</option>
+                                            <% for(String item : DropdownData.STUDENT_STATUSES) { %>
+                                                <option value="<%=item%>" <%=item.equals("Active") ? "selected" : ""%>><%=item%></option>
+                                            <% } %>
                                         </select>
                                     </div>
                                 </div>
@@ -331,8 +373,8 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-heart-pulse-fill"></i> Medical Information</h5>
                                 
-                                <div class="mb-3">
-                                    <label class="form-label">Any Medical History? <span class="required-star">*</span></label>
+                                <div class="mb-3 p-3 bg-light rounded-3 border">
+                                    <label class="form-label d-block mb-2">Any Medical History? <span class="required-star">*</span></label>
                                     <div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="medicalHistory" id="medicalHistoryYes" value="yes" onchange="toggleMedicalDetails(true)" required>
@@ -346,8 +388,8 @@
                                 </div>
                                 
                                 <div id="medicalDetailsSection" style="display: none;">
-                                    <div class="alert alert-info">
-                                        <i class="bi bi-info-circle"></i> Please provide details about medical conditions, allergies, or ongoing treatments
+                                    <div class="alert alert-info border-0 shadow-sm">
+                                        <i class="bi bi-info-circle-fill me-2"></i> Please provide details about medical conditions, allergies, or ongoing treatments
                                     </div>
                                     
                                     <div class="mb-3">
@@ -371,81 +413,35 @@
                             
                             <!-- Document Uploads -->
                             <div class="card-custom mb-4">
-                                <h5 class="mb-4"><i class="bi bi-file-earmark-arrow-up"></i> Document Uploads</h5>
-                                <p class="text-muted mb-4">Please upload clear scanned copies of the following documents (PDF format preferred)</p>
+                                <h5 class="mb-4"><i class="bi bi-file-earmark-arrow-up-fill"></i> Document Uploads</h5>
                                 
-                                <div class="row">
-                                    <!-- Aadhar Card -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Aadhar Card <span class="required-star">*</span></label>
-                                        <div class="file-upload-box" id="aadharBox" onclick="document.getElementById('aadharCard').click()">
-                                            <i class="bi bi-cloud-upload" style="font-size: 30px; color: #6c757d;"></i>
-                                            <p class="mb-0 mt-2">Click to upload Aadhar Card</p>
-                                            <small class="text-muted">PDF, JPG, PNG - Max 5MB</small>
-                                        </div>
-                                        <p class="file-name" id="aadharFileName"></p>
-                                        <input type="file" id="aadharCard" name="aadharCard" accept=".pdf,.jpg,.jpeg,.png" required style="display: none;" onchange="handleFileUpload(this, 'aadharBox', 'aadharFileName')">
+                                <!-- Hidden Inputs for Form Submission -->
+                                <div class="d-none">
+                                    <input type="file" id="aadharCard" name="aadharCard" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="panCard" name="panCard" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="marksheet" name="marksheet" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="degreeCertificate" name="degreeCertificate" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="jobGuarantee" name="jobGuarantee" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx">
+                                    <!-- Multi-file trigger -->
+                                    <input type="file" id="multiFileTrigger" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx">
+                                </div>
+
+                                <div class="upload-drop-zone" id="dropZone">
+                                    <div class="upload-icon-circle">
+                                        <i class="bi bi-cloud-arrow-up-fill"></i>
                                     </div>
-                                    
-                                    <!-- PAN Card -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">PAN Card</label>
-                                        <div class="file-upload-box" id="panCardBox" onclick="document.getElementById('panCard').click()">
-                                            <i class="bi bi-cloud-upload" style="font-size: 30px; color: #6c757d;"></i>
-                                            <p class="mb-0 mt-2">Click to upload PAN Card</p>
-                                            <small class="text-muted">PDF, JPG, PNG - Max 5MB</small>
-                                        </div>
-                                        <p class="file-name" id="panCardFileName"></p>
-                                        <input type="file" id="panCard" name="panCard" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(this, 'panCardBox', 'panCardFileName')">
+                                    <div class="upload-text">
+                                        <h6>Choose a file or drag & drop it here.</h6>
+                                        <p>txt, docx, pdf, jpeg, xlsx - Up to 50MB</p>
+                                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('multiFileTrigger').click()">
+                                            Browse Files
+                                        </button>
                                     </div>
-                                    
-                                    <!-- Marksheet -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Current/Final Year Marksheet <span class="required-star">*</span></label>
-                                        <div class="file-upload-box" id="marksheetBox" onclick="document.getElementById('marksheet').click()">
-                                            <i class="bi bi-cloud-upload" style="font-size: 30px; color: #6c757d;"></i>
-                                            <p class="mb-0 mt-2">Click to upload Marksheet</p>
-                                            <small class="text-muted">PDF, JPG, PNG - Max 5MB</small>
-                                        </div>
-                                        <p class="file-name" id="marksheetFileName"></p>
-                                        <input type="file" id="marksheet" name="marksheet" accept=".pdf,.jpg,.jpeg,.png" required style="display: none;" onchange="handleFileUpload(this, 'marksheetBox', 'marksheetFileName')">
-                                    </div>
-                                    
-                                    <!-- Degree Certificate -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Degree Certificate</label>
-                                        <div class="file-upload-box" id="degreeBox" onclick="document.getElementById('degreeCertificate').click()">
-                                            <i class="bi bi-cloud-upload" style="font-size: 30px; color: #6c757d;"></i>
-                                            <p class="mb-0 mt-2">Click to upload Degree Certificate</p>
-                                            <small class="text-muted">PDF, JPG, PNG - Max 5MB</small>
-                                        </div>
-                                        <p class="file-name" id="degreeFileName"></p>
-                                        <input type="file" id="degreeCertificate" name="degreeCertificate" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(this, 'degreeBox', 'degreeFileName')">
-                                    </div>
-                                    
-                                    <!-- Job Guarantee Document -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Job Guarantee Document</label>
-                                        <div class="file-upload-box" id="jobGuaranteeBox" onclick="document.getElementById('jobGuarantee').click()">
-                                            <i class="bi bi-cloud-upload" style="font-size: 30px; color: #6c757d;"></i>
-                                            <p class="mb-0 mt-2">Click to upload Job Guarantee Doc</p>
-                                            <small class="text-muted">PDF, JPG, PNG - Max 5MB</small>
-                                        </div>
-                                        <p class="file-name" id="jobGuaranteeFileName"></p>
-                                        <input type="file" id="jobGuarantee" name="jobGuarantee" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(this, 'jobGuaranteeBox', 'jobGuaranteeFileName')">
-                                    </div>
-                                    
-                                    <!-- Resume -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Resume/CV</label>
-                                        <div class="file-upload-box" id="resumeBox" onclick="document.getElementById('resume').click()">
-                                            <i class="bi bi-cloud-upload" style="font-size: 30px; color: #6c757d;"></i>
-                                            <p class="mb-0 mt-2">Click to upload Resume/CV</p>
-                                            <small class="text-muted">PDF, DOC, DOCX - Max 5MB</small>
-                                        </div>
-                                        <p class="file-name" id="resumeFileName"></p>
-                                        <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleFileUpload(this, 'resumeBox', 'resumeFileName')">
-                                    </div>
+                                </div>
+
+                                <div class="document-list" id="documentList">
+                                    <!-- Dynamic file list will appear here -->
                                 </div>
                             </div>
                             
@@ -460,16 +456,16 @@
                             </div>
                             
                             <!-- Form Actions -->
-                            <div class="d-flex gap-2 mb-4 form-action-buttons">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i> Submit Registration
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
-                                    <i class="bi bi-arrow-clockwise"></i> Reset Form
-                                </button>
-                                <a href="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp" class="btn btn-outline-danger">
-                                    <i class="bi bi-x-circle"></i> Cancel
+                            <div class="form-action-buttons d-flex gap-3 justify-content-end">
+                                <a href="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp" class="btn btn-outline-secondary px-4">
+                                    Cancel
                                 </a>
+                                <button type="button" class="btn btn-outline-primary px-4" onclick="resetForm()">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <i class="bi bi-check-circle-fill"></i> Submit Registration
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -531,6 +527,10 @@
     <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <!-- Add Student Page Scripts -->
-    <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/add-student.js"></script>
+    <script>
+        // Pass server-side data to JavaScript
+        const SERVER_DOCUMENT_TYPES = <%=documentTypesJson.toString()%>;
+    </script>
+    <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/add-student.js?v=<%=System.currentTimeMillis()%>"></script>
 </body>
 </html>

@@ -3,8 +3,221 @@
  * Matching add-student page styling for consistency
  */
 
-/* Mobile Responsive Styles */
-@media (max-width: 768px) {
+/* Modern Card Styling */
+.card-custom {
+    background: #fff;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    padding: 2rem;
+    transition: box-shadow 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card-custom:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+.card-custom h5 {
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-custom h5 i {
+    background: #e7f1ff;
+    color: #0d6efd;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+/* Form Controls Enhancement */
+.form-label {
+    font-weight: 600;
+    color: #344767;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background-color: #fff;
+    min-height: 48px;
+}
+
+textarea.form-control {
+    min-height: 100px;
+}
+
+.form-select {
+    padding-right: 2.5rem;
+    background-position: right 1rem center;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+    background-color: #fff;
+}
+
+/* Required Star Styling */
+.required-star {
+    color: #dc3545;
+    font-weight: bold;
+    margin-left: 3px;
+}
+
+/* Form Action Buttons - Sticky Bottom */
+.form-action-buttons {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: var(--sidebar-width); /* Default sidebar width */
+    background: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    z-index: 99;
+    border-top: 1px solid #dee2e6;
+    margin: 0;
+    border-radius: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    transition: left 0.3s ease;
+}
+
+.form-action-buttons .btn {
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+}
+
+/* Header Buttons */
+.back-button-container .btn {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Adjust for collapsed sidebar */
+.dashboard-main.expanded .form-action-buttons {
+    left: var(--sidebar-collapsed-width);
+}
+
+/* Sidebar Styling */
+.create-course-sidebar-column .card-custom {
+    position: sticky;
+    top: 100px; /* Adjust based on header height */
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.create-course-sidebar-column h6 {
+    color: #0d6efd;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.create-course-sidebar-column ul li {
+    position: relative;
+    padding-left: 0;
+    margin-bottom: 12px;
+    color: #555;
+}
+
+/* ===================================
+   Layout Structure
+   =================================== */
+
+/* Desktop Layout - Form LEFT, Sidebar RIGHT */
+@media (min-width: 992px) {
+    .create-course-layout {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        align-items: flex-start;
+        padding-bottom: 80px; /* Space for fixed footer */
+    }
+    
+    .create-course-form-column {
+        flex: 1;
+        min-width: 0; /* Prevent flex item from overflowing */
+    }
+    
+    .create-course-sidebar-column {
+        width: 300px;
+        flex-shrink: 0;
+    }
+}
+
+/* Tablet Layout (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .create-course-layout {
+        display: block;
+        padding-bottom: 80px;
+    }
+    
+    .create-course-form-column,
+    .create-course-sidebar-column {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .create-course-sidebar-column {
+        margin-top: 2rem;
+    }
+}
+
+/* Mobile Layout */
+@media (max-width: 767px) {
+    .create-course-layout {
+        display: block;
+        padding-bottom: 140px; /* More space for stacked buttons on mobile */
+    }
+    
+    .create-course-form-column,
+    .create-course-sidebar-column {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .create-course-sidebar-column {
+        margin-top: 2rem;
+    }
+    
+    .form-action-buttons {
+        flex-direction: column;
+        padding: 1rem;
+        left: 0;
+    }
+    
+    .form-action-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
     /* Page Header Mobile */
     .page-header .d-flex {
         flex-direction: column !important;
@@ -30,39 +243,10 @@
     .card-custom h5 {
         font-size: 1.1rem;
     }
-
-    /* Form Controls */
-    .form-control,
-    .form-select {
-        font-size: 0.875rem;
-        height: 38px;
-    }
-
-    .form-label {
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-    }
-
-    /* Submit Buttons */
-    .btn-primary,
-    .btn-secondary {
-        width: 100%;
-        min-height: 44px;
-        font-size: 0.95rem;
-        margin-bottom: 0.5rem;
-    }
 }
 
-@media (max-width: 576px) {
-    .page-header {
-        margin-bottom: 1rem !important;
-    }
-
-    .page-header h2 {
-        font-size: 1.25rem;
-    }
-
-    .card-custom {
-        padding: 0.75rem;
+@media (max-width: 991px) {
+    .form-action-buttons {
+        left: 0;
     }
 }

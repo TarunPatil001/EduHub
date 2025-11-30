@@ -34,6 +34,12 @@ public class DropdownData {
         "High School", "Diploma", "Bachelor's Degree", "Master's Degree", "PhD", "Other"
     );
 
+    public static final List<String> SPECIALIZATIONS = Arrays.asList(
+        "Computer Science", "Information Technology", "Electronics & Comm.", 
+        "Mechanical Engineering", "Civil Engineering", "Electrical Engineering",
+        "Commerce", "Arts", "Science", "Business Administration", "Other"
+    );
+
     public static final List<String> GENDERS = Arrays.asList(
         "Male", "Female", "Other", "Prefer not to say"
     );
@@ -84,5 +90,23 @@ public class DropdownData {
 
     public static final List<String> COUNTRIES = Arrays.asList(
         "India", "USA", "UK", "Canada", "Australia", "Germany", "France", "Japan", "Singapore", "UAE"
+    );
+
+    public static final List<String> COURSES = Arrays.asList(
+        "Web Development - Full Stack", "Data Science - Advanced", "Mobile App Development", "Digital Marketing", "Python Programming"
+    );
+
+    public static final List<String> STUDENT_STATUSES = Arrays.asList(
+        "Active", "Inactive", "Suspended", "Graduated"
+    );
+
+    // Format: "value|label"
+    public static final List<String> DOCUMENT_TYPES = Arrays.asList(
+        "aadharCard|Aadhar Card (Required)",
+        "panCard|PAN Card",
+        "marksheet|Marksheet (Required)",
+        "degreeCertificate|Degree Certificate",
+        "jobGuarantee|Job Guarantee Doc",
+        "resume|Resume/CV"
     );
 }
