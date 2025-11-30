@@ -142,9 +142,6 @@
                     <div class="profile-role"><%= displayRole.toUpperCase() %></div>
                 </div>
                 <div class="dropdown-divider m-0"></div>
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/dashboard/pages/profile.jsp">
-                    <i class="bi bi-person"></i> My Profile
-                </a>
                 <a class="dropdown-item" href="${pageContext.request.contextPath}/dashboard/pages/settings.jsp">
                     <i class="bi bi-gear"></i> Settings
                 </a>
