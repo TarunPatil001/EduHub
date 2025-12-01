@@ -25,6 +25,9 @@
                 <li class="mobile-only"><a href="public/register_institute.jsp" class="btn btn-primary btn-sm">Get Started</a></li>
             </ul>
             <div class="nav-buttons">
+                <button class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center p-0" id="themeToggleBtn" onclick="ThemeSwitcher.toggle()" style="width: 38px; height: 38px;" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
                 <a href="public/login.jsp" class="btn btn-outline-primary">Login</a>
                 <a href="public/register_institute.jsp" class="btn btn-primary">Get Started</a>
             </div>
@@ -238,6 +241,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="dashboard/js/theme-switcher.js"></script>
     <script src="public/js/script.js"></script>
 </body>
 </html>

@@ -299,9 +299,9 @@
 #resetFilters {
     border-radius: 10px;
     font-weight: 600;
-    color: var(--danger-color, #EF4444);
-    border: 1px solid var(--danger-color, #EF4444);
-    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
     min-height: 48px;
     display: inline-flex;
     align-items: center;
@@ -310,22 +310,23 @@
 }
 
 #resetFilters:hover {
-    background-color: var(--danger-color, #EF4444);
-    color: #fff;
-    border-color: var(--danger-color, #EF4444);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark Mode Overrides for Reset Button */
 [data-theme="dark"] #resetFilters {
-    background-color: transparent;
-    color: var(--danger-color, #EF4444);
-    border-color: var(--danger-color, #EF4444);
+    background-color: var(--input-bg);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
 }
 
 [data-theme="dark"] #resetFilters:hover {
-    background-color: var(--danger-color, #EF4444);
-    border-color: var(--danger-color, #EF4444);
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
 }
 
 /* Courses Table Container */

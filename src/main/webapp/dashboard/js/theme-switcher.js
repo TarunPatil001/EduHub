@@ -68,6 +68,30 @@
         if (darkModeToggle) {
             darkModeToggle.checked = isDark;
         }
+
+        // Update navbar toggle button icon
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        if (themeToggleBtn) {
+            const icon = themeToggleBtn.querySelector('i');
+            if (icon) {
+                // Check if using Bootstrap Icons or FontAwesome
+                const isBootstrapIcon = icon.classList.contains('bi');
+                
+                if (isDark) {
+                    if (isBootstrapIcon) {
+                        icon.className = 'bi bi-sun-fill';
+                    } else {
+                        icon.className = 'fas fa-sun';
+                    }
+                } else {
+                    if (isBootstrapIcon) {
+                        icon.className = 'bi bi-moon-stars-fill';
+                    } else {
+                        icon.className = 'fas fa-moon';
+                    }
+                }
+            }
+        }
         
         // Update any other theme toggles
         const themeToggles = document.querySelectorAll('[data-theme-toggle]');

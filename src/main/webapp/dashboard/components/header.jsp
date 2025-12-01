@@ -38,6 +38,11 @@
     </div>
     
     <div class="header-right">
+        <!-- Theme Toggle Button -->
+        <button class="btn-icon" id="themeToggleBtn" onclick="ThemeSwitcher.toggle()" title="Toggle Theme">
+            <i class="bi bi-moon-stars-fill"></i>
+        </button>
+        
         <div class="header-notifications dropdown">
             <button class="btn-icon" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-bell"></i>

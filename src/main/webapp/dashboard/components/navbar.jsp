@@ -28,6 +28,11 @@
 		<!-- Navbar links -->
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<div class="ms-auto d-flex gap-3 mt-3 mt-md-0 align-items-center">
+				<!-- Theme Toggle Button -->
+				<button class="btn btn-glass btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" id="themeToggleBtn" onclick="ThemeSwitcher.toggle()" title="Toggle Theme" style="width: 32px; height: 32px;">
+					<i class="bi bi-moon-stars-fill"></i>
+				</button>
+
 				<a class="btn btn-glass btn-sm" href="${pageContext.request.contextPath}/public/login.jsp">
 					<i class="bi bi-box-arrow-in-right me-1"></i> Login
 				</a>
