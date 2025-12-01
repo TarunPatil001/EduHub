@@ -172,6 +172,36 @@ public class DBUtil {
 					createCoursesTable(conn);
 					logger.info("Courses table created successfully");
 				}
+
+				// Check if staff table exists
+				boolean staffExists = tableExists(conn, "staff");
+				logger.info("Staff table exists: {}", staffExists);
+				
+				if (!staffExists) {
+					logger.warn("Staff table not found. Creating...");
+					createStaffTable(conn);
+					logger.info("Staff table created successfully");
+				}
+
+				// Check if staff_certifications table exists
+				boolean staffCertificationsExists = tableExists(conn, "staff_certifications");
+				logger.info("Staff certifications table exists: {}", staffCertificationsExists);
+				
+				if (!staffCertificationsExists) {
+					logger.warn("Staff certifications table not found. Creating...");
+					createStaffCertificationsTable(conn);
+					logger.info("Staff certifications table created successfully");
+				}
+
+				// Check if staff_documents table exists
+				boolean staffDocumentsExists = tableExists(conn, "staff_documents");
+				logger.info("Staff documents table exists: {}", staffDocumentsExists);
+				
+				if (!staffDocumentsExists) {
+					logger.warn("Staff documents table not found. Creating...");
+					createStaffDocumentsTable(conn);
+					logger.info("Staff documents table created successfully");
+				}
 			} else {
 				logger.error("Skipping users and courses table creation because institutes table does not exist.");
 			}
@@ -314,6 +344,104 @@ public class DBUtil {
 		try (var stmt = conn.createStatement()) {
 			stmt.executeUpdate(sql);
 			logger.info("Courses table created successfully");
+		}
+	}
+	
+	/**
+	 * Create staff table
+	 * Optimized for MySQL 8.0+ / TiDB Cloud
+	 */
+	private static void createStaffTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create staff table...");
+		String sql = "CREATE TABLE staff (" +
+				"staff_id VARCHAR(36) PRIMARY KEY, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"first_name VARCHAR(100) NOT NULL, " +
+				"last_name VARCHAR(100) NOT NULL, " +
+				"date_of_birth DATE NOT NULL, " +
+				"gender VARCHAR(20) NOT NULL, " +
+				"nationality VARCHAR(100), " +
+				"marital_status VARCHAR(50), " +
+				"employee_id VARCHAR(50) NOT NULL, " +
+				"role VARCHAR(50) NOT NULL, " +
+				"joining_date DATE NOT NULL, " +
+				"employment_type VARCHAR(50) NOT NULL, " +
+				"salary DECIMAL(10, 2) NOT NULL, " +
+				"work_shift VARCHAR(50), " +
+				"reporting_manager VARCHAR(100), " +
+				"phone VARCHAR(20) NOT NULL, " +
+				"email VARCHAR(255) NOT NULL, " +
+				"address TEXT NOT NULL, " +
+				"city VARCHAR(100) NOT NULL, " +
+				"state VARCHAR(100) NOT NULL, " +
+				"postal_code VARCHAR(20) NOT NULL, " +
+				"emergency_contact_name VARCHAR(100), " +
+				"emergency_contact_phone VARCHAR(20), " +
+				"emergency_contact_relation VARCHAR(50), " +
+				"highest_qualification VARCHAR(100) NOT NULL, " +
+				"specialization VARCHAR(100), " +
+				"experience DOUBLE, " +
+				"status VARCHAR(50) DEFAULT 'Yet to Onboard', " +
+				"profile_photo_url VARCHAR(255), " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"UNIQUE KEY unique_employee_id (institute_id, employee_id), " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_email (email), " +
+				"INDEX idx_status (status)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Staff table created successfully");
+		}
+	}
+
+	/**
+	 * Create staff certifications table
+	 */
+	private static void createStaffCertificationsTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create staff_certifications table...");
+		String sql = "CREATE TABLE staff_certifications (" +
+				"certification_id VARCHAR(36) PRIMARY KEY, " +
+				"staff_id VARCHAR(36) NOT NULL, " +
+				"name VARCHAR(255) NOT NULL, " +
+				"issuing_organization VARCHAR(255) NOT NULL, " +
+				"issue_date DATE NOT NULL, " +
+				"expiry_date DATE, " +
+				"credential_id VARCHAR(100), " +
+				"verification_url VARCHAR(500), " +
+				"certificate_file_url VARCHAR(500), " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE, " +
+				"INDEX idx_staff_id (staff_id)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Staff certifications table created successfully");
+		}
+	}
+
+	/**
+	 * Create staff documents table
+	 */
+	private static void createStaffDocumentsTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create staff_documents table...");
+		String sql = "CREATE TABLE staff_documents (" +
+				"document_id VARCHAR(36) PRIMARY KEY, " +
+				"staff_id VARCHAR(36) NOT NULL, " +
+				"document_type VARCHAR(50) NOT NULL, " +
+				"document_url VARCHAR(500) NOT NULL, " +
+				"uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE, " +
+				"INDEX idx_staff_id (staff_id)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Staff documents table created successfully");
 		}
 	}
 	

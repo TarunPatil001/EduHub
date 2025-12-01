@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*"%>
+<%@ page import="com.eduhub.util.DropdownData"%>
 <%@ page import="java.time.LocalDate"%>
 <%@ page import="java.time.format.DateTimeFormatter"%>
 <%!
@@ -221,45 +222,18 @@ pageContext.setAttribute("staffList", staffList);
                                 <label class="form-label">Role</label>
                                 <select class="form-select" id="roleFilter">
                                     <option value="">All Roles</option>
-                                    <option value="Teacher">Teacher</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="IT Support">IT Support</option>
-                                    <option value="Librarian">Librarian</option>
-                                    <option value="Accountant">Accountant</option>
-                                    <option value="HR Manager">HR Manager</option>
-                                    <option value="Counselor">Counselor</option>
-                                    <option value="Lab Assistant">Lab Assistant</option>
-                                    <option value="Sports Coordinator">Sports Coordinator</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Department</label>
-                                <select class="form-select" id="departmentFilter">
-                                    <option value="">All Departments</option>
-                                    <option value="Computer Science">Computer Science</option>
-                                    <option value="Mathematics">Mathematics</option>
-                                    <option value="Physics">Physics</option>
-                                    <option value="Chemistry">Chemistry</option>
-                                    <option value="Biology">Biology</option>
-                                    <option value="English">English</option>
-                                    <option value="Economics">Economics</option>
-                                    <option value="Administration">Administration</option>
-                                    <option value="IT Department">IT Department</option>
-                                    <option value="Library">Library</option>
-                                    <option value="Finance">Finance</option>
-                                    <option value="Human Resources">Human Resources</option>
-                                    <option value="Student Services">Student Services</option>
-                                    <option value="Science Lab">Science Lab</option>
-                                    <option value="Sports Department">Sports Department</option>
+                                    <% for(String role : DropdownData.ROLES) { %>
+                                        <option value="<%= role %>"><%= role %></option>
+                                    <% } %>
                                 </select>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Status</label>
                                 <select class="form-select" id="statusFilter">
                                     <option value="">All Status</option>
-                                    <option value="Active">Active</option>
-                                    <option value="On Leave">On Leave</option>
-                                    <option value="Inactive">Inactive</option>
+                                    <% for(String status : DropdownData.STAFF_STATUSES) { %>
+                                        <option value="<%= status %>"><%= status %></option>
+                                    <% } %>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -290,7 +264,6 @@ pageContext.setAttribute("staffList", staffList);
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Role</th>
-                                        <th>Department</th>
                                         <th>Qualification</th>
                                         <th>Experience</th>
                                         <th>Employment Type</th>
@@ -305,7 +278,7 @@ pageContext.setAttribute("staffList", staffList);
                                     if (staffList.isEmpty()) {
                                     %>
                                     <tr class="empty-state-row">
-                                        <td colspan="14" class="text-center py-5">
+                                        <td colspan="13" class="text-center py-5">
                                             <div class="empty-state">
                                                 <div class="empty-state-icon">
                                                     <i class="bi bi-people"></i>
@@ -323,7 +296,7 @@ pageContext.setAttribute("staffList", staffList);
                                         for (Staff staff : staffList) {
                                     %>
                                     <tr data-staff-id="<%= staff.id %>" data-role="<%= staff.role %>" 
-                                        data-department="<%= staff.department %>" data-status="<%= staff.status %>">
+                                        data-status="<%= staff.status %>">
                                         <td>
                                             <div class="form-check">
                                                 <input type="checkbox" class="form-check-input staff-checkbox" value="<%= staff.id %>">
@@ -344,7 +317,6 @@ pageContext.setAttribute("staffList", staffList);
                                         <td><%= staff.email %></td>
                                         <td><%= staff.phone %></td>
                                         <td><span class="role-badge"><%= staff.role %></span></td>
-                                        <td><%= staff.department %></td>
                                         <td><%= staff.qualification %></td>
                                         <td><%= staff.experience %></td>
                                         <td>

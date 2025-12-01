@@ -1,252 +1,80 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
+<%@ page import="com.eduhub.util.DropdownData" %>
+<%
+    // Helper to build options string for input-field component
+    StringBuilder genderOptions = new StringBuilder();
+    for(String item : DropdownData.GENDERS) {
+        genderOptions.append(item).append("|").append(item).append(",");
+    }
+    if(genderOptions.length() > 0) genderOptions.setLength(genderOptions.length() - 1);
+
+    StringBuilder maritalStatusOptions = new StringBuilder();
+    for(String item : DropdownData.MARITAL_STATUSES) {
+        maritalStatusOptions.append(item).append("|").append(item).append(",");
+    }
+    if(maritalStatusOptions.length() > 0) maritalStatusOptions.setLength(maritalStatusOptions.length() - 1);
+
+    StringBuilder roleOptions = new StringBuilder();
+    for(String item : DropdownData.ROLES) {
+        roleOptions.append(item).append("|").append(item).append(",");
+    }
+    if(roleOptions.length() > 0) roleOptions.setLength(roleOptions.length() - 1);
+
+    StringBuilder employmentTypeOptions = new StringBuilder();
+    for(String item : DropdownData.EMPLOYMENT_TYPES) {
+        employmentTypeOptions.append(item).append("|").append(item).append(",");
+    }
+    if(employmentTypeOptions.length() > 0) employmentTypeOptions.setLength(employmentTypeOptions.length() - 1);
+
+    StringBuilder workShiftOptions = new StringBuilder();
+    for(String item : DropdownData.WORK_SHIFTS) {
+        workShiftOptions.append(item).append("|").append(item).append(",");
+    }
+    if(workShiftOptions.length() > 0) workShiftOptions.setLength(workShiftOptions.length() - 1);
+
+    StringBuilder qualificationOptions = new StringBuilder();
+    for(String item : DropdownData.QUALIFICATIONS) {
+        qualificationOptions.append(item).append("|").append(item).append(",");
+    }
+    if(qualificationOptions.length() > 0) qualificationOptions.setLength(qualificationOptions.length() - 1);
+
+    StringBuilder specializationOptions = new StringBuilder();
+    for(String item : DropdownData.SPECIALIZATIONS) {
+        specializationOptions.append(item).append("|").append(item).append(",");
+    }
+    if(specializationOptions.length() > 0) specializationOptions.setLength(specializationOptions.length() - 1);
+
+    StringBuilder countryOptions = new StringBuilder();
+    for(String item : DropdownData.COUNTRIES) {
+        countryOptions.append(item).append("|").append(item).append(",");
+    }
+    if(countryOptions.length() > 0) countryOptions.setLength(countryOptions.length() - 1);
+
+    StringBuilder stateOptions = new StringBuilder();
+    for(String item : DropdownData.STATES) {
+        stateOptions.append(item).append("|").append(item).append(",");
+    }
+    if(stateOptions.length() > 0) stateOptions.setLength(stateOptions.length() - 1);
+
+    // Build document types JSON for JavaScript
+    StringBuilder documentTypesJson = new StringBuilder("[");
+    for(int i = 0; i < DropdownData.DOCUMENT_TYPES.size(); i++) {
+        String[] parts = DropdownData.DOCUMENT_TYPES.get(i).split("\\|");
+        documentTypesJson.append("{ \"value\": \"").append(parts[0]).append("\", \"label\": \"").append(parts[1]).append("\" }");
+        if(i < DropdownData.DOCUMENT_TYPES.size() - 1) documentTypesJson.append(", ");
+    }
+    documentTypesJson.append("]");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <jsp:include page="/dashboard/components/head.jsp">
         <jsp:param name="title" value="Add Staff - Dashboard - EduHub"/>
-        <jsp:param name="description" value="Add new staff member in EduHub"/>
+        <jsp:param name="description" value="Add new staff member to EduHub"/>
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
-    <style>
-        .add-staff-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .form-section {
-            background: #fff;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .form-section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .form-section-header .icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #0D6EFD 0%, #0a58ca 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            margin-right: 1rem;
-        }
-        
-        .form-section-header .title {
-            flex: 1;
-        }
-        
-        .form-section-header h5 {
-            margin: 0;
-            color: #212529;
-            font-weight: 600;
-        }
-        
-        .form-section-header p {
-            margin: 0;
-            color: #6c757d;
-            font-size: 0.875rem;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group {
-            margin-bottom: 0;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #212529;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-        
-        .form-group label i {
-            margin-right: 0.5rem;
-            color: #0D6EFD;
-        }
-        
-        .form-group label .required {
-            color: #DC3545;
-            margin-left: 0.25rem;
-        }
-        
-        .form-control, .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: #0D6EFD;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-            outline: none;
-        }
-        
-        .form-control:disabled, .form-select:disabled {
-            background-color: #e9ecef;
-        }
-        
-        textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .file-upload-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        
-        .file-upload-input {
-            opacity: 0;
-            position: absolute;
-            z-index: -1;
-        }
-        
-        .file-upload-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: #f8f9fa;
-            min-height: 180px;
-            height: 180px;
-        }
-        
-        .file-upload-label:hover {
-            border-color: #0D6EFD;
-            background-color: #e7f1ff;
-        }
-        
-        .file-upload-label i {
-            font-size: 2rem;
-            color: #0D6EFD;
-            margin-bottom: 0.5rem;
-            display: block;
-            text-align: center;
-        }
-        
-        .file-upload-text {
-            text-align: center;
-            width: 100%;
-            display: block;
-        }
-        
-        .file-upload-text strong {
-            display: block;
-            color: #212529;
-            margin-bottom: 0.25rem;
-            text-align: center;
-            width: 100%;
-        }
-        
-        .file-upload-text small {
-            color: #6c757d;
-            display: block;
-            text-align: center;
-            width: 100%;
-        }
-        
-        /* Photo Upload Label - Special styling for photo preview */
-        .photo-preview-box {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 80px;
-            margin-bottom: 0.5rem;
-        }
-        
-        .photo-preview-box.show {
-            display: flex;
-        }
-        
-        .photo-preview-box img {
-            max-width: 80px;
-            max-height: 80px;
-            width: auto;
-            height: auto;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-        
-        .file-upload-label.has-photo {
-            border-color: #198754 !important;
-            background-color: #d1e7dd !important;
-        }
-        
-        .file-upload-label.has-photo #photoUploadIcon {
-            display: none;
-        }
-        
-        .file-name-display {
-            display: block;
-            margin-top: 0.5rem;
-            color: #198754;
-            font-size: 0.875rem;
-        }
-        
-        .file-name-display i {
-            margin-right: 0.25rem;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 2px solid #f0f0f0;
-        }
-        
-        /* Use Bootstrap buttons - no custom styles needed */
-        
-
-        
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-section {
-                padding: 1.5rem;
-            }
-            
-            .form-actions {
-                flex-direction: column-reverse;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/staff/css/add-staff.css?v=<%=System.currentTimeMillis()%>">
 </head>
 <body>
     <div class="dashboard-container">
@@ -260,14 +88,12 @@
             </jsp:include>
             
             <div class="dashboard-content">
-                <div class="page-header-wrapper">
-                    <!-- Page Heading -->
+                <div class="page-header-wrapper mb-4">
                     <div class="page-title-container">
                         <h2>Add New Staff Member</h2>
-                        <p>Register a new staff member in the system</p>
+                        <p class="text-muted">Register a new staff member in the system</p>
                     </div>
                     
-                    <!-- Back Button -->
                     <div class="back-button-container">
                         <jsp:include page="/dashboard/components/back-button.jsp">
                             <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp"/>
@@ -276,468 +102,444 @@
                     </div>
                 </div>
                 
-                <div class="add-staff-container">
-                    <form id="addStaffForm" action="${pageContext.request.contextPath}/staff/add" method="post" enctype="multipart/form-data">
-                        
-                        <!-- Personal Information Section -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="icon">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <div class="title">
-                                    <h5>Personal Information</h5>
-                                    <p>Basic details of the staff member</p>
-                                </div>
-                            </div>
+                <div class="add-staff-layout">
+                    <div class="add-staff-form-column">
+                        <form id="addStaffForm" action="${pageContext.request.contextPath}/staff/add" method="POST" enctype="multipart/form-data">
                             
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="firstName">
-                                        <i class="bi bi-person-fill"></i>First Name<span class="required">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" required placeholder="Enter first name">
-                                </div>
+                            <!-- Personal Information -->
+                            <div class="card-custom mb-4">
+                                <h5 class="mb-4"><i class="bi bi-person-badge-fill"></i> Personal Information</h5>
                                 
-                                <div class="form-group">
-                                    <label for="lastName">
-                                        <i class="bi bi-person-fill"></i>Last Name<span class="required">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" required placeholder="Enter last name">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="email">
-                                        <i class="bi bi-envelope-fill"></i>Email Address<span class="required">*</span>
-                                    </label>
-                                    <input type="email" class="form-control" id="email" name="email" required placeholder="staff@example.com">
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="phone">
-                                        <i class="bi bi-telephone-fill"></i>Phone Number<span class="required">*</span>
-                                    </label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" required placeholder="+1 (555) 123-4567">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="dateOfBirth">
-                                        <i class="bi bi-calendar-fill"></i>Date of Birth<span class="required">*</span>
-                                    </label>
-                                    <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="gender">
-                                        <i class="bi bi-gender-ambiguous"></i>Gender<span class="required">*</span>
-                                    </label>
-                                    <select class="form-select" id="gender" name="gender" required>
-                                        <option value="">Select Gender</option>
-                                        <% if(application.getAttribute("genders") != null) {
-                                            for(String item : (List<String>)application.getAttribute("genders")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="nationality">
-                                        <i class="bi bi-flag-fill"></i>Nationality
-                                    </label>
-                                    <input type="text" class="form-control" id="nationality" name="nationality" placeholder="Enter nationality">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="bloodGroup">
-                                        <i class="bi bi-heart-pulse-fill"></i>Blood Group
-                                    </label>
-                                    <select class="form-select" id="bloodGroup" name="bloodGroup">
-                                        <option value="">Select Blood Group</option>
-                                        <% if(application.getAttribute("bloodGroups") != null) {
-                                            for(String item : (List<String>)application.getAttribute("bloodGroups")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="maritalStatus">
-                                        <i class="bi bi-people-fill"></i>Marital Status
-                                    </label>
-                                    <select class="form-select" id="maritalStatus" name="maritalStatus">
-                                        <option value="">Select Status</option>
-                                        <% if(application.getAttribute("maritalStatuses") != null) {
-                                            for(String item : (List<String>)application.getAttribute("maritalStatuses")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Employment Information Section -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="icon">
-                                    <i class="bi bi-briefcase"></i>
-                                </div>
-                                <div class="title">
-                                    <h5>Employment Information</h5>
-                                    <p>Job role and department details</p>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="employeeId">
-                                        <i class="bi bi-badge-tm-fill"></i>Employee ID<span class="required">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="employeeId" name="employeeId" required placeholder="EMP-001">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="role">
-                                        <i class="bi bi-person-badge-fill"></i>Role/Position<span class="required">*</span>
-                                    </label>
-                                    <select class="form-select" id="role" name="role" required>
-                                        <option value="">Select Role</option>
-                                        <% if(application.getAttribute("roles") != null) {
-                                            for(String item : (List<String>)application.getAttribute("roles")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="department">
-                                        <i class="bi bi-building"></i>Department<span class="required">*</span>
-                                    </label>
-                                    <select class="form-select" id="department" name="department" required>
-                                        <option value="">Select Department</option>
-                                        <% if(application.getAttribute("departments") != null) {
-                                            for(String item : (List<String>)application.getAttribute("departments")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="joiningDate">
-                                        <i class="bi bi-calendar-check-fill"></i>Joining Date<span class="required">*</span>
-                                    </label>
-                                    <input type="date" class="form-control" id="joiningDate" name="joiningDate" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="employmentType">
-                                        <i class="bi bi-clock-fill"></i>Employment Type<span class="required">*</span>
-                                    </label>
-                                    <select class="form-select" id="employmentType" name="employmentType" required>
-                                        <option value="">Select Type</option>
-                                        <% if(application.getAttribute("employmentTypes") != null) {
-                                            for(String item : (List<String>)application.getAttribute("employmentTypes")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="salary">
-                                        <i class="bi bi-currency-dollar"></i>Monthly Salary<span class="required">*</span>
-                                    </label>
-                                    <input type="number" class="form-control" id="salary" name="salary" required placeholder="5000" min="0" step="0.01">
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="workShift">
-                                        <i class="bi bi-clock-history"></i>Work Shift
-                                    </label>
-                                    <select class="form-select" id="workShift" name="workShift">
-                                        <option value="">Select Shift</option>
-                                        <% if(application.getAttribute("workShifts") != null) {
-                                            for(String item : (List<String>)application.getAttribute("workShifts")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="reportingManager">
-                                        <i class="bi bi-person-lines-fill"></i>Reporting Manager
-                                    </label>
-                                    <input type="text" class="form-control" id="reportingManager" name="reportingManager" placeholder="Manager name">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Contact Information Section -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="icon">
-                                    <i class="bi bi-geo-alt"></i>
-                                </div>
-                                <div class="title">
-                                    <h5>Contact Information</h5>
-                                    <p>Address and emergency contact details</p>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group" style="grid-column: 1 / -1;">
-                                    <label for="address">
-                                        <i class="bi bi-house-fill"></i>Current Address<span class="required">*</span>
-                                    </label>
-                                    <textarea class="form-control" id="address" name="address" required placeholder="Enter complete address"></textarea>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="city">
-                                        <i class="bi bi-building"></i>City<span class="required">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="city" name="city" required placeholder="Enter city">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="state">
-                                        <i class="bi bi-map-fill"></i>State/Province<span class="required">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="state" name="state" required placeholder="Enter state">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="postalCode">
-                                        <i class="bi bi-mailbox"></i>Postal Code<span class="required">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="postalCode" name="postalCode" required placeholder="Enter postal code">
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="emergencyContactName">
-                                        <i class="bi bi-person-fill-exclamation"></i>Emergency Contact Name
-                                    </label>
-                                    <input type="text" class="form-control" id="emergencyContactName" name="emergencyContactName" placeholder="Contact person name">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="emergencyContactPhone">
-                                        <i class="bi bi-telephone-fill"></i>Emergency Contact Phone
-                                    </label>
-                                    <input type="tel" class="form-control" id="emergencyContactPhone" name="emergencyContactPhone" placeholder="+1 (555) 123-4567">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="emergencyContactRelation">
-                                        <i class="bi bi-people-fill"></i>Relationship
-                                    </label>
-                                    <input type="text" class="form-control" id="emergencyContactRelation" name="emergencyContactRelation" placeholder="e.g., Spouse, Parent">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Qualifications Section -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="icon">
-                                    <i class="bi bi-mortarboard"></i>
-                                </div>
-                                <div class="title">
-                                    <h5>Qualifications</h5>
-                                    <p>Educational background and certifications</p>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="highestQualification">
-                                        <i class="bi bi-award-fill"></i>Highest Qualification<span class="required">*</span>
-                                    </label>
-                                    <select class="form-select" id="highestQualification" name="highestQualification" required>
-                                        <option value="">Select Qualification</option>
-                                        <% if(application.getAttribute("qualifications") != null) {
-                                            for(String item : (List<String>)application.getAttribute("qualifications")) { %>
-                                            <option value="<%=item%>"><%=item%></option>
-                                        <% } } %>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="specialization">
-                                        <i class="bi bi-book-fill"></i>Specialization/Field
-                                    </label>
-                                    <select class="form-select" id="specialization" name="specialization">
-                                        <option value="">Select Specialization</option>
-                                        <option value="Computer Science">Computer Science</option>
-                                        <option value="Information Technology">Information Technology</option>
-                                        <option value="Electronics & Communication">Electronics & Communication</option>
-                                        <option value="Electrical Engineering">Electrical Engineering</option>
-                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                        <option value="Civil Engineering">Civil Engineering</option>
-                                        <option value="Chemical Engineering">Chemical Engineering</option>
-                                        <option value="Automobile Engineering">Automobile Engineering</option>
-                                        <option value="Mathematics">Mathematics</option>
-                                        <option value="Physics">Physics</option>
-                                        <option value="Chemistry">Chemistry</option>
-                                        <option value="Business Administration">Business Administration</option>
-                                        <option value="Human Resources">Human Resources</option>
-                                        <option value="Accounting & Finance">Accounting & Finance</option>
-                                        <option value="Marketing">Marketing</option>
-                                        <option value="Management">Management</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Psychology">Psychology</option>
-                                        <option value="English Literature">English Literature</option>
-                                        <option value="Library Science">Library Science</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="experience">
-                                        <i class="bi bi-graph-up-arrow"></i>Years of Experience
-                                    </label>
-                                    <input type="number" class="form-control" id="experience" name="experience" placeholder="0" min="0" step="0.5">
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group" style="grid-column: 1 / -1;">
-                                    <label for="certifications">
-                                        <i class="bi bi-patch-check-fill"></i>Certifications
-                                    </label>
-                                    <textarea class="form-control" id="certifications" name="certifications" placeholder="List any professional certifications (one per line)" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Documents & Photo Section -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="icon">
-                                    <i class="bi bi-file-earmark-text"></i>
-                                </div>
-                                <div class="title">
-                                    <h5>Documents & Photo</h5>
-                                    <p>Upload required documents and profile photo</p>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="photo">
-                                        <i class="bi bi-camera-fill"></i>Profile Photo
-                                    </label>
-                                    <div class="file-upload-wrapper">
-                                        <input type="file" class="file-upload-input" id="photo" name="photo" accept="image/*">
-                                        <label for="photo" class="file-upload-label photo-upload-label">
-                                            <div class="photo-preview-box" id="photoPreviewBox">
-                                                <img id="photoPreview" alt="Staff Photo">
+                                <div class="row align-items-center">
+                                    <!-- Photo Upload Column -->
+                                    <div class="col-lg-auto col-md-auto d-flex flex-column align-items-center mb-4 mb-md-0 pe-lg-5 border-end-lg">
+                                        <div class="photo-upload-section">
+                                            <div class="photo-preview" onclick="document.getElementById('staffPhoto').click()">
+                                                <div class="photo-placeholder" id="photoPlaceholder">
+                                                    <i class="bi bi-camera-fill"></i>
+                                                    <span class="small fw-bold">Upload</span>
+                                                </div>
+                                                <img id="photoPreview" style="display: none;" alt="Staff Photo">
                                             </div>
-                                            <i class="bi bi-cloud-upload" id="photoUploadIcon"></i>
-                                            <div class="file-upload-text">
-                                                <strong id="photoUploadText">Click to upload photo</strong>
-                                                <small>JPG, PNG - Max 2MB</small>
+                                            <input type="file" id="staffPhoto" name="staffPhoto" accept="image/*" style="display: none;">
+                                            <div class="upload-hint text-center">
+                                                JPG/PNG &bull; Max 2MB
                                             </div>
-                                        </label>
+                                        </div>
                                     </div>
-                                    <small id="photoFileName" class="file-name-display"></small>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="resume">
-                                        <i class="bi bi-file-pdf-fill"></i>Resume/CV
-                                    </label>
-                                    <div class="file-upload-wrapper">
-                                        <input type="file" class="file-upload-input" id="resume" name="resume" accept=".pdf,.doc,.docx">
-                                        <label for="resume" class="file-upload-label">
-                                            <i class="bi bi-cloud-upload"></i>
-                                            <div class="file-upload-text">
-                                                <strong>Click to upload resume</strong>
-                                                <small>PDF, DOC, DOCX - Max 5MB</small>
-                                            </div>
-                                        </label>
+                                    
+                                    <!-- Personal Details Column -->
+                                    <div class="col-lg col-md">
+                                        <div class="row mb-3">
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="text"/>
+                                                <jsp:param name="id" value="firstName"/>
+                                                <jsp:param name="name" value="firstName"/>
+                                                <jsp:param name="label" value="First Name"/>
+                                                <jsp:param name="placeholder" value="First Name"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="class" value="col-md-6"/>
+                                            </jsp:include>
+                                            
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="text"/>
+                                                <jsp:param name="id" value="lastName"/>
+                                                <jsp:param name="name" value="lastName"/>
+                                                <jsp:param name="label" value="Last Name"/>
+                                                <jsp:param name="placeholder" value="Last Name"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="class" value="col-md-6"/>
+                                            </jsp:include>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="date"/>
+                                                <jsp:param name="id" value="dateOfBirth"/>
+                                                <jsp:param name="name" value="dateOfBirth"/>
+                                                <jsp:param name="label" value="Date of Birth"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="class" value="col-md-6"/>
+                                            </jsp:include>
+                                            
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="select"/>
+                                                <jsp:param name="id" value="gender"/>
+                                                <jsp:param name="name" value="gender"/>
+                                                <jsp:param name="label" value="Gender"/>
+                                                <jsp:param name="placeholder" value="Select Gender"/>
+                                                <jsp:param name="required" value="true"/>
+                                                <jsp:param name="options" value="<%=genderOptions.toString()%>"/>
+                                                <jsp:param name="class" value="col-md-6"/>
+                                            </jsp:include>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="text"/>
+                                                <jsp:param name="id" value="nationality"/>
+                                                <jsp:param name="name" value="nationality"/>
+                                                <jsp:param name="label" value="Nationality"/>
+                                                <jsp:param name="placeholder" value="Enter nationality"/>
+                                                <jsp:param name="class" value="col-md-6"/>
+                                            </jsp:include>
+
+                                            <jsp:include page="/dashboard/components/input-field.jsp">
+                                                <jsp:param name="type" value="select"/>
+                                                <jsp:param name="id" value="maritalStatus"/>
+                                                <jsp:param name="name" value="maritalStatus"/>
+                                                <jsp:param name="label" value="Marital Status"/>
+                                                <jsp:param name="placeholder" value="Select Status"/>
+                                                <jsp:param name="options" value="<%=maritalStatusOptions.toString()%>"/>
+                                                <jsp:param name="class" value="col-md-6"/>
+                                            </jsp:include>
+                                        </div>
                                     </div>
-                                    <small id="resumeFileName" class="file-name-display"></small>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="idProof">
-                                        <i class="bi bi-card-heading"></i>ID Proof
-                                    </label>
-                                    <div class="file-upload-wrapper">
-                                        <input type="file" class="file-upload-input" id="idProof" name="idProof" accept=".pdf,.jpg,.jpeg,.png">
-                                        <label for="idProof" class="file-upload-label">
-                                            <i class="bi bi-cloud-upload"></i>
-                                            <div class="file-upload-text">
-                                                <strong>Click to upload ID</strong>
-                                                <small>PDF, JPG, PNG - Max 2MB</small>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <small id="idProofFileName" class="file-name-display"></small>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Additional Information Section -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="icon">
-                                    <i class="bi bi-info-circle"></i>
-                                </div>
-                                <div class="title">
-                                    <h5>Additional Information</h5>
-                                    <p>Other relevant details</p>
                                 </div>
                             </div>
                             
-                            <div class="form-row">
-                                <div class="form-group" style="grid-column: 1 / -1;">
-                                    <label for="notes">
-                                        <i class="bi bi-journal-text"></i>Notes/Comments
-                                    </label>
-                                    <textarea class="form-control" id="notes" name="notes" placeholder="Any additional information about the staff member" rows="4"></textarea>
+                            <!-- Employment Information -->
+                            <div class="card-custom mb-4">
+                                <h5 class="mb-4"><i class="bi bi-briefcase-fill"></i> Employment Information</h5>
+                                
+                                <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="employeeId"/>
+                                        <jsp:param name="name" value="employeeId"/>
+                                        <jsp:param name="label" value="Employee ID"/>
+                                        <jsp:param name="placeholder" value="EMP-001"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="role"/>
+                                        <jsp:param name="name" value="role"/>
+                                        <jsp:param name="label" value="Role/Position"/>
+                                        <jsp:param name="placeholder" value="Select Role"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=roleOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="date"/>
+                                        <jsp:param name="id" value="joiningDate"/>
+                                        <jsp:param name="name" value="joiningDate"/>
+                                        <jsp:param name="label" value="Joining Date"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="employmentType"/>
+                                        <jsp:param name="name" value="employmentType"/>
+                                        <jsp:param name="label" value="Employment Type"/>
+                                        <jsp:param name="placeholder" value="Select Type"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=employmentTypeOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="number"/>
+                                        <jsp:param name="id" value="salary"/>
+                                        <jsp:param name="name" value="salary"/>
+                                        <jsp:param name="label" value="Monthly Salary"/>
+                                        <jsp:param name="placeholder" value="5000"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="min" value="0"/>
+                                        <jsp:param name="step" value="0.01"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="workShift"/>
+                                        <jsp:param name="name" value="workShift"/>
+                                        <jsp:param name="label" value="Work Shift"/>
+                                        <jsp:param name="placeholder" value="Select Shift"/>
+                                        <jsp:param name="options" value="<%=workShiftOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="reportingManager"/>
+                                        <jsp:param name="name" value="reportingManager"/>
+                                        <jsp:param name="label" value="Reporting Manager"/>
+                                        <jsp:param name="placeholder" value="Manager name"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
                                 </div>
                             </div>
                             
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="status">
-                                        <i class="bi bi-toggle-on"></i>Status<span class="required">*</span>
-                                    </label>
-                                    <select class="form-select" id="status" name="status" required>
-                                        <option value="Active" selected>Active</option>
-                                        <option value="On Leave">On Leave</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
+                            <!-- Contact Information -->
+                            <div class="card-custom mb-4">
+                                <h5 class="mb-4"><i class="bi bi-telephone-fill"></i> Contact Information</h5>
+                                
+                                <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="tel"/>
+                                        <jsp:param name="id" value="phone"/>
+                                        <jsp:param name="name" value="phone"/>
+                                        <jsp:param name="label" value="Phone Number"/>
+                                        <jsp:param name="placeholder" value="10-digit mobile number"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="pattern" value="[0-9]{10}"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="email"/>
+                                        <jsp:param name="id" value="email"/>
+                                        <jsp:param name="name" value="email"/>
+                                        <jsp:param name="label" value="Email Address"/>
+                                        <jsp:param name="placeholder" value="staff@example.com"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                    </jsp:include>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="address" class="form-label">Current Address <span class="required-star">*</span></label>
+                                            <textarea class="form-control" id="address" name="address" rows="3" required placeholder="Enter complete address"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="city"/>
+                                        <jsp:param name="name" value="city"/>
+                                        <jsp:param name="label" value="City"/>
+                                        <jsp:param name="placeholder" value="Enter city"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="state"/>
+                                        <jsp:param name="name" value="state"/>
+                                        <jsp:param name="label" value="State/Province"/>
+                                        <jsp:param name="placeholder" value="Select State"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=stateOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="postalCode"/>
+                                        <jsp:param name="name" value="postalCode"/>
+                                        <jsp:param name="label" value="Postal Code"/>
+                                        <jsp:param name="placeholder" value="Enter postal code"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="emergencyContactName"/>
+                                        <jsp:param name="name" value="emergencyContactName"/>
+                                        <jsp:param name="label" value="Emergency Contact Name"/>
+                                        <jsp:param name="placeholder" value="Contact person name"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="tel"/>
+                                        <jsp:param name="id" value="emergencyContactPhone"/>
+                                        <jsp:param name="name" value="emergencyContactPhone"/>
+                                        <jsp:param name="label" value="Emergency Contact Phone"/>
+                                        <jsp:param name="placeholder" value="10-digit number"/>
+                                        <jsp:param name="pattern" value="[0-9]{10}"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="emergencyContactRelation"/>
+                                        <jsp:param name="name" value="emergencyContactRelation"/>
+                                        <jsp:param name="label" value="Relationship"/>
+                                        <jsp:param name="placeholder" value="e.g., Spouse, Parent"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
                                 </div>
                             </div>
+                            
+                            <!-- Qualifications -->
+                            <div class="card-custom mb-4">
+                                <h5 class="mb-4"><i class="bi bi-mortarboard-fill"></i> Qualifications</h5>
+                                
+                                <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="highestQualification"/>
+                                        <jsp:param name="name" value="highestQualification"/>
+                                        <jsp:param name="label" value="Highest Qualification"/>
+                                        <jsp:param name="placeholder" value="Select Qualification"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=qualificationOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="specialization"/>
+                                        <jsp:param name="name" value="specialization"/>
+                                        <jsp:param name="label" value="Specialization/Field"/>
+                                        <jsp:param name="placeholder" value="Select Specialization"/>
+                                        <jsp:param name="options" value="<%=specializationOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="number"/>
+                                        <jsp:param name="id" value="experience"/>
+                                        <jsp:param name="name" value="experience"/>
+                                        <jsp:param name="label" value="Years of Experience"/>
+                                        <jsp:param name="placeholder" value="0"/>
+                                        <jsp:param name="min" value="0"/>
+                                        <jsp:param name="step" value="0.5"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <label class="form-label mb-0">Certifications</label>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addCertification()">
+                                                <i class="bi bi-plus-circle"></i> Add Certification
+                                            </button>
+                                        </div>
+                                        <div id="certificationsContainer">
+                                            <!-- Dynamic certification items will be added here -->
+                                        </div>
+                                        <input type="hidden" name="certificationIndices" id="certificationIndices" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Document Uploads -->
+                            <div class="card-custom mb-4">
+                                <h5 class="mb-4"><i class="bi bi-file-earmark-arrow-up-fill"></i> Document Uploads</h5>
+                                
+                                <!-- Hidden Inputs for Form Submission -->
+                                <div class="d-none">
+                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx">
+                                    <input type="file" id="aadharCard" name="aadharCard" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="panCard" name="panCard" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="marksheet" name="marksheet" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="degreeCertificate" name="degreeCertificate" accept=".pdf,.jpg,.jpeg,.png">
+                                    <input type="file" id="jobGuarantee" name="jobGuarantee" accept=".pdf,.doc,.docx">
+                                    <!-- Multi-file trigger -->
+                                    <input type="file" id="multiFileTrigger" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx">
+                                </div>
+
+                                <div class="upload-drop-zone" id="dropZone">
+                                    <div class="upload-icon-circle">
+                                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                                    </div>
+                                    <div class="upload-text">
+                                        <h6>Choose a file or drag & drop it here.</h6>
+                                        <p>txt, docx, pdf, jpeg, xlsx - Up to 50MB</p>
+                                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('multiFileTrigger').click()">
+                                            Browse Files
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="document-list" id="documentList">
+                                    <!-- Dynamic file list will appear here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Information -->
+                            <div class="card-custom mb-4">
+                                <h5 class="mb-4"><i class="bi bi-info-circle-fill"></i> Additional Information</h5>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="status" class="form-label">Status <span class="required-star">*</span></label>
+                                        <select class="form-select" id="status" name="status" required>
+                                            <option value="Yet to Onboard" selected>Yet to Onboard</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Form Actions -->
+                            <div class="form-action-buttons d-flex gap-3 justify-content-end">
+                                <a href="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp" class="btn btn-outline-secondary px-4" id="cancelBtn">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                                <button type="button" class="btn btn-outline-primary px-4" onclick="resetForm()">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <i class="bi bi-check-circle-fill"></i> Add Staff Member
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Sidebar -->
+                    <div class="add-staff-sidebar-column">
+                        <div class="card-custom mb-3">
+                            <h6 class="mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Registration Guidelines
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-2">Fill all required fields marked with <span class="required-star">*</span></li>
+                                <li class="mb-2">Upload clear, legible document scans</li>
+                                <li class="mb-2">Ensure mobile numbers are active</li>
+                                <li class="mb-2">Use a valid email address</li>
+                                <li class="mb-2">Photo should be passport-size</li>
+                                <li class="mb-2">All documents should be in PDF or image format</li>
+                            </ul>
+                            
+                            <hr class="my-3">
+                            
+                            <h6 class="mb-3">
+                                <i class="bi bi-file-text me-2"></i>Required Documents
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-2">✓ ID Proof</li>
+                                <li class="mb-2">✓ Resume/CV</li>
+                                <li class="mb-2">• Educational Certificates</li>
+                                <li class="mb-2">• Experience Letters</li>
+                            </ul>
+                            
+                            <hr class="my-3">
+                            
+                            <div>
+                                <h6 class="mb-3">
+                                    <i class="bi bi-headset me-2"></i>Need Help?
+                                </h6>
+                                <p class="small text-muted mb-2">Contact HR department for assistance</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="bi bi-telephone me-2"></i>Contact HR
+                                </a>
+                            </div>
                         </div>
-                        
-                        <!-- Form Actions -->
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
-                                <i class="bi bi-x-circle"></i> Clear Form
-                            </button>
-                            <jsp:include page="/dashboard/components/back-button.jsp">
-                                <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp"/>
-                                <jsp:param name="text" value="Cancel"/>
-                            </jsp:include>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Add Staff Member
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -752,165 +554,11 @@
     <!-- Include Toast Notification Component -->
     <jsp:include page="/components/toast-dependencies.jsp"/>
     
+    <!-- Add Staff Page Scripts -->
     <script>
-        // Photo preview functionality
-        document.getElementById('photo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            if (file.size > 2 * 1024 * 1024) {
-                toast.error('Photo size should not exceed 2MB. Please select a smaller file.');
-                this.value = '';
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const preview = document.getElementById('photoPreview');
-                const previewBox = document.getElementById('photoPreviewBox');
-                const photoLabel = document.querySelector('.photo-upload-label');
-                const photoFileName = document.getElementById('photoFileName');
-                const uploadText = document.getElementById('photoUploadText');
-                
-                preview.src = event.target.result;
-                previewBox.classList.add('show');
-                photoLabel.classList.add('has-photo');
-                uploadText.textContent = 'Click to change photo';
-                photoFileName.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + file.name;
-                
-                // Show success toast
-                toast.success('Profile photo uploaded successfully');
-            };
-            reader.readAsDataURL(file);
-        });
-        
-        // Reset Form Function
-        function resetForm() {
-            showConfirmationModal({
-                title: 'Reset Form',
-                message: 'Are you sure you want to clear all form data?<br><br><strong class="text-danger">All entered data will be lost!</strong>',
-                confirmText: 'Yes, Reset',
-                cancelText: 'Keep Data',
-                confirmClass: 'btn-danger',
-                icon: 'bi-exclamation-triangle-fill text-danger',
-                onConfirm: function() {
-                    const form = document.getElementById('addStaffForm');
-                    form.reset();
-                    
-                    // Reset photo preview
-                    const photoPreview = document.getElementById('photoPreview');
-                    const previewBox = document.getElementById('photoPreviewBox');
-                    const uploadText = document.getElementById('photoUploadText');
-                    const photoFileName = document.getElementById('photoFileName');
-                    
-                    if (photoPreview) photoPreview.src = '';
-                    if (previewBox) previewBox.classList.remove('show');
-                    if (uploadText) uploadText.textContent = 'Click to upload photo';
-                    if (photoFileName) photoFileName.textContent = '';
-                    
-                    // Reset file name displays
-                    document.getElementById('resumeFileName').textContent = '';
-                    document.getElementById('idProofFileName').textContent = '';
-                    
-                    // Reset all file upload boxes - remove has-photo class
-                    document.querySelectorAll('.file-upload-label').forEach(label => {
-                        label.classList.remove('has-photo');
-                    });
-                    
-                    // Show success toast
-                    toast.success('Form has been reset successfully');
-                }
-            });
-        }
-        
-        // File Upload Label Update for Resume and ID Proof
-        document.getElementById('resume').addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                toast.error('Resume file size should not exceed 5MB. Please select a smaller file.');
-                this.value = '';
-                return;
-            }
-            
-            const fileDisplay = document.getElementById('resumeFileName');
-            const label = this.nextElementSibling;
-            fileDisplay.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + file.name;
-            label.classList.add('has-photo');
-            toast.success('Resume uploaded successfully');
-        });
-        
-        document.getElementById('idProof').addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            
-            if (file.size > 2 * 1024 * 1024) {
-                toast.error('ID Proof file size should not exceed 2MB. Please select a smaller file.');
-                this.value = '';
-                return;
-            }
-            
-            const fileDisplay = document.getElementById('idProofFileName');
-            const label = this.nextElementSibling;
-            fileDisplay.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + file.name;
-            label.classList.add('has-photo');
-            toast.success('ID Proof uploaded successfully');
-        });
-        
-        // Form Validation
-        document.getElementById('addStaffForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Basic validation
-            const requiredFields = this.querySelectorAll('[required]');
-            let isValid = true;
-            let invalidFields = [];
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.style.borderColor = '#DC3545';
-                    const label = document.querySelector(`label[for="${field.id}"]`);
-                    if (label) {
-                        invalidFields.push(label.textContent.replace('*', '').trim());
-                    }
-                } else {
-                    field.style.borderColor = '#dee2e6';
-                }
-            });
-            
-            if (!isValid) {
-                showErrorModal({
-                    title: 'Validation Error',
-                    message: `Please fill in all required fields:<br><br><ul class="text-start"><li>${invalidFields.slice(0, 5).join('</li><li>')}</li></ul>${invalidFields.length > 5 ? '<p>...and ' + (invalidFields.length - 5) + ' more fields</p>' : ''}`
-                });
-                
-                // Scroll to first invalid field
-                const firstInvalid = document.querySelector('[required][style*="border-color: rgb(220, 53, 69)"]');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                return;
-            }
-            
-            // If validation passes, show success and submit
-            showSuccessModal({
-                title: 'Staff Member Added Successfully!',
-                message: 'The staff member has been registered in the system.<br><br>You will be redirected to the staff list.',
-                onClose: function() {
-                    // In a real application, this would submit to the backend
-                    // Uncomment the following line to actually submit the form
-                    // document.getElementById('addStaffForm').submit();
-                    
-                    // For demo: redirect to all staff page
-                    // window.location.href = '${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp';
-                }
-            });
-            
-            // Show success toast as well
-            toast.success('Staff member added successfully!');
-        });
+        // Pass server-side data to JavaScript
+        const SERVER_DOCUMENT_TYPES = <%=documentTypesJson.toString()%>;
     </script>
+    <script src="${pageContext.request.contextPath}/dashboard/pages/staff/js/add-staff.js?v=<%=System.currentTimeMillis()%>"></script>
 </body>
 </html>
