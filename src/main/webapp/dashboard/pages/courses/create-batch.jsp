@@ -1,5 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
+<%@ page import="com.eduhub.util.DropdownData" %>
+<%
+    // Helper to build options string for input-field component
+    StringBuilder courseOptions = new StringBuilder();
+    // Using index as ID for now
+    int cIdx = 1;
+    for(String item : DropdownData.COURSES) {
+        courseOptions.append(cIdx++).append("|").append(item).append(",");
+    }
+    if(courseOptions.length() > 0) courseOptions.setLength(courseOptions.length() - 1);
+
+    // Dummy instructors
+    String instructorOptions = "1|Dr. John Smith,2|Prof. Sarah Johnson,3|Mr. Michael Brown,4|Ms. Emily Davis";
+
+    StringBuilder modeOptions = new StringBuilder();
+    for(String item : DropdownData.MODES_OF_CONDUCT) {
+        modeOptions.append(item).append("|").append(item).append(",");
+    }
+    if(modeOptions.length() > 0) modeOptions.setLength(modeOptions.length() - 1);
+
+    StringBuilder statusOptions = new StringBuilder();
+    for(String item : DropdownData.BATCH_STATUSES) {
+        statusOptions.append(item).append("|").append(item).append(",");
+    }
+    if(statusOptions.length() > 0) statusOptions.setLength(statusOptions.length() - 1);
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,52 +34,7 @@
         <jsp:param name="description" value="Create new batch in EduHub"/>
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
-    <style>
-        /* Mobile responsive styles for page header */
-        @media (max-width: 991px) {
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start !important;
-                gap: 1rem;
-            }
-            
-            .page-header .d-flex {
-                flex-direction: column;
-                align-items: flex-start !important;
-                width: 100%;
-                gap: 1rem;
-            }
-            
-            .page-header .btn {
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start !important;
-                gap: 1rem;
-                width: 100%;
-            }
-            
-            .page-header .d-flex {
-                flex-direction: column;
-                align-items: flex-start !important;
-                width: 100%;
-            }
-            
-            .page-header h2 {
-                font-size: 1.5rem;
-            }
-            
-            .page-header .btn {
-                width: 100%;
-                font-size: 0.875rem;
-                padding: 0.75rem 1rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/courses/css/create-course.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -83,47 +64,62 @@
                     </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col-lg-9">
+                <div class="create-course-layout">
+                    <div class="create-course-form-column">
                         <form id="createBatchForm" action="${pageContext.request.contextPath}/api/batches/create" method="POST">
                             
                             <!-- Basic Information -->
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-info-circle-fill"></i> Basic Information</h5>
                                 
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label for="batchCode" class="form-label">Batch Code <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="batchCode" name="batchCode" required placeholder="e.g., CS-2025-A">
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label for="batchName" class="form-label">Batch Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="batchName" name="batchName" required placeholder="e.g., Morning Batch, Weekend Batch">
-                                    </div>
+                                <div class="row g-3 mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="batchCode"/>
+                                        <jsp:param name="name" value="batchCode"/>
+                                        <jsp:param name="label" value="Batch Code"/>
+                                        <jsp:param name="placeholder" value="e.g., CS-2025-A"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                        <jsp:param name="icon" value="upc-scan"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="batchName"/>
+                                        <jsp:param name="name" value="batchName"/>
+                                        <jsp:param name="label" value="Batch Name"/>
+                                        <jsp:param name="placeholder" value="e.g., Morning Batch, Weekend Batch"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-8"/>
+                                        <jsp:param name="icon" value="tag"/>
+                                    </jsp:include>
                                 </div>
                                 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="courseId" class="form-label">Select Course <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="courseId" name="courseId" required>
-                                            <option value="">Choose a course...</option>
-                                            <option value="1">Computer Science - Foundation</option>
-                                            <option value="2">Data Science - Advanced</option>
-                                            <option value="3">Web Development - Full Stack</option>
-                                            <option value="4">Mobile App Development</option>
-                                            <option value="5">Digital Marketing</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="instructorId" class="form-label">Instructor <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="instructorId" name="instructorId" required>
-                                            <option value="">Choose instructor...</option>
-                                            <option value="1">Dr. John Smith</option>
-                                            <option value="2">Prof. Sarah Johnson</option>
-                                            <option value="3">Mr. Michael Brown</option>
-                                            <option value="4">Ms. Emily Davis</option>
-                                        </select>
-                                    </div>
+                                <div class="row g-3 mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="courseId"/>
+                                        <jsp:param name="name" value="courseId"/>
+                                        <jsp:param name="label" value="Select Course"/>
+                                        <jsp:param name="placeholder" value="Choose a course..."/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=courseOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="icon" value="book"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="instructorId"/>
+                                        <jsp:param name="name" value="instructorId"/>
+                                        <jsp:param name="label" value="Instructor"/>
+                                        <jsp:param name="placeholder" value="Choose instructor..."/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=instructorOptions%>"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="icon" value="person-badge"/>
+                                    </jsp:include>
                                 </div>
                             </div>
                             
@@ -131,35 +127,65 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-calendar-fill"></i> Schedule Details</h5>
                                 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="startDate" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" id="startDate" name="startDate" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="endDate" class="form-label">End Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" id="endDate" name="endDate" required>
-                                    </div>
+                                <div class="row g-3 mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="date"/>
+                                        <jsp:param name="id" value="startDate"/>
+                                        <jsp:param name="name" value="startDate"/>
+                                        <jsp:param name="label" value="Start Date"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="icon" value="calendar-event"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="date"/>
+                                        <jsp:param name="id" value="endDate"/>
+                                        <jsp:param name="name" value="endDate"/>
+                                        <jsp:param name="label" value="Expected End Date"/>
+                                        <jsp:param name="required" value="false"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="icon" value="calendar-check"/>
+                                    </jsp:include>
                                 </div>
                                 
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label for="startTime" class="form-label">Start Time <span class="text-danger">*</span></label>
-                                        <input type="time" class="form-control" id="startTime" name="startTime" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="endTime" class="form-label">End Time <span class="text-danger">*</span></label>
-                                        <input type="time" class="form-control" id="endTime" name="endTime" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="maxCapacity" class="form-label">Max Students <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" id="maxCapacity" name="maxCapacity" required min="1" placeholder="e.g., 30">
-                                    </div>
+                                <div class="row g-3 mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="time"/>
+                                        <jsp:param name="id" value="startTime"/>
+                                        <jsp:param name="name" value="startTime"/>
+                                        <jsp:param name="label" value="Start Time"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                        <jsp:param name="icon" value="clock"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="time"/>
+                                        <jsp:param name="id" value="endTime"/>
+                                        <jsp:param name="name" value="endTime"/>
+                                        <jsp:param name="label" value="End Time"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                        <jsp:param name="icon" value="clock-history"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="number"/>
+                                        <jsp:param name="id" value="maxCapacity"/>
+                                        <jsp:param name="name" value="maxCapacity"/>
+                                        <jsp:param name="label" value="Max Students"/>
+                                        <jsp:param name="placeholder" value="e.g., 30"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="min" value="1"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                        <jsp:param name="icon" value="people"/>
+                                    </jsp:include>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label">Class Days <span class="text-danger">*</span></label>
-                                    <div class="d-flex flex-wrap gap-3">
+                                    <label class="form-label"><i class="bi bi-calendar-week"></i> Class Days <span class="text-danger">*</span></label>
+                                    <div class="d-flex flex-wrap gap-3 p-3 border rounded bg-light">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="monday" name="classDays" value="monday">
                                             <label class="form-check-label" for="monday">Monday</label>
@@ -196,46 +222,97 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-gear-fill"></i> Batch Settings</h5>
                                 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="modeOfConduct" class="form-label">Mode of Conduct <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="modeOfConduct" name="modeOfConduct" required>
-                                            <option value="">Select Mode</option>
-                                            <% if(application.getAttribute("modesOfConduct") != null) {
-                                                for(String item : (List<String>)application.getAttribute("modesOfConduct")) { %>
-                                                <option value="<%=item%>"><%=item%></option>
-                                            <% } } %>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="batchStatus" class="form-label">Status <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="batchStatus" name="batchStatus" required>
-                                            <% if(application.getAttribute("batchStatuses") != null) {
-                                                for(String item : (List<String>)application.getAttribute("batchStatuses")) { %>
-                                                <option value="<%=item%>"><%=item%></option>
-                                            <% } } %>
-                                        </select>
-                                    </div>
+                                <div class="row g-3 mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="modeOfConduct"/>
+                                        <jsp:param name="name" value="modeOfConduct"/>
+                                        <jsp:param name="label" value="Mode of Conduct"/>
+                                        <jsp:param name="placeholder" value="Select Mode"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=modeOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="icon" value="laptop"/>
+                                    </jsp:include>
+                                    
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="batchStatus"/>
+                                        <jsp:param name="name" value="batchStatus"/>
+                                        <jsp:param name="label" value="Status"/>
+                                        <jsp:param name="placeholder" value="Select Status"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=statusOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="icon" value="toggle-on"/>
+                                    </jsp:include>
                                 </div>
                                 
-                                <div class="row mb-3">
-                                    <div class="col-md-12">
-                                        <label for="classroomLocation" class="form-label">Classroom/Location</label>
-                                        <input type="text" class="form-control" id="classroomLocation" name="classroomLocation" placeholder="e.g., Room 101, Building A or Zoom Meeting ID">
-                                    </div>
+                                <div class="row g-3 mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="text"/>
+                                        <jsp:param name="id" value="classroomLocation"/>
+                                        <jsp:param name="name" value="classroomLocation"/>
+                                        <jsp:param name="label" value="Classroom/Location"/>
+                                        <jsp:param name="placeholder" value="e.g., Room 101, Building A or Zoom Meeting ID"/>
+                                        <jsp:param name="class" value="col-md-12"/>
+                                        <jsp:param name="icon" value="geo-alt"/>
+                                    </jsp:include>
                                 </div>
                             </div>
                             
                             <!-- Form Actions -->
-                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                <button type="button" class="btn btn-secondary" id="cancelBtn">
+                            <div class="form-action-buttons d-flex gap-3 justify-content-end">
+                                <a href="${pageContext.request.contextPath}/dashboard/pages/courses/manage-batches.jsp" class="btn btn-outline-secondary px-4" id="cancelBtn">
                                     <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                                <button type="button" class="btn btn-outline-primary px-4" id="resetBtn">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset
                                 </button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i> Create Batch
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <i class="bi bi-check-circle-fill"></i> Create Batch
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="create-course-sidebar-column">
+                        <div class="card-custom mb-3">
+                            <h6 class="mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Batch Guidelines
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-2">Fill all required fields marked with <span class="required-star">*</span></li>
+                                <li class="mb-2">Batch Code must be unique</li>
+                                <li class="mb-2">Ensure start date is before end date</li>
+                                <li class="mb-2">Check instructor availability before assigning</li>
+                                <li class="mb-2">Verify classroom capacity for offline batches</li>
+                            </ul>
+                            
+                            <hr class="my-3">
+                            
+                            <h6 class="mb-3">
+                                <i class="bi bi-lightbulb me-2"></i>Tips
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-2">Use consistent naming for batches</li>
+                                <li class="mb-2">Set realistic capacity limits</li>
+                                <li class="mb-2">Double-check time slots to avoid conflicts</li>
+                            </ul>
+                            
+                            <hr class="my-3">
+                            
+                            <div>
+                                <h6 class="mb-3">
+                                    <i class="bi bi-headset me-2"></i>Need Help?
+                                </h6>
+                                <p class="small text-muted mb-2">Contact the academic coordinator for assistance</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="bi bi-envelope me-2"></i>Contact Support
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -249,9 +326,11 @@
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script>
-        // Cancel button handler
-        document.getElementById('cancelBtn').addEventListener('click', function() {
-            window.location.href = '${pageContext.request.contextPath}/dashboard/pages/courses/manage-batches.jsp';
+        // Reset button handler
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if(confirm('Are you sure you want to reset the form?')) {
+                document.getElementById('createBatchForm').reset();
+            }
         });
         
         // Date validation - end date should be after start date
@@ -260,7 +339,7 @@
             const endDate = this.value;
             
             if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
-                alert('End date must be after start date');
+                alert('Expected end date must be after start date');
                 this.value = '';
             }
         });
