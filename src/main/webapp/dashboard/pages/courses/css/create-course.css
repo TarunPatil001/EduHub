@@ -5,9 +5,9 @@
 
 /* Modern Card Styling */
 .card-custom {
-    background: #fff;
+    background: var(--card-bg);
     border-radius: 16px;
-    border: none;
+    border: 1px solid var(--border-color);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
     padding: 2rem;
     transition: box-shadow 0.2s ease;
@@ -19,10 +19,10 @@
 }
 
 .card-custom h5 {
-    color: #2c3e50;
+    color: var(--text-primary);
     font-weight: 700;
     font-size: 1.1rem;
-    border-bottom: 2px solid #f0f2f5;
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 1rem;
     margin-bottom: 1.5rem;
     display: flex;
@@ -30,8 +30,8 @@
 }
 
 .card-custom h5 i {
-    background: #e7f1ff;
-    color: #0d6efd;
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--primary-color);
     width: 36px;
     height: 36px;
     display: flex;
@@ -45,18 +45,19 @@
 /* Form Controls Enhancement */
 .form-label {
     font-weight: 600;
-    color: #344767;
+    color: var(--text-primary);
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
 
 .form-control, .form-select {
     border-radius: 8px;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--border-color);
     padding: 0.75rem 1rem;
     font-size: 0.95rem;
     transition: all 0.2s ease;
-    background-color: #fff;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
     min-height: 48px;
 }
 
@@ -70,14 +71,15 @@ textarea.form-control {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #0d6efd;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
-    background-color: #fff;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
 }
 
 /* Required Star Styling */
 .required-star {
-    color: #dc3545;
+    color: var(--danger-color);
     font-weight: bold;
     margin-left: 3px;
 }
@@ -88,11 +90,11 @@ textarea.form-control {
     bottom: 0;
     right: 0;
     left: var(--sidebar-width); /* Default sidebar width */
-    background: #fff;
+    background: var(--card-bg);
     padding: 1rem 2rem;
     box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
     z-index: 99;
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid var(--border-color);
     margin: 0;
     border-radius: 0;
     display: flex;
@@ -112,6 +114,20 @@ textarea.form-control {
     min-height: 48px;
 }
 
+/* Cancel Button Styling */
+#cancelBtn {
+    color: var(--danger-color, #EF4444);
+    border-color: var(--danger-color, #EF4444);
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+#cancelBtn:hover {
+    background-color: var(--danger-color, #EF4444);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
 /* Header Buttons */
 .back-button-container .btn {
     min-height: 48px;
@@ -129,11 +145,11 @@ textarea.form-control {
 .create-course-sidebar-column .card-custom {
     position: sticky;
     top: 100px; /* Adjust based on header height */
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    background: var(--card-bg);
 }
 
 .create-course-sidebar-column h6 {
-    color: #0d6efd;
+    color: var(--primary-color);
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -144,7 +160,7 @@ textarea.form-control {
     position: relative;
     padding-left: 0;
     margin-bottom: 12px;
-    color: #555;
+    color: var(--text-secondary);
 }
 
 /* ===================================

@@ -302,7 +302,7 @@
                 <td><span class="status-badge status-${statusClass}">${capitalize(safeStatus)}</span></td>
                 <td>
                     <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary view-btn" onclick="viewCourse('${safeId}')" title="View Details">
+                        <button class="btn btn-sm view-btn" onclick="viewCourse('${safeId}')" title="View Details">
                             <i class="bi bi-eye"></i>
                         </button>
                         <button class="btn btn-sm btn-outline-success edit-btn" onclick="editCourse('${safeId}')" title="Edit Course">

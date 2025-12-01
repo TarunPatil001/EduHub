@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Auto-dismiss alerts after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
+    const alerts = document.querySelectorAll('.alert.alert-dismissible');
     alerts.forEach(function(alert) {
         setTimeout(function() {
             const bsAlert = new bootstrap.Alert(alert);
