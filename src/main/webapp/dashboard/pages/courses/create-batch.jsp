@@ -5,8 +5,11 @@
 <%@ page import="com.eduhub.dao.impl.CourseDAOImpl" %>
 <%@ page import="com.eduhub.dao.interfaces.StaffDAO" %>
 <%@ page import="com.eduhub.dao.impl.StaffDAOImpl" %>
+<%@ page import="com.eduhub.dao.interfaces.BranchDAO" %>
+<%@ page import="com.eduhub.dao.impl.BranchDAOImpl" %>
 <%@ page import="com.eduhub.model.Course" %>
 <%@ page import="com.eduhub.model.Staff" %>
+<%@ page import="com.eduhub.model.Branch" %>
 <%
     String instituteId = (String) session.getAttribute("instituteId");
     if (instituteId == null) {
@@ -16,6 +19,15 @@
 
     CourseDAO courseDAO = new CourseDAOImpl();
     StaffDAO staffDAO = new StaffDAOImpl();
+    BranchDAO branchDAO = new BranchDAOImpl();
+
+    // Fetch Branches
+    List<Branch> branches = branchDAO.getAllBranches(instituteId);
+    StringBuilder branchOptions = new StringBuilder();
+    for(Branch branch : branches) {
+        branchOptions.append(branch.getBranchId()).append("|").append(branch.getBranchName()).append(" (").append(branch.getBranchCode()).append(")").append(",");
+    }
+    if(branchOptions.length() > 0) branchOptions.setLength(branchOptions.length() - 1);
 
     // Fetch Courses
     List<Course> courses = courseDAO.getAllCourses(instituteId);
@@ -25,12 +37,12 @@
     }
     if(courseOptions.length() > 0) courseOptions.setLength(courseOptions.length() - 1);
 
-    // Fetch Trainers
-    List<Staff> trainers = staffDAO.getStaffByRoleLike(instituteId, "%Trainer");
+    // Fetch Trainers (Department: Trainer)
+    List<Staff> trainers = staffDAO.getStaffByDepartment(instituteId, "Trainer");
     StringBuilder trainerOptions = new StringBuilder();
     for(Staff trainer : trainers) {
         String fullName = trainer.getFirstName() + " " + trainer.getLastName();
-        trainerOptions.append(trainer.getStaffId()).append("|").append(fullName).append(" (").append(trainer.getRole()).append(")").append(",");
+        trainerOptions.append(trainer.getStaffId()).append("|").append(fullName).append(",");
     }
     if(trainerOptions.length() > 0) trainerOptions.setLength(trainerOptions.length() - 1);
 
@@ -125,7 +137,7 @@
                                         <jsp:param name="placeholder" value="Choose a course..."/>
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="options" value="<%=courseOptions.toString()%>"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                         <jsp:param name="icon" value="book"/>
                                     </jsp:include>
                                     
@@ -137,8 +149,20 @@
                                         <jsp:param name="placeholder" value="Choose trainer..."/>
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="options" value="<%=trainerOptions.toString()%>"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                         <jsp:param name="icon" value="person-badge"/>
+                                    </jsp:include>
+
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="branchId"/>
+                                        <jsp:param name="name" value="branchId"/>
+                                        <jsp:param name="label" value="Branch"/>
+                                        <jsp:param name="placeholder" value="Select Branch..."/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=branchOptions.toString()%>"/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                        <jsp:param name="icon" value="building"/>
                                     </jsp:include>
                                 </div>
                             </div>

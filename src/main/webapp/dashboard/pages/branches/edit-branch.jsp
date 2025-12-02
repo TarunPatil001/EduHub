@@ -29,7 +29,7 @@
     StringBuilder managerOptions = new StringBuilder();
     for(Staff manager : managers) {
         String fullName = manager.getFirstName() + " " + manager.getLastName();
-        managerOptions.append(manager.getStaffId()).append("|").append(fullName).append(" (").append(manager.getRole()).append(")").append(",");
+        managerOptions.append(manager.getStaffId()).append("|").append(fullName).append(",");
     }
     if(managerOptions.length() > 0) managerOptions.setLength(managerOptions.length() - 1);
 

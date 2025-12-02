@@ -75,6 +75,7 @@ public class BatchServlet extends HttpServlet {
             Batch batch = new Batch();
             batch.setBatchId(UUID.randomUUID().toString());
             batch.setInstituteId(instituteId);
+            batch.setBranchId(request.getParameter("branchId"));
             batch.setBatchCode(request.getParameter("batchCode"));
             batch.setBatchName(request.getParameter("batchName"));
             batch.setCourseId(request.getParameter("courseId"));

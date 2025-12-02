@@ -7,6 +7,7 @@ import java.time.LocalTime;
 public class Batch {
     private String batchId;
     private String instituteId;
+    private String branchId;
     private String courseId;
     private String instructorId;
     private String batchCode;
@@ -29,6 +30,9 @@ public class Batch {
 
     public String getInstituteId() { return instituteId; }
     public void setInstituteId(String instituteId) { this.instituteId = instituteId; }
+
+    public String getBranchId() { return branchId; }
+    public void setBranchId(String branchId) { this.branchId = branchId; }
 
     public String getCourseId() { return courseId; }
     public void setCourseId(String courseId) { this.courseId = courseId; }

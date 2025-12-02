@@ -671,4 +671,115 @@ public class StaffDAOImpl implements StaffDAO {
         logger.debug("Found {} staff members with role pattern: {}", staffList.size(), rolePattern);
         return staffList;
     }
+
+    @Override
+    public List<Staff> getStaffByDepartmentAndRole(String instituteId, String department, String role) throws SQLException {
+        logger.debug("Fetching staff by department and role for institute: {}, department: {}, role: {}", instituteId, department, role);
+        List<Staff> staffList = new ArrayList<>();
+        String sql = "SELECT * FROM staff WHERE institute_id = ? AND department = ? AND role = ? ORDER BY first_name, last_name";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, instituteId);
+            pstmt.setString(2, department);
+            pstmt.setString(3, role);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Staff staff = new Staff();
+                    staff.setStaffId(rs.getString("staff_id"));
+                    staff.setInstituteId(rs.getString("institute_id"));
+                    staff.setFirstName(rs.getString("first_name"));
+                    staff.setLastName(rs.getString("last_name"));
+                    staff.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
+                    staff.setGender(rs.getString("gender"));
+                    staff.setNationality(rs.getString("nationality"));
+                    staff.setMaritalStatus(rs.getString("marital_status"));
+                    staff.setEmployeeId(rs.getString("employee_id"));
+                    staff.setDepartment(rs.getString("department"));
+                    staff.setRole(rs.getString("role"));
+                    staff.setBranchId(rs.getString("branch_id"));
+                    staff.setJoiningDate(rs.getDate("joining_date").toLocalDate());
+                    staff.setEmploymentType(rs.getString("employment_type"));
+                    staff.setSalary(rs.getBigDecimal("salary"));
+                    staff.setWorkShift(rs.getString("work_shift"));
+                    staff.setReportingManager(rs.getString("reporting_manager"));
+                    staff.setPhone(rs.getString("phone"));
+                    staff.setEmail(rs.getString("email"));
+                    staff.setAddress(rs.getString("address"));
+                    staff.setCity(rs.getString("city"));
+                    staff.setState(rs.getString("state"));
+                    staff.setPostalCode(rs.getString("postal_code"));
+                    staff.setEmergencyContactName(rs.getString("emergency_contact_name"));
+                    staff.setEmergencyContactPhone(rs.getString("emergency_contact_phone"));
+                    staff.setEmergencyContactRelation(rs.getString("emergency_contact_relation"));
+                    staff.setHighestQualification(rs.getString("highest_qualification"));
+                    staff.setSpecialization(rs.getString("specialization"));
+                    staff.setExperience(rs.getDouble("experience"));
+                    staff.setStatus(rs.getString("status"));
+                    staff.setProfilePhotoUrl(rs.getString("profile_photo_url"));
+                    
+                    staffList.add(staff);
+                }
+            }
+        }
+        logger.debug("Found {} staff members with department: {} and role: {}", staffList.size(), department, role);
+        return staffList;
+    }
+
+    @Override
+    public List<Staff> getStaffByDepartment(String instituteId, String department) throws SQLException {
+        logger.debug("Fetching staff by department for institute: {}, department: {}", instituteId, department);
+        List<Staff> staffList = new ArrayList<>();
+        String sql = "SELECT * FROM staff WHERE institute_id = ? AND department = ? ORDER BY first_name, last_name";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, instituteId);
+            pstmt.setString(2, department);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Staff staff = new Staff();
+                    staff.setStaffId(rs.getString("staff_id"));
+                    staff.setInstituteId(rs.getString("institute_id"));
+                    staff.setFirstName(rs.getString("first_name"));
+                    staff.setLastName(rs.getString("last_name"));
+                    staff.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
+                    staff.setGender(rs.getString("gender"));
+                    staff.setNationality(rs.getString("nationality"));
+                    staff.setMaritalStatus(rs.getString("marital_status"));
+                    staff.setEmployeeId(rs.getString("employee_id"));
+                    staff.setDepartment(rs.getString("department"));
+                    staff.setRole(rs.getString("role"));
+                    staff.setBranchId(rs.getString("branch_id"));
+                    staff.setJoiningDate(rs.getDate("joining_date").toLocalDate());
+                    staff.setEmploymentType(rs.getString("employment_type"));
+                    staff.setSalary(rs.getBigDecimal("salary"));
+                    staff.setWorkShift(rs.getString("work_shift"));
+                    staff.setReportingManager(rs.getString("reporting_manager"));
+                    staff.setPhone(rs.getString("phone"));
+                    staff.setEmail(rs.getString("email"));
+                    staff.setAddress(rs.getString("address"));
+                    staff.setCity(rs.getString("city"));
+                    staff.setState(rs.getString("state"));
+                    staff.setPostalCode(rs.getString("postal_code"));
+                    staff.setEmergencyContactName(rs.getString("emergency_contact_name"));
+                    staff.setEmergencyContactPhone(rs.getString("emergency_contact_phone"));
+                    staff.setEmergencyContactRelation(rs.getString("emergency_contact_relation"));
+                    staff.setHighestQualification(rs.getString("highest_qualification"));
+                    staff.setSpecialization(rs.getString("specialization"));
+                    staff.setExperience(rs.getDouble("experience"));
+                    staff.setStatus(rs.getString("status"));
+                    staff.setProfilePhotoUrl(rs.getString("profile_photo_url"));
+                    
+                    staffList.add(staff);
+                }
+            }
+        }
+        logger.debug("Found {} staff members with department: {}", staffList.size(), department);
+        return staffList;
+    }
 }

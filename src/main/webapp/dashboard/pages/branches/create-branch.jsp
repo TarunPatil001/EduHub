@@ -13,15 +13,12 @@
 
     StaffDAO staffDAO = new StaffDAOImpl();
 
-    // Fetch Branch Managers (Staff with role 'Admin' or 'Manager' or similar - adjusting to 'Manager' for now)
-    // Assuming 'Manager' is a role. If not, we might need to filter differently.
-    // For now, let's fetch all staff and filter or just fetch specific roles if known.
-    // Using 'Manager' as a placeholder role.
-    List<Staff> managers = staffDAO.getStaffByRoleLike(instituteId, "%Manager");
+    // Fetch Branch Managers (Department: Management, Role: Branch Manager)
+    List<Staff> managers = staffDAO.getStaffByDepartmentAndRole(instituteId, "Management", "Branch Manager");
     StringBuilder managerOptions = new StringBuilder();
     for(Staff manager : managers) {
         String fullName = manager.getFirstName() + " " + manager.getLastName();
-        managerOptions.append(manager.getStaffId()).append("|").append(fullName).append(" (").append(manager.getRole()).append(")").append(",");
+        managerOptions.append(manager.getStaffId()).append("|").append(fullName).append(",");
     }
     if(managerOptions.length() > 0) managerOptions.setLength(managerOptions.length() - 1);
 

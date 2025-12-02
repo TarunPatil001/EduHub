@@ -28,4 +28,6 @@ public interface StaffDAO {
     int getStaffCountByRole(String instituteId, String role) throws SQLException;
     int getStaffCountByRoleAndStatus(String instituteId, String role, String status) throws SQLException;
     List<Staff> getStaffByRoleLike(String instituteId, String rolePattern) throws SQLException;
+    List<Staff> getStaffByDepartmentAndRole(String instituteId, String department, String role) throws SQLException;
+    List<Staff> getStaffByDepartment(String instituteId, String department) throws SQLException;
 }

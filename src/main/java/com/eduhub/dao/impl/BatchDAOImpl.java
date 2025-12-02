@@ -16,28 +16,29 @@ public class BatchDAOImpl implements BatchDAO {
 
     @Override
     public boolean createBatch(Batch batch) {
-        String sql = "INSERT INTO batches (batch_id, institute_id, course_id, instructor_id, batch_code, batch_name, " +
+        String sql = "INSERT INTO batches (batch_id, institute_id, branch_id, course_id, instructor_id, batch_code, batch_name, " +
                      "start_date, end_date, start_time, end_time, max_capacity, class_days, mode_of_conduct, " +
-                     "status, classroom_location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "status, classroom_location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, batch.getBatchId());
             pstmt.setString(2, batch.getInstituteId());
-            pstmt.setString(3, batch.getCourseId());
-            pstmt.setString(4, batch.getInstructorId());
-            pstmt.setString(5, batch.getBatchCode());
-            pstmt.setString(6, batch.getBatchName());
-            pstmt.setDate(7, java.sql.Date.valueOf(batch.getStartDate()));
-            pstmt.setDate(8, batch.getEndDate() != null ? java.sql.Date.valueOf(batch.getEndDate()) : null);
-            pstmt.setTime(9, java.sql.Time.valueOf(batch.getStartTime()));
-            pstmt.setTime(10, java.sql.Time.valueOf(batch.getEndTime()));
-            pstmt.setInt(11, batch.getMaxCapacity());
-            pstmt.setString(12, batch.getClassDays());
-            pstmt.setString(13, batch.getModeOfConduct());
-            pstmt.setString(14, batch.getStatus());
-            pstmt.setString(15, batch.getClassroomLocation());
+            pstmt.setString(3, batch.getBranchId());
+            pstmt.setString(4, batch.getCourseId());
+            pstmt.setString(5, batch.getInstructorId());
+            pstmt.setString(6, batch.getBatchCode());
+            pstmt.setString(7, batch.getBatchName());
+            pstmt.setDate(8, java.sql.Date.valueOf(batch.getStartDate()));
+            pstmt.setDate(9, batch.getEndDate() != null ? java.sql.Date.valueOf(batch.getEndDate()) : null);
+            pstmt.setTime(10, java.sql.Time.valueOf(batch.getStartTime()));
+            pstmt.setTime(11, java.sql.Time.valueOf(batch.getEndTime()));
+            pstmt.setInt(12, batch.getMaxCapacity());
+            pstmt.setString(13, batch.getClassDays());
+            pstmt.setString(14, batch.getModeOfConduct());
+            pstmt.setString(15, batch.getStatus());
+            pstmt.setString(16, batch.getClassroomLocation());
             
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -107,28 +108,29 @@ public class BatchDAOImpl implements BatchDAO {
 
     @Override
     public boolean updateBatch(Batch batch) {
-        String sql = "UPDATE batches SET course_id=?, instructor_id=?, batch_code=?, batch_name=?, " +
+        String sql = "UPDATE batches SET branch_id=?, course_id=?, instructor_id=?, batch_code=?, batch_name=?, " +
                      "start_date=?, end_date=?, start_time=?, end_time=?, max_capacity=?, class_days=?, " +
                      "mode_of_conduct=?, status=?, classroom_location=? WHERE batch_id=? AND institute_id=?";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, batch.getCourseId());
-            pstmt.setString(2, batch.getInstructorId());
-            pstmt.setString(3, batch.getBatchCode());
-            pstmt.setString(4, batch.getBatchName());
-            pstmt.setDate(5, java.sql.Date.valueOf(batch.getStartDate()));
-            pstmt.setDate(6, batch.getEndDate() != null ? java.sql.Date.valueOf(batch.getEndDate()) : null);
-            pstmt.setTime(7, java.sql.Time.valueOf(batch.getStartTime()));
-            pstmt.setTime(8, java.sql.Time.valueOf(batch.getEndTime()));
-            pstmt.setInt(9, batch.getMaxCapacity());
-            pstmt.setString(10, batch.getClassDays());
-            pstmt.setString(11, batch.getModeOfConduct());
-            pstmt.setString(12, batch.getStatus());
-            pstmt.setString(13, batch.getClassroomLocation());
-            pstmt.setString(14, batch.getBatchId());
-            pstmt.setString(15, batch.getInstituteId());
+            pstmt.setString(1, batch.getBranchId());
+            pstmt.setString(2, batch.getCourseId());
+            pstmt.setString(3, batch.getInstructorId());
+            pstmt.setString(4, batch.getBatchCode());
+            pstmt.setString(5, batch.getBatchName());
+            pstmt.setDate(6, java.sql.Date.valueOf(batch.getStartDate()));
+            pstmt.setDate(7, batch.getEndDate() != null ? java.sql.Date.valueOf(batch.getEndDate()) : null);
+            pstmt.setTime(8, java.sql.Time.valueOf(batch.getStartTime()));
+            pstmt.setTime(9, java.sql.Time.valueOf(batch.getEndTime()));
+            pstmt.setInt(10, batch.getMaxCapacity());
+            pstmt.setString(11, batch.getClassDays());
+            pstmt.setString(12, batch.getModeOfConduct());
+            pstmt.setString(13, batch.getStatus());
+            pstmt.setString(14, batch.getClassroomLocation());
+            pstmt.setString(15, batch.getBatchId());
+            pstmt.setString(16, batch.getInstituteId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -175,6 +177,7 @@ public class BatchDAOImpl implements BatchDAO {
         Batch batch = new Batch();
         batch.setBatchId(rs.getString("batch_id"));
         batch.setInstituteId(rs.getString("institute_id"));
+        batch.setBranchId(rs.getString("branch_id"));
         batch.setCourseId(rs.getString("course_id"));
         batch.setInstructorId(rs.getString("instructor_id"));
         batch.setBatchCode(rs.getString("batch_code"));
