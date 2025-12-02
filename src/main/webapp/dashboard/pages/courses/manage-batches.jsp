@@ -142,9 +142,9 @@
                             </select>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                            <label for="filterInstructor" class="form-label fw-semibold">Filter by Instructor</label>
+                            <label for="filterInstructor" class="form-label fw-semibold">Filter by Trainer</label>
                             <select class="form-select modern-select" id="filterInstructor">
-                                <option value="">All Instructors</option>
+                                <option value="">All Trainers</option>
                                 <option value="john">Dr. John Smith</option>
                                 <option value="sarah">Prof. Sarah Johnson</option>
                                 <option value="michael">Mr. Michael Brown</option>
@@ -186,7 +186,7 @@
                                     
                                     <div class="info-row">
                                         <div class="info-item">
-                                            <label>Instructor</label>
+                                            <label>Trainer</label>
                                             <div class="value">Dr. John Smith</div>
                                         </div>
                                         <div class="info-item">
@@ -252,7 +252,7 @@
                                     
                                     <div class="info-row">
                                         <div class="info-item">
-                                            <label>Instructor</label>
+                                            <label>Trainer</label>
                                             <div class="value">Prof. Sarah Johnson</div>
                                         </div>
                                         <div class="info-item">
@@ -318,7 +318,7 @@
                                     
                                     <div class="info-row">
                                         <div class="info-item">
-                                            <label>Instructor</label>
+                                            <label>Trainer</label>
                                             <div class="value">Mr. Michael Brown</div>
                                         </div>
                                         <div class="info-item">
@@ -384,7 +384,7 @@
                                     
                                     <div class="info-row">
                                         <div class="info-item">
-                                            <label>Instructor</label>
+                                            <label>Trainer</label>
                                             <div class="value">Ms. Emily Davis</div>
                                         </div>
                                         <div class="info-item">
@@ -450,7 +450,7 @@
                                     
                                     <div class="info-row">
                                         <div class="info-item">
-                                            <label>Instructor</label>
+                                            <label>Trainer</label>
                                             <div class="value">Dr. John Smith</div>
                                         </div>
                                         <div class="info-item">
@@ -516,7 +516,7 @@
                                     
                                     <div class="info-row info-row-three-cols">
                                         <div class="info-item">
-                                            <label>Instructor</label>
+                                            <label>Trainer</label>
                                             <div class="value">Prof. Sarah Johnson</div>
                                         </div>
                                         <div class="info-item">

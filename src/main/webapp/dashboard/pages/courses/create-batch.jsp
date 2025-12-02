@@ -1,18 +1,38 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="com.eduhub.util.DropdownData" %>
+<%@ page import="com.eduhub.dao.interfaces.CourseDAO" %>
+<%@ page import="com.eduhub.dao.impl.CourseDAOImpl" %>
+<%@ page import="com.eduhub.dao.interfaces.StaffDAO" %>
+<%@ page import="com.eduhub.dao.impl.StaffDAOImpl" %>
+<%@ page import="com.eduhub.model.Course" %>
+<%@ page import="com.eduhub.model.Staff" %>
 <%
-    // Helper to build options string for input-field component
+    String instituteId = (String) session.getAttribute("instituteId");
+    if (instituteId == null) {
+        response.sendRedirect(request.getContextPath() + "/public/login.jsp");
+        return;
+    }
+
+    CourseDAO courseDAO = new CourseDAOImpl();
+    StaffDAO staffDAO = new StaffDAOImpl();
+
+    // Fetch Courses
+    List<Course> courses = courseDAO.getAllCourses(instituteId);
     StringBuilder courseOptions = new StringBuilder();
-    // Using index as ID for now
-    int cIdx = 1;
-    for(String item : DropdownData.COURSES) {
-        courseOptions.append(cIdx++).append("|").append(item).append(",");
+    for(Course course : courses) {
+        courseOptions.append(course.getCourseId()).append("|").append(course.getCourseName()).append(" (").append(course.getCourseCode()).append(")").append(",");
     }
     if(courseOptions.length() > 0) courseOptions.setLength(courseOptions.length() - 1);
 
-    // Dummy instructors
-    String instructorOptions = "1|Dr. John Smith,2|Prof. Sarah Johnson,3|Mr. Michael Brown,4|Ms. Emily Davis";
+    // Fetch Trainers
+    List<Staff> trainers = staffDAO.getStaffByRoleLike(instituteId, "%Trainer");
+    StringBuilder trainerOptions = new StringBuilder();
+    for(Staff trainer : trainers) {
+        String fullName = trainer.getFirstName() + " " + trainer.getLastName();
+        trainerOptions.append(trainer.getStaffId()).append("|").append(fullName).append(" (").append(trainer.getRole()).append(")").append(",");
+    }
+    if(trainerOptions.length() > 0) trainerOptions.setLength(trainerOptions.length() - 1);
 
     StringBuilder modeOptions = new StringBuilder();
     for(String item : DropdownData.MODES_OF_CONDUCT) {
@@ -113,10 +133,10 @@
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="instructorId"/>
                                         <jsp:param name="name" value="instructorId"/>
-                                        <jsp:param name="label" value="Instructor"/>
-                                        <jsp:param name="placeholder" value="Choose instructor..."/>
+                                        <jsp:param name="label" value="Trainer"/>
+                                        <jsp:param name="placeholder" value="Choose trainer..."/>
                                         <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="<%=instructorOptions%>"/>
+                                        <jsp:param name="options" value="<%=trainerOptions.toString()%>"/>
                                         <jsp:param name="class" value="col-md-6"/>
                                         <jsp:param name="icon" value="person-badge"/>
                                     </jsp:include>
@@ -286,7 +306,7 @@
                                 <li class="mb-2">Fill all required fields marked with <span class="required-star">*</span></li>
                                 <li class="mb-2">Batch Code must be unique</li>
                                 <li class="mb-2">Ensure start date is before end date</li>
-                                <li class="mb-2">Check instructor availability before assigning</li>
+                                <li class="mb-2">Check trainer availability before assigning</li>
                                 <li class="mb-2">Verify classroom capacity for offline batches</li>
                             </ul>
                             

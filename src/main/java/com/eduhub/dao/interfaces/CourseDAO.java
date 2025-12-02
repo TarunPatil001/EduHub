@@ -15,4 +15,5 @@ public interface CourseDAO {
     boolean updateCourse(Course course);
     boolean deleteCourse(String courseId, String instituteId);
     Course getCourseById(String courseId, String instituteId);
+    List<Course> getAllCourses(String instituteId);
 }

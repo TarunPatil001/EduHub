@@ -20,6 +20,9 @@
     boolean staffActive = activePage.equals("staff") || activePage.equals("add-staff") || 
                          activePage.equals("all-staff") || activePage.equals("payroll");
     
+    boolean branchesActive = activePage.equals("branches") || activePage.equals("create-branch") || 
+                            activePage.equals("all-branches");
+
     boolean reportsActive = activePage.equals("reports") || activePage.equals("placement-reports");
 %>
 <%--
@@ -116,6 +119,21 @@
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="nav-link <%= activePage.equals("add-staff") ? "active" : "" %>"><i class="bi bi-plus-circle"></i><span>Add Staff</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/all-staff.jsp" class="nav-link <%= activePage.equals("all-staff") ? "active" : "" %>"><i class="bi bi-person-lines-fill"></i><span>All Staff</span></a></li>
                     <li><a href="${pageContext.request.contextPath}/dashboard/pages/staff/payroll.jsp" class="nav-link <%= activePage.equals("payroll") ? "active" : "" %>"><i class="bi bi-cash-stack"></i><span>Payroll & Salary</span></a></li>
+                </ul>
+            </li>
+            
+            <!-- Branch Management -->
+            <li class="nav-item">
+                <a href="#" class="nav-link has-submenu <%= branchesActive ? "active" : "" %>" 
+                   data-bs-toggle="collapse" data-bs-target="#branchesMenu" 
+                   aria-expanded="<%= branchesActive ? "true" : "false" %>">
+                    <i class="bi bi-diagram-3"></i>
+                    <span>Branch Management</span>
+                    <i class="bi bi-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="submenu collapse <%= branchesActive ? "show" : "" %>" id="branchesMenu">
+                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/branches/create-branch.jsp" class="nav-link <%= activePage.equals("create-branch") ? "active" : "" %>"><i class="bi bi-plus-circle"></i><span>Create Branch</span></a></li>
+                    <li><a href="${pageContext.request.contextPath}/dashboard/pages/branches/all-branches.jsp" class="nav-link <%= activePage.equals("all-branches") ? "active" : "" %>"><i class="bi bi-list-ul"></i><span>All Branches</span></a></li>
                 </ul>
             </li>
             

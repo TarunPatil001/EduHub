@@ -27,4 +27,5 @@ public interface StaffDAO {
     List<String> getDistinctRoles(String instituteId) throws SQLException;
     int getStaffCountByRole(String instituteId, String role) throws SQLException;
     int getStaffCountByRoleAndStatus(String instituteId, String role, String status) throws SQLException;
+    List<Staff> getStaffByRoleLike(String instituteId, String rolePattern) throws SQLException;
 }

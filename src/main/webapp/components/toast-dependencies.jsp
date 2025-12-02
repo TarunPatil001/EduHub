@@ -46,6 +46,32 @@
                 // Clear the message so it doesn't show again
                 sessionStorage.removeItem('pendingToastType');
             }
+
+            // Check for URL parameters (success/error/message)
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+            const message = urlParams.get('message');
+
+            if (message) {
+                if (success === 'true') {
+                    setTimeout(() => {
+                        if (typeof toast !== 'undefined') {
+                            toast.success(message);
+                        }
+                    }, 300);
+                } else if (error === 'true') {
+                    setTimeout(() => {
+                        if (typeof toast !== 'undefined') {
+                            toast.error(message);
+                        }
+                    }, 300);
+                }
+                
+                // Optional: Clean up URL parameters without refreshing
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
         });
     })();
 </script>

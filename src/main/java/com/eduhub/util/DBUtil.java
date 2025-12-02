@@ -202,6 +202,26 @@ public class DBUtil {
 					createStaffDocumentsTable(conn);
 					logger.info("Staff documents table created successfully");
 				}
+
+				// Check if batches table exists
+				boolean batchesExists = tableExists(conn, "batches");
+				logger.info("Batches table exists: {}", batchesExists);
+				
+				if (!batchesExists) {
+					logger.warn("Batches table not found. Creating...");
+					createBatchesTable(conn);
+					logger.info("Batches table created successfully");
+				}
+
+				// Check if branches table exists
+				boolean branchesExists = tableExists(conn, "branches");
+				logger.info("Branches table exists: {}", branchesExists);
+				
+				if (!branchesExists) {
+					logger.warn("Branches table not found. Creating...");
+					createBranchesTable(conn);
+					logger.info("Branches table created successfully");
+				}
 			} else {
 				logger.error("Skipping users and courses table creation because institutes table does not exist.");
 			}
@@ -446,6 +466,79 @@ public class DBUtil {
 	}
 	
 	
+	/**
+	 * Create batches table
+	 */
+	private static void createBatchesTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create batches table...");
+		String sql = "CREATE TABLE batches (" +
+				"batch_id VARCHAR(36) PRIMARY KEY, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"course_id VARCHAR(36) NOT NULL, " +
+				"instructor_id VARCHAR(36) NOT NULL, " +
+				"batch_code VARCHAR(50) NOT NULL, " +
+				"batch_name VARCHAR(100) NOT NULL, " +
+				"start_date DATE NOT NULL, " +
+				"end_date DATE, " +
+				"start_time TIME NOT NULL, " +
+				"end_time TIME NOT NULL, " +
+				"max_capacity INT NOT NULL, " +
+				"class_days VARCHAR(255) NOT NULL, " +
+				"mode_of_conduct VARCHAR(50) NOT NULL, " +
+				"status VARCHAR(20) DEFAULT 'Active', " +
+				"classroom_location VARCHAR(255), " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (instructor_id) REFERENCES staff(staff_id) ON DELETE CASCADE, " +
+				"UNIQUE KEY unique_batch_code (institute_id, batch_code), " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_course_id (course_id), " +
+				"INDEX idx_instructor_id (instructor_id), " +
+				"INDEX idx_status (status)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Batches table created successfully");
+		}
+	}
+
+	/**
+	 * Create branches table
+	 */
+	private static void createBranchesTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create branches table...");
+		String sql = "CREATE TABLE branches (" +
+				"branch_id VARCHAR(36) PRIMARY KEY, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"branch_code VARCHAR(50) NOT NULL, " +
+				"branch_name VARCHAR(100) NOT NULL, " +
+				"branch_manager_id VARCHAR(36), " +
+				"status VARCHAR(20) DEFAULT 'Active', " +
+				"email VARCHAR(255), " +
+				"phone VARCHAR(20), " +
+				"address TEXT, " +
+				"city VARCHAR(100), " +
+				"state VARCHAR(100), " +
+				"zip_code VARCHAR(20), " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (branch_manager_id) REFERENCES staff(staff_id) ON DELETE SET NULL, " +
+				"UNIQUE KEY unique_branch_code (institute_id, branch_code), " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_branch_manager_id (branch_manager_id), " +
+				"INDEX idx_status (status)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Branches table created successfully");
+		}
+	}
+
 	/*
      * This method will be called whenever you need a DB connection.
      * It returns a Connection object using the loaded credentials.

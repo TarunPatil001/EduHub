@@ -333,6 +333,26 @@ public class CourseDAOImpl implements CourseDAO {
         return false;
     }
 
+    @Override
+    public List<Course> getAllCourses(String instituteId) {
+        logger.debug("Fetching all courses for institute: {}", instituteId);
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT * FROM courses WHERE institute_id = ? ORDER BY course_name";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, instituteId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    courses.add(mapResultSetToCourse(rs));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting all courses: {}", e.getMessage(), e);
+        }
+        logger.debug("Found {} courses for institute: {}", courses.size(), instituteId);
+        return courses;
+    }
+
     private Course mapResultSetToCourse(ResultSet rs) throws SQLException {
         Course course = new Course();
         course.setCourseId(rs.getString("course_id"));

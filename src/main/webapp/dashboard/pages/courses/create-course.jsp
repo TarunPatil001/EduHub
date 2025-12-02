@@ -210,7 +210,7 @@
                                 </div>
                                 
                                 <div class="alert alert-info mb-0">
-                                    <i class="bi bi-info-circle"></i> <strong>Note:</strong> After creating the course, you can create batches with specific schedules, instructors, and timing in the "Create Batch" section.
+                                    <i class="bi bi-info-circle"></i> <strong>Note:</strong> After creating the course, you can create batches with specific schedules, trainers, and timing in the "Create Batch" section.
                                 </div>
                             </div>
                             
