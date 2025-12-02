@@ -11,4 +11,7 @@ public interface BatchDAO {
     boolean updateBatch(Batch batch);
     boolean deleteBatch(String batchId, String instituteId);
     boolean isBatchCodeExists(String instituteId, String batchCode);
+    List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery);
+    List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery, int offset, int limit);
+    int getBatchCountByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery);
 }

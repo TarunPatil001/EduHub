@@ -60,4 +60,20 @@ public class BatchServiceImpl implements BatchService {
     public boolean deleteBatch(String batchId, String instituteId) {
         return batchDAO.deleteBatch(batchId, instituteId);
     }
+
+    @Override
+    public List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery) {
+        return batchDAO.getBatchesByFilters(instituteId, courseId, branchId, status, searchQuery);
+    }
+
+    @Override
+    public List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery, int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return batchDAO.getBatchesByFilters(instituteId, courseId, branchId, status, searchQuery, offset, pageSize);
+    }
+
+    @Override
+    public int getBatchCountByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery) {
+        return batchDAO.getBatchCountByFilters(instituteId, courseId, branchId, status, searchQuery);
+    }
 }

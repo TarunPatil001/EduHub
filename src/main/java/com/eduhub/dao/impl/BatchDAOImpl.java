@@ -173,6 +173,108 @@ public class BatchDAOImpl implements BatchDAO {
         return false;
     }
 
+    @Override
+    public List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery) {
+        return getBatchesByFilters(instituteId, courseId, branchId, status, searchQuery, 0, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery, int offset, int limit) {
+        List<Batch> batches = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM batches WHERE institute_id = ?");
+        List<Object> params = new ArrayList<>();
+        params.add(instituteId);
+
+        if (courseId != null && !courseId.isEmpty() && !"all".equalsIgnoreCase(courseId)) {
+            sql.append(" AND course_id = ?");
+            params.add(courseId);
+        }
+        
+        if (branchId != null && !branchId.isEmpty() && !"all".equalsIgnoreCase(branchId)) {
+            sql.append(" AND branch_id = ?");
+            params.add(branchId);
+        }
+        
+        if (status != null && !status.isEmpty() && !"all".equalsIgnoreCase(status)) {
+            sql.append(" AND status = ?");
+            params.add(status);
+        }
+        
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            sql.append(" AND (LOWER(batch_name) LIKE ? OR LOWER(batch_code) LIKE ?)");
+            String searchPattern = "%" + searchQuery.toLowerCase() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+        
+        sql.append(" ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            
+            for (int i = 0; i < params.size(); i++) {
+                pstmt.setObject(i + 1, params.get(i));
+            }
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    batches.add(mapResultSetToBatch(rs));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting batches by filters: {}", e.getMessage(), e);
+        }
+        return batches;
+    }
+
+    @Override
+    public int getBatchCountByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM batches WHERE institute_id = ?");
+        List<Object> params = new ArrayList<>();
+        params.add(instituteId);
+
+        if (courseId != null && !courseId.isEmpty() && !"all".equalsIgnoreCase(courseId)) {
+            sql.append(" AND course_id = ?");
+            params.add(courseId);
+        }
+        
+        if (branchId != null && !branchId.isEmpty() && !"all".equalsIgnoreCase(branchId)) {
+            sql.append(" AND branch_id = ?");
+            params.add(branchId);
+        }
+        
+        if (status != null && !status.isEmpty() && !"all".equalsIgnoreCase(status)) {
+            sql.append(" AND status = ?");
+            params.add(status);
+        }
+        
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            sql.append(" AND (LOWER(batch_name) LIKE ? OR LOWER(batch_code) LIKE ?)");
+            String searchPattern = "%" + searchQuery.toLowerCase() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            
+            for (int i = 0; i < params.size(); i++) {
+                pstmt.setObject(i + 1, params.get(i));
+            }
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting batch count by filters: {}", e.getMessage(), e);
+        }
+        return 0;
+    }
+
     private Batch mapResultSetToBatch(ResultSet rs) throws SQLException {
         Batch batch = new Batch();
         batch.setBatchId(rs.getString("batch_id"));

@@ -10,4 +10,7 @@ public interface BatchService {
     List<Batch> getAllBatches(String instituteId);
     boolean updateBatch(Batch batch);
     boolean deleteBatch(String batchId, String instituteId);
+    List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery);
+    List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery, int page, int pageSize);
+    int getBatchCountByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery);
 }
