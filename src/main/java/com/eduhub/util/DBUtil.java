@@ -477,6 +477,7 @@ public class DBUtil {
 		String sql = "CREATE TABLE batches (" +
 				"batch_id VARCHAR(36) PRIMARY KEY, " +
 				"institute_id VARCHAR(36) NOT NULL, " +
+				"branch_id VARCHAR(36), " +
 				"course_id VARCHAR(36) NOT NULL, " +
 				"instructor_id VARCHAR(36) NOT NULL, " +
 				"batch_code VARCHAR(50) NOT NULL, " +
@@ -493,10 +494,12 @@ public class DBUtil {
 				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
 				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
 				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (branch_id) REFERENCES branches(branch_id) ON DELETE SET NULL, " +
 				"FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE, " +
 				"FOREIGN KEY (instructor_id) REFERENCES staff(staff_id) ON DELETE CASCADE, " +
 				"UNIQUE KEY unique_batch_code (institute_id, batch_code), " +
 				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_branch_id (branch_id), " +
 				"INDEX idx_course_id (course_id), " +
 				"INDEX idx_instructor_id (instructor_id), " +
 				"INDEX idx_status (status)" +

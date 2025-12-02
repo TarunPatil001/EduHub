@@ -372,8 +372,25 @@
     <script>
         // Reset button handler
         document.getElementById('resetBtn').addEventListener('click', function() {
-            if(confirm('Are you sure you want to reset the form?')) {
-                document.getElementById('createBatchForm').reset();
+            if (typeof showConfirmationModal === 'function') {
+                showConfirmationModal({
+                    title: 'Reset Form',
+                    message: 'Are you sure you want to reset the form? All entered data will be lost.',
+                    confirmText: 'Reset',
+                    cancelText: 'Cancel',
+                    confirmClass: 'btn-warning',
+                    icon: 'bi-arrow-clockwise text-warning',
+                    onConfirm: function() {
+                        document.getElementById('createBatchForm').reset();
+                        if (typeof toast !== 'undefined') {
+                            toast.info('Form has been reset');
+                        }
+                    }
+                });
+            } else {
+                if(confirm('Are you sure you want to reset the form?')) {
+                    document.getElementById('createBatchForm').reset();
+                }
             }
         });
         
