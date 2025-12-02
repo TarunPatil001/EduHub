@@ -21,9 +21,6 @@
     color: var(--text-primary);
     font-weight: 700;
     font-size: 1.1rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
 }
@@ -39,6 +36,31 @@
     border-radius: 10px;
     margin-right: 12px;
     font-size: 1.1rem;
+}
+
+/* Add border to the flex container instead of h5 */
+.card-custom .d-flex.justify-content-between.align-items-center {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Mobile responsive for section headers with buttons */
+@media (max-width: 575px) {
+    .card-custom .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .card-custom .d-flex.justify-content-between.align-items-center h5 {
+        width: 100%;
+    }
+    
+    .card-custom .d-flex.justify-content-between.align-items-center .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* Photo Upload Styling */
@@ -693,4 +715,598 @@ textarea.form-control {
 [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     cursor: pointer;
+}
+
+/* ===================================
+   Enhanced Document Upload Styles
+   =================================== */
+
+.upload-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.upload-icon-circle {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.2) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.upload-drop-zone:hover .upload-icon-circle {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.2) 0%, rgba(13, 110, 253, 0.3) 100%);
+}
+
+.upload-icon-circle i {
+    font-size: 2.25rem;
+    color: var(--primary-color);
+}
+
+.upload-text h6 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.upload-text p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.upload-text .btn {
+    font-weight: 600;
+    padding: 0.65rem 1.75rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.upload-text .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+/* Enhanced Document Item Styling */
+.document-item-enhanced {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.document-item-enhanced:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
+}
+
+.doc-icon-wrapper {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.document-item-enhanced:hover .doc-icon-wrapper {
+    transform: scale(1.1);
+}
+
+.doc-info-wrapper {
+    min-width: 0;
+}
+
+.doc-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.doc-link {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.doc-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.doc-type-selector .form-select {
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.doc-type-selector .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+/* Document Action Buttons */
+.btn-doc-action {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-replace {
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--primary-color);
+}
+
+.btn-replace:hover {
+    background: var(--primary-color);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.btn-delete {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+.btn-delete:hover {
+    background: var(--danger-color);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* Existing Documents Section Header */
+.existing-documents-section h6 {
+    font-size: 0.95rem;
+}
+
+.existing-documents-section .badge {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* New Document Item Styles */
+.document-item-new {
+    border-color: rgba(13, 202, 240, 0.5) !important;
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.05) 0%, rgba(13, 202, 240, 0.02) 100%) !important;
+    animation: slideInFromRight 0.4s ease-out;
+    box-shadow: 0 2px 8px rgba(13, 202, 240, 0.1) !important;
+}
+
+.document-item-new:hover {
+    border-color: #0dcaf0 !important;
+    box-shadow: 0 4px 16px rgba(13, 202, 240, 0.25) !important;
+}
+
+.document-item-new .doc-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.document-item-new .doc-icon-wrapper {
+    box-shadow: 0 2px 8px rgba(13, 202, 240, 0.15);
+    border: 1px solid rgba(13, 202, 240, 0.2);
+}
+
+.document-item-new .badge {
+    animation: pulse 2s ease-in-out infinite;
+    background: linear-gradient(135deg, #0dcaf0 0%, #0d6efd 100%) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(13, 202, 240, 0.3);
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+    .document-item-enhanced {
+        position: relative;
+        padding: 1rem !important;
+        padding-top: 1.25rem !important;
+    }
+    
+    .document-item-enhanced > .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        width: 100%;
+    }
+    
+    .doc-icon-wrapper {
+        margin-bottom: 0.75rem;
+        width: 48px !important;
+        height: 48px !important;
+        font-size: 1.25rem !important;
+    }
+    
+    .doc-info-wrapper {
+        width: 100%;
+        margin-bottom: 1rem;
+        padding-left: 0;
+    }
+    
+    .doc-info-wrapper > .d-flex {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        align-items: center !important;
+        gap: 0.5rem;
+    }
+    
+    .doc-info-wrapper .doc-title {
+        font-size: 0.9rem;
+        white-space: normal;
+        word-break: break-word;
+        flex: 0 1 auto;
+        max-width: calc(100% - 80px);
+    }
+    
+    .doc-info-wrapper .badge {
+        flex-shrink: 0;
+    }
+    
+    .doc-type-selector {
+        width: 100% !important;
+        min-width: 100% !important;
+        margin-bottom: 0.75rem;
+    }
+    
+    .doc-actions-wrapper {
+        position: absolute !important;
+        top: 1rem;
+        right: 1rem;
+        width: auto !important;
+        flex-direction: row !important;
+        gap: 0.5rem;
+        z-index: 10;
+    }
+    
+    .btn-doc-action {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===================================
+   Enhanced Certification Styles
+   =================================== */
+
+.existing-certifications-section h6 {
+    font-size: 0.95rem;
+}
+
+.existing-certifications-section .badge {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.certification-item-enhanced {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.certification-item-enhanced:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 16px rgba(13, 110, 253, 0.12);
+}
+
+.certification-new {
+    border-color: rgba(13, 110, 253, 0.3);
+    background: linear-gradient(to bottom, rgba(13, 110, 253, 0.02), var(--card-bg));
+}
+
+.cert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.02) 100%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cert-icon-wrapper {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.15) 0%, rgba(13, 110, 253, 0.25) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.certification-item-enhanced:hover .cert-icon-wrapper {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.cert-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.cert-org {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.btn-cert-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+}
+
+.btn-cert-close:hover {
+    background: var(--danger-color);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.cert-body {
+    padding: 1.5rem;
+}
+
+.cert-body .form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.cert-body .form-control {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.cert-body .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.cert-file-wrapper {
+    margin-top: 0.5rem;
+}
+
+.current-cert-file {
+    background: rgba(13, 110, 253, 0.05);
+    border: 1px solid rgba(13, 110, 253, 0.15);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.cert-view-link {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.cert-view-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Certification file input styling - override default */
+.cert-file-wrapper .certification-file-input {
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+    border-radius: 8px;
+    background-color: var(--input-bg);
+    border: 1px dashed var(--border-color);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.cert-file-wrapper .certification-file-input:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(13, 110, 253, 0.02);
+}
+
+/* File input button alignment */
+.cert-file-wrapper .certification-file-input::file-selector-button {
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.cert-file-wrapper .certification-file-input::file-selector-button:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+/* Webkit compatibility */
+.cert-file-wrapper .certification-file-input::-webkit-file-upload-button {
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.cert-file-wrapper .certification-file-input::-webkit-file-upload-button:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+/* ===================================
+   Empty State Styling
+   =================================== */
+
+.empty-state-box {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--input-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(108, 117, 125, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.empty-state-icon i {
+    font-size: 2.5rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.empty-state-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+/* Mobile responsive for certifications */
+@media (max-width: 767px) {
+    .empty-state-box {
+        padding: 2rem 1.5rem;
+    }
+    
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+    }
+    
+    .empty-state-icon i {
+        font-size: 2rem;
+    }
+    
+    .empty-state-title {
+        font-size: 1rem;
+    }
+    
+    .empty-state-text {
+        font-size: 0.85rem;
+    }
+    
+    .cert-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .btn-cert-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+    
+    .cert-body {
+        padding: 1rem;
+    }
+    
+    .existing-certifications-section .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .existing-certifications-section button {
+        width: 100%;
+    }
 }

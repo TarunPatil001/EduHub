@@ -1,123 +1,99 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*"%>
 <%@ page import="com.eduhub.util.DropdownData"%>
+<%@ page import="com.eduhub.dao.interfaces.StaffDAO"%>
+<%@ page import="com.eduhub.dao.impl.StaffDAOImpl"%>
+<%@ page import="com.eduhub.model.Staff"%>
+<%@ page import="com.eduhub.model.StaffCertification"%>
+<%@ page import="com.eduhub.model.StaffDocument"%>
 <%@ page import="java.time.LocalDate"%>
 <%@ page import="java.time.format.DateTimeFormatter"%>
 <%!
 // Helper method to format date to DD-MM-YYYY
-public String formatDate(String dateStr) {
+public String formatDate(LocalDate date) {
     try {
-        if (dateStr != null && !dateStr.isEmpty()) {
-            LocalDate date = LocalDate.parse(dateStr);
+        if (date != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             return date.format(formatter);
         }
     } catch (Exception e) {
-        // Return original if parsing fails
+        // Return empty if parsing fails
     }
-    return dateStr;
+    return "";
+}
+
+// Helper to get initials
+public String getInitials(String firstName, String lastName) {
+    String initials = "";
+    if (firstName != null && !firstName.isEmpty()) {
+        initials += firstName.charAt(0);
+    }
+    if (lastName != null && !lastName.isEmpty()) {
+        initials += lastName.charAt(0);
+    }
+    return initials.toUpperCase();
 }
 %>
 <%
-// Dummy staff data
-class Staff {
-    String id, name, email, phone, role, department, qualification, joinDate, status, avatar;
-    String dateOfBirth, gender, bloodGroup, address, emergencyContact, salary, employmentType;
-    String specialization, experience, linkedin, aadharNumber, panNumber;
-
-    public Staff(String id, String name, String email, String phone, String role, String department, 
-    String qualification, String joinDate, String status, String avatar, String dateOfBirth, String gender,
-    String bloodGroup, String address, String emergencyContact, String salary, String employmentType,
-    String specialization, String experience, String linkedin, String aadharNumber, String panNumber) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.role = role;
-        this.department = department;
-        this.qualification = qualification;
-        this.joinDate = joinDate;
-        this.status = status;
-        this.avatar = avatar;
-        this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.bloodGroup = bloodGroup;
-        this.address = address;
-        this.emergencyContact = emergencyContact;
-        this.salary = salary;
-        this.employmentType = employmentType;
-        this.specialization = specialization;
-        this.experience = experience;
-        this.linkedin = linkedin;
-        this.aadharNumber = aadharNumber;
-        this.panNumber = panNumber;
+    // Fetch staff data from database
+    StaffDAO staffDAO = new StaffDAOImpl();
+    String instituteId = (String) session.getAttribute("instituteId");
+    List<Staff> staffList = new ArrayList<>();
+    
+    // Pagination and Filter Parameters
+    String searchQuery = request.getParameter("search");
+    String roleFilter = request.getParameter("role");
+    String statusFilter = request.getParameter("status");
+    
+    int currentPage = 1;
+    int limit = 10;
+    
+    try {
+        if (request.getParameter("page") != null) {
+            currentPage = Integer.parseInt(request.getParameter("page"));
+        }
+        if (request.getParameter("limit") != null) {
+            limit = Integer.parseInt(request.getParameter("limit"));
+        }
+    } catch (NumberFormatException e) {
+        // Default values
     }
-}
+    
+    int offset = (currentPage - 1) * limit;
+    int totalFilteredStaff = 0;
+    
+    // Stats variables
+    int totalStaff = 0;
+    int activeStaff = 0;
+    int technicalTrainers = 0;
+    int supportStaff = 0;
+    
+    // Get distinct roles from database
+    List<String> availableRoles = new ArrayList<>();
 
-List<Staff> staffList = Arrays.asList(
-    new Staff("STF001", "Dr. Rajesh Kumar", "rajesh.kumar@eduhub.com", "+91 98765 11111", "Teacher", "Computer Science",
-        "Ph.D. in Computer Science", "2020-01-15", "Active", "RK", "1985-03-20", "Male", "A+", 
-        "123 Tech Street, Bangalore", "+91 98765 99001", "₹75,000", "Full-time", "Machine Learning, AI", "10 years", 
-        "rajesh-kumar-prof", "1234-5678-9012", "ABCDE1234F"),
-    new Staff("STF002", "Dr. Priya Sharma", "priya.sharma@eduhub.com", "+91 98765 11112", "Teacher", "Mathematics",
-        "M.Sc. in Mathematics", "2019-07-10", "Active", "PS", "1988-06-15", "Female", "B+",
-        "456 Education Lane, Mumbai", "+91 98765 99002", "₹65,000", "Full-time", "Statistics, Calculus", "8 years",
-        "priya-sharma-prof", "2345-6789-0123", "BCDEF2345G"),
-    new Staff("STF003", "Amit Patel", "amit.patel@eduhub.com", "+91 98765 11113", "Admin", "Administration",
-        "MBA in Management", "2021-03-01", "Active", "AP", "1990-09-25", "Male", "O+",
-        "789 Admin Road, Delhi", "+91 98765 99003", "₹55,000", "Part-time", "Operations Management", "6 years",
-        "amit-patel-admin", "3456-7890-1234", "CDEFG3456H"),
-    new Staff("STF004", "Sneha Gupta", "sneha.gupta@eduhub.com", "+91 98765 11114", "Teacher", "Physics",
-        "M.Sc. in Physics", "2020-08-20", "Active", "SG", "1987-11-30", "Female", "AB+",
-        "321 Science Park, Chennai", "+91 98765 99004", "₹60,000", "Full-time", "Quantum Mechanics", "7 years",
-        "sneha-gupta-prof", "4567-8901-2345", "DEFGH4567I"),
-    new Staff("STF005", "Vikram Singh", "vikram.singh@eduhub.com", "+91 98765 11115", "IT Support", "IT Department",
-        "B.Tech in IT", "2022-01-10", "Active", "VS", "1992-04-12", "Male", "A-",
-        "654 Tech Tower, Pune", "+91 98765 99005", "₹45,000", "Full-time", "Network Administration", "5 years",
-        "vikram-singh-it", "5678-9012-3456", "EFGHI5678J"),
-    new Staff("STF006", "Meera Reddy", "meera.reddy@eduhub.com", "+91 98765 11116", "Teacher", "Chemistry",
-        "Ph.D. in Chemistry", "2018-06-15", "Active", "MR", "1986-02-18", "Female", "B-",
-        "987 Research Avenue, Hyderabad", "+91 98765 99006", "₹70,000", "Full-time", "Organic Chemistry", "12 years",
-        "meera-reddy-prof", "6789-0123-4567", "FGHIJ6789K"),
-    new Staff("STF007", "Arjun Verma", "arjun.verma@eduhub.com", "+91 98765 11117", "Librarian", "Library",
-        "M.Lib.Sc.", "2021-09-01", "Active", "AV", "1989-07-22", "Male", "O-",
-        "147 Book Street, Kolkata", "+91 98765 99007", "₹40,000", "Full-time", "Library Management", "4 years",
-        "arjun-verma-lib", "7890-1234-5678", "GHIJK7890L"),
-    new Staff("STF008", "Kavya Nair", "kavya.nair@eduhub.com", "+91 98765 11118", "Teacher", "Biology",
-        "M.Sc. in Biotechnology", "2020-02-20", "Active", "KN", "1991-05-10", "Female", "A+",
-        "258 Bio Park, Kochi", "+91 98765 99008", "₹58,000", "Full-time", "Genetics, Microbiology", "6 years",
-        "kavya-nair-prof", "8901-2345-6789", "HIJKL8901M"),
-    new Staff("STF009", "Rohit Desai", "rohit.desai@eduhub.com", "+91 98765 11119", "Accountant", "Finance",
-        "CA (Chartered Accountant)", "2019-11-15", "Active", "RD", "1988-12-05", "Male", "B+",
-        "369 Finance Tower, Ahmedabad", "+91 98765 99009", "₹62,000", "Full-time", "Financial Accounting", "9 years",
-        "rohit-desai-ca", "9012-3456-7890", "IJKLM9012N"),
-    new Staff("STF010", "Anjali Iyer", "anjali.iyer@eduhub.com", "+91 98765 11120", "Teacher", "English",
-        "M.A. in English Literature", "2021-07-01", "Active", "AI", "1990-08-28", "Female", "AB-",
-        "741 Literature Lane, Bangalore", "+91 98765 99010", "₹52,000", "Full-time", "Literature, Creative Writing", "5 years",
-        "anjali-iyer-prof", "0123-4567-8901", "JKLMN0123O"),
-    new Staff("STF011", "Kunal Mehta", "kunal.mehta@eduhub.com", "+91 98765 11121", "HR Manager", "Human Resources",
-        "MBA in HR", "2020-05-10", "Active", "KM", "1987-10-15", "Male", "A-",
-        "852 HR Plaza, Mumbai", "+91 98765 99011", "₹68,000", "Full-time", "Recruitment, Training", "8 years",
-        "kunal-mehta-hr", "1234-5678-9013", "KLMNO1234P"),
-    new Staff("STF012", "Divya Joshi", "divya.joshi@eduhub.com", "+91 98765 11122", "Counselor", "Student Services",
-        "M.A. in Psychology", "2022-03-15", "Active", "DJ", "1993-01-20", "Female", "O+",
-        "963 Counseling Center, Delhi", "+91 98765 99012", "₹48,000", "Full-time", "Career Counseling", "3 years",
-        "divya-joshi-counselor", "2345-6789-0124", "LMNOP2345Q"),
-    new Staff("STF013", "Sanjay Kumar", "sanjay.kumar@eduhub.com", "+91 98765 11123", "Teacher", "Economics",
-        "Ph.D. in Economics", "2019-04-01", "On Leave", "SK", "1984-11-08", "Male", "B-",
-        "147 Economy Street, Chennai", "+91 98765 99013", "₹72,000", "Full-time", "Macroeconomics", "11 years",
-        "sanjay-kumar-prof", "3456-7890-1235", "MNOPQ3456R"),
-    new Staff("STF014", "Pooja Rao", "pooja.rao@eduhub.com", "+91 98765 11124", "Lab Assistant", "Science Lab",
-        "B.Sc. in Chemistry", "2023-01-20", "Active", "PR", "1995-03-12", "Female", "A+",
-        "258 Lab Complex, Bangalore", "+91 98765 99014", "₹35,000", "Part-time", "Lab Management", "2 years",
-        "pooja-rao-lab", "4567-8901-2346", "NOPQR4567S"),
-    new Staff("STF015", "Rahul Khanna", "rahul.khanna@eduhub.com", "+91 98765 11125", "Sports Coordinator", "Sports Department",
-        "B.P.Ed.", "2021-06-01", "Active", "RK", "1991-07-25", "Male", "O+",
-        "369 Sports Complex, Pune", "+91 98765 99015", "₹42,000", "Full-time", "Sports Management", "4 years",
-        "rahul-khanna-sports", "5678-9012-3457", "OPQRS5678T")
-);
-
-pageContext.setAttribute("staffList", staffList);
+    if (instituteId != null) {
+        try {
+            // Get filtered list
+            staffList = staffDAO.getStaffList(instituteId, searchQuery, roleFilter, statusFilter, offset, limit);
+            totalFilteredStaff = staffDAO.getStaffCount(instituteId, searchQuery, roleFilter, statusFilter);
+            
+            // Get real-time stats from database
+            totalStaff = staffDAO.getStaffCount(instituteId, null, null, null);
+            activeStaff = staffDAO.getStaffCount(instituteId, null, null, "Active");
+            
+            // Get distinct roles from database
+            availableRoles = staffDAO.getDistinctRoles(instituteId);
+            
+            // Get role-specific counts (only active staff)
+            technicalTrainers = staffDAO.getStaffCountByRoleAndStatus(instituteId, "Technical Trainer", "Active");
+            supportStaff = staffDAO.getStaffCountByRoleAndStatus(instituteId, "Support Staff", "Active");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    boolean hasStaff = totalFilteredStaff > 0;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -128,6 +104,9 @@ pageContext.setAttribute("staffList", staffList);
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/staff/css/all-staff.css">
+    <script>
+        var contextPath = '${pageContext.request.contextPath}';
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -145,69 +124,65 @@ pageContext.setAttribute("staffList", staffList);
                 <div class="page-header-wrapper mb-4">
                     <!-- Page Heading -->
                     <div class="page-title-container">
-                        <h2 class="mb-1">All Staff Members</h2>
-                        <p class="text-muted mb-0">Manage and view all staff members</p>
+                        <h2>All Staff Members</h2>
+                        <p class="text-muted">Manage and view all staff members</p>
                     </div>
                     
                     <!-- Action Buttons -->
                     <div class="back-button-container">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Bulk Delete Button (hidden by default) -->
-                            <button class="btn btn-danger" id="bulkDeleteBtn" style="display: none;">
-                                <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedCount">0</span>)
+                        <div class="d-flex gap-2">
+                            <button id="bulkDeleteBtn" class="btn btn-danger shadow-sm" style="display: none;">
+                                <i class="bi bi-trash"></i> Delete Selected (<span id="selectedCount">0</span>)
                             </button>
-                            <button class="btn btn-outline-primary" id="exportBtn">
-                                <i class="bi bi-download me-2"></i>Export
-                            </button>
-                            <a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="btn btn-primary">
+                            <a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="btn btn-primary shadow-sm">
                                 <i class="bi bi-plus-circle"></i> Add New Staff
                             </a>
                         </div>
                     </div>
                 </div>
 
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stats-card stats-primary">
-                    <div class="stats-icon">
-                        <i class="bi bi-people-fill"></i>
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon total">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="totalStaff"><%= totalStaff %></h4>
+                            <p>Total Staff</p>
+                        </div>
                     </div>
-                    <div class="stats-content">
-                        <h3 id="totalStaff">15</h3>
-                        <p>Total Staff</p>
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="activeStaff"><%= activeStaff %></h4>
+                            <p>Active Staff</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon teachers">
+                            <i class="bi bi-person-badge-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="technicalTrainers"><%= technicalTrainers %></h4>
+                            <p>Technical Trainers</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon support">
+                            <i class="bi bi-person-gear"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="supportStaff"><%= supportStaff %></h4>
+                            <p>Support Staff</p>
+                        </div>
                     </div>
                 </div>
-                <div class="stats-card stats-success">
-                    <div class="stats-icon">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
-                    <div class="stats-content">
-                        <h3 id="activeStaff">14</h3>
-                        <p>Active Staff</p>
-                    </div>
-                </div>
-                <div class="stats-card stats-warning">
-                    <div class="stats-icon">
-                        <i class="bi bi-mortarboard-fill"></i>
-                    </div>
-                    <div class="stats-content">
-                        <h3 id="totalTeachers">8</h3>
-                        <p>Teachers</p>
-                    </div>
-                </div>
-                <div class="stats-card stats-info">
-                    <div class="stats-icon">
-                        <i class="bi bi-person-gear"></i>
-                    </div>
-                    <div class="stats-content">
-                        <h3 id="supportStaff">7</h3>
-                        <p>Support Staff</p>
-                    </div>
-                </div>
-            </div>
 
-                <!-- Filters and Search -->
-                <div class="card shadow-sm mb-4">
+                <!-- Search and Filter Section -->
+                <div class="card shadow-sm mb-3">
                     <div class="card-body">
                         <div class="row g-3 align-items-end">
                             <div class="col-md-4">
@@ -215,15 +190,16 @@ pageContext.setAttribute("staffList", staffList);
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-search"></i></span>
                                     <input type="text" class="form-control" id="searchInput"
-                                        placeholder="Search by name, email, or ID...">
+                                        placeholder="Search by name, email, or ID..."
+                                        value="<%= searchQuery != null ? searchQuery : "" %>">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Role</label>
                                 <select class="form-select" id="roleFilter">
                                     <option value="">All Roles</option>
-                                    <% for(String role : DropdownData.ROLES) { %>
-                                        <option value="<%= role %>"><%= role %></option>
+                                    <% for(String role : availableRoles) { %>
+                                        <option value="<%= role %>" <%= role.equals(roleFilter) ? "selected" : "" %>><%= role %></option>
                                     <% } %>
                                 </select>
                             </div>
@@ -232,11 +208,12 @@ pageContext.setAttribute("staffList", staffList);
                                 <select class="form-select" id="statusFilter">
                                     <option value="">All Status</option>
                                     <% for(String status : DropdownData.STAFF_STATUSES) { %>
-                                        <option value="<%= status %>"><%= status %></option>
+                                        <option value="<%= status %>" <%= status.equals(statusFilter) ? "selected" : "" %>><%= status %></option>
                                     <% } %>
                                 </select>
                             </div>
                             <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
                                 <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" 
                                     id="resetFilters" type="button" aria-label="Reset filters">
                                     <i class="bi bi-arrow-clockwise me-2"></i>
@@ -250,7 +227,22 @@ pageContext.setAttribute("staffList", staffList);
                 <!-- Staff Table -->
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
-                        <div class="table-responsive">
+                        <!-- Empty State - Show when no data -->
+                        <div id="emptyState" class="empty-state-container" style="<%= hasStaff ? "display: none;" : "" %>">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <h4 class="empty-state-title">No Staff Yet</h4>
+                                <p class="empty-state-text">Get started by adding your first staff member to the system</p>
+                                <a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="btn btn-primary mt-3">
+                                    <i class="bi bi-plus-circle"></i> Add First Staff Member
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Table - Show when data exists -->
+                        <div class="table-responsive" id="staffTableContainer" style="<%= !hasStaff ? "display: none;" : "" %>">
                             <table class="table table-hover mb-0" id="staffTable">
                                 <thead class="table-light">
                                     <tr>
@@ -261,94 +253,133 @@ pageContext.setAttribute("staffList", staffList);
                                         </th>
                                         <th>Staff ID</th>
                                         <th>Name</th>
+                                        <th>Role</th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <th>Role</th>
+                                        <th>Gender</th>
+                                        <th>DOB</th>
+                                        <th>Nationality</th>
+                                        <th>Marital Status</th>
+                                        <th>Work Shift</th>
+                                        <th>Reporting Manager</th>
                                         <th>Qualification</th>
+                                        <th>Specialization</th>
+                                        <th>Certifications</th>
+                                        <th>Documents</th>
                                         <th>Experience</th>
                                         <th>Employment Type</th>
                                         <th>Join Date</th>
                                         <th>Salary</th>
+                                        <th>Address</th>
+                                        <th>City</th>
+                                        <th>State</th>
+                                        <th>Postal Code</th>
+                                        <th>Emergency Contact</th>
+                                        <th>Emergency Phone</th>
+                                        <th>Relation</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="staffTableBody">
                                     <%
-                                    if (staffList.isEmpty()) {
-                                    %>
-                                    <tr class="empty-state-row">
-                                        <td colspan="13" class="text-center py-5">
-                                            <div class="empty-state">
-                                                <div class="empty-state-icon">
-                                                    <i class="bi bi-people"></i>
-                                                </div>
-                                                <h5 class="empty-state-title">No Staff Members Found</h5>
-                                                <p class="empty-state-text text-muted">Get started by adding your first staff member to the system.</p>
-                                                <a href="${pageContext.request.contextPath}/dashboard/pages/staff/add-staff.jsp" class="btn btn-primary mt-3">
-                                                    <i class="bi bi-plus-circle"></i> Add Staff Member
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <%
-                                    } else {
+                                    if (hasStaff) {
                                         for (Staff staff : staffList) {
+                                            String fullName = staff.getFirstName() + " " + staff.getLastName();
+                                            String initials = getInitials(staff.getFirstName(), staff.getLastName());
+                                            String avatarContent = initials;
+                                            
+                                            if (staff.getProfilePhotoUrl() != null && !staff.getProfilePhotoUrl().isEmpty()) {
+                                                avatarContent = "<img src='" + staff.getProfilePhotoUrl() + "' alt='" + fullName + "' style='width:100%;height:100%;object-fit:cover;border-radius:50%;'>";
+                                            }
+                                            
+                                            List<StaffCertification> certifications = staffDAO.getCertificationsByStaffId(staff.getStaffId());
+                                            List<StaffDocument> documents = staffDAO.getDocumentsByStaffId(staff.getStaffId());
                                     %>
-                                    <tr data-staff-id="<%= staff.id %>" data-role="<%= staff.role %>" 
-                                        data-status="<%= staff.status %>">
+                                    <tr data-staff-id="<%= staff.getStaffId() %>" data-role="<%= staff.getRole() %>" 
+                                        data-status="<%= staff.getStatus() %>">
                                         <td>
                                             <div class="form-check">
-                                                <input type="checkbox" class="form-check-input staff-checkbox" value="<%= staff.id %>">
+                                                <input type="checkbox" class="form-check-input staff-checkbox" value="<%= staff.getStaffId() %>">
                                             </div>
                                         </td>
-                                        <td><strong><%= staff.id %></strong></td>
+                                        <td><span class="staff-id-badge"><%= staff.getEmployeeId() %></span></td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="staff-avatar">
-                                                    <%= staff.avatar %>
+                                                    <%= avatarContent %>
                                                 </div>
                                                 <div>
-                                                    <div class="staff-name"><%= staff.name %></div>
-                                                    <small class="text-muted">Joined: <%= formatDate(staff.joinDate) %></small>
+                                                    <div class="staff-name"><%= fullName %></div>
+                                                    <small class="text-muted">Joined: <%= formatDate(staff.getJoiningDate()) %></small>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><%= staff.email %></td>
-                                        <td><%= staff.phone %></td>
-                                        <td><span class="role-badge"><%= staff.role %></span></td>
-                                        <td><%= staff.qualification %></td>
-                                        <td><%= staff.experience %></td>
+                                        <td><span class="role-badge"><%= staff.getRole() %></span></td>
+                                        <td><%= staff.getEmail() %></td>
+                                        <td><%= staff.getPhone() %></td>
+                                        <td><%= staff.getGender() != null ? staff.getGender() : "-" %></td>
+                                        <td><%= formatDate(staff.getDateOfBirth()) %></td>
+                                        <td><%= staff.getNationality() != null ? staff.getNationality() : "-" %></td>
+                                        <td><%= staff.getMaritalStatus() != null ? staff.getMaritalStatus() : "-" %></td>
+                                        <td><%= staff.getWorkShift() != null ? staff.getWorkShift() : "-" %></td>
+                                        <td><%= staff.getReportingManager() != null ? staff.getReportingManager() : "-" %></td>
+                                        <td><%= staff.getHighestQualification() %></td>
+                                        <td><%= staff.getSpecialization() != null ? staff.getSpecialization() : "-" %></td>
                                         <td>
-                                            <% if ("Full-time".equals(staff.employmentType)) { %>
-                                                <span class="badge bg-success"><%= staff.employmentType %></span>
-                                            <% } else { %>
-                                                <span class="badge bg-warning text-dark"><%= staff.employmentType %></span>
+                                            <% for(StaffCertification cert : certifications) { %>
+                                                <a href="<%= cert.getCertificateFileUrl() %>" target="_blank" class="badge bg-info text-decoration-none mb-1">
+                                                    <%= cert.getName() %>
+                                                </a>
                                             <% } %>
-                                        </td>
-                                        <td><%= formatDate(staff.joinDate) %></td>
-                                        <td><strong><%= staff.salary %></strong></td>
-                                        <td>
-                                            <% if ("Active".equals(staff.status)) { %>
-                                                <span class="badge status-active"><%= staff.status %></span>
-                                            <% } else if ("On Leave".equals(staff.status)) { %>
-                                                <span class="badge status-onleave"><%= staff.status %></span>
-                                            <% } else { %>
-                                                <span class="badge status-inactive"><%= staff.status %></span>
-                                            <% } %>
+                                            <% if(certifications.isEmpty()) { %> - <% } %>
                                         </td>
                                         <td>
-                                            <div class="action-buttons">
-                                                <button type="button" class="btn btn-sm btn-outline-primary view-btn" 
-                                                        data-staff-id="<%= staff.id %>" title="View Details">
+                                            <% for(StaffDocument doc : documents) { %>
+                                                <a href="<%= doc.getDocumentUrl() %>" target="_blank" class="badge bg-secondary text-decoration-none mb-1">
+                                                    <%= doc.getDocumentType() %>
+                                                </a>
+                                            <% } %>
+                                            <% if(documents.isEmpty()) { %> - <% } %>
+                                        </td>
+                                        <td><%= staff.getExperience() %> years</td>
+                                        <td>
+                                            <% if ("Full-Time".equalsIgnoreCase(staff.getEmploymentType())) { %>
+                                                <span class="badge bg-success"><%= staff.getEmploymentType() %></span>
+                                            <% } else { %>
+                                                <span class="badge bg-warning text-dark"><%= staff.getEmploymentType() %></span>
+                                            <% } %>
+                                        </td>
+                                        <td><%= formatDate(staff.getJoiningDate()) %></td>
+                                        <td><strong><%= staff.getSalary() %></strong></td>
+                                        <td><%= staff.getAddress() != null ? staff.getAddress() : "-" %></td>
+                                        <td><%= staff.getCity() != null ? staff.getCity() : "-" %></td>
+                                        <td><%= staff.getState() != null ? staff.getState() : "-" %></td>
+                                        <td><%= staff.getPostalCode() != null ? staff.getPostalCode() : "-" %></td>
+                                        <td><%= staff.getEmergencyContactName() != null ? staff.getEmergencyContactName() : "-" %></td>
+                                        <td><%= staff.getEmergencyContactPhone() != null ? staff.getEmergencyContactPhone() : "-" %></td>
+                                        <td><%= staff.getEmergencyContactRelation() != null ? staff.getEmergencyContactRelation() : "-" %></td>
+                                        <td>
+                                            <% if ("Active".equalsIgnoreCase(staff.getStatus())) { %>
+                                                <span class="badge status-active"><%= staff.getStatus() %></span>
+                                            <% } else if ("On Leave".equalsIgnoreCase(staff.getStatus())) { %>
+                                                <span class="badge status-onleave"><%= staff.getStatus() %></span>
+                                            <% } else { %>
+                                                <span class="badge status-inactive"><%= staff.getStatus() %></span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm view-btn" 
+                                                        data-staff-id="<%= staff.getStaffId() %>" title="View Details">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-success edit-btn" 
-                                                        data-staff-id="<%= staff.id %>" title="Edit">
+                                                        data-staff-id="<%= staff.getStaffId() %>" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger delete-btn" 
-                                                        data-staff-id="<%= staff.id %>" title="Delete">
+                                                        data-staff-id="<%= staff.getStaffId() %>" title="Delete">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
@@ -362,34 +393,30 @@ pageContext.setAttribute("staffList", staffList);
                             </table>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="entries-info">
-                                    Showing <span id="showingStart">1</span> to <span id="showingEnd">15</span> of <span id="totalEntries">15</span> entries
-                                </div>
-                                <div class="entries-selector-wrapper">
-                                    <label for="entriesPerPage">Show</label>
-                                    <select id="entriesPerPage" class="form-select form-select-sm">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
+                    
+                    <!-- Pagination Footer - Show only when data exists -->
+                    <div class="card-footer py-3 bg-white" id="paginationFooter" style="<%= !hasStaff ? "display: none;" : "" %>">
+                        <div class="row align-items-center gy-3">
+                            <div class="col-sm-12 col-md-5">
+                                <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 text-muted small">
+                                    <span>Show</span>
+                                    <select class="form-select form-select-sm w-auto border-light bg-light" id="itemsPerPage" style="min-width: 70px;">
+                                        <option value="10" <%= limit == 10 ? "selected" : "" %>>10</option>
+                                        <option value="25" <%= limit == 25 ? "selected" : "" %>>25</option>
+                                        <option value="50" <%= limit == 50 ? "selected" : "" %>>50</option>
+                                        <option value="100" <%= limit == 100 ? "selected" : "" %>>100</option>
                                     </select>
+                                    <span>entries</span>
+                                    <div class="vr mx-2"></div>
+                                    <span class="entries-info">
+                                        Showing <span id="showingStart" class="fw-bold text-dark"><%= totalFilteredStaff > 0 ? offset + 1 : 0 %></span> - <span id="showingEnd" class="fw-bold text-dark"><%= Math.min(offset + limit, totalFilteredStaff) %></span> of <span id="totalEntries" class="fw-bold text-dark"><%= totalFilteredStaff %></span>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="pagination-wrapper">
-                                <nav aria-label="Staff pagination">
-                                    <ul class="pagination mb-0" id="pagination">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" tabindex="-1"><i class="bi bi-chevron-left"></i></a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                            <div class="col-sm-12 col-md-7">
+                                <div id="paginationContainer" class="d-flex justify-content-center justify-content-md-end">
+                                    <!-- Pagination buttons will be generated by JavaScript -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -425,5 +452,39 @@ pageContext.setAttribute("staffList", staffList);
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/staff/js/all-staff.js"></script>
+    <script>
+        // Server-side pagination data
+        var serverPagination = {
+            currentPage: <%= currentPage %>,
+            itemsPerPage: <%= limit %>,
+            totalItems: <%= totalFilteredStaff %>,
+            totalPages: <%= (int) Math.ceil((double) totalFilteredStaff / limit) %>
+        };
+    </script>
+    
+    <%-- Toast Notification Logic --%>
+    <%
+        String successMessage = (String) session.getAttribute("successMessage");
+        if (successMessage != null) {
+            session.removeAttribute("successMessage");
+    %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof toast !== 'undefined') toast.success("<%= successMessage %>");
+        });
+    </script>
+    <% } %>
+    
+    <%
+        String errorMessage = (String) session.getAttribute("errorMessage");
+        if (errorMessage != null) {
+            session.removeAttribute("errorMessage");
+    %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof toast !== 'undefined') toast.error("<%= errorMessage %>");
+        });
+    </script>
+    <% } %>
 </body>
 </html>

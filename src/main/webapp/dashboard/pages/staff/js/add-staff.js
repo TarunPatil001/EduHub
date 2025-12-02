@@ -208,47 +208,73 @@ function addFileToList(file) {
 
     const listContainer = document.getElementById('documentList');
     const item = document.createElement('div');
-    item.className = 'document-item';
+    item.className = 'document-item-enhanced document-item-new';
     item.id = `item_${fileId}`;
     
-    // Determine icon
+    // Determine icon and color based on file type
     let iconClass = 'bi-file-earmark-text';
-    let iconTypeClass = '';
-    if (file.type.includes('image')) {
+    let iconBg = 'rgba(13, 110, 253, 0.1)';
+    let iconColor = '#0d6efd';
+    
+    if (file.type.includes('image') || file.name.match(/\.(jpg|jpeg|png|gif)$/i)) {
         iconClass = 'bi-file-earmark-image';
-        iconTypeClass = 'image';
-    } else if (file.type.includes('pdf')) {
+        iconBg = 'rgba(13, 110, 253, 0.1)';
+        iconColor = '#0d6efd';
+    } else if (file.type.includes('pdf') || file.name.endsWith('.pdf')) {
         iconClass = 'bi-file-earmark-pdf';
-    } else if (file.type.includes('spreadsheet') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-        iconClass = 'bi-file-earmark-spreadsheet';
-        iconTypeClass = 'image'; // Reusing blue color style
+        iconBg = 'rgba(220, 53, 69, 0.1)';
+        iconColor = '#dc3545';
+    } else if (file.name.match(/\.(doc|docx)$/i)) {
+        iconClass = 'bi-file-earmark-word';
+        iconBg = 'rgba(25, 135, 84, 0.1)';
+        iconColor = '#198754';
+    } else if (file.name.match(/\.(xls|xlsx)$/i)) {
+        iconClass = 'bi-file-earmark-excel';
+        iconBg = 'rgba(25, 135, 84, 0.1)';
+        iconColor = '#198754';
     }
 
-    // Build dropdown options
     let optionsHtml = '<option value="">Select Document Type...</option>';
     documentTypes.forEach(type => {
         optionsHtml += `<option value="${type.value}">${type.label}</option>`;
     });
 
     item.innerHTML = `
-        <div class="doc-icon ${iconTypeClass}">
-            <i class="bi ${iconClass}"></i>
-        </div>
-        <div class="doc-info">
-            <div class="doc-name" title="${file.name}">${file.name}</div>
-            <div class="doc-size">${formatFileSize(file.size)}</div>
-        </div>
-        <select class="form-select form-select-sm doc-type-select" onchange="assignFileType('${fileId}', this.value)">
-            ${optionsHtml}
-        </select>
-        <div class="doc-actions">
-            <button type="button" class="btn-remove-file" onclick="removeFile('${fileId}')" title="Remove file">
-                <i class="bi bi-trash"></i>
-            </button>
+        <div class="d-flex align-items-center gap-3 flex-wrap w-100">
+            <div class="doc-icon-wrapper" style="background: ${iconBg}; color: ${iconColor};">
+                <i class="bi ${iconClass}"></i>
+            </div>
+            
+            <div class="doc-info-wrapper flex-grow-1">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h6 class="doc-title mb-0" title="${file.name}">${file.name}</h6>
+                    <span class="badge bg-info-subtle text-info" style="font-size: 0.7rem; padding: 3px 8px;">New</span>
+                </div>
+                <p class="doc-link mb-0" style="font-size: 0.85rem; color: var(--text-secondary);">
+                    <i class="bi bi-clock-history me-1"></i>${formatFileSize(file.size)} • Pending Upload
+                </p>
+            </div>
+            
+            <div class="doc-type-selector" style="min-width: 220px;">
+                <select class="form-select form-select-sm" style="border-radius: 8px;" onchange="assignFileType('${fileId}', this.value)">
+                    ${optionsHtml}
+                </select>
+            </div>
+            
+            <div class="doc-actions-wrapper d-flex gap-2">
+                <button type="button" class="btn-doc-action btn-delete" onclick="removeFile('${fileId}')" title="Remove">
+                    <i class="bi bi-trash3"></i>
+                </button>
+            </div>
         </div>
     `;
 
     listContainer.appendChild(item);
+    
+    // Smooth scroll to the new item
+    setTimeout(() => {
+        item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
 }
 
 function formatFileSize(bytes) {
@@ -405,43 +431,65 @@ let certCounter = 0;
 function addCertification() {
     certCounter++;
     const container = document.getElementById('certificationsContainer');
-    const indicesInput = document.getElementById('certificationIndices');
+    
+    // Hide empty state when adding first certification
+    const emptyState = document.getElementById('certEmptyState');
+    if (emptyState) {
+        emptyState.style.display = 'none';
+    }
     
     const certId = certCounter;
     
     const certHtml = `
-        <div class="certification-item mb-3 position-relative" id="cert_${certId}">
-            <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="removeCertification(${certId})"></button>
-            <h6 class="card-title mb-3">Certification #${certId}</h6>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Certification Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-sm" name="certName_${certId}" required placeholder="e.g. AWS Certified Solutions Architect">
+        <div class="certification-item-enhanced certification-new" id="cert_${certId}">
+            <div class="cert-header">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="cert-icon-wrapper">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="cert-title mb-0">New Certification <span class="badge bg-info-subtle text-info ms-2" style="font-size: 0.7rem; padding: 3px 8px;">New</span></h6>
+                        <p class="cert-org mb-0">Enter details below</p>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Issuing Organization <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-sm" name="certOrg_${certId}" required placeholder="e.g. Amazon Web Services">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold">Issue Date <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control form-control-sm" name="certDate_${certId}" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold">Expiry Date</label>
-                    <input type="date" class="form-control form-control-sm" name="certExpiry_${certId}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Credential ID</label>
-                    <input type="text" class="form-control form-control-sm" name="certId_${certId}" placeholder="e.g. ABC-123-XYZ">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Verification URL</label>
-                    <input type="url" class="form-control form-control-sm" name="certUrl_${certId}" placeholder="https://...">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Certificate File</label>
-                    <input type="file" class="form-control form-control-sm certification-file-input" name="certFile_${certId}" accept=".pdf,.jpg,.jpeg,.png">
-                    <div class="form-text small">Upload PDF or Image (Max 2MB)</div>
+                <button type="button" class="btn-cert-close" aria-label="Close" onclick="removeCertification(${certId})">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            
+            <div class="cert-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Certification Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="certName_${certId}" required placeholder="e.g., AWS Certified Solutions Architect">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Issuing Organization <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="certOrg_${certId}" required placeholder="e.g., Amazon Web Services">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Issue Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="certDate_${certId}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" name="certExpiry_${certId}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Credential ID</label>
+                        <input type="text" class="form-control" name="certId_${certId}" placeholder="e.g., ABC-123-XYZ">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Verification URL</label>
+                        <input type="url" class="form-control" name="certUrl_${certId}" placeholder="https://...">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Certificate File</label>
+                        <div class="cert-file-wrapper">
+                            <input type="file" class="form-control certification-file-input" name="certFile_${certId}" accept=".pdf,.jpg,.jpeg,.png">
+                            <div class="form-text small mt-2"><i class="bi bi-info-circle me-1"></i>Upload PDF or image (Max 2MB)</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -449,34 +497,37 @@ function addCertification() {
     
     container.insertAdjacentHTML('beforeend', certHtml);
     
-    // Update indices
-    updateCertificationIndices();
+    // Update indices input
+    let indicesInput = document.getElementById('certificationIndices');
+    if (indicesInput) {
+        const current = indicesInput.value;
+        indicesInput.value = current ? current + ',' + certId : certId.toString();
+    }
+    
+    // Scroll to the new certification
+    const newCert = document.getElementById(`cert_${certId}`);
+    if (newCert) {
+        newCert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 function removeCertification(id) {
     const item = document.getElementById(`cert_${id}`);
     if (item) {
         item.remove();
-        updateCertificationIndices();
-    }
-}
-
-function updateCertificationIndices() {
-    const container = document.getElementById('certificationsContainer');
-    const indicesInput = document.getElementById('certificationIndices');
-    const items = container.querySelectorAll('.certification-item');
-    
-    const indices = [];
-    items.forEach((item, index) => {
-        // Update visible numbering to be sequential
-        const title = item.querySelector('.card-title');
-        if (title) {
-            title.textContent = `Certification #${index + 1}`;
+        
+        // Update indices input
+        let indicesInput = document.getElementById('certificationIndices');
+        if (indicesInput) {
+            let indices = indicesInput.value.split(',').filter(i => i != id);
+            indicesInput.value = indices.join(',');
         }
         
-        const id = item.id.replace('cert_', '');
-        indices.push(id);
-    });
-    
-    indicesInput.value = indices.join(',');
+        // Show empty state if no certifications left
+        const container = document.getElementById('certificationsContainer');
+        const emptyState = document.getElementById('certEmptyState');
+        if (container && emptyState && container.children.length === 0) {
+            emptyState.style.display = 'block';
+        }
+    }
 }

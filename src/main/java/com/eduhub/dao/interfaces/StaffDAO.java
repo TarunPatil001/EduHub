@@ -12,8 +12,19 @@ public interface StaffDAO {
     void addDocument(StaffDocument document) throws SQLException;
     Staff getStaffById(String staffId, String instituteId) throws SQLException;
     List<Staff> getAllStaff(String instituteId) throws SQLException;
+    List<Staff> getStaffList(String instituteId, String searchQuery, String role, String status, int offset, int limit) throws SQLException;
+    int getStaffCount(String instituteId, String searchQuery, String role, String status) throws SQLException;
     void updateStaff(Staff staff) throws SQLException;
     void deleteStaff(String staffId, String instituteId) throws SQLException;
     boolean isEmailExists(String email) throws SQLException;
     boolean isEmployeeIdExists(String instituteId, String employeeId) throws SQLException;
+    List<StaffCertification> getCertificationsByStaffId(String staffId) throws SQLException;
+    List<StaffDocument> getDocumentsByStaffId(String staffId) throws SQLException;
+    void updateCertification(StaffCertification certification) throws SQLException;
+    void updateDocument(StaffDocument document) throws SQLException;
+    void deleteCertification(String certificationId) throws SQLException;
+    void deleteDocument(String documentId) throws SQLException;
+    List<String> getDistinctRoles(String instituteId) throws SQLException;
+    int getStaffCountByRole(String instituteId, String role) throws SQLException;
+    int getStaffCountByRoleAndStatus(String instituteId, String role, String status) throws SQLException;
 }
