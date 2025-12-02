@@ -63,7 +63,7 @@ public class BranchServlet extends HttpServlet {
         
         String instituteId = (String) session.getAttribute("instituteId");
         if (instituteId == null) {
-            response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/create-branch.jsp?error=true&message=Session error: Institute ID not found");
+            response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/create-branch.jsp?status=error&message=Session error: Institute ID not found");
             return;
         }
         
@@ -85,19 +85,73 @@ public class BranchServlet extends HttpServlet {
             boolean success = branchService.createBranch(branch);
             
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/all-branches.jsp?success=true&message=Branch created successfully");
+                response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/all-branches.jsp?status=success&message=Branch created successfully");
             } else {
-                response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/create-branch.jsp?error=true&message=Failed to create branch. Branch code might already exist.");
+                response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/create-branch.jsp?status=error&message=Failed to create branch. Branch code might already exist.");
             }
             
         } catch (Exception e) {
             logger.error("Error creating branch", e);
-            response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/create-branch.jsp?error=true&message=An error occurred: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/create-branch.jsp?status=error&message=An error occurred: " + e.getMessage());
         }
     }
 
     private void handleUpdateBranch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Implementation for update
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login?error=unauthorized");
+            return;
+        }
+        
+        String instituteId = (String) session.getAttribute("instituteId");
+        if (instituteId == null) {
+            response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/all-branches.jsp?status=error&message=Session error: Institute ID not found");
+            return;
+        }
+        
+        String branchId = request.getParameter("branchId");
+        
+        logger.info("Processing update request for branchId: {}", branchId);
+        
+        if (branchId == null || branchId.trim().isEmpty()) {
+            logger.warn("Update failed: Branch ID is missing or empty");
+            response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/all-branches.jsp?status=error&message=Branch ID is required");
+            return;
+        }
+        
+        try {
+            Branch branch = new Branch();
+            branch.setBranchId(branchId);
+            branch.setInstituteId(instituteId);
+            branch.setBranchCode(request.getParameter("branchCode"));
+            branch.setBranchName(request.getParameter("branchName"));
+            branch.setBranchManagerId(request.getParameter("branchManagerId"));
+            branch.setStatus(request.getParameter("branchStatus"));
+            branch.setEmail(request.getParameter("email"));
+            branch.setPhone(request.getParameter("phone"));
+            branch.setAddress(request.getParameter("address"));
+            branch.setCity(request.getParameter("city"));
+            branch.setState(request.getParameter("state"));
+            branch.setZipCode(request.getParameter("zipCode"));
+            
+            logger.info("Updating branch details - Name: {}, Code: {}, Manager: {}", 
+                    branch.getBranchName(), branch.getBranchCode(), branch.getBranchManagerId());
+            
+            boolean success = branchService.updateBranch(branch);
+            
+            if (success) {
+                logger.info("Branch updated successfully: {}", branchId);
+                response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/all-branches.jsp?status=success&message=Branch updated successfully");
+            } else {
+                logger.warn("Failed to update branch: {}", branchId);
+                response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/edit-branch.jsp?id=" + branchId + "&status=error&message=Failed to update branch");
+            }
+            
+        } catch (Exception e) {
+            logger.error("Error updating branch", e);
+            String branchId2 = request.getParameter("branchId");
+            response.sendRedirect(request.getContextPath() + "/dashboard/pages/branches/edit-branch.jsp?id=" + branchId2 + "&status=error&message=An error occurred: " + e.getMessage());
+        }
     }
 
     private void handleDeleteBranch(HttpServletRequest request, HttpServletResponse response) throws IOException {

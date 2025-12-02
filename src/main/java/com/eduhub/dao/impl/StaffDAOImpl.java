@@ -21,45 +21,47 @@ public class StaffDAOImpl implements StaffDAO {
     @Override
     public void addStaff(Staff staff) throws SQLException {
         logger.debug("Adding new staff member: {} {}", staff.getFirstName(), staff.getLastName());
-        String sql = "INSERT INTO staff (staff_id, institute_id, first_name, last_name, date_of_birth, gender, " +
-                     "nationality, marital_status, employee_id, role, joining_date, employment_type, salary, " +
+        String sql = "INSERT INTO staff (staff_id, institute_id, branch_id, first_name, last_name, date_of_birth, gender, " +
+                     "nationality, marital_status, employee_id, department, role, joining_date, employment_type, salary, " +
                      "work_shift, reporting_manager, phone, email, address, city, state, postal_code, " +
                      "emergency_contact_name, emergency_contact_phone, emergency_contact_relation, " +
                      "highest_qualification, specialization, experience, status, profile_photo_url) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, staff.getStaffId());
             pstmt.setString(2, staff.getInstituteId());
-            pstmt.setString(3, staff.getFirstName());
-            pstmt.setString(4, staff.getLastName());
-            pstmt.setDate(5, java.sql.Date.valueOf(staff.getDateOfBirth()));
-            pstmt.setString(6, staff.getGender());
-            pstmt.setString(7, staff.getNationality());
-            pstmt.setString(8, staff.getMaritalStatus());
-            pstmt.setString(9, staff.getEmployeeId());
-            pstmt.setString(10, staff.getRole());
-            pstmt.setDate(11, java.sql.Date.valueOf(staff.getJoiningDate()));
-            pstmt.setString(12, staff.getEmploymentType());
-            pstmt.setBigDecimal(13, staff.getSalary());
-            pstmt.setString(14, staff.getWorkShift());
-            pstmt.setString(15, staff.getReportingManager());
-            pstmt.setString(16, staff.getPhone());
-            pstmt.setString(17, staff.getEmail());
-            pstmt.setString(18, staff.getAddress());
-            pstmt.setString(19, staff.getCity());
-            pstmt.setString(20, staff.getState());
-            pstmt.setString(21, staff.getPostalCode());
-            pstmt.setString(22, staff.getEmergencyContactName());
-            pstmt.setString(23, staff.getEmergencyContactPhone());
-            pstmt.setString(24, staff.getEmergencyContactRelation());
-            pstmt.setString(25, staff.getHighestQualification());
-            pstmt.setString(26, staff.getSpecialization());
-            pstmt.setDouble(27, staff.getExperience());
-            pstmt.setString(28, staff.getStatus());
-            pstmt.setString(29, staff.getProfilePhotoUrl());
+            pstmt.setString(3, staff.getBranchId());
+            pstmt.setString(4, staff.getFirstName());
+            pstmt.setString(5, staff.getLastName());
+            pstmt.setDate(6, java.sql.Date.valueOf(staff.getDateOfBirth()));
+            pstmt.setString(7, staff.getGender());
+            pstmt.setString(8, staff.getNationality());
+            pstmt.setString(9, staff.getMaritalStatus());
+            pstmt.setString(10, staff.getEmployeeId());
+            pstmt.setString(11, staff.getDepartment());
+            pstmt.setString(12, staff.getRole());
+            pstmt.setDate(13, java.sql.Date.valueOf(staff.getJoiningDate()));
+            pstmt.setString(14, staff.getEmploymentType());
+            pstmt.setBigDecimal(15, staff.getSalary());
+            pstmt.setString(16, staff.getWorkShift());
+            pstmt.setString(17, staff.getReportingManager());
+            pstmt.setString(18, staff.getPhone());
+            pstmt.setString(19, staff.getEmail());
+            pstmt.setString(20, staff.getAddress());
+            pstmt.setString(21, staff.getCity());
+            pstmt.setString(22, staff.getState());
+            pstmt.setString(23, staff.getPostalCode());
+            pstmt.setString(24, staff.getEmergencyContactName());
+            pstmt.setString(25, staff.getEmergencyContactPhone());
+            pstmt.setString(26, staff.getEmergencyContactRelation());
+            pstmt.setString(27, staff.getHighestQualification());
+            pstmt.setString(28, staff.getSpecialization());
+            pstmt.setDouble(29, staff.getExperience());
+            pstmt.setString(30, staff.getStatus());
+            pstmt.setString(31, staff.getProfilePhotoUrl());
 
             pstmt.executeUpdate();
         }
@@ -121,6 +123,7 @@ public class StaffDAOImpl implements StaffDAO {
                     staff = new Staff();
                     staff.setStaffId(rs.getString("staff_id"));
                     staff.setInstituteId(rs.getString("institute_id"));
+                    staff.setBranchId(rs.getString("branch_id"));
                     staff.setFirstName(rs.getString("first_name"));
                     staff.setLastName(rs.getString("last_name"));
                     staff.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
@@ -128,6 +131,7 @@ public class StaffDAOImpl implements StaffDAO {
                     staff.setNationality(rs.getString("nationality"));
                     staff.setMaritalStatus(rs.getString("marital_status"));
                     staff.setEmployeeId(rs.getString("employee_id"));
+                    staff.setDepartment(rs.getString("department"));
                     staff.setRole(rs.getString("role"));
                     staff.setJoiningDate(rs.getDate("joining_date").toLocalDate());
                     staff.setEmploymentType(rs.getString("employment_type"));
@@ -169,6 +173,7 @@ public class StaffDAOImpl implements StaffDAO {
                     Staff staff = new Staff();
                     staff.setStaffId(rs.getString("staff_id"));
                     staff.setInstituteId(rs.getString("institute_id"));
+                    staff.setBranchId(rs.getString("branch_id"));
                     staff.setFirstName(rs.getString("first_name"));
                     staff.setLastName(rs.getString("last_name"));
                     staff.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
@@ -176,6 +181,7 @@ public class StaffDAOImpl implements StaffDAO {
                     staff.setNationality(rs.getString("nationality"));
                     staff.setMaritalStatus(rs.getString("marital_status"));
                     staff.setEmployeeId(rs.getString("employee_id"));
+                    staff.setDepartment(rs.getString("department"));
                     staff.setRole(rs.getString("role"));
                     staff.setJoiningDate(rs.getDate("joining_date").toLocalDate());
                     staff.setEmploymentType(rs.getString("employment_type"));
@@ -253,6 +259,7 @@ public class StaffDAOImpl implements StaffDAO {
                     Staff staff = new Staff();
                     staff.setStaffId(rs.getString("staff_id"));
                     staff.setInstituteId(rs.getString("institute_id"));
+                    staff.setBranchId(rs.getString("branch_id"));
                     staff.setFirstName(rs.getString("first_name"));
                     staff.setLastName(rs.getString("last_name"));
                     staff.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
@@ -260,6 +267,7 @@ public class StaffDAOImpl implements StaffDAO {
                     staff.setNationality(rs.getString("nationality"));
                     staff.setMaritalStatus(rs.getString("marital_status"));
                     staff.setEmployeeId(rs.getString("employee_id"));
+                    staff.setDepartment(rs.getString("department"));
                     staff.setRole(rs.getString("role"));
                     staff.setJoiningDate(rs.getDate("joining_date").toLocalDate());
                     staff.setEmploymentType(rs.getString("employment_type"));
@@ -340,10 +348,10 @@ public class StaffDAOImpl implements StaffDAO {
     @Override
     public void updateStaff(Staff staff) throws SQLException {
         String sql = "UPDATE staff SET first_name=?, last_name=?, date_of_birth=?, gender=?, nationality=?, " +
-                     "marital_status=?, role=?, joining_date=?, employment_type=?, salary=?, work_shift=?, " +
+                     "marital_status=?, department=?, role=?, joining_date=?, employment_type=?, salary=?, work_shift=?, " +
                      "reporting_manager=?, phone=?, email=?, address=?, city=?, state=?, postal_code=?, " +
                      "emergency_contact_name=?, emergency_contact_phone=?, emergency_contact_relation=?, " +
-                     "highest_qualification=?, specialization=?, experience=?, status=?, profile_photo_url=? " +
+                     "highest_qualification=?, specialization=?, experience=?, status=?, profile_photo_url=?, branch_id=? " +
                      "WHERE staff_id=? AND institute_id=?";
                      
         try (Connection conn = DBUtil.getConnection();
@@ -355,28 +363,30 @@ public class StaffDAOImpl implements StaffDAO {
             pstmt.setString(4, staff.getGender());
             pstmt.setString(5, staff.getNationality());
             pstmt.setString(6, staff.getMaritalStatus());
-            pstmt.setString(7, staff.getRole());
-            pstmt.setDate(8, java.sql.Date.valueOf(staff.getJoiningDate()));
-            pstmt.setString(9, staff.getEmploymentType());
-            pstmt.setBigDecimal(10, staff.getSalary());
-            pstmt.setString(11, staff.getWorkShift());
-            pstmt.setString(12, staff.getReportingManager());
-            pstmt.setString(13, staff.getPhone());
-            pstmt.setString(14, staff.getEmail());
-            pstmt.setString(15, staff.getAddress());
-            pstmt.setString(16, staff.getCity());
-            pstmt.setString(17, staff.getState());
-            pstmt.setString(18, staff.getPostalCode());
-            pstmt.setString(19, staff.getEmergencyContactName());
-            pstmt.setString(20, staff.getEmergencyContactPhone());
-            pstmt.setString(21, staff.getEmergencyContactRelation());
-            pstmt.setString(22, staff.getHighestQualification());
-            pstmt.setString(23, staff.getSpecialization());
-            pstmt.setDouble(24, staff.getExperience());
-            pstmt.setString(25, staff.getStatus());
-            pstmt.setString(26, staff.getProfilePhotoUrl());
-            pstmt.setString(27, staff.getStaffId());
-            pstmt.setString(28, staff.getInstituteId());
+            pstmt.setString(7, staff.getDepartment());
+            pstmt.setString(8, staff.getRole());
+            pstmt.setDate(9, java.sql.Date.valueOf(staff.getJoiningDate()));
+            pstmt.setString(10, staff.getEmploymentType());
+            pstmt.setBigDecimal(11, staff.getSalary());
+            pstmt.setString(12, staff.getWorkShift());
+            pstmt.setString(13, staff.getReportingManager());
+            pstmt.setString(14, staff.getPhone());
+            pstmt.setString(15, staff.getEmail());
+            pstmt.setString(16, staff.getAddress());
+            pstmt.setString(17, staff.getCity());
+            pstmt.setString(18, staff.getState());
+            pstmt.setString(19, staff.getPostalCode());
+            pstmt.setString(20, staff.getEmergencyContactName());
+            pstmt.setString(21, staff.getEmergencyContactPhone());
+            pstmt.setString(22, staff.getEmergencyContactRelation());
+            pstmt.setString(23, staff.getHighestQualification());
+            pstmt.setString(24, staff.getSpecialization());
+            pstmt.setDouble(25, staff.getExperience());
+            pstmt.setString(26, staff.getStatus());
+            pstmt.setString(27, staff.getProfilePhotoUrl());
+            pstmt.setString(28, staff.getBranchId());
+            pstmt.setString(29, staff.getStaffId());
+            pstmt.setString(30, staff.getInstituteId());
 
             pstmt.executeUpdate();
         }
@@ -631,7 +641,9 @@ public class StaffDAOImpl implements StaffDAO {
                     staff.setNationality(rs.getString("nationality"));
                     staff.setMaritalStatus(rs.getString("marital_status"));
                     staff.setEmployeeId(rs.getString("employee_id"));
+                    staff.setDepartment(rs.getString("department"));
                     staff.setRole(rs.getString("role"));
+                    staff.setBranchId(rs.getString("branch_id"));
                     staff.setJoiningDate(rs.getDate("joining_date").toLocalDate());
                     staff.setEmploymentType(rs.getString("employment_type"));
                     staff.setSalary(rs.getBigDecimal("salary"));

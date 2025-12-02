@@ -3,7 +3,10 @@
 <%@ page import="com.eduhub.util.DropdownData"%>
 <%@ page import="com.eduhub.dao.interfaces.StaffDAO"%>
 <%@ page import="com.eduhub.dao.impl.StaffDAOImpl"%>
+<%@ page import="com.eduhub.dao.interfaces.BranchDAO"%>
+<%@ page import="com.eduhub.dao.impl.BranchDAOImpl"%>
 <%@ page import="com.eduhub.model.Staff"%>
+<%@ page import="com.eduhub.model.Branch"%>
 <%@ page import="com.eduhub.model.StaffCertification"%>
 <%@ page import="com.eduhub.model.StaffDocument"%>
 <%@ page import="java.time.LocalDate"%>
@@ -37,8 +40,10 @@ public String getInitials(String firstName, String lastName) {
 <%
     // Fetch staff data from database
     StaffDAO staffDAO = new StaffDAOImpl();
+    BranchDAO branchDAO = new BranchDAOImpl();
     String instituteId = (String) session.getAttribute("instituteId");
     List<Staff> staffList = new ArrayList<>();
+    Map<String, String> branchMap = new HashMap<>();
     
     // Pagination and Filter Parameters
     String searchQuery = request.getParameter("search");
@@ -87,6 +92,12 @@ public String getInitials(String firstName, String lastName) {
             // Get role-specific counts (only active staff)
             technicalTrainers = staffDAO.getStaffCountByRoleAndStatus(instituteId, "Technical Trainer", "Active");
             supportStaff = staffDAO.getStaffCountByRoleAndStatus(instituteId, "Support Staff", "Active");
+            
+            // Fetch branches for mapping
+            List<Branch> branches = branchDAO.getAllBranches(instituteId);
+            for (Branch branch : branches) {
+                branchMap.put(branch.getBranchId(), branch.getBranchName());
+            }
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -253,6 +264,7 @@ public String getInitials(String firstName, String lastName) {
                                         </th>
                                         <th>Staff ID</th>
                                         <th>Name</th>
+                                        <th>Department</th>
                                         <th>Role</th>
                                         <th>Email</th>
                                         <th>Phone</th>
@@ -295,9 +307,10 @@ public String getInitials(String firstName, String lastName) {
                                             
                                             List<StaffCertification> certifications = staffDAO.getCertificationsByStaffId(staff.getStaffId());
                                             List<StaffDocument> documents = staffDAO.getDocumentsByStaffId(staff.getStaffId());
+                                            String branchName = branchMap.getOrDefault(staff.getBranchId(), "-");
                                     %>
                                     <tr data-staff-id="<%= staff.getStaffId() %>" data-role="<%= staff.getRole() %>" 
-                                        data-status="<%= staff.getStatus() %>">
+                                        data-status="<%= staff.getStatus() %>" data-branch="<%= branchName %>">
                                         <td>
                                             <div class="form-check">
                                                 <input type="checkbox" class="form-check-input staff-checkbox" value="<%= staff.getStaffId() %>">
@@ -315,6 +328,7 @@ public String getInitials(String firstName, String lastName) {
                                                 </div>
                                             </div>
                                         </td>
+                                        <td><%= staff.getDepartment() != null ? staff.getDepartment() : "-" %></td>
                                         <td><span class="role-badge"><%= staff.getRole() %></span></td>
                                         <td><%= staff.getEmail() %></td>
                                         <td><%= staff.getPhone() %></td>
@@ -451,7 +465,7 @@ public String getInitials(String firstName, String lastName) {
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
-    <script src="${pageContext.request.contextPath}/dashboard/pages/staff/js/all-staff.js"></script>
+    <script src="${pageContext.request.contextPath}/dashboard/pages/staff/js/all-staff.js?v=<%=System.currentTimeMillis()%>"></script>
     <script>
         // Server-side pagination data
         var serverPagination = {

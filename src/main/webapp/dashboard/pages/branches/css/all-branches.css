@@ -5,6 +5,11 @@
     --primary-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
     --card-border-radius: 16px;
     --transition-speed: 0.3s;
+    --bg-color: #f9fafb;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1f2937;
 }
 
 /* Empty State Container */
@@ -319,7 +324,7 @@
 #branchesTable {
     margin-bottom: 0;
     width: 100%;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 0;
 }
 
@@ -377,13 +382,14 @@
 #branchesTable td:first-child {
     position: sticky;
     left: 0;
-    z-index: 10;
+    z-index: 30;
     background: var(--card-bg);
     box-shadow: 4px 0 8px -4px rgba(0,0,0,0.05);
 }
 
 #branchesTable thead th:first-child {
     background: var(--bg-color);
+    z-index: 40;
 }
 
 #branchesTable tbody tr:hover td:first-child {
@@ -395,7 +401,7 @@
 #branchesTable td:last-child {
     position: sticky;
     right: 0;
-    z-index: 10;
+    z-index: 30;
     text-align: center;
     background: var(--card-bg); /* Default background */
     box-shadow: -4px 0 8px -4px rgba(0,0,0,0.05);
@@ -403,6 +409,7 @@
 
 #branchesTable thead th:last-child {
     background: var(--bg-color);
+    z-index: 40;
 }
 
 #branchesTable tbody tr:hover td:last-child {

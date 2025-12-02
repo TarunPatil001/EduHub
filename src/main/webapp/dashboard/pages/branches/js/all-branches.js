@@ -513,9 +513,8 @@
     };
 
     window.editBranch = function(branchId) {
-        // Redirect to edit page (not yet created, but placeholder)
-        // window.location.href = `${contextPath}/dashboard/pages/branches/edit-branch.jsp?id=${branchId}`;
-        if (typeof toast !== 'undefined') toast.info('Edit functionality coming soon');
+        const basePath = (typeof contextPath !== 'undefined') ? contextPath : '';
+        window.location.href = `${basePath}/dashboard/pages/branches/edit-branch.jsp?id=${branchId}`;
     };
 
     // Handle Select All

@@ -376,6 +376,7 @@ public class DBUtil {
 		String sql = "CREATE TABLE staff (" +
 				"staff_id VARCHAR(36) PRIMARY KEY, " +
 				"institute_id VARCHAR(36) NOT NULL, " +
+				"branch_id VARCHAR(36), " +
 				"first_name VARCHAR(100) NOT NULL, " +
 				"last_name VARCHAR(100) NOT NULL, " +
 				"date_of_birth DATE NOT NULL, " +
@@ -383,6 +384,7 @@ public class DBUtil {
 				"nationality VARCHAR(100), " +
 				"marital_status VARCHAR(50), " +
 				"employee_id VARCHAR(50) NOT NULL, " +
+				"department VARCHAR(100), " +
 				"role VARCHAR(50) NOT NULL, " +
 				"joining_date DATE NOT NULL, " +
 				"employment_type VARCHAR(50) NOT NULL, " +
@@ -406,6 +408,7 @@ public class DBUtil {
 				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
 				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
 				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (branch_id) REFERENCES branches(branch_id) ON DELETE SET NULL, " +
 				"UNIQUE KEY unique_employee_id (institute_id, employee_id), " +
 				"INDEX idx_institute_id (institute_id), " +
 				"INDEX idx_email (email), " +

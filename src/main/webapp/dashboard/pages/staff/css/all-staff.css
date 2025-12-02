@@ -439,14 +439,21 @@
 
 /* Staff ID Badge */
 .staff-id-badge {
-    background-color: #E0E7FF; /* Light indigo/purple */
-    color: #4F46E5; /* Indigo */
-    border: 1px solid #C7D2FE; /* Slightly darker border */
+    background-color: #EEF2FF; /* Lighter indigo background */
+    color: #4338CA; /* Darker indigo text for better contrast */
+    border: 1px solid #E0E7FF; /* Subtle border matching background tone */
     padding: 0.35rem 0.75rem;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 600;
     font-size: 0.85rem;
     display: inline-block;
+    letter-spacing: 0.025em;
+}
+
+[data-theme="dark"] .staff-id-badge {
+    background-color: rgba(79, 70, 229, 0.15); /* Dark mode background */
+    color: #818CF8; /* Lighter indigo text for dark mode */
+    border-color: rgba(79, 70, 229, 0.3);
 }
 
 /* Status Badges */

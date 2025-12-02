@@ -70,6 +70,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Role Mapping based on Department
+    const roleMapping = {
+        "Trainer": ["Technical Trainer", "Programming Trainer", "Soft Skills Trainer"],
+        "HR & Admin": ["HR Executive", "HR Manager", "Front Desk"],
+        "Placement": ["Placement Officer", "Placement Coordinator"],
+        "Accounts": ["Accountant"],
+        "Technical Support": ["IT Support", "Lab Assistant"],
+        "Management": ["Branch Manager"]
+    };
+
+    const departmentSelect = document.getElementById('department');
+    const roleSelect = document.getElementById('role');
+
+    if (departmentSelect && roleSelect) {
+        // Store the initial role value from the rendered HTML (which has the correct option selected)
+        const initialRole = roleSelect.value;
+
+        function updateRoles(selectedDept, selectedRole) {
+            const roles = roleMapping[selectedDept] || ["Other"];
+            
+            // Clear existing options
+            roleSelect.innerHTML = '<option value="" disabled>Select Role</option>';
+            
+            // Add new options
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role;
+                option.textContent = role;
+                if (role === selectedRole) {
+                    option.selected = true;
+                }
+                roleSelect.appendChild(option);
+            });
+        }
+
+        // Initial update to filter roles based on current department, but keep current role selected
+        if (departmentSelect.value) {
+            updateRoles(departmentSelect.value, initialRole);
+        }
+
+        departmentSelect.addEventListener('change', function() {
+            updateRoles(this.value, null); // Reset role when department changes
+        });
+    }
+
     // Form validation
     const editStaffForm = document.getElementById('editStaffForm');
     if (editStaffForm) {

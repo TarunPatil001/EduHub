@@ -77,32 +77,34 @@ function loadStaffDataFromDOM() {
             id: row.getAttribute('data-staff-id'),
             role: row.getAttribute('data-role'),
             status: row.getAttribute('data-status'),
+            branch: row.getAttribute('data-branch'),
             employeeId: getText(1),
             name: name,
             avatarHtml: avatarHtml,
-            email: getText(4),
-            phone: getText(5),
-            gender: getText(6),
-            dob: getText(7),
-            nationality: getText(8),
-            maritalStatus: getText(9),
-            workShift: getText(10),
-            reportingManager: getText(11),
-            qualification: getText(12),
-            specialization: getText(13),
-            certificationsHtml: getHtml(14),
-            documentsHtml: getHtml(15),
-            experience: getText(16),
-            employmentType: getText(17),
-            joinDate: getText(18),
-            salary: getText(19),
-            address: getText(20),
-            city: getText(21),
-            state: getText(22),
-            postalCode: getText(23),
-            emergencyContact: getText(24),
-            emergencyPhone: getText(25),
-            emergencyRelation: getText(26)
+            department: getText(3),
+            email: getText(5),
+            phone: getText(6),
+            gender: getText(7),
+            dob: getText(8),
+            nationality: getText(9),
+            maritalStatus: getText(10),
+            workShift: getText(11),
+            reportingManager: getText(12),
+            qualification: getText(13),
+            specialization: getText(14),
+            certificationsHtml: getHtml(15),
+            documentsHtml: getHtml(16),
+            experience: getText(17),
+            employmentType: getText(18),
+            joinDate: getText(19),
+            salary: getText(20),
+            address: getText(21),
+            city: getText(22),
+            state: getText(23),
+            postalCode: getText(24),
+            emergencyContact: getText(25),
+            emergencyPhone: getText(26),
+            emergencyRelation: getText(27)
         };
     });
 }
@@ -421,6 +423,9 @@ function viewStaffDetails(staffId) {
                         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10">
                             <i class="bi bi-person-badge me-1"></i> ${staff.role}
                         </span>
+                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-10">
+                            <i class="bi bi-building me-1"></i> ${staff.branch}
+                        </span>
                         <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-10">
                             <i class="bi bi-card-text me-1"></i> ${staff.employeeId}
                         </span>
@@ -501,7 +506,7 @@ function viewStaffDetails(staffId) {
                     </div>
                     <div class="detail-content">
                         <div class="detail-label">Department/Role</div>
-                        <div class="detail-value">${staff.role}</div>
+                        <div class="detail-value">${staff.department} / ${staff.role}</div>
                     </div>
                 </div>
                 <div class="detail-item">

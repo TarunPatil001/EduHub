@@ -167,6 +167,7 @@ public class StaffServlet extends HttpServlet {
             String maritalStatus = request.getParameter("maritalStatus");
             String employeeId = request.getParameter("employeeId");
             String role = request.getParameter("role");
+            String branchId = request.getParameter("branchId");
             LocalDate joiningDate = LocalDate.parse(request.getParameter("joiningDate"));
             String employmentType = request.getParameter("employmentType");
             BigDecimal salary = new BigDecimal(request.getParameter("salary"));
@@ -210,6 +211,8 @@ public class StaffServlet extends HttpServlet {
             Staff staff = new Staff();
             staff.setStaffId(UUID.randomUUID().toString());
             staff.setInstituteId(instituteId);
+            staff.setBranchId(branchId);
+            staff.setDepartment(request.getParameter("department"));
             staff.setFirstName(firstName);
             staff.setLastName(lastName);
             staff.setDateOfBirth(dateOfBirth);
@@ -347,6 +350,7 @@ public class StaffServlet extends HttpServlet {
             String maritalStatus = request.getParameter("maritalStatus");
             String employeeId = request.getParameter("employeeId");
             String role = request.getParameter("role");
+            String branchId = request.getParameter("branchId");
             LocalDate joiningDate = LocalDate.parse(request.getParameter("joiningDate"));
             String employmentType = request.getParameter("employmentType");
             BigDecimal salary = new BigDecimal(request.getParameter("salary"));
@@ -530,6 +534,8 @@ public class StaffServlet extends HttpServlet {
             Staff staff = new Staff();
             staff.setStaffId(staffId);
             staff.setInstituteId(instituteId);
+            staff.setBranchId(branchId);
+            staff.setDepartment(request.getParameter("department"));
             staff.setFirstName(firstName);
             staff.setLastName(lastName);
             staff.setDateOfBirth(dateOfBirth);

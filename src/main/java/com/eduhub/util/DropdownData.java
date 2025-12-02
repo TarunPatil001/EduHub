@@ -6,22 +6,18 @@ import java.util.List;
 public class DropdownData {
 
     public static final List<String> ROLES = Arrays.asList(
-
             "Technical Trainer",
+            "Programming Trainer",
             "Soft Skills Trainer",
-            "Aptitude Trainer",
+            "HR Executive",
             "HR Manager",
-            "Administrative Officer",
-            "Front Desk Executive",
+            "Front Desk",
+            "Placement Officer",
             "Placement Coordinator",
             "Accountant",
             "IT Support",
             "Lab Assistant",
-            "Counsellor",
-            "Business Development Executive",
-            "Center Manager",
             "Branch Manager",
-            "Support Staff",
             "Other");
 
     public static final List<String> DEPARTMENTS = Arrays.asList(
@@ -30,7 +26,12 @@ public class DropdownData {
             "Placement", "IT Support", "MBA");
 
     public static final List<String> STAFF_DEPARTMENTS = Arrays.asList(
-
+            "Trainer",
+            "HR & Admin",
+            "Placement",
+            "Accounts",
+            "Technical Support",
+            "Management"
     );
 
     public static final List<String> EMPLOYMENT_TYPES = Arrays.asList(

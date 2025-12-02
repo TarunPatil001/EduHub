@@ -53,6 +53,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Role Mapping based on Department
+    const roleMapping = {
+        "Trainer": ["Technical Trainer", "Programming Trainer", "Soft Skills Trainer"],
+        "HR & Admin": ["HR Executive", "HR Manager", "Front Desk"],
+        "Placement": ["Placement Officer", "Placement Coordinator"],
+        "Accounts": ["Accountant"],
+        "Technical Support": ["IT Support", "Lab Assistant"],
+        "Management": ["Branch Manager"]
+    };
+
+    const departmentSelect = document.getElementById('department');
+    const roleSelect = document.getElementById('role');
+
+    if (departmentSelect && roleSelect) {
+        departmentSelect.addEventListener('change', function() {
+            const selectedDept = this.value;
+            const roles = roleMapping[selectedDept] || ["Other"];
+            
+            // Clear existing options
+            roleSelect.innerHTML = '<option value="" disabled selected>Select Role</option>';
+            
+            // Add new options
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role;
+                option.textContent = role;
+                roleSelect.appendChild(option);
+            });
+        });
+    }
+
     // Form validation and submission
     const addStaffForm = document.getElementById('addStaffForm');
     if (addStaffForm) {

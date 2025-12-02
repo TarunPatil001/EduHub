@@ -1,0 +1,260 @@
+/**
+ * Create/Edit Branch Page - Custom Styles
+ * Reusing create-course styling for consistency
+ */
+
+/* Modern Card Styling */
+.card-custom {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    padding: 2rem;
+    transition: box-shadow 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card-custom:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+.card-custom h5 {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-custom h5 i {
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--primary-color);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+/* Form Controls Enhancement */
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    min-height: 48px;
+}
+
+textarea.form-control {
+    min-height: 100px;
+}
+
+.form-select {
+    padding-right: 2.5rem;
+    background-position: right 1rem center;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+}
+
+/* Required Star Styling */
+.required-star {
+    color: var(--danger-color);
+    font-weight: bold;
+    margin-left: 3px;
+}
+
+/* Form Action Buttons - Sticky Bottom */
+.form-action-buttons {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: var(--sidebar-width);
+    background: var(--card-bg);
+    padding: 1rem 2rem;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    z-index: 99;
+    border-top: 1px solid var(--border-color);
+    margin: 0;
+    border-radius: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    transition: left 0.3s ease;
+}
+
+.form-action-buttons .btn {
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+}
+
+/* Cancel Button Styling */
+#cancelBtn {
+    color: var(--danger-color, #EF4444);
+    border-color: var(--danger-color, #EF4444);
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+#cancelBtn:hover {
+    background-color: var(--danger-color, #EF4444);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* Header Buttons */
+.back-button-container .btn {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Adjust for collapsed sidebar */
+.dashboard-main.expanded .form-action-buttons {
+    left: var(--sidebar-collapsed-width);
+}
+
+/* Sidebar Styling */
+.create-course-sidebar-column .card-custom {
+    position: sticky;
+    top: 100px;
+    background: var(--card-bg);
+}
+
+.create-course-sidebar-column h6 {
+    color: var(--primary-color);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.create-course-sidebar-column ul li {
+    position: relative;
+    padding-left: 0;
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+}
+
+/* Layout Structure */
+@media (min-width: 992px) {
+    .create-course-layout {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        align-items: flex-start;
+        padding-bottom: 80px;
+    }
+    
+    .create-course-form-column {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .create-course-sidebar-column {
+        width: 300px;
+        flex-shrink: 0;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .create-course-layout {
+        display: block;
+        padding-bottom: 80px;
+    }
+    
+    .create-course-form-column,
+    .create-course-sidebar-column {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .create-course-sidebar-column {
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .create-course-layout {
+        display: block;
+        padding-bottom: 140px;
+    }
+    
+    .create-course-form-column,
+    .create-course-sidebar-column {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .create-course-sidebar-column {
+        margin-top: 2rem;
+    }
+    
+    .form-action-buttons {
+        flex-direction: column;
+        padding: 1rem;
+        left: 0;
+    }
+    
+    .form-action-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .page-header .d-flex {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+
+    .page-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header .text-muted {
+        font-size: 0.9rem;
+    }
+
+    .card-custom {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-custom h5 {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .form-action-buttons {
+        left: 0;
+    }
+}

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class Staff {
     private String staffId;
     private String instituteId;
+    private String branchId;
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
@@ -14,6 +15,7 @@ public class Staff {
     private String nationality;
     private String maritalStatus;
     private String employeeId; // Internal ID like EMP-001
+    private String department;
     private String role;
     private LocalDate joiningDate;
     private String employmentType;
@@ -44,6 +46,9 @@ public class Staff {
     public String getInstituteId() { return instituteId; }
     public void setInstituteId(String instituteId) { this.instituteId = instituteId; }
 
+    public String getBranchId() { return branchId; }
+    public void setBranchId(String branchId) { this.branchId = branchId; }
+
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
@@ -64,6 +69,9 @@ public class Staff {
 
     public String getEmployeeId() { return employeeId; }
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
+
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }

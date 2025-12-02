@@ -3,7 +3,10 @@
 <%@ page import="com.eduhub.util.DropdownData" %>
 <%@ page import="com.eduhub.dao.interfaces.StaffDAO" %>
 <%@ page import="com.eduhub.dao.impl.StaffDAOImpl" %>
+<%@ page import="com.eduhub.dao.interfaces.BranchDAO" %>
+<%@ page import="com.eduhub.dao.impl.BranchDAOImpl" %>
 <%@ page import="com.eduhub.model.Staff" %>
+<%@ page import="com.eduhub.model.Branch" %>
 <%@ page import="com.eduhub.model.StaffCertification" %>
 <%@ page import="com.eduhub.model.StaffDocument" %>
 <%
@@ -31,6 +34,16 @@
         return;
     }
 
+    // Fetch branches
+    BranchDAO branchDAO = new BranchDAOImpl();
+    List<Branch> branches = branchDAO.getAllBranches(instituteId);
+    
+    StringBuilder branchOptions = new StringBuilder();
+    for(Branch branch : branches) {
+        branchOptions.append(branch.getBranchId()).append("|").append(branch.getBranchName()).append(",");
+    }
+    if(branchOptions.length() > 0) branchOptions.setLength(branchOptions.length() - 1);
+
     // Helper to build options string for input-field component
     StringBuilder genderOptions = new StringBuilder();
     for(String item : DropdownData.GENDERS) {
@@ -49,6 +62,12 @@
         roleOptions.append(item).append("|").append(item).append(",");
     }
     if(roleOptions.length() > 0) roleOptions.setLength(roleOptions.length() - 1);
+
+    StringBuilder departmentOptions = new StringBuilder();
+    for(String item : DropdownData.STAFF_DEPARTMENTS) {
+        departmentOptions.append(item).append("|").append(item).append(",");
+    }
+    if(departmentOptions.length() > 0) departmentOptions.setLength(departmentOptions.length() - 1);
 
     StringBuilder employmentTypeOptions = new StringBuilder();
     for(String item : DropdownData.EMPLOYMENT_TYPES) {
@@ -249,9 +268,21 @@
                                         <jsp:param name="placeholder" value="EMP-001"/>
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="value" value="<%= staff.getEmployeeId() %>"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="department"/>
+                                        <jsp:param name="name" value="department"/>
+                                        <jsp:param name="label" value="Department"/>
+                                        <jsp:param name="placeholder" value="Select Department"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=departmentOptions.toString()%>"/>
+                                        <jsp:param name="value" value='<%= staff.getDepartment() != null ? staff.getDepartment() : "" %>'/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="role"/>
@@ -261,11 +292,23 @@
                                         <jsp:param name="required" value="true"/>
                                         <jsp:param name="options" value="<%=roleOptions.toString()%>"/>
                                         <jsp:param name="value" value="<%= staff.getRole() %>"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                 </div>
                                 
                                 <div class="row mb-3">
+                                    <jsp:include page="/dashboard/components/input-field.jsp">
+                                        <jsp:param name="type" value="select"/>
+                                        <jsp:param name="id" value="branchId"/>
+                                        <jsp:param name="name" value="branchId"/>
+                                        <jsp:param name="label" value="Branch"/>
+                                        <jsp:param name="placeholder" value="Select Branch"/>
+                                        <jsp:param name="required" value="true"/>
+                                        <jsp:param name="options" value="<%=branchOptions.toString()%>"/>
+                                        <jsp:param name="value" value='<%= staff.getBranchId() != null ? staff.getBranchId() : "" %>'/>
+                                        <jsp:param name="class" value="col-md-4"/>
+                                    </jsp:include>
+
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="date"/>
                                         <jsp:param name="id" value="joiningDate"/>
@@ -287,7 +330,9 @@
                                         <jsp:param name="value" value="<%= staff.getEmploymentType() %>"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
-                                    
+                                </div>
+
+                                <div class="row mb-3">
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="number"/>
                                         <jsp:param name="id" value="salary"/>
@@ -300,9 +345,7 @@
                                         <jsp:param name="value" value="<%= staff.getSalary() %>"/>
                                         <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
-                                </div>
 
-                                <div class="row mb-3">
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="select"/>
                                         <jsp:param name="id" value="workShift"/>
@@ -311,7 +354,7 @@
                                         <jsp:param name="placeholder" value="Select Shift"/>
                                         <jsp:param name="options" value="<%=workShiftOptions.toString()%>"/>
                                         <jsp:param name="value" value="<%= staff.getWorkShift() %>"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                     
                                     <jsp:include page="/dashboard/components/input-field.jsp">
@@ -321,7 +364,7 @@
                                         <jsp:param name="label" value="Reporting Manager"/>
                                         <jsp:param name="placeholder" value="Manager name"/>
                                         <jsp:param name="value" value="<%= staff.getReportingManager() %>"/>
-                                        <jsp:param name="class" value="col-md-6"/>
+                                        <jsp:param name="class" value="col-md-4"/>
                                     </jsp:include>
                                 </div>
                             </div>
