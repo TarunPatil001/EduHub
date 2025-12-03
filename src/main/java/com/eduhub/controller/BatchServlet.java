@@ -119,6 +119,11 @@ public class BatchServlet extends HttpServlet {
             batch.setStatus(request.getParameter("batchStatus"));
             batch.setClassroomLocation(request.getParameter("classroomLocation"));
             
+            if (batchService.isBatchCodeExists(instituteId, batch.getBatchCode())) {
+                response.sendRedirect(request.getContextPath() + "/dashboard/pages/courses/create-batch.jsp?error=duplicate_code&batchCode=" + java.net.URLEncoder.encode(batch.getBatchCode(), "UTF-8"));
+                return;
+            }
+
             boolean success = batchService.createBatch(batch);
             
             if (success) {
@@ -341,6 +346,8 @@ public class BatchServlet extends HttpServlet {
         json.append("\"batchName\":\"").append(escapeJson(batch.getBatchName())).append("\",");
         json.append("\"courseId\":\"").append(escapeJson(batch.getCourseId())).append("\",");
         json.append("\"branchId\":\"").append(escapeJson(batch.getBranchId())).append("\",");
+        json.append("\"branchName\":\"").append(escapeJson(batch.getBranchName())).append("\",");
+        json.append("\"courseName\":\"").append(escapeJson(batch.getCourseName())).append("\",");
         json.append("\"instructorId\":\"").append(escapeJson(batch.getInstructorId())).append("\",");
         json.append("\"startDate\":\"").append(batch.getStartDate() != null ? batch.getStartDate().toString() : "").append("\",");
         json.append("\"endDate\":\"").append(batch.getEndDate() != null ? batch.getEndDate().toString() : "").append("\",");

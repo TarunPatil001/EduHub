@@ -88,7 +88,7 @@ public class UpdateProfileServlet extends HttpServlet {
                     // Capture old photo URL before updating
                     oldPhotoUrl = user.getProfilePhotoUrl();
                     
-                    String photoUrl = registrationService.saveUserProfilePhoto(filePart, userId, appPath);
+                    String photoUrl = registrationService.saveUserProfilePhoto(filePart, userId, user.getInstituteId(), appPath);
                     user.setProfilePhotoUrl(photoUrl);
                     logger.info("Updated profile photo for user {}. New URL: {}", userId, photoUrl);
                 }

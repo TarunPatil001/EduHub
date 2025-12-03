@@ -23,6 +23,10 @@ public class Batch {
     private String classroomLocation;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    
+    // Transient fields (not in batches table)
+    private String branchName;
+    private String courseName;
 
     // Getters and Setters
     public String getBatchId() { return batchId; }
@@ -78,4 +82,10 @@ public class Batch {
 
     public Timestamp getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getBranchName() { return branchName; }
+    public void setBranchName(String branchName) { this.branchName = branchName; }
+
+    public String getCourseName() { return courseName; }
+    public void setCourseName(String courseName) { this.courseName = courseName; }
 }

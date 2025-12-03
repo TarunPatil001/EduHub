@@ -1,910 +1,776 @@
-/**
- * All Students Page JavaScript
- * Handles filtering, searching, pagination, and student management
+﻿/**
+ * all-students.js
+ * Handles student page interactions including search, filtering, pagination, and CRUD operations.
+ * Uses server-side pagination and filtering.
  */
 
-(function() {
-    'use strict';
+document.addEventListener('DOMContentLoaded', function() {
+    init();
+});
 
-    // DOM Elements
-    const searchInput = document.getElementById('searchInput');
-    const courseFilter = document.getElementById('courseFilter');
-    const statusFilter = document.getElementById('statusFilter');
-    const entriesPerPage = document.getElementById('entriesPerPage');
-    const resetFilters = document.getElementById('resetFilters');
-    const selectAll = document.getElementById('selectAll');
-    const studentsTable = document.getElementById('studentsTable');
-    const addStudentBtn = document.getElementById('addStudentBtn');
-    const exportBtn = document.getElementById('exportBtn');
-    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+// State variables
+let studentData = []; // Used for View Modal (contains current page data)
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalPages = 1;
 
-    // State
-    let currentPage = 1;
-    let filteredStudents = [];
-    let allRows = [];
+// DOM Elements
+const elements = {
+    searchInput: document.getElementById('searchInput'),
+    courseFilter: document.getElementById('courseFilter'),
+    branchFilter: document.getElementById('branchFilter'),
+    batchFilter: document.getElementById('batchFilter'),
+    statusFilter: document.getElementById('statusFilter'),
+    resetBtn: document.getElementById('resetFilters'),
+    itemsPerPageSelect: document.getElementById('itemsPerPage'),
+    tableBody: document.getElementById('studentTableBody'),
+    tableContainer: document.getElementById('studentTableContainer'),
+    emptyState: document.getElementById('emptyState'),
+    paginationFooter: document.getElementById('paginationFooter'),
+    selectAllCheckbox: document.getElementById('selectAllStudents'),
+    bulkDeleteBtn: document.getElementById('bulkDeleteBtn'),
+    selectedCountSpan: document.getElementById('selectedCount'),
+    paginationContainer: document.getElementById('paginationContainer')
+};
 
-    // Initialize
-    function init() {
-        allRows = Array.from(studentsTable.querySelectorAll('tbody tr'));
-        filteredStudents = [...allRows];
-        
-        attachEventListeners();
-        updatePagination();
-        showEmptyState(); // Show empty state if no students
-        handleURLParameters(); // Handle URL parameters for notifications
+/**
+ * Initialize the page
+ */
+function init() {
+    // Load server-side pagination data if available
+    if (typeof serverPagination !== 'undefined') {
+        currentPage = serverPagination.currentPage;
+        itemsPerPage = serverPagination.itemsPerPage;
+        totalPages = serverPagination.totalPages;
     }
+
+    loadStudentDataFromDOM();
+    setupEventListeners();
+    renderPagination();
     
-    // Handle URL Parameters for Toast Notifications
-    function handleURLParameters() {
+    // Check empty state
+    if (typeof serverPagination !== 'undefined' && serverPagination.totalItems === 0) {
         const urlParams = new URLSearchParams(window.location.search);
-        
-        // Success messages
-        if (urlParams.has('success')) {
-            const successType = urlParams.get('success');
-            
-            if (successType === 'added') {
-                toast.success('Student added successfully!');
-            } else if (successType === 'updated') {
-                toast.success('Student updated successfully!');
-            } else if (successType === 'deleted') {
-                toast.success('Student deleted successfully!');
-            } else if (successType === 'imported') {
-                toast.success('Students imported successfully!');
-            }
-            
-            // Clean URL
-            urlParams.delete('success');
-            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
-            window.history.replaceState({}, '', newUrl);
-        }
-        
-        // Error messages
-        if (urlParams.has('error')) {
-            const errorType = urlParams.get('error');
-            
-            if (errorType === 'notfound') {
-                toast.error('Student not found');
-            } else if (errorType === 'failed') {
-                toast.error('Operation failed. Please try again.');
-            } else if (errorType === 'duplicate') {
-                toast.error('Student with this email already exists');
-            } else {
-                toast.error('An error occurred. Please try again.');
-            }
-            
-            // Clean URL
-            urlParams.delete('error');
-            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
-            window.history.replaceState({}, '', newUrl);
-        }
+        const hasFilters = urlParams.has('search') || urlParams.has('course') || urlParams.has('branch') || urlParams.has('batch') || urlParams.has('status');
+        showEmptyState(true, hasFilters);
+    } else {
+        showEmptyState(false);
     }
+}
 
-    // Event Listeners
-    function attachEventListeners() {
-        // Search
-        if (searchInput) {
-            searchInput.addEventListener('input', debounce(handleSearch, 300));
-        }
-
-        // Filters
-        if (courseFilter) {
-            courseFilter.addEventListener('change', handleFilter);
-        }
+/**
+ * Load student data from the server-rendered table (for Modal View)
+ */
+function loadStudentDataFromDOM() {
+    const rows = document.querySelectorAll('#studentTableBody tr');
+    studentData = Array.from(rows).map(row => {
+        const cells = row.cells;
+        const getText = (index) => cells[index] ? cells[index].textContent.trim() : '';
+        const getHtml = (index) => cells[index] ? cells[index].innerHTML : '';
         
-        if (statusFilter) {
-            statusFilter.addEventListener('change', handleFilter);
-        }
+        const avatarContainer = row.querySelector('.student-avatar');
+        const avatarHtml = avatarContainer ? avatarContainer.innerHTML : '';
+        
+        const nameElement = row.querySelector('.student-name');
+        const name = nameElement ? nameElement.textContent.trim() : getText(1);
+        
+        const fullId = row.getAttribute('data-student-id') || '';
+        
+        return {
+            element: row,
+            id: fullId,
+            course: row.getAttribute('data-course'),
+            status: row.getAttribute('data-status'),
+            branch: row.getAttribute('data-branch'),
+            name: name,
+            avatarHtml: avatarHtml,
+            courseName: row.getAttribute('data-course') || '-',
+            branchName: getText(4),
+            email: getText(5),
+            phone: getText(6),
+            whatsapp: getText(7),
+            parentMobile: getText(8),
+            gender: getText(9),
+            bloodGroup: getText(10),
+            dob: getText(11),
+            qualification: getText(12),
+            specialization: getText(13),
+            college: getText(14),
+            passingYear: getText(15),
+            batchCode: getText(2),
+            batchName: getText(3),
+            instagram: getText(16),
+            linkedin: getText(17),
+            permanentAddress: getText(18),
+            currentAddress: getText(19),
+            medicalHistory: getText(20),
+            declaration: getText(21),
+            documentsHtml: getHtml(22)
+        };
+    });
+}
 
-        if (entriesPerPage) {
-            entriesPerPage.addEventListener('change', () => {
-                currentPage = 1;
-                updatePagination();
-            });
-        }
-
-        // Reset Filters
-        if (resetFilters) {
-            resetFilters.addEventListener('click', handleResetFilters);
-        }
-
-        // Select All Checkbox
-        if (selectAll) {
-            selectAll.addEventListener('change', handleSelectAll);
-        }
-
-        // Student Checkboxes - using event delegation
-        studentsTable.addEventListener('change', function(e) {
-            if (e.target.classList.contains('student-checkbox')) {
-                const checkbox = e.target;
-                const row = checkbox.closest('tr');
-                
-                if (checkbox.checked) {
-                    row.classList.add('row-selected');
-                } else {
-                    row.classList.remove('row-selected');
-                    // Clear any inline styles
-                    row.style.backgroundColor = '';
-                    row.style.borderLeft = '';
-                }
-                
-                updateSelectAllState();
-                updateBulkActionButtons();
+/**
+ * Setup all event listeners
+ */
+function setupEventListeners() {
+    // Search and Filter
+    if (elements.searchInput) {
+        elements.searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
             }
         });
+        // Debounce input for smoother experience
+        elements.searchInput.addEventListener('input', debounce(applyFilters, 800));
+    }
+    
+    if (elements.courseFilter) {
+        elements.courseFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (elements.branchFilter) {
+        elements.branchFilter.addEventListener('change', applyFilters);
+    }
 
-        // Action Buttons - using event delegation
-        studentsTable.addEventListener('click', function(e) {
+    if (elements.batchFilter) {
+        elements.batchFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (elements.statusFilter) {
+        elements.statusFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (elements.resetBtn) {
+        elements.resetBtn.addEventListener('click', resetFilters);
+    }
+    
+    // Pagination Limit
+    if (elements.itemsPerPageSelect) {
+        elements.itemsPerPageSelect.addEventListener('change', function() {
+            itemsPerPage = parseInt(this.value);
+            currentPage = 1;
+            reloadPage();
+        });
+    }
+    
+    // Bulk Selection
+    if (elements.selectAllCheckbox) {
+        elements.selectAllCheckbox.addEventListener('change', toggleAllSelection);
+    }
+    
+    // Table Actions
+    if (elements.tableBody) {
+        elements.tableBody.addEventListener('change', function(e) {
+            if (e.target.classList.contains('student-checkbox')) {
+                const row = e.target.closest('tr');
+                if (row) {
+                    if (e.target.checked) {
+                        row.classList.add('row-selected');
+                    } else {
+                        row.classList.remove('row-selected');
+                        row.style.backgroundColor = '';
+                        row.style.borderLeft = '';
+                    }
+                }
+                updateBulkActionState();
+            }
+        });
+        
+        elements.tableBody.addEventListener('click', function(e) {
             const target = e.target.closest('button');
             if (!target) return;
             
-            const studentId = target.dataset.studentId;
-            if (!studentId) return;
+            const studentId = target.getAttribute('data-student-id');
             
             if (target.classList.contains('view-btn')) {
-                handleViewStudent(studentId);
+                viewStudentDetails(studentId);
             } else if (target.classList.contains('edit-btn')) {
-                handleEditStudent(studentId);
+                window.location.href = `${contextPath}/dashboard/pages/students/add-student.jsp?id=${studentId}`;
             } else if (target.classList.contains('delete-btn')) {
-                handleDeleteStudent(studentId);
+                confirmDelete(studentId);
             }
         });
+    }
+    
+    // Bulk Delete
+    if (elements.bulkDeleteBtn) {
+        elements.bulkDeleteBtn.addEventListener('click', confirmBulkDelete);
+    }
+}
 
-        // Add Student
-        if (addStudentBtn) {
-            addStudentBtn.addEventListener('click', handleAddStudent);
-        }
+/**
+ * Apply filters by reloading the page with query params
+ */
+function applyFilters() {
+    currentPage = 1;
+    reloadPage();
+}
 
-        // Export
-        if (exportBtn) {
-            exportBtn.addEventListener('click', handleExport);
-        }
+/**
+ * Reset all filters
+ */
+function resetFilters() {
+    if (elements.searchInput) elements.searchInput.value = '';
+    if (elements.courseFilter) elements.courseFilter.value = '';
+    if (elements.branchFilter) elements.branchFilter.value = '';
+    if (elements.batchFilter) elements.batchFilter.value = '';
+    if (elements.statusFilter) elements.statusFilter.value = '';
+    applyFilters();
+}
 
-        // Bulk Delete
-        if (bulkDeleteBtn) {
-            bulkDeleteBtn.addEventListener('click', handleBulkDelete);
+/**
+ * Reload page with current state
+ */
+function reloadPage() {
+    const params = new URLSearchParams();
+    
+    if (elements.searchInput && elements.searchInput.value.trim()) {
+        params.set('search', elements.searchInput.value.trim());
+    }
+    if (elements.courseFilter && elements.courseFilter.value) {
+        params.set('course', elements.courseFilter.value);
+    }
+    if (elements.branchFilter && elements.branchFilter.value) {
+        params.set('branch', elements.branchFilter.value);
+    }
+    if (elements.batchFilter && elements.batchFilter.value) {
+        params.set('batch', elements.batchFilter.value);
+    }
+    if (elements.statusFilter && elements.statusFilter.value) {
+        params.set('status', elements.statusFilter.value);
+    }
+    
+    params.set('page', currentPage);
+    params.set('limit', itemsPerPage);
+    
+    window.location.href = `${window.location.pathname}?${params.toString()}`;
+}
+
+/**
+ * Change page
+ */
+function changePage(page) {
+    currentPage = page;
+    reloadPage();
+}
+
+/**
+ * Render pagination buttons
+ */
+function renderPagination() {
+    if (!elements.paginationContainer) return;
+    
+    if (totalPages <= 1) {
+        elements.paginationContainer.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '<div class="btn-group" role="group" aria-label="Pagination">';
+    
+    // Previous button
+    paginationHTML += `
+        <button type="button" class="btn btn-outline-secondary btn-sm ${currentPage === 1 ? 'disabled' : ''}" 
+            data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>
+            <i class="bi bi-chevron-left"></i>
+        </button>
+    `;
+    
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage < maxVisiblePages - 1) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    if (startPage > 1) {
+        paginationHTML += `<button type="button" class="btn btn-outline-primary btn-sm" data-page="1">1</button>`;
+        if (startPage > 2) {
+            paginationHTML += `<button type="button" class="btn btn-outline-secondary btn-sm disabled" disabled>...</button>`;
         }
     }
-
-    // Removed attachActionButtons - now using event delegation
-
-    // Search Handler
-    function handleSearch() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        
-        filteredStudents = allRows.filter(row => {
-            const text = row.textContent.toLowerCase();
-            return text.includes(searchTerm);
-        });
-
-        currentPage = 1;
-        applyFiltersAndDisplay();
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const activeClass = i === currentPage ? 'btn-primary' : 'btn-outline-primary';
+        paginationHTML += `
+            <button type="button" class="btn ${activeClass} btn-sm" data-page="${i}">${i}</button>
+        `;
     }
-
-    // Filter Handler
-    function handleFilter() {
-        const courseValue = courseFilter ? courseFilter.value : '';
-        const statusValue = statusFilter ? statusFilter.value : '';
-
-        filteredStudents = allRows.filter(row => {
-            const rowCourse = row.dataset.course || '';
-            const rowStatus = row.dataset.status || '';
-
-            const courseMatch = !courseValue || rowCourse === courseValue;
-            const statusMatch = !statusValue || rowStatus === statusValue;
-
-            return courseMatch && statusMatch;
-        });
-
-        // Apply search if active
-        if (searchInput && searchInput.value.trim()) {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            filteredStudents = filteredStudents.filter(row => {
-                return row.textContent.toLowerCase().includes(searchTerm);
-            });
+    
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            paginationHTML += `<button type="button" class="btn btn-outline-secondary btn-sm disabled" disabled>...</button>`;
         }
-
-        currentPage = 1;
-        applyFiltersAndDisplay();
+        paginationHTML += `<button type="button" class="btn btn-outline-primary btn-sm" data-page="${totalPages}">${totalPages}</button>`;
     }
-
-    // Apply Filters and Display
-    function applyFiltersAndDisplay() {
-        // Hide all rows first
-        allRows.forEach(row => {
-            row.style.display = 'none';
-            // Maintain row highlighting if checkbox is checked
-            const checkbox = row.querySelector('.student-checkbox');
-            if (checkbox && checkbox.checked) {
-                row.classList.add('row-selected');
+    
+    // Next button
+    paginationHTML += `
+        <button type="button" class="btn btn-outline-secondary btn-sm ${currentPage === totalPages ? 'disabled' : ''}" 
+            data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    `;
+    
+    paginationHTML += '</div>';
+    elements.paginationContainer.innerHTML = paginationHTML;
+    
+    // Add event listeners
+    elements.paginationContainer.querySelectorAll('button[data-page]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (this.disabled || this.classList.contains('disabled')) return;
+            
+            const page = parseInt(this.dataset.page);
+            if (page && page !== currentPage && page >= 1 && page <= totalPages) {
+                changePage(page);
             }
         });
+    });
+}
 
-        // Show filtered rows
-        filteredStudents.forEach(row => row.style.display = '');
-
-        updatePagination();
-        showEmptyState();
-        updateSelectAllState();
-        updateBulkActionButtons();
-    }
-
-    // Reset Filters
-    function handleResetFilters() {
-        if (searchInput) searchInput.value = '';
-        if (courseFilter) courseFilter.value = '';
-        if (statusFilter) statusFilter.value = '';
-        
-        filteredStudents = [...allRows];
-        currentPage = 1;
-        applyFiltersAndDisplay();
-    }
-
-    // Select All Handler
-    function handleSelectAll() {
-        const isChecked = selectAll.checked;
-        const visibleRows = Array.from(studentsTable.querySelectorAll('tbody tr'))
-            .filter(row => row.style.display !== 'none' && !row.classList.contains('empty-state-row'));
-        
-        visibleRows.forEach(row => {
-            const checkbox = row.querySelector('.student-checkbox');
-            if (checkbox) {
-                checkbox.checked = isChecked;
-                
-                if (isChecked) {
-                    row.classList.add('row-selected');
-                } else {
-                    row.classList.remove('row-selected');
-                    row.style.backgroundColor = '';
-                    row.style.borderLeft = '';
-                }
-            }
-        });
-
-        updateBulkActionButtons();
-    }
-
-    // Update Select All State
-    function updateSelectAllState() {
-        const visibleRows = Array.from(studentsTable.querySelectorAll('tbody tr'))
-            .filter(row => row.style.display !== 'none' && !row.classList.contains('empty-state-row'));
-        
-        const visibleCheckboxes = visibleRows.map(row => row.querySelector('.student-checkbox')).filter(cb => cb);
-        const checkedCheckboxes = visibleCheckboxes.filter(cb => cb.checked);
-
-        if (selectAll) {
-            if (visibleCheckboxes.length === 0) {
-                selectAll.checked = false;
-                selectAll.indeterminate = false;
-            } else if (checkedCheckboxes.length === 0) {
-                selectAll.checked = false;
-                selectAll.indeterminate = false;
-            } else if (checkedCheckboxes.length === visibleCheckboxes.length) {
-                selectAll.checked = true;
-                selectAll.indeterminate = false;
+/**
+ * Toggle visibility of empty state and table
+ */
+function showEmptyState(show, isSearch = false) {
+    if (show) {
+        if (elements.tableContainer) elements.tableContainer.style.display = 'none';
+        if (elements.paginationFooter) elements.paginationFooter.style.display = 'none';
+        if (elements.emptyState) {
+            elements.emptyState.style.display = 'block';
+            
+            const title = elements.emptyState.querySelector('.empty-state-title');
+            const text = elements.emptyState.querySelector('.empty-state-text');
+            const btn = elements.emptyState.querySelector('.btn-primary');
+            
+            if (isSearch) {
+                if (title) title.textContent = 'No Students Found';
+                if (text) text.textContent = 'No students match your search criteria. Try adjusting your filters.';
+                if (btn) btn.style.display = 'none';
             } else {
-                selectAll.checked = false;
-                selectAll.indeterminate = true;
+                if (title) title.textContent = 'No Students Yet';
+                if (text) text.textContent = 'Get started by adding your first student to the system';
+                if (btn) btn.style.display = 'inline-block';
             }
         }
+    } else {
+        if (elements.tableContainer) elements.tableContainer.style.display = 'block';
+        if (elements.paginationFooter) elements.paginationFooter.style.display = 'block';
+        if (elements.emptyState) elements.emptyState.style.display = 'none';
     }
+}
 
-    // Update Bulk Action Buttons
-    function updateBulkActionButtons() {
-        // Only count visible checkboxes (not hidden by pagination or filters)
-        const visibleRows = Array.from(studentsTable.querySelectorAll('tbody tr'))
-            .filter(row => row.style.display !== 'none' && !row.classList.contains('empty-state-row'));
-        
-        const checkedCount = visibleRows.filter(row => {
-            const checkbox = row.querySelector('.student-checkbox');
-            return checkbox && checkbox.checked;
-        }).length;
-        
-        const selectedCountSpan = document.getElementById('selectedCount');
-        
-        if (!bulkDeleteBtn || !selectedCountSpan) return;
-        
-        if (checkedCount > 0) {
-            bulkDeleteBtn.style.display = 'inline-block';
-            selectedCountSpan.textContent = checkedCount;
-        } else {
-            bulkDeleteBtn.style.display = 'none';
-            if (selectAll) {
-                selectAll.checked = false;
-                selectAll.indeterminate = false;
-            }
-        }
-    }
-
-    // Pagination
-    function updatePagination() {
-        const perPage = parseInt(entriesPerPage ? entriesPerPage.value : 10);
-        const totalEntries = filteredStudents.length;
-        const totalPages = Math.ceil(totalEntries / perPage);
-
-        // Hide all rows and maintain selection state
-        allRows.forEach(row => {
-            row.style.display = 'none';
-            // Maintain row highlighting if checkbox is checked
-            const checkbox = row.querySelector('.student-checkbox');
-            if (checkbox && checkbox.checked) {
+/**
+ * Toggle all checkboxes
+ */
+function toggleAllSelection() {
+    const isChecked = elements.selectAllCheckbox.checked;
+    const checkboxes = document.querySelectorAll('.student-checkbox');
+    
+    checkboxes.forEach(cb => {
+        cb.checked = isChecked;
+        const row = cb.closest('tr');
+        if (row) {
+            if (isChecked) {
                 row.classList.add('row-selected');
             } else {
                 row.classList.remove('row-selected');
             }
-        });
-
-        // Show current page rows
-        const start = (currentPage - 1) * perPage;
-        const end = start + perPage;
-        const pageRows = filteredStudents.slice(start, end);
-        
-        pageRows.forEach(row => row.style.display = '');
-
-        // Update pagination info
-        updatePaginationInfo(start, end, totalEntries);
-        renderPaginationButtons(totalPages);
-        
-        // Update select all state
-        updateSelectAllState();
-        
-        // Update bulk action buttons to reflect current state
-        updateBulkActionButtons();
-    }
-
-    // Update Pagination Info
-    function updatePaginationInfo(start, end, total) {
-        const showingStart = document.getElementById('showingStart');
-        const showingEnd = document.getElementById('showingEnd');
-        const totalEntriesEl = document.getElementById('totalEntries');
-
-        if (showingStart) showingStart.textContent = total > 0 ? start + 1 : 0;
-        if (showingEnd) showingEnd.textContent = Math.min(end, total);
-        if (totalEntriesEl) totalEntriesEl.textContent = total;
-    }
-
-    // Render Pagination Buttons
-    function renderPaginationButtons(totalPages) {
-        const pagination = document.getElementById('pagination');
-        if (!pagination) return;
-
-        pagination.innerHTML = '';
-
-        // Previous button
-        const prevLi = document.createElement('li');
-        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a>`;
-        prevLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                updatePagination();
-            }
-        });
-        pagination.appendChild(prevLi);
-
-        // Page numbers
-        const maxButtons = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-        let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-
-        if (endPage - startPage < maxButtons - 1) {
-            startPage = Math.max(1, endPage - maxButtons + 1);
         }
+    });
+    
+    updateBulkActionState();
+}
 
-        for (let i = startPage; i <= endPage; i++) {
-            const pageLi = document.createElement('li');
-            pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
-            pageLi.innerHTML = `<a class="page-link" href="#"></a>`;
-            pageLi.querySelector('a').textContent = i;
-            
-            pageLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                currentPage = i;
-                updatePagination();
-            });
-            
-            pagination.appendChild(pageLi);
-        }
-
-        // Next button
-        const nextLi = document.createElement('li');
-        nextLi.className = `page-item ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}`;
-        nextLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>`;
-        nextLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage < totalPages) {
-                currentPage++;
-                updatePagination();
-            }
-        });
-        pagination.appendChild(nextLi);
-    }
-
-    // Show Empty State
-    function showEmptyState() {
-        const tbody = studentsTable.querySelector('tbody');
-        const thead = studentsTable.querySelector('thead');
-        const tableResponsive = studentsTable.closest('.table-responsive');
-        let emptyRow = tbody.querySelector('.empty-state-row');
-
-        if (filteredStudents.length === 0) {
-            // Check if it's a completely empty table or just filtered results
-            const isCompletelyEmpty = allRows.length === 0;
-            const hasActiveFilters = (searchInput && searchInput.value.trim()) || 
-                                    (courseFilter && courseFilter.value) || 
-                                    (statusFilter && statusFilter.value);
-            
-            if (!emptyRow) {
-                emptyRow = document.createElement('tr');
-                emptyRow.className = 'empty-state-row';
-                tbody.appendChild(emptyRow);
-            }
-            
-            // Hide table header for both empty table and no search results
-            if (thead) thead.style.display = 'none';
-            if (tableResponsive) {
-                tableResponsive.style.overflowX = 'visible';
-                tableResponsive.style.overflowY = 'visible';
-            }
-            
-            // Update content based on whether table is empty or just filtered
-            if (isCompletelyEmpty) {
-                emptyRow.innerHTML = `
-                    <td colspan="23" class="text-center py-5">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="bi bi-person-plus"></i>
-                            </div>
-                            <h4 class="empty-state-title">No Students Yet</h4>
-                            <p class="empty-state-text">Get started by adding your first student to the system</p>
-                            <button class="btn btn-primary mt-3" id="emptyAddStudentBtn">
-                                <i class="bi bi-plus-lg me-2"></i>Add First Student
-                            </button>
-                        </div>
-                    </td>
-                `;
-                
-                // Attach click handler to the add student button in empty state
-                const emptyAddBtn = emptyRow.querySelector('#emptyAddStudentBtn');
-                if (emptyAddBtn) {
-                    emptyAddBtn.addEventListener('click', handleAddStudent);
-                }
-            } else if (hasActiveFilters) {
-                emptyRow.innerHTML = `
-                    <td colspan="23" class="text-center py-5">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="bi bi-search"></i>
-                            </div>
-                            <h4 class="empty-state-title">No Students Found</h4>
-                            <p class="empty-state-text">No students match your current search or filter criteria</p>
-                            <button class="btn btn-outline-primary mt-3" id="emptyResetBtn">
-                                <i class="bi bi-arrow-clockwise me-2"></i>Clear Filters
-                            </button>
-                        </div>
-                    </td>
-                `;
-                
-                // Attach click handler to reset button in empty state
-                const emptyResetBtn = emptyRow.querySelector('#emptyResetBtn');
-                if (emptyResetBtn) {
-                    emptyResetBtn.addEventListener('click', handleResetFilters);
-                }
-            }
-            
-            emptyRow.style.display = '';
+/**
+ * Update bulk action button state
+ */
+function updateBulkActionState() {
+    const allCheckboxes = document.querySelectorAll('.student-checkbox');
+    const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+    const count = checkedBoxes.length;
+    
+    if (elements.selectedCountSpan) elements.selectedCountSpan.textContent = count;
+    
+    // Update "Select All" checkbox state
+    if (elements.selectAllCheckbox) {
+        if (allCheckboxes.length > 0 && count === allCheckboxes.length) {
+            elements.selectAllCheckbox.checked = true;
+            elements.selectAllCheckbox.indeterminate = false;
+        } else if (count > 0) {
+            elements.selectAllCheckbox.checked = false;
+            elements.selectAllCheckbox.indeterminate = true;
         } else {
-            // Show table header and restore scroll when there are students
-            if (thead) thead.style.display = '';
-            if (tableResponsive) {
-                tableResponsive.style.overflowX = 'auto';
-                tableResponsive.style.overflowY = 'visible';
-            }
-            if (emptyRow) {
-                emptyRow.style.display = 'none';
-            }
+            elements.selectAllCheckbox.checked = false;
+            elements.selectAllCheckbox.indeterminate = false;
         }
     }
+    
+    // Update bulk delete button visibility
+    if (count > 0) {
+        if (elements.bulkDeleteBtn) elements.bulkDeleteBtn.style.display = 'inline-block';
+    } else {
+        if (elements.bulkDeleteBtn) elements.bulkDeleteBtn.style.display = 'none';
+    }
+}
 
-    // View Student Details
-    function handleViewStudent(studentId) {
-        console.log('Viewing student:', studentId);
-        
-        // Get student row
-        const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
-        if (!row) return;
+/**
+ * View Student Details
+ */
+function viewStudentDetails(studentId) {
+    const student = studentData.find(s => s.id === studentId);
+    if (!student) return;
+    
+    const modalContent = document.getElementById('studentDetailsContent');
+    if (modalContent) {
+        const modalDialog = document.querySelector('#viewStudentModal .modal-dialog');
+        if (modalDialog) {
+            modalDialog.classList.add('student-details-modal');
+        }
 
-        // Extract student data from table cells
-        const cells = row.querySelectorAll('td');
-        const studentName = row.querySelector('.student-name')?.textContent || '';
-        const enrollDate = row.querySelector('.text-muted')?.textContent.replace('Enrolled: ', '') || '';
-        const avatar = row.querySelector('.student-avatar')?.textContent || '';
-        
-        // Get all data from cells (adjusting indices based on table structure)
-        const fatherName = cells[3]?.textContent || 'N/A';
-        const surname = cells[4]?.textContent || 'N/A';
-        const dob = cells[5]?.textContent || 'N/A';
-        const gender = cells[6]?.textContent || 'N/A';
-        const bloodGroup = cells[7]?.textContent || 'N/A';
-        const email = cells[8]?.textContent || 'N/A';
-        const phone = cells[9]?.textContent || 'N/A';
-        const whatsapp = cells[10]?.textContent || 'N/A';
-        const parentMobile = cells[11]?.textContent || 'N/A';
-        const instagram = cells[12]?.textContent || 'N/A';
-        const linkedin = cells[13]?.textContent || 'N/A';
-        const course = row.dataset.course || 'N/A';
-        const batchMode = cells[15]?.textContent || 'N/A';
-        const college = cells[16]?.textContent || 'N/A';
-        const qualification = cells[17]?.textContent || 'N/A';
-        const passingYear = cells[18]?.textContent || 'N/A';
-        const grade = cells[19]?.textContent || 'N/A';
-        const attendance = cells[20]?.textContent || 'N/A';
-        const status = row.dataset.status || 'N/A';
-
-        // Populate modal with comprehensive data
-        const modalContent = document.getElementById('studentDetailsContent');
-        if (modalContent) {
-            modalContent.innerHTML = `
-                <div class="student-details-modal">
-                    <!-- Student Header -->
-                    <div class="text-center mb-4 pb-3 border-bottom">
-                        <div class="student-avatar-large mb-2">${avatar}</div>
-                        <h4 class="mb-1">${studentName} ${surname}</h4>
-                        <p class="text-muted mb-2">${studentId}</p>
-                        <span class="badge status-${status.toLowerCase()} fs-6">${status}</span>
+        modalContent.innerHTML = `
+            <div class="student-details-header">
+                <div class="student-details-avatar">
+                    ${student.avatarHtml}
+                </div>
+                <div class="student-details-title">
+                    <h3>${student.name}</h3>
+                    <div class="student-details-meta">
+                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10">
+                            <i class="bi bi-book me-1"></i> ${student.courseName}
+                        </span>
+                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-10">
+                            <i class="bi bi-building me-1"></i> ${student.branchName}
+                        </span>
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-10">
+                            <i class="bi bi-upc-scan me-1"></i> ${student.batchCode}
+                        </span>
+                        <span class="badge ${student.status === 'Active' ? 'bg-success' : 'bg-danger'} bg-opacity-10 ${student.status === 'Active' ? 'text-success' : 'text-danger'} border ${student.status === 'Active' ? 'border-success' : 'border-danger'} border-opacity-10">
+                            <i class="bi bi-circle-fill me-1" style="font-size: 0.6rem;"></i> ${student.status}
+                        </span>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Personal Information -->
-                    <h6 class="text-primary mb-3"><i class="bi bi-person-fill me-2"></i>Personal Information</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Full Name</small>
-                            <strong>${studentName} ${surname}</strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Father's Name</small>
-                            <strong>${fatherName}</strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Date of Birth</small>
-                            <strong>${dob}</strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Gender</small>
-                            <strong>${gender}</strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Blood Group</small>
-                            <strong>${bloodGroup}</strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Enrollment Date</small>
-                            <strong>${enrollDate}</strong>
-                        </div>
+            <div class="detail-section-title">
+                <i class="bi bi-person-lines-fill"></i> Personal Information
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-envelope"></i>
                     </div>
-
-                    <!-- Contact Information -->
-                    <h6 class="text-primary mb-3"><i class="bi bi-telephone-fill me-2"></i>Contact Information</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Email</small>
-                            <strong><a href="mailto:${email}">${email}</a></strong>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Phone</small>
-                            <strong>${phone}</strong>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">WhatsApp</small>
-                            <strong>${whatsapp}</strong>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Parent Mobile</small>
-                            <strong>${parentMobile}</strong>
-                        </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Email Address</div>
+                        <div class="detail-value">${student.email}</div>
                     </div>
-
-                    <!-- Social Media -->
-                    <h6 class="text-primary mb-3"><i class="bi bi-share-fill me-2"></i>Social Media</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Instagram</small>
-                            <strong>${instagram !== 'N/A' ? `<a href="https://instagram.com/${instagram.replace('@', '')}" target="_blank">${instagram}</a>` : 'N/A'}</strong>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">LinkedIn</small>
-                            <strong>${linkedin !== 'N/A' ? `<a href="https://linkedin.com/in/${linkedin}" target="_blank">${linkedin}</a>` : 'N/A'}</strong>
-                        </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-telephone"></i>
                     </div>
-
-                    <!-- Academic Information -->
-                    <h6 class="text-primary mb-3"><i class="bi bi-book-fill me-2"></i>Academic Information</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Course</small>
-                            <strong><span class="course-badge">${course}</span></strong>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Batch Mode</small>
-                            <strong><span class="badge bg-info">${batchMode}</span></strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Grade</small>
-                            <strong>${grade}</strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Attendance</small>
-                            <strong>${attendance}</strong>
-                        </div>
-                        <div class="col-md-4">
-                            <small class="text-muted d-block">Status</small>
-                            <strong><span class="badge status-${status.toLowerCase()}">${status}</span></strong>
-                        </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Phone Number</div>
+                        <div class="detail-value">${student.phone}</div>
                     </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">WhatsApp</div>
+                        <div class="detail-value">${student.whatsapp}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-telephone-forward"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Parent's Mobile</div>
+                        <div class="detail-value">${student.parentMobile}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-gender-ambiguous"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Gender</div>
+                        <div class="detail-value">${student.gender}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-droplet"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Blood Group</div>
+                        <div class="detail-value">${student.bloodGroup}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Date of Birth</div>
+                        <div class="detail-value">${student.dob}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-instagram"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Instagram</div>
+                        <div class="detail-value">${student.instagram}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-linkedin"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">LinkedIn</div>
+                        <div class="detail-value">${student.linkedin}</div>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Education Background -->
-                    <h6 class="text-primary mb-3"><i class="bi bi-mortarboard-fill me-2"></i>Education Background</h6>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">College/University</small>
-                            <strong>${college}</strong>
-                        </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block">Qualification</small>
-                            <strong>${qualification}</strong>
-                        </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block">Passing Year</small>
-                            <strong>${passingYear}</strong>
+            <div class="detail-section-title">
+                <i class="bi bi-geo-alt"></i> Address Information
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item full-width">
+                    <div class="detail-icon">
+                        <i class="bi bi-house-door"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Permanent Address</div>
+                        <div class="detail-value">${student.permanentAddress}</div>
+                    </div>
+                </div>
+                <div class="detail-item full-width">
+                    <div class="detail-icon">
+                        <i class="bi bi-geo"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Current Address</div>
+                        <div class="detail-value">${student.currentAddress}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section-title">
+                <i class="bi bi-mortarboard"></i> Educational Details
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">College Name</div>
+                        <div class="detail-value">${student.college}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Qualification</div>
+                        <div class="detail-value">${student.qualification}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Specialization</div>
+                        <div class="detail-value">${student.specialization}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Passing Year</div>
+                        <div class="detail-value">${student.passingYear}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section-title">
+                <i class="bi bi-journal-check"></i> Enrollment & Medical
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-upc-scan"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Batch Code</div>
+                        <div class="detail-value">${student.batchCode}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-bookmark"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Batch Name</div>
+                        <div class="detail-value">${student.batchName}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Medical History</div>
+                        <div class="detail-value">${student.medicalHistory}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Declaration</div>
+                        <div class="detail-value">${student.declaration}</div>
+                    </div>
+                </div>
+            </div>
+            
+            ${(student.documentsHtml && student.documentsHtml.trim() !== '-' && student.documentsHtml.trim() !== '') ? `
+            <div class="detail-section-title">
+                <i class="bi bi-file-earmark-text"></i> Documents
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item full-width">
+                    <div class="detail-icon">
+                        <i class="bi bi-folder2-open"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Uploaded Documents</div>
+                        <div class="d-flex flex-wrap gap-2 mt-1">
+                            ${student.documentsHtml}
                         </div>
                     </div>
                 </div>
-            `;
-        }
-
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('studentDetailsModal'));
+            </div>
+            ` : ''}
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('viewStudentModal'));
         modal.show();
     }
+}
 
-    // Edit Student
-    function handleEditStudent(studentId) {
-        console.log('Editing student:', studentId);
-        // Redirect to edit page or show edit modal
-        window.location.href = `edit-student.jsp?id=${studentId}`;
-    }
-
-    // Delete Student
-    function handleDeleteStudent(studentId) {
-        const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
-        const studentName = row ? row.querySelector('.student-name')?.textContent || 'this student' : 'this student';
-        
+/**
+ * Confirm Delete
+ */
+function confirmDelete(studentId) {
+    if (typeof showConfirmationModal === 'function') {
         showConfirmationModal({
             title: 'Delete Student',
-            message: `Are you sure you want to delete this student?<br><br>This action cannot be undone.`,
-            confirmText: 'Yes, Delete',
-            cancelText: 'Cancel',
+            message: 'Are you sure you want to delete this student? This action cannot be undone.',
+            confirmText: 'Delete',
             confirmClass: 'btn-danger',
+            icon: 'bi-trash text-danger',
             onConfirm: function() {
-                // Save the state of other checked checkboxes BEFORE deletion
-                const checkedStudentIds = Array.from(document.querySelectorAll('.student-checkbox:checked'))
-                    .map(cb => cb.closest('tr')?.dataset.studentId)
-                    .filter(id => id && id !== studentId); // Exclude the student being deleted
-                
-                // Remove row from table
-                if (row) {
-                    row.remove();
-                    
-                    // Update arrays
-                    allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
-                    filteredStudents = filteredStudents.filter(r => r !== row);
-                    
-                    // Update view
-                    updatePagination();
-                    showEmptyState();
-                    
-                    // Restore the checked state of other students after re-render
-                    setTimeout(() => {
-                        checkedStudentIds.forEach(id => {
-                            const studentRow = document.querySelector(`tr[data-student-id="${id}"]`);
-                            if (studentRow) {
-                                const checkbox = studentRow.querySelector('.student-checkbox');
-                                if (checkbox) {
-                                    checkbox.checked = true;
-                                    studentRow.classList.add('row-selected');
-                                }
-                            }
-                        });
-                        
-                        // Update bulk action buttons and select all state
-                        updateBulkActionButtons();
-                        updateSelectAllState();
-                    }, 50);
-                    
-                    toast.success(`Student "${studentName}" deleted successfully`);
-                }
+                deleteStudent(studentId);
             }
         });
-    }
-
-    // Bulk Delete Students
-    function handleBulkDelete() {
-        const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
-        
-        if (selectedCheckboxes.length === 0) {
-            if (typeof toast !== 'undefined') {
-                toast.error('Please select students to delete');
-            } else {
-                alert('Please select students to delete');
-            }
-            return;
-        }
-
-        const studentCount = selectedCheckboxes.length;
-        const studentNames = [];
-        
-        selectedCheckboxes.forEach(checkbox => {
-            const row = checkbox.closest('tr');
-            const nameEl = row.querySelector('.student-name');
-            if (nameEl) {
-                studentNames.push(nameEl.textContent.trim());
-            }
-        });
-
-        if (typeof showConfirmationModal === 'function') {
-            showConfirmationModal({
-                title: 'Delete Students',
-                message: `Are you sure you want to delete <strong>${studentCount} student(s)</strong>?<br><br>This action cannot be undone.`,
-                confirmText: 'Yes, Delete',
-                cancelText: 'Cancel',
-                confirmClass: 'btn-danger',
-                onConfirm: function() {
-                    // Remove all selected rows
-                    selectedCheckboxes.forEach(checkbox => {
-                        const row = checkbox.closest('tr');
-                        if (row) {
-                            row.remove();
-                        }
-                    });
-                    
-                    // Update arrays
-                    allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
-                    filteredStudents = [...allRows];
-                    
-                    // Reset checkboxes
-                    if (selectAll) {
-                        selectAll.checked = false;
-                        selectAll.indeterminate = false;
-                    }
-                    
-                    // Hide bulk delete button
-                    if (bulkDeleteBtn) {
-                        bulkDeleteBtn.style.display = 'none';
-                    }
-                    
-                    // Reset to page 1 if current page is now empty
-                    const totalPages = Math.ceil(filteredStudents.length / entriesPerPage);
-                    if (currentPage > totalPages) {
-                        currentPage = Math.max(1, totalPages);
-                    }
-                    
-                    // Update view
-                    updatePagination();
-                    showEmptyState();
-                    
-                    if (typeof toast !== 'undefined') {
-                        toast.success(`${studentCount} student(s) deleted successfully`);
-                    }
-                }
-            });
-        } else {
-            // Fallback to confirm dialog
-            if (confirm(`Are you sure you want to delete ${studentCount} student(s)? This action cannot be undone.`)) {
-                selectedCheckboxes.forEach(checkbox => {
-                    const row = checkbox.closest('tr');
-                    if (row) row.remove();
-                });
-                allRows = Array.from(studentsTable.querySelectorAll('tbody tr:not(.empty-state-row)'));
-                filteredStudents = [...allRows];
-                if (selectAll) {
-                    selectAll.checked = false;
-                    selectAll.indeterminate = false;
-                }
-                if (bulkDeleteBtn) {
-                    bulkDeleteBtn.style.display = 'none';
-                }
-                updatePagination();
-                showEmptyState();
-                alert(`${studentCount} student(s) deleted successfully`);
-            }
-        }
-    }
-
-    // Add Student
-    function handleAddStudent() {
-        console.log('Adding new student');
-        // Redirect to add student page
-        window.location.href = 'add-student.jsp';
-    }
-
-    // Export Data
-    function handleExport() {
-        console.log('Exporting student data');
-        
-        // Get visible students
-        const visibleRows = Array.from(
-            studentsTable.querySelectorAll('tbody tr:not([style*="display: none"]):not(.empty-state-row)')
-        );
-
-        if (visibleRows.length === 0) {
-            toast('No data to export', { icon: '⚠️' });
-            return;
-        }
-
-        // Show loading toast
-        const loadingToastId = toast.loading('Preparing student data export...');
-
-        // Create CSV
-        let csv = 'Student ID,Name,Email,Phone,Course,Grade,Attendance,Status\n';
-        
-        visibleRows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            const id = cells[1]?.textContent.trim() || '';
-            const name = row.querySelector('.student-name')?.textContent.trim() || '';
-            const email = cells[3]?.textContent.trim() || '';
-            const phone = cells[4]?.textContent.trim() || '';
-            const course = row.dataset.course || '';
-            const grade = cells[6]?.textContent.trim() || '';
-            const attendance = cells[7]?.querySelector('small')?.textContent.trim() || '';
-            const status = row.dataset.status || '';
-            
-            csv += `"${id}","${name}","${email}","${phone}","${course}","${grade}","${attendance}","${status}"\n`;
-        });
-
-        // Download CSV with delay to show loading
-        setTimeout(() => {
-            downloadCSV(csv, 'students-export.csv');
-            
-            // Dismiss loading toast
-            toast.dismiss(loadingToastId);
-            
-            toast.success(`${visibleRows.length} student records exported successfully`);
-        }, 500);
-    }
-
-    // Download CSV
-    function downloadCSV(csv, filename) {
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // Debounce Helper
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    // Initialize on DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
     } else {
-        init();
+        if (confirm('Are you sure you want to delete this student?')) {
+            deleteStudent(studentId);
+        }
     }
+}
 
-})();
+/**
+ * Confirm Bulk Delete
+ */
+function confirmBulkDelete() {
+    const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+    const ids = Array.from(checkedBoxes).map(cb => cb.value);
+    
+    if (ids.length === 0) return;
+    
+    if (typeof showConfirmationModal === 'function') {
+        showConfirmationModal({
+            title: 'Delete Selected Students',
+            message: `Are you sure you want to delete ${ids.length} student${ids.length > 1 ? 's' : ''}? This action cannot be undone.`,
+            confirmText: 'Delete All',
+            confirmClass: 'btn-danger',
+            icon: 'bi-trash text-danger',
+            onConfirm: function() {
+                deleteStudentBulk(ids);
+            }
+        });
+    } else {
+        if (confirm(`Are you sure you want to delete ${ids.length} students?`)) {
+            deleteStudentBulk(ids);
+        }
+    }
+}
+
+/**
+ * Delete Student (API call)
+ */
+function deleteStudent(studentId) {
+    // Create a form and submit it
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `${contextPath}/api/students/delete`;
+    
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'studentId';
+    input.value = studentId;
+    
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+/**
+ * Bulk Delete Student (API call)
+ */
+function deleteStudentBulk(ids) {
+    if (ids.length === 0) return;
+    
+    // Create a form and submit it
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `${contextPath}/api/students/delete`;
+    
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'studentIds';
+    input.value = ids.join(',');
+    form.appendChild(input);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+/**
+ * Debounce utility
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}

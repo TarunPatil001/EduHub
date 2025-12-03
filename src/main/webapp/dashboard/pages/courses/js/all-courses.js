@@ -285,6 +285,23 @@
             const levelClass = safeLevel.toLowerCase().replace(/\s+/g, '-');
             const statusClass = safeStatus.toLowerCase().replace(/\s+/g, '-');
 
+            // Render modules as badges
+            let modulesHTML = '';
+            if (course.modules && course.modules.trim() !== '') {
+                const modules = course.modules.split(',').map(m => m.trim()).filter(m => m);
+                if (modules.length > 0) {
+                    modulesHTML = modules.map(module => 
+                        `<span class="badge rounded-pill bg-primary me-1 mb-1" style="font-size: 0.75rem;">
+                            <i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(module)}
+                        </span>`
+                    ).join('');
+                } else {
+                    modulesHTML = '<span class="text-muted" style="font-size: 0.85rem;">No modules</span>';
+                }
+            } else {
+                modulesHTML = '<span class="text-muted" style="font-size: 0.85rem;">No modules</span>';
+            }
+
             return `
             <tr data-course-id="${safeId}">
                 <td>
@@ -299,6 +316,7 @@
                 <td>${safeDuration}</td>
                 <td>₹${safeFee.toLocaleString()}</td>
                 <td>${safeCertificate}</td>
+                <td><div class="d-flex flex-wrap gap-1 align-items-center">${modulesHTML}</div></td>
                 <td><span class="status-badge status-${statusClass}">${capitalize(safeStatus)}</span></td>
                 <td>
                     <div class="btn-group" role="group">
@@ -571,7 +589,7 @@
                                 <div class="detail-info">
                                     <div class="detail-label">Category</div>
                                     <div class="detail-value">
-                                        <span class="category-badge category-${categoryClass} border-0 p-0 bg-transparent text-dark">
+                                        <span class="category-badge category-${categoryClass} border-0 p-0 bg-transparent">
                                             ${capitalize(safeCategory)}
                                         </span>
                                     </div>
@@ -586,7 +604,7 @@
                                 <div class="detail-info">
                                     <div class="detail-label">Level</div>
                                     <div class="detail-value">
-                                        <span class="level-badge level-${levelClass} border-0 p-0 bg-transparent text-dark">
+                                        <span class="level-badge level-${levelClass} border-0 p-0 bg-transparent">
                                             ${capitalize(safeLevel)}
                                         </span>
                                     </div>

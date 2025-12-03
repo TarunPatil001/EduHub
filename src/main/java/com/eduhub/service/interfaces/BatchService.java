@@ -13,4 +13,5 @@ public interface BatchService {
     List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery);
     List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery, int page, int pageSize);
     int getBatchCountByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery);
+    boolean isBatchCodeExists(String instituteId, String batchCode);
 }

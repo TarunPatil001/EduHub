@@ -28,11 +28,12 @@ public interface RegistrationService {
      *
      * @param filePart The file part from the multipart request.
      * @param userId The ID of the user (used for folder structure).
+     * @param instituteId The ID of the institute (used for folder structure).
      * @param appPath The real path of the application context.
      * @return The URL or path to the saved photo.
      * @throws IOException If an I/O error occurs.
      */
-    String saveUserProfilePhoto(Part filePart, String userId, String appPath) throws IOException;
+    String saveUserProfilePhoto(Part filePart, String userId, String instituteId, String appPath) throws IOException;
 
     /**
      * Deletes the admin's profile photo.

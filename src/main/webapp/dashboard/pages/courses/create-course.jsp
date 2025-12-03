@@ -141,6 +141,24 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-book-fill"></i> Course Details</h5>
                                 
+                                <!-- Modules Section -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold"><i class="bi bi-layers-fill text-primary"></i> Modules</label>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text bg-light"><i class="bi bi-plus-circle"></i></span>
+                                        <input type="text" class="form-control" id="moduleInput" placeholder="Enter module name (e.g. HTML, CSS, JavaScript)">
+                                        <button class="btn btn-primary" type="button" id="addModuleBtn">
+                                            <i class="bi bi-plus-lg"></i> Add
+                                        </button>
+                                    </div>
+                                    <div id="modulesList" class="d-flex flex-wrap gap-2 mb-3 p-3 border rounded bg-light" style="min-height: 60px;">
+                                        <!-- Dynamic modules will appear here -->
+                                        <div class="text-muted small w-100 text-center" id="emptyModulesMessage">No modules added yet. Add your first module above.</div>
+                                    </div>
+                                    <input type="hidden" name="modules" id="modulesHidden">
+                                    <small class="text-muted"><i class="bi bi-info-circle"></i> Add the sub-modules or subjects included in this course. Press Enter or click Add button.</small>
+                                </div>
+
                                 <div class="row g-3 mb-3">
                                     <jsp:include page="/dashboard/components/input-field.jsp">
                                         <jsp:param name="type" value="number"/>

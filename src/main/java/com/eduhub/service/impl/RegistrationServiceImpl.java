@@ -107,8 +107,11 @@ public class RegistrationServiceImpl implements RegistrationService {
             validateRegistration(institute.getInstituteEmail(), admin.getEmail());
             
             // Step 2: Generate UUIDs and create institute
-            String instituteId = UUID.randomUUID().toString();
-            institute.setInstituteId(instituteId);
+            String instituteId = institute.getInstituteId();
+            if (instituteId == null || instituteId.isEmpty()) {
+                instituteId = UUID.randomUUID().toString();
+                institute.setInstituteId(instituteId);
+            }
             
             String createdInstituteId = instituteDAO.createInstitute(institute);
             
@@ -205,7 +208,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public String saveUserProfilePhoto(Part filePart, String userId, String appPath) throws IOException {
+    public String saveUserProfilePhoto(Part filePart, String userId, String instituteId, String appPath) throws IOException {
         // Security Check: Validate file type
         String contentType = filePart.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
@@ -229,10 +232,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         
         try {
             // Upload to Cloudinary
-            // Folder structure: eduhub/users/{userId}/profile
+            // Folder structure: eduhub/user_photos/{instituteId}
+            String folderPath = "eduhub/user_photos/" + instituteId;
+            
             Map uploadResult = cloudinary.uploader().upload(tempFile.toFile(), ObjectUtils.asMap(
-                "folder", "eduhub/users/" + userId + "/profile",
-                "public_id", UUID.randomUUID().toString(),
+                "folder", folderPath,
+                "public_id", "user_" + userId + "_" + System.currentTimeMillis(),
                 "overwrite", true,
                 "resource_type", "auto"
             ));

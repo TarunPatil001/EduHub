@@ -73,6 +73,8 @@ public class RegisterServlet extends HttpServlet {
         try {
             // Generate User ID early for photo upload path
             String userId = UUID.randomUUID().toString();
+            // Generate Institute ID early for photo upload path
+            String instituteId = UUID.randomUUID().toString();
             
             // Handle file upload first
             Part filePart = request.getPart("adminPhoto");
@@ -83,7 +85,7 @@ public class RegisterServlet extends HttpServlet {
                     try {
                         // Get the real path of the application context
                         String appPath = request.getServletContext().getRealPath("");
-                        photoUrl = registrationService.saveUserProfilePhoto(filePart, userId, appPath);
+                        photoUrl = registrationService.saveUserProfilePhoto(filePart, userId, instituteId, appPath);
                         logger.info("Admin photo uploaded successfully. Path: {}", photoUrl);
                     } catch (IOException e) {
                         logger.error("Failed to save admin photo", e);
@@ -224,6 +226,7 @@ public class RegisterServlet extends HttpServlet {
                 instituteName, instituteType, instituteEmail, institutePhone,
                 address, city, state, zipCode, country
             );
+            institute.setInstituteId(instituteId); // Set the pre-generated ID
             logger.info("Institute object created successfully");
             
             // Create User (Admin) object with hashed password

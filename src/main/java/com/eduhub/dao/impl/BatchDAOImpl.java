@@ -181,33 +181,37 @@ public class BatchDAOImpl implements BatchDAO {
     @Override
     public List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery, int offset, int limit) {
         List<Batch> batches = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM batches WHERE institute_id = ?");
+        StringBuilder sql = new StringBuilder("SELECT b.*, br.branch_name, c.course_name FROM batches b ");
+        sql.append("LEFT JOIN branches br ON b.branch_id = br.branch_id ");
+        sql.append("LEFT JOIN courses c ON b.course_id = c.course_id ");
+        sql.append("WHERE b.institute_id = ?");
+        
         List<Object> params = new ArrayList<>();
         params.add(instituteId);
 
         if (courseId != null && !courseId.isEmpty() && !"all".equalsIgnoreCase(courseId)) {
-            sql.append(" AND course_id = ?");
+            sql.append(" AND b.course_id = ?");
             params.add(courseId);
         }
         
         if (branchId != null && !branchId.isEmpty() && !"all".equalsIgnoreCase(branchId)) {
-            sql.append(" AND branch_id = ?");
+            sql.append(" AND b.branch_id = ?");
             params.add(branchId);
         }
         
         if (status != null && !status.isEmpty() && !"all".equalsIgnoreCase(status)) {
-            sql.append(" AND status = ?");
+            sql.append(" AND b.status = ?");
             params.add(status);
         }
         
         if (searchQuery != null && !searchQuery.isEmpty()) {
-            sql.append(" AND (LOWER(batch_name) LIKE ? OR LOWER(batch_code) LIKE ?)");
+            sql.append(" AND (LOWER(b.batch_name) LIKE ? OR LOWER(b.batch_code) LIKE ?)");
             String searchPattern = "%" + searchQuery.toLowerCase() + "%";
             params.add(searchPattern);
             params.add(searchPattern);
         }
         
-        sql.append(" ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        sql.append(" ORDER BY b.created_at DESC LIMIT ? OFFSET ?");
         params.add(limit);
         params.add(offset);
         
@@ -220,7 +224,11 @@ public class BatchDAOImpl implements BatchDAO {
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    batches.add(mapResultSetToBatch(rs));
+                    Batch batch = mapResultSetToBatch(rs);
+                    // Map joined fields
+                    batch.setBranchName(rs.getString("branch_name"));
+                    batch.setCourseName(rs.getString("course_name"));
+                    batches.add(batch);
                 }
             }
         } catch (SQLException e) {

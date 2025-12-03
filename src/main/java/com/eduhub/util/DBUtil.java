@@ -222,6 +222,26 @@ public class DBUtil {
 					createBranchesTable(conn);
 					logger.info("Branches table created successfully");
 				}
+
+				// Check if students table exists
+				boolean studentsExists = tableExists(conn, "students");
+				logger.info("Students table exists: {}", studentsExists);
+				
+				if (!studentsExists) {
+					logger.warn("Students table not found. Creating...");
+					createStudentsTable(conn);
+					logger.info("Students table created successfully");
+				}
+
+				// Check if student_documents table exists
+				boolean studentDocumentsExists = tableExists(conn, "student_documents");
+				logger.info("Student documents table exists: {}", studentDocumentsExists);
+				
+				if (!studentDocumentsExists) {
+					logger.warn("Student documents table not found. Creating...");
+					createStudentDocumentsTable(conn);
+					logger.info("Student documents table created successfully");
+				}
 			} else {
 				logger.error("Skipping users and courses table creation because institutes table does not exist.");
 			}
@@ -542,6 +562,74 @@ public class DBUtil {
 		try (var stmt = conn.createStatement()) {
 			stmt.executeUpdate(sql);
 			logger.info("Branches table created successfully");
+		}
+	}
+
+	/**
+	 * Create students table
+	 */
+	private static void createStudentsTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create students table...");
+		String sql = "CREATE TABLE students (" +
+				"student_id VARCHAR(36) PRIMARY KEY, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"student_name VARCHAR(100) NOT NULL, " +
+				"father_name VARCHAR(100), " +
+				"surname VARCHAR(100), " +
+				"date_of_birth DATE, " +
+				"gender VARCHAR(20), " +
+				"blood_group VARCHAR(10), " +
+				"mobile_number VARCHAR(20), " +
+				"whatsapp_number VARCHAR(20), " +
+				"parent_mobile VARCHAR(20), " +
+				"email_id VARCHAR(100), " +
+				"instagram_id VARCHAR(100), " +
+				"linkedin_id VARCHAR(100), " +
+				"permanent_address TEXT, " +
+				"current_address TEXT, " +
+				"college_name VARCHAR(200), " +
+				"education_qualification VARCHAR(100), " +
+				"specialization VARCHAR(100), " +
+				"passing_year VARCHAR(10), " +
+				"batch_id VARCHAR(36), " +
+				"student_status VARCHAR(50), " +
+				"medical_history BOOLEAN DEFAULT FALSE, " +
+				"medical_condition TEXT, " +
+				"medicine_name TEXT, " +
+				"student_declaration BOOLEAN DEFAULT FALSE, " +
+				"profile_photo_url VARCHAR(255), " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (batch_id) REFERENCES batches(batch_id) ON DELETE SET NULL, " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_batch_id (batch_id)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Students table created successfully");
+		}
+	}
+
+	/**
+	 * Create student documents table
+	 */
+	private static void createStudentDocumentsTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create student_documents table...");
+		String sql = "CREATE TABLE student_documents (" +
+				"document_id VARCHAR(36) PRIMARY KEY, " +
+				"student_id VARCHAR(36) NOT NULL, " +
+				"document_type VARCHAR(50) NOT NULL, " +
+				"document_url VARCHAR(500) NOT NULL, " +
+				"uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE, " +
+				"INDEX idx_student_id (student_id)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Student documents table created successfully");
 		}
 	}
 

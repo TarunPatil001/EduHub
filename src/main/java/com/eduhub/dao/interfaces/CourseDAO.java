@@ -16,4 +16,5 @@ public interface CourseDAO {
     boolean deleteCourse(String courseId, String instituteId);
     Course getCourseById(String courseId, String instituteId);
     List<Course> getAllCourses(String instituteId);
+    List<Course> getActiveCourses(String instituteId);
 }

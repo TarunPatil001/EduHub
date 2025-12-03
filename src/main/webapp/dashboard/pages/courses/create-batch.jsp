@@ -83,7 +83,7 @@
     String classDays = (batch != null && batch.getClassDays() != null) ? batch.getClassDays().toLowerCase() : "";
 
     // Pre-calculate values for JSP expressions to avoid quoting issues
-    String batchCodeVal = isEditMode ? batch.getBatchCode() : "";
+    String batchCodeVal = isEditMode ? batch.getBatchCode() : (request.getParameter("batchCode") != null ? request.getParameter("batchCode") : "");
     String batchNameVal = isEditMode ? batch.getBatchName() : "";
     String courseIdVal = isEditMode ? batch.getCourseId() : "";
     String instructorIdVal = isEditMode ? batch.getInstructorId() : "";
@@ -468,6 +468,31 @@
             if (startTime && endTime && endTime <= startTime) {
                 alert('End time must be after start time');
                 this.value = '';
+            }
+        });
+
+        // Check for duplicate batch code error
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('error') === 'duplicate_code') {
+                if (typeof toast !== 'undefined') {
+                    toast.error('Batch Code already exists! Please use a unique code.');
+                }
+                // Highlight the batch code input
+                const batchCodeInput = document.getElementById('batchCode');
+                if (batchCodeInput) {
+                    batchCodeInput.classList.add('is-invalid');
+                    batchCodeInput.focus();
+                    
+                    // Remove invalid class on input
+                    batchCodeInput.addEventListener('input', function() {
+                        this.classList.remove('is-invalid');
+                    });
+                }
+                
+                // Clean up URL
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
             }
         });
     </script>

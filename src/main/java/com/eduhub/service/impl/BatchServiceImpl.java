@@ -76,4 +76,9 @@ public class BatchServiceImpl implements BatchService {
     public int getBatchCountByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery) {
         return batchDAO.getBatchCountByFilters(instituteId, courseId, branchId, status, searchQuery);
     }
+
+    @Override
+    public boolean isBatchCodeExists(String instituteId, String batchCode) {
+        return batchDAO.isBatchCodeExists(instituteId, batchCode);
+    }
 }

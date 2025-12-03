@@ -195,6 +195,7 @@
                                         <th>Duration</th>
                                         <th>Fee</th>
                                         <th>Certificate</th>
+                                        <th style="min-width: 500px;">Modules</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>

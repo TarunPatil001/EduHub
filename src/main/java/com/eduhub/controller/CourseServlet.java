@@ -22,7 +22,7 @@ import com.eduhub.model.Course;
 import com.eduhub.service.interfaces.CourseService;
 import com.eduhub.service.impl.CourseServiceImpl;
 
-@WebServlet(urlPatterns = {"/api/courses/list", "/api/courses/create", "/api/courses/delete", "/api/courses/stats", "/api/courses/update"})
+@WebServlet(urlPatterns = {"/api/courses/list", "/api/courses/create", "/api/courses/delete", "/api/courses/stats", "/api/courses/update", "/api/courses/active"})
 public class CourseServlet extends HttpServlet {
     
     private static final Logger logger = LoggerFactory.getLogger(CourseServlet.class);
@@ -42,9 +42,48 @@ public class CourseServlet extends HttpServlet {
             handleListCourses(request, response);
         } else if (servletPath.endsWith("/stats")) {
             handleGetStats(request, response);
+        } else if (servletPath.endsWith("/active")) {
+            handleListActiveCourses(request, response);
         } else {
             logger.warn("Endpoint not found in doGet: {}", servletPath);
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Endpoint not found");
+        }
+    }
+
+    private void handleListActiveCourses(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("handleListActiveCourses called");
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            return;
+        }
+        
+        String instituteId = (String) session.getAttribute("instituteId");
+        if (instituteId == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session incomplete - Institute ID missing");
+            return;
+        }
+        
+        try {
+            List<Course> courses = courseService.getActiveCourses(instituteId);
+            
+            StringBuilder json = new StringBuilder();
+            json.append("[");
+            for (int i = 0; i < courses.size(); i++) {
+                Course course = courses.get(i);
+                json.append(convertCourseToJson(course));
+                if (i < courses.size() - 1) {
+                    json.append(",");
+                }
+            }
+            json.append("]");
+            
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json.toString());
+        } catch (Exception e) {
+            logger.error("Error fetching active courses", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error fetching active courses");
         }
     }
 
@@ -184,6 +223,7 @@ public class CourseServlet extends HttpServlet {
         json.append("\"category\":\"").append(escapeJson(course.getCategory())).append("\",");
         json.append("\"level\":\"").append(escapeJson(course.getLevel())).append("\",");
         json.append("\"description\":\"").append(escapeJson(course.getDescription())).append("\",");
+        json.append("\"modules\":\"").append(escapeJson(course.getModules())).append("\",");
         json.append("\"duration\":\"").append(course.getDurationValue()).append(" ").append(escapeJson(course.getDurationUnit())).append("\",");
         json.append("\"maxStudents\":").append(0).append(","); // Assuming maxStudents is not in Course model yet, defaulting to 0
         json.append("\"fee\":").append(course.getFee()).append(",");
@@ -253,6 +293,7 @@ public class CourseServlet extends HttpServlet {
             String category = request.getParameter("category");
             String level = request.getParameter("level");
             String description = request.getParameter("description");
+            String modules = request.getParameter("modules");
             
             String durationValueStr = request.getParameter("durationValue");
             int durationValue = (durationValueStr != null && !durationValueStr.isEmpty()) ? Integer.parseInt(durationValueStr) : 0;
@@ -272,6 +313,7 @@ public class CourseServlet extends HttpServlet {
             course.setCategory(category);
             course.setLevel(level);
             course.setDescription(description);
+            course.setModules(modules);
             course.setDurationValue(durationValue);
             course.setDurationUnit(durationUnit);
             course.setFee(fee);
@@ -334,6 +376,7 @@ public class CourseServlet extends HttpServlet {
             String category = request.getParameter("category");
             String level = request.getParameter("level");
             String description = request.getParameter("description");
+            String modules = request.getParameter("modules");
             
             String durationValueStr = request.getParameter("durationValue");
             int durationValue = (durationValueStr != null && !durationValueStr.isEmpty()) ? Integer.parseInt(durationValueStr) : 0;
@@ -354,6 +397,7 @@ public class CourseServlet extends HttpServlet {
             course.setCategory(category);
             course.setLevel(level);
             course.setDescription(description);
+            course.setModules(modules);
             course.setDurationValue(durationValue);
             course.setDurationUnit(durationUnit);
             course.setFee(fee);

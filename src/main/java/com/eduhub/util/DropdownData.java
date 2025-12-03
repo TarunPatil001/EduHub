@@ -103,7 +103,7 @@ public class DropdownData {
             "Python Programming");
 
     public static final List<String> STUDENT_STATUSES = Arrays.asList(
-            "Active", "Inactive", "Suspended", "Graduated");
+            "Pending", "Active", "Inactive", "Suspended", "Graduated");
 
     public static final List<String> STAFF_STATUSES = Arrays.asList(
             "Yet to Onboard", "Active", "Inactive");

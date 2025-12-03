@@ -6,10 +6,27 @@
     const form = document.getElementById('createCourseForm');
     const cancelBtn = document.getElementById('cancelBtn');
     const resetBtn = document.getElementById('resetBtn');
+    
+    // Module Management Elements
+    const moduleInput = document.getElementById('moduleInput');
+    const addModuleBtn = document.getElementById('addModuleBtn');
+    const modulesList = document.getElementById('modulesList');
+    const childCoursesHidden = document.getElementById('childCoursesHidden');
+    let modules = [];
 
     // Initialize
     function init() {
         bindEvents();
+        initModules();
+    }
+
+    // Initialize Modules
+    function initModules() {
+        // Check if there's existing data (e.g. after validation error or edit mode)
+        if (childCoursesHidden && childCoursesHidden.value) {
+            const existingModules = childCoursesHidden.value.split(',').map(m => m.trim()).filter(m => m);
+            existingModules.forEach(addModule);
+        }
     }
 
     // Bind Events
@@ -26,6 +43,23 @@
         if (resetBtn) {
             resetBtn.addEventListener('click', handleReset);
         }
+        
+        // Module Management Events
+        if (addModuleBtn && moduleInput) {
+            addModuleBtn.addEventListener('click', () => {
+                addModule(moduleInput.value);
+                moduleInput.value = '';
+                moduleInput.focus();
+            });
+            
+            moduleInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent form submission
+                    addModule(moduleInput.value);
+                    moduleInput.value = '';
+                }
+            });
+        }
 
         // Real-time validation on blur
         const requiredFields = form.querySelectorAll('[required]');
@@ -40,6 +74,73 @@
                 }
             });
         });
+    }
+
+    // Add Module
+    function addModule(name) {
+        if (!name || !name.trim()) return;
+        
+        const moduleName = name.trim();
+        
+        // Prevent duplicates
+        if (modules.includes(moduleName)) {
+            toast('Module already exists', { icon: '⚠️' });
+            return;
+        }
+        
+        modules.push(moduleName);
+        updateModulesHiddenInput();
+        renderModule(moduleName);
+        hideEmptyMessage();
+    }
+    
+    // Render Module Chip
+    function renderModule(name) {
+        const chip = document.createElement('div');
+        chip.className = 'badge bg-primary text-white p-2 px-3 d-flex align-items-center gap-2';
+        chip.style.fontSize = '0.9rem';
+        chip.innerHTML = `
+            <i class="bi bi-check-circle-fill"></i>
+            <span>${name}</span>
+            <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem;" aria-label="Remove" title="Remove ${name}"></button>
+        `;
+        
+        // Remove button event
+        chip.querySelector('.btn-close').addEventListener('click', () => {
+            removeModule(name, chip);
+        });
+        
+        modulesList.appendChild(chip);
+    }
+    
+    // Show/Hide Empty Message
+    function hideEmptyMessage() {
+        const emptyMessage = document.getElementById('emptyModulesMessage');
+        if (emptyMessage && modules.length > 0) {
+            emptyMessage.style.display = 'none';
+        }
+    }
+    
+    function showEmptyMessage() {
+        const emptyMessage = document.getElementById('emptyModulesMessage');
+        if (emptyMessage && modules.length === 0) {
+            emptyMessage.style.display = 'block';
+        }
+    }
+    
+    // Remove Module
+    function removeModule(name, element) {
+        modules = modules.filter(m => m !== name);
+        updateModulesHiddenInput();
+        element.remove();
+        showEmptyMessage();
+    }
+    
+    // Update Hidden Input
+    function updateModulesHiddenInput() {
+        if (modulesHidden) {
+            modulesHidden.value = modules.join(',');
+        }
     }
 
     // Validate Field
@@ -132,6 +233,13 @@
     // Reset Form
     function resetForm() {
         form.reset();
+        
+        // Reset modules
+        modules = [];
+        if (modulesList) {
+            modulesList.innerHTML = '<div class="text-muted small w-100 text-center" id="emptyModulesMessage">No modules added yet. Add your first module above.</div>';
+        }
+        if (childCoursesHidden) childCoursesHidden.value = '';
         
         // Reset status to empty (Select Status option)
         const statusField = document.getElementById('status');

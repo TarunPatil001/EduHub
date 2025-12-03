@@ -17,9 +17,9 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public boolean createCourse(Course course) {
-        String sql = "INSERT INTO courses (course_id, institute_id, course_code, course_name, category, level, description, " +
+        String sql = "INSERT INTO courses (course_id, institute_id, course_code, course_name, category, level, description, modules, " +
                      "duration_value, duration_unit, fee, status, certificate_offered) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -34,11 +34,12 @@ public class CourseDAOImpl implements CourseDAO {
             pstmt.setString(5, course.getCategory());
             pstmt.setString(6, course.getLevel());
             pstmt.setString(7, course.getDescription());
-            pstmt.setInt(8, course.getDurationValue());
-            pstmt.setString(9, course.getDurationUnit());
-            pstmt.setBigDecimal(10, course.getFee());
-            pstmt.setString(11, course.getStatus());
-            pstmt.setBoolean(12, course.isCertificateOffered());
+            pstmt.setString(8, course.getModules());
+            pstmt.setInt(9, course.getDurationValue());
+            pstmt.setString(10, course.getDurationUnit());
+            pstmt.setBigDecimal(11, course.getFee());
+            pstmt.setString(12, course.getStatus());
+            pstmt.setBoolean(13, course.isCertificateOffered());
             
             int affectedRows = pstmt.executeUpdate();
             
@@ -291,7 +292,7 @@ public class CourseDAOImpl implements CourseDAO {
             return false;
         }
 
-        String sql = "UPDATE courses SET course_code = ?, course_name = ?, category = ?, level = ?, description = ?, " +
+        String sql = "UPDATE courses SET course_code = ?, course_name = ?, category = ?, level = ?, description = ?, modules = ?, " +
                      "duration_value = ?, duration_unit = ?, fee = ?, status = ?, certificate_offered = ? " +
                      "WHERE course_id = ? AND institute_id = ?";
         
@@ -303,13 +304,14 @@ public class CourseDAOImpl implements CourseDAO {
             pstmt.setString(3, course.getCategory());
             pstmt.setString(4, course.getLevel());
             pstmt.setString(5, course.getDescription());
-            pstmt.setInt(6, course.getDurationValue());
-            pstmt.setString(7, course.getDurationUnit());
-            pstmt.setBigDecimal(8, course.getFee());
-            pstmt.setString(9, course.getStatus());
-            pstmt.setBoolean(10, course.isCertificateOffered());
-            pstmt.setString(11, course.getCourseId());
-            pstmt.setString(12, course.getInstituteId());
+            pstmt.setString(6, course.getModules());
+            pstmt.setInt(7, course.getDurationValue());
+            pstmt.setString(8, course.getDurationUnit());
+            pstmt.setBigDecimal(9, course.getFee());
+            pstmt.setString(10, course.getStatus());
+            pstmt.setBoolean(11, course.isCertificateOffered());
+            pstmt.setString(12, course.getCourseId());
+            pstmt.setString(13, course.getInstituteId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -331,6 +333,30 @@ public class CourseDAOImpl implements CourseDAO {
             logger.error("Error deleting course with institute check: {}", e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public List<Course> getActiveCourses(String instituteId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT DISTINCT c.* FROM courses c " +
+                     "JOIN batches b ON c.course_id = b.course_id " +
+                     "WHERE c.institute_id = ? AND c.status = 'Active' AND b.status = 'Upcoming' " +
+                     "ORDER BY c.course_name";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, instituteId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    courses.add(mapResultSetToCourse(rs));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting active courses with active batches: {}", e.getMessage(), e);
+        }
+        return courses;
     }
 
     @Override
@@ -362,6 +388,7 @@ public class CourseDAOImpl implements CourseDAO {
         course.setCategory(rs.getString("category"));
         course.setLevel(rs.getString("level"));
         course.setDescription(rs.getString("description"));
+        course.setModules(rs.getString("modules"));
         course.setDurationValue(rs.getInt("duration_value"));
         course.setDurationUnit(rs.getString("duration_unit"));
         course.setFee(rs.getBigDecimal("fee"));

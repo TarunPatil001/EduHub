@@ -5,10 +5,27 @@
     // DOM Elements
     const form = document.getElementById('editCourseForm');
     const cancelBtn = document.getElementById('cancelBtn');
+    
+    // Module Management Elements
+    const moduleInput = document.getElementById('moduleInput');
+    const addModuleBtn = document.getElementById('addModuleBtn');
+    const modulesList = document.getElementById('modulesList');
+    const modulesHidden = document.getElementById('modulesHidden');
+    let modules = [];
 
     // Initialize
     function init() {
         bindEvents();
+        initModules();
+    }
+    
+    // Initialize Modules
+    function initModules() {
+        // Check if there's existing data
+        if (modulesHidden && modulesHidden.value) {
+            const existingModules = modulesHidden.value.split(',').map(m => m.trim()).filter(m => m);
+            existingModules.forEach(addModule);
+        }
     }
 
     // Bind Events
@@ -21,6 +38,23 @@
         // Cancel button
         if (cancelBtn) {
             cancelBtn.addEventListener('click', handleCancel);
+        }
+        
+        // Module Management Events
+        if (addModuleBtn && moduleInput) {
+            addModuleBtn.addEventListener('click', () => {
+                addModule(moduleInput.value);
+                moduleInput.value = '';
+                moduleInput.focus();
+            });
+            
+            moduleInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent form submission
+                    addModule(moduleInput.value);
+                    moduleInput.value = '';
+                }
+            });
         }
 
         // Real-time validation on blur
@@ -37,6 +71,75 @@
                     }
                 });
             });
+        }
+    }
+
+    // Add Module
+    function addModule(name) {
+        if (!name || !name.trim()) return;
+        
+        const moduleName = name.trim();
+        
+        // Prevent duplicates
+        if (modules.includes(moduleName)) {
+            if (typeof toast !== 'undefined') {
+                toast('Module already exists', { icon: '⚠️' });
+            }
+            return;
+        }
+        
+        modules.push(moduleName);
+        updateModulesHiddenInput();
+        renderModule(moduleName);
+        hideEmptyMessage();
+    }
+    
+    // Render Module Chip
+    function renderModule(name) {
+        const chip = document.createElement('div');
+        chip.className = 'badge bg-primary text-white p-2 px-3 d-flex align-items-center gap-2';
+        chip.style.fontSize = '0.9rem';
+        chip.innerHTML = `
+            <i class="bi bi-check-circle-fill"></i>
+            <span>${name}</span>
+            <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem;" aria-label="Remove" title="Remove ${name}"></button>
+        `;
+        
+        // Remove button event
+        chip.querySelector('.btn-close').addEventListener('click', () => {
+            removeModule(name, chip);
+        });
+        
+        modulesList.appendChild(chip);
+    }
+    
+    // Show/Hide Empty Message
+    function hideEmptyMessage() {
+        const emptyMessage = document.getElementById('emptyModulesMessage');
+        if (emptyMessage && modules.length > 0) {
+            emptyMessage.style.display = 'none';
+        }
+    }
+    
+    function showEmptyMessage() {
+        const emptyMessage = document.getElementById('emptyModulesMessage');
+        if (emptyMessage && modules.length === 0) {
+            emptyMessage.style.display = 'block';
+        }
+    }
+    
+    // Remove Module
+    function removeModule(name, element) {
+        modules = modules.filter(m => m !== name);
+        updateModulesHiddenInput();
+        element.remove();
+        showEmptyMessage();
+    }
+    
+    // Update Hidden Input
+    function updateModulesHiddenInput() {
+        if (modulesHidden) {
+            modulesHidden.value = modules.join(',');
         }
     }
 

@@ -324,7 +324,7 @@
                                     <div class="col-md-4">
                                         <label for="passingYear" class="form-label">Passing Year <span class="required-star">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
+                                            <span class="input-group-text input-group-text-custom"><i class="bi bi-calendar-event"></i></span>
                                             <input type="text" class="form-control" id="passingYear" name="passingYear" required placeholder="Select Year" readonly>
                                         </div>
                                     </div>
@@ -336,33 +336,26 @@
                                 <h5 class="mb-4"><i class="bi bi-journal-check"></i> Enrollment Details</h5>
                                 
                                 <div class="row mb-3">
-                                    <jsp:include page="/dashboard/components/input-field.jsp">
-                                        <jsp:param name="type" value="select"/>
-                                        <jsp:param name="id" value="courseEnrolled"/>
-                                        <jsp:param name="name" value="courseEnrolled"/>
-                                        <jsp:param name="label" value="Course to Enroll"/>
-                                        <jsp:param name="placeholder" value="Select Course"/>
-                                        <jsp:param name="required" value="true"/>
-                                        <jsp:param name="options" value="<%=courseOptions.toString()%>"/>
-                                        <jsp:param name="class" value="col-md-4"/>
-                                    </jsp:include>
-                                    
-                                    <div class="col-md-4">
-                                        <label for="batchPreference" class="form-label">Batch Preference</label>
-                                        <select class="form-select" id="batchPreference" name="batchPreference">
-                                            <option value="">Select Batch Mode</option>
-                                            <% for(String item : DropdownData.MODES_OF_CONDUCT) { %>
-                                                <option value="<%=item%>"><%=item%></option>
-                                            <% } %>
+                                    <div class="col-md-6">
+                                        <label for="batchCode" class="form-label">Batch Code <span class="required-star">*</span></label>
+                                        <select class="form-select" id="batchCode" name="batchCode" required>
+                                            <option value="">Select Batch Code</option>
                                         </select>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label for="batchName" class="form-label">Batch Name</label>
+                                        <input type="text" class="form-control" id="batchName" readonly placeholder="Auto-populated">
+                                        <input type="hidden" id="batchId" name="batchId">
+                                    </div>
+                                </div>
 
-                                    <div class="col-md-4">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
                                         <label for="studentStatus" class="form-label">Student Status <span class="required-star">*</span></label>
                                         <select class="form-select" id="studentStatus" name="studentStatus" required>
                                             <option value="">Select Status</option>
                                             <% for(String item : DropdownData.STUDENT_STATUSES) { %>
-                                                <option value="<%=item%>" <%=item.equals("Active") ? "selected" : ""%>><%=item%></option>
+                                                <option value="<%=item%>" <%=item.equals("Pending") ? "selected" : ""%>><%=item%></option>
                                             <% } %>
                                         </select>
                                     </div>
@@ -373,7 +366,7 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-heart-pulse-fill"></i> Medical Information</h5>
                                 
-                                <div class="mb-3 p-3 bg-light rounded-3 border">
+                                <div class="mb-3 p-3 medical-info-box rounded-3 border">
                                     <label class="form-label d-block mb-2">Any Medical History? <span class="required-star">*</span></label>
                                     <div>
                                         <div class="form-check form-check-inline">
@@ -415,27 +408,26 @@
                             <div class="card-custom mb-4">
                                 <h5 class="mb-4"><i class="bi bi-file-earmark-arrow-up-fill"></i> Document Uploads</h5>
                                 
-                                <!-- Hidden Inputs for Form Submission -->
-                                <div class="d-none">
-                                    <input type="file" id="aadharCard" name="aadharCard" accept=".pdf,.jpg,.jpeg,.png">
-                                    <input type="file" id="panCard" name="panCard" accept=".pdf,.jpg,.jpeg,.png">
-                                    <input type="file" id="marksheet" name="marksheet" accept=".pdf,.jpg,.jpeg,.png">
-                                    <input type="file" id="degreeCertificate" name="degreeCertificate" accept=".pdf,.jpg,.jpeg,.png">
-                                    <input type="file" id="jobGuarantee" name="jobGuarantee" accept=".pdf,.jpg,.jpeg,.png">
-                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx">
-                                    <!-- Multi-file trigger -->
-                                    <input type="file" id="multiFileTrigger" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx">
+                                <div class="alert alert-info alert-custom-info d-flex align-items-center mb-4">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    <span>Upload new documents below.</span>
                                 </div>
-
-                                <div class="upload-drop-zone" id="dropZone">
-                                    <div class="upload-icon-circle">
-                                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                                
+                <!-- Hidden Inputs for Form Submission -->
+                <div class="d-none">
+                    <!-- Multi-file trigger -->
+                    <input type="file" id="multiFileTrigger" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx">
+                </div>                                <div class="upload-drop-zone" id="dropZone">
+                                    <div class="upload-icon-wrapper">
+                                        <div class="upload-icon-circle">
+                                            <i class="bi bi-cloud-arrow-up-fill"></i>
+                                        </div>
                                     </div>
                                     <div class="upload-text">
-                                        <h6>Choose a file or drag & drop it here.</h6>
-                                        <p>txt, docx, pdf, jpeg, xlsx - Up to 50MB</p>
-                                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('multiFileTrigger').click()">
-                                            Browse Files
+                                        <h6 class="mb-2">Choose files or drag & drop here</h6>
+                                        <p class="text-muted mb-3"><i class="bi bi-file-earmark-text me-1"></i>PDF, DOC, DOCX, JPEG, PNG, XLSX • Max 50MB per file</p>
+                                        <button type="button" class="btn btn-primary" onclick="document.getElementById('multiFileTrigger').click()">
+                                            <i class="bi bi-folder2-open me-2"></i>Browse Files
                                         </button>
                                     </div>
                                 </div>
@@ -448,8 +440,8 @@
                             <!-- Terms and Conditions -->
                             <div class="card-custom mb-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="termsConditions" name="termsConditions" required>
-                                    <label class="form-check-label" for="termsConditions">
+                                    <input class="form-check-input" type="checkbox" id="studentDeclaration" name="studentDeclaration" required>
+                                    <label class="form-check-label" for="studentDeclaration">
                                         I hereby declare that the information provided is true and correct to the best of my knowledge. <span class="required-star">*</span>
                                     </label>
                                 </div>
@@ -529,6 +521,7 @@
     <!-- Add Student Page Scripts -->
     <script>
         // Pass server-side data to JavaScript
+        const CONTEXT_PATH = '${pageContext.request.contextPath}';
         const SERVER_DOCUMENT_TYPES = <%=documentTypesJson.toString()%>;
     </script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/add-student.js?v=<%=System.currentTimeMillis()%>"></script>

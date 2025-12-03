@@ -15,6 +15,7 @@ public class Course {
     private String category;
     private String level;
     private String description;
+    private String modules;
     private int durationValue;
     private String durationUnit;
     private BigDecimal fee;
@@ -27,7 +28,7 @@ public class Course {
     public Course() {}
     
     public Course(String instituteId, String courseCode, String courseName, String category, 
-                 String level, String description, int durationValue, String durationUnit, 
+                 String level, String description, String modules, int durationValue, String durationUnit, 
                  BigDecimal fee, String status, boolean certificateOffered) {
         this.instituteId = instituteId;
         this.courseCode = courseCode;
@@ -35,6 +36,7 @@ public class Course {
         this.category = category;
         this.level = level;
         this.description = description;
+        this.modules = modules;
         this.durationValue = durationValue;
         this.durationUnit = durationUnit;
         this.fee = fee;
@@ -97,6 +99,14 @@ public class Course {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getModules() {
+        return modules;
+    }
+
+    public void setModules(String modules) {
+        this.modules = modules;
     }
 
     public int getDurationValue() {
