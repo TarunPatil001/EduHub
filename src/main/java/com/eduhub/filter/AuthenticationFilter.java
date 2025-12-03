@@ -66,6 +66,15 @@ public class AuthenticationFilter implements Filter {
             logger.warn("Unauthorized access attempt to: {} from IP: {}", 
                 requestURI, httpRequest.getRemoteAddr());
             
+            // Check if request is for a static resource
+            boolean isStaticResource = requestURI.toLowerCase().matches(".*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map)$");
+
+            if (isStaticResource) {
+                // For static resources, send 401 instead of redirecting to login page
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
             // Store the original requested URL to redirect back after login
             String originalURL = requestURI;
             String queryString = httpRequest.getQueryString();

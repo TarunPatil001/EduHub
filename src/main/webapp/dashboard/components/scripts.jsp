@@ -17,7 +17,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <!-- Theme Switcher (must load before other scripts) -->
-<script src="${pageContext.request.contextPath}/dashboard/js/theme-switcher.js"></script>
+<script src="${pageContext.request.contextPath}/public/js/theme-switcher.js"></script>
 
 <!-- Custom JS -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/public/js/script.js"></script>

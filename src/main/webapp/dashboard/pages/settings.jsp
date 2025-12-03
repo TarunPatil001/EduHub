@@ -1195,6 +1195,6 @@
             <% } %>
         });
     </script>
-    <script src="${pageContext.request.contextPath}/dashboard/js/theme-switcher.js"></script>
+    <script src="${pageContext.request.contextPath}/public/js/theme-switcher.js"></script>
 </body>
 </html>

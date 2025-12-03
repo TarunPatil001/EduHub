@@ -561,11 +561,3 @@ function hideLoading() {
  * Note: Toast notification functions are provided by hot-toast library
  * Include /components/toast-dependencies.jsp in your page to use toast() function
  */
-
-// Load theme switcher script dynamically
-(function loadThemeSwitcher() {
-    const script = document.createElement('script');
-    script.src = document.querySelector('script[src*="dashboard.js"]')
-        .src.replace('dashboard.js', 'theme-switcher.js');
-    document.head.appendChild(script);
-})();
