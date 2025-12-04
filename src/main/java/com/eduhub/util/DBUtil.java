@@ -242,6 +242,26 @@ public class DBUtil {
 					createStudentDocumentsTable(conn);
 					logger.info("Student documents table created successfully");
 				}
+
+				// Check if fees table exists
+				boolean feesExists = tableExists(conn, "fees");
+				logger.info("Fees table exists: {}", feesExists);
+				
+				if (!feesExists) {
+					logger.warn("Fees table not found. Creating...");
+					createFeesTable(conn);
+					logger.info("Fees table created successfully");
+				}
+
+				// Check if transactions table exists
+				boolean transactionsExists = tableExists(conn, "transactions");
+				logger.info("Transactions table exists: {}", transactionsExists);
+				
+				if (!transactionsExists) {
+					logger.warn("Transactions table not found. Creating...");
+					createTransactionsTable(conn);
+					logger.info("Transactions table created successfully");
+				}
 			} else {
 				logger.error("Skipping users and courses table creation because institutes table does not exist.");
 			}
@@ -630,6 +650,67 @@ public class DBUtil {
 		try (var stmt = conn.createStatement()) {
 			stmt.executeUpdate(sql);
 			logger.info("Student documents table created successfully");
+		}
+	}
+
+	/**
+	 * Create fees table
+	 */
+	private static void createFeesTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create fees table...");
+		String sql = "CREATE TABLE fees (" +
+				"fee_id VARCHAR(36) PRIMARY KEY, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"student_id VARCHAR(36) NOT NULL, " +
+				"total_fee DECIMAL(10, 2) DEFAULT 0.00, " +
+				"paid_amount DECIMAL(10, 2) DEFAULT 0.00, " +
+				"pending_amount DECIMAL(10, 2) DEFAULT 0.00, " +
+				"status VARCHAR(20) DEFAULT 'Pending', " +
+				"last_payment_date DATE, " +
+				"due_date DATE, " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE, " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_student_id (student_id), " +
+				"INDEX idx_status (status)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Fees table created successfully");
+		}
+	}
+
+	/**
+	 * Create transactions table
+	 */
+	private static void createTransactionsTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create transactions table...");
+		String sql = "CREATE TABLE transactions (" +
+				"transaction_id VARCHAR(36) PRIMARY KEY, " +
+				"fee_id VARCHAR(36) NOT NULL, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"student_id VARCHAR(36) NOT NULL, " +
+				"amount DECIMAL(10, 2) NOT NULL, " +
+				"payment_mode VARCHAR(50) DEFAULT 'Cash', " +
+				"transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"status VARCHAR(20) DEFAULT 'Success', " +
+				"remarks TEXT, " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (fee_id) REFERENCES fees(fee_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE, " +
+				"INDEX idx_fee_id (fee_id), " +
+				"INDEX idx_institute_id (institute_id), " +
+				"INDEX idx_student_id (student_id), " +
+				"INDEX idx_transaction_date (transaction_date)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Transactions table created successfully");
 		}
 	}
 

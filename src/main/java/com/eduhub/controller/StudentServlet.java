@@ -117,6 +117,7 @@ public class StudentServlet extends HttpServlet {
             // Enrollment Details
             student.setBatchId(request.getParameter("batchId"));
             student.setStudentStatus(request.getParameter("studentStatus"));
+            student.setFeesAllowed(request.getParameter("feesAllowed"));
             
             // Medical Info
             String medicalHistory = request.getParameter("medicalHistory");
@@ -229,6 +230,7 @@ public class StudentServlet extends HttpServlet {
             
             student.setBatchId(request.getParameter("batchId"));
             student.setStudentStatus(request.getParameter("studentStatus"));
+            student.setFeesAllowed(request.getParameter("feesAllowed"));
             
             String studentDeclaration = request.getParameter("studentDeclaration");
             if (studentDeclaration != null) {
@@ -548,6 +550,7 @@ public class StudentServlet extends HttpServlet {
         json.append("\"batchId\":\"").append(escapeJson(student.getBatchId())).append("\",");
         json.append("\"studentDeclaration\":").append(student.isStudentDeclaration()).append(",");
         json.append("\"studentStatus\":\"").append(escapeJson(student.getStudentStatus())).append("\",");
+        json.append("\"feesAllowed\":\"").append(escapeJson(student.getFeesAllowed())).append("\",");
         json.append("\"medicalHistory\":").append(student.isMedicalHistory()).append(",");
         json.append("\"medicalCondition\":\"").append(escapeJson(student.getMedicalCondition())).append("\",");
         json.append("\"medicineName\":\"").append(escapeJson(student.getMedicineName())).append("\",");

@@ -23,8 +23,8 @@ public class StudentDAOImpl implements StudentDAO {
         String sql = "INSERT INTO students (student_id, institute_id, student_name, father_name, surname, date_of_birth, " +
                      "gender, blood_group, mobile_number, whatsapp_number, parent_mobile, email_id, instagram_id, linkedin_id, " +
                      "permanent_address, current_address, college_name, education_qualification, specialization, passing_year, " +
-                     "batch_id, student_status, medical_history, medical_condition, medicine_name, student_declaration, profile_photo_url) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "batch_id, student_status, fees_allowed, medical_history, medical_condition, medicine_name, student_declaration, profile_photo_url) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -52,6 +52,7 @@ public class StudentDAOImpl implements StudentDAO {
             pstmt.setString(i++, student.getPassingYear());
             pstmt.setString(i++, student.getBatchId());
             pstmt.setString(i++, student.getStudentStatus());
+            pstmt.setString(i++, student.getFeesAllowed());
             pstmt.setBoolean(i++, student.isMedicalHistory());
             pstmt.setString(i++, student.getMedicalCondition());
             pstmt.setString(i++, student.getMedicineName());
@@ -71,7 +72,7 @@ public class StudentDAOImpl implements StudentDAO {
         String sql = "UPDATE students SET student_name=?, father_name=?, surname=?, date_of_birth=?, gender=?, blood_group=?, " +
                      "mobile_number=?, whatsapp_number=?, parent_mobile=?, email_id=?, instagram_id=?, linkedin_id=?, " +
                      "permanent_address=?, current_address=?, college_name=?, education_qualification=?, specialization=?, " +
-                     "passing_year=?, batch_id=?, student_status=?, medical_history=?, " +
+                     "passing_year=?, batch_id=?, student_status=?, fees_allowed=?, medical_history=?, " +
                      "medical_condition=?, medicine_name=?, student_declaration=?, profile_photo_url=? WHERE student_id=? AND institute_id=?";
         
         try (Connection conn = DBUtil.getConnection();
@@ -98,6 +99,7 @@ public class StudentDAOImpl implements StudentDAO {
             pstmt.setString(i++, student.getPassingYear());
             pstmt.setString(i++, student.getBatchId());
             pstmt.setString(i++, student.getStudentStatus());
+            pstmt.setString(i++, student.getFeesAllowed());
             pstmt.setBoolean(i++, student.isMedicalHistory());
             pstmt.setString(i++, student.getMedicalCondition());
             pstmt.setString(i++, student.getMedicineName());
@@ -297,6 +299,49 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
+    public List<Student> getStudentsForFees(String instituteId) {
+        List<Student> students = new ArrayList<>();
+        // Fetch students where fees_allowed is 'YES'
+        // Also join with batches/courses to get course name if needed, but for now simple fetch
+        // We might want to order by name or ID
+        String sql = "SELECT s.*, b.course_id, c.course_name " + 
+                     "FROM students s " +
+                     "LEFT JOIN batches b ON s.batch_id = b.batch_id " +
+                     "LEFT JOIN courses c ON b.course_id = c.course_id " +
+                     "WHERE s.institute_id = ? AND s.fees_allowed = 'YES' " +
+                     "ORDER BY s.student_name";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, instituteId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Student student = mapResultSetToStudent(rs);
+                    // We might need to set course name transiently if Student model supports it, 
+                    // but Student model doesn't have courseName field. 
+                    // However, the JSP needs course name.
+                    // Let's check if we can use a DTO or just rely on what we have.
+                    // For now, we return the Student object. The JSP might need to fetch course name separately 
+                    // or we can add a transient field to Student.
+                    // Actually, looking at mapResultSetToStudent, it doesn't map course_name.
+                    // Let's just return the student for now. The JSP can use batchId to find course or we can update Student model.
+                    // Wait, the JSP displays "Course". 
+                    // The current dummy data has "Course".
+                    // The Student model has `batchId`.
+                    // I should probably update Student model to have `courseName` (transient) or just fetch it here.
+                    // But `mapResultSetToStudent` is used elsewhere.
+                    // Let's stick to the interface contract.
+                    students.add(student);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting students for fees: {}", e.getMessage(), e);
+        }
+        return students;
+    }
+
+    @Override
     public List<Course> getDistinctCourses(String instituteId) {
         List<Course> courses = new ArrayList<>();
         String sql = "SELECT DISTINCT c.* FROM courses c " +
@@ -424,6 +469,7 @@ public class StudentDAOImpl implements StudentDAO {
         student.setPassingYear(rs.getString("passing_year"));
         student.setBatchId(rs.getString("batch_id"));
         student.setStudentStatus(rs.getString("student_status"));
+        student.setFeesAllowed(rs.getString("fees_allowed"));
         student.setMedicalHistory(rs.getBoolean("medical_history"));
         student.setMedicalCondition(rs.getString("medical_condition"));
         student.setMedicineName(rs.getString("medicine_name"));

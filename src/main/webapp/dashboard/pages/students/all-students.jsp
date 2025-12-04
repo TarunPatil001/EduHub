@@ -332,6 +332,7 @@ public String getInitials(String firstName, String lastName) {
                                         <th>Medical History</th>
                                         <th>Declaration</th>
                                         <th>Documents</th>
+                                        <th>Fees Allowed</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -414,6 +415,13 @@ public String getInitials(String firstName, String lastName) {
                                                 </a>
                                             <% } %>
                                             <% if(documents.isEmpty()) { %> - <% } %>
+                                        </td>
+                                        <td>
+                                            <% if ("YES".equalsIgnoreCase(student.getFeesAllowed())) { %>
+                                                <span class="badge bg-success bg-opacity-10 text-success">Yes</span>
+                                            <% } else { %>
+                                                <span class="badge bg-danger bg-opacity-10 text-danger">No</span>
+                                            <% } %>
                                         </td>
                                         <td>
                                             <% if ("Active".equalsIgnoreCase(student.getStudentStatus())) { %>

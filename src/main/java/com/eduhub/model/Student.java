@@ -26,6 +26,7 @@ public class Student {
     private String passingYear;
     private String batchId;
     private String studentStatus;
+    private String feesAllowed;
     private boolean medicalHistory;
     private String medicalCondition;
     private String medicineName;
@@ -101,6 +102,9 @@ public class Student {
 
     public String getStudentStatus() { return studentStatus; }
     public void setStudentStatus(String studentStatus) { this.studentStatus = studentStatus; }
+
+    public String getFeesAllowed() { return feesAllowed; }
+    public void setFeesAllowed(String feesAllowed) { this.feesAllowed = feesAllowed; }
 
     public boolean isMedicalHistory() { return medicalHistory; }
     public void setMedicalHistory(boolean medicalHistory) { this.medicalHistory = medicalHistory; }

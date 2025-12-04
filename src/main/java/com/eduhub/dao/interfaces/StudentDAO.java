@@ -18,6 +18,9 @@ public interface StudentDAO {
     List<Student> getStudentsByFilters(String instituteId, String courseId, String branchId, String batchId, String status, String search, int page, int pageSize);
     int getStudentCountByFilters(String instituteId, String courseId, String branchId, String batchId, String status, String search);
     
+    // Fee management methods
+    List<Student> getStudentsForFees(String instituteId);
+    
     // Dropdown data methods
     List<Course> getDistinctCourses(String instituteId);
     List<Branch> getDistinctBranches(String instituteId);

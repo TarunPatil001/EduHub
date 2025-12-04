@@ -96,6 +96,7 @@ function populateForm(student) {
     setVal('specialization', student.specialization);
     setVal('passingYear', student.passingYear);
     setVal('studentStatus', student.studentStatus);
+    setVal('feesAllowed', student.feesAllowed || 'NO');
     
     // Batch Selection
     const batchSelect = document.getElementById('batchCode');
@@ -1044,3 +1045,37 @@ function markDocumentForDeletion(docId) {
         }
     }
 }
+/**
+ * Update Fees Allowed based on Student Status
+ */
+function updateFeesAllowed() {
+    const statusSelect = document.getElementById('studentStatus');
+    const feesSelect = document.getElementById('feesAllowed');
+    
+    if (!statusSelect || !feesSelect) return;
+    
+    const status = statusSelect.value;
+    
+    switch(status) {
+        case 'Pending':
+        case 'Active':
+        case 'Inactive':
+            feesSelect.value = 'YES';
+            break;
+            
+        case 'Suspended':
+        case 'Graduated':
+        case 'Dropped':
+        default:
+            feesSelect.value = 'NO';
+            break;
+    }
+    
+    // Visual feedback
+    feesSelect.style.transition = 'background-color 0.3s';
+    feesSelect.style.backgroundColor = '#e8f0fe';
+    setTimeout(() => {
+        feesSelect.style.backgroundColor = '';
+    }, 500);
+}
+

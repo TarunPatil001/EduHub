@@ -105,7 +105,8 @@ function loadStudentDataFromDOM() {
             currentAddress: getText(19),
             medicalHistory: getText(20),
             declaration: getText(21),
-            documentsHtml: getHtml(22)
+            documentsHtml: getHtml(22),
+            feesAllowed: getText(23)
         };
     });
 }
@@ -644,6 +645,15 @@ function viewStudentDetails(studentId) {
                     <div class="detail-content">
                         <div class="detail-label">Declaration</div>
                         <div class="detail-value">${student.declaration}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="bi bi-cash-coin"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Fees Allowed</div>
+                        <div class="detail-value">${student.feesAllowed}</div>
                     </div>
                 </div>
             </div>

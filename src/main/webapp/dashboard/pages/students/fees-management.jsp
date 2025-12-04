@@ -1,85 +1,87 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*"%>
+<%@ page import="java.math.BigDecimal"%>
 <%@ page import="java.time.LocalDate"%>
 <%@ page import="java.time.format.DateTimeFormatter"%>
+<%@ page import="com.eduhub.dao.interfaces.FeeDAO"%>
+<%@ page import="com.eduhub.dao.impl.FeeDAOImpl"%>
+<%@ page import="com.eduhub.model.Fee"%>
+<%@ page import="com.eduhub.dao.interfaces.StudentDAO"%>
+<%@ page import="com.eduhub.dao.impl.StudentDAOImpl"%>
+<%@ page import="com.eduhub.model.Course"%>
 <%!
 // Helper method to format date to DD-MM-YYYY
-public String formatDate(String dateStr) {
+public String formatDate(java.sql.Date date) {
     try {
-        if (dateStr != null && !dateStr.isEmpty() && !"-".equals(dateStr)) {
-            LocalDate date = LocalDate.parse(dateStr);
+        if (date != null) {
+            LocalDate localDate = date.toLocalDate();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            return date.format(formatter);
+            return localDate.format(formatter);
         }
     } catch (Exception e) {
-        // Return original if parsing fails
+        // Return empty if parsing fails
     }
-    return dateStr;
+    return "-";
+}
+
+public String formatCurrency(BigDecimal amount) {
+    if (amount == null) return "₹0";
+    return "₹" + amount.stripTrailingZeros().toPlainString();
+}
+
+// Helper to get initials
+public String getInitials(String name) {
+    if (name == null || name.isEmpty()) return "?";
+    String[] parts = name.split("\\s+");
+    String initials = "";
+    if (parts.length > 0 && !parts[0].isEmpty()) initials += parts[0].charAt(0);
+    if (parts.length > 1 && !parts[1].isEmpty()) initials += parts[1].charAt(0);
+    return initials.toUpperCase();
 }
 %>
 <%
-// Dummy fee data
-class FeeRecord {
-    String studentId, studentName, course, totalFee, paidAmount, pendingAmount, status, lastPaymentDate, dueDate;
+    String instituteId = (String) session.getAttribute("instituteId");
+    if (instituteId == null) instituteId = "INST001"; // Fallback
+
+    FeeDAO feeDAO = new FeeDAOImpl();
+    StudentDAO studentDAO = new StudentDAOImpl();
     
-    public FeeRecord(String studentId, String studentName, String course, String totalFee, 
-                     String paidAmount, String pendingAmount, String status, 
-                     String lastPaymentDate, String dueDate) {
-        this.studentId = studentId;
-        this.studentName = studentName;
-        this.course = course;
-        this.totalFee = totalFee;
-        this.paidAmount = paidAmount;
-        this.pendingAmount = pendingAmount;
-        this.status = status;
-        this.lastPaymentDate = lastPaymentDate;
-        this.dueDate = dueDate;
+    // Pagination and Filter Parameters
+    String searchQuery = request.getParameter("search");
+    String courseFilter = request.getParameter("course");
+    String statusFilter = request.getParameter("status");
+    
+    int currentPage = 1;
+    int limit = 10;
+    
+    try {
+        if (request.getParameter("page") != null) {
+            currentPage = Integer.parseInt(request.getParameter("page"));
+        }
+        if (request.getParameter("limit") != null) {
+            limit = Integer.parseInt(request.getParameter("limit"));
+        }
+    } catch (NumberFormatException e) {
+        // Default values
     }
-}
-
-List<FeeRecord> feeRecords = Arrays.asList(
-	    new FeeRecord("STU001", "Aarav Sharma", "Computer Science", "₹50,000", "₹50,000", "₹0", "Paid", "2024-03-15", "-"),
-	    new FeeRecord("STU002", "Diya Patel", "Business Administration", "₹45,000", "₹30,000", "₹15,000", "Partial", "2024-03-10", "2024-04-10"),
-	    new FeeRecord("STU003", "Arjun Kumar", "Engineering", "₹60,000", "₹20,000", "₹40,000", "Pending", "2024-02-20", "2024-04-05"),
-	    new FeeRecord("STU004", "Ananya Singh", "Mathematics", "₹40,000", "₹0", "₹40,000", "Unpaid", "-", "2024-03-25"),
-	    new FeeRecord("STU005", "Vihaan Mehta", "Computer Science", "₹50,000", "₹50,000", "₹0", "Paid", "2024-03-18", "-"),
-	    new FeeRecord("STU006", "Aarav Khan", "Data Science", "₹55,000", "₹35,000", "₹20,000", "Partial", "2024-03-12", "2024-04-12"),
-	    new FeeRecord("STU007", "Rohan Verma", "Physics", "₹42,000", "₹42,000", "₹0", "Paid", "2024-03-20", "-"),
-	    new FeeRecord("STU008", "Sara Ali", "Chemistry", "₹43,000", "₹25,000", "₹18,000", "Pending", "2024-03-08", "2024-04-08"),
-	    new FeeRecord("STU009", "Kabir Reddy", "Business Administration", "₹45,000", "₹0", "₹45,000", "Overdue", "-", "2024-03-01"),
-	    new FeeRecord("STU010", "Myra Gupta", "Engineering", "₹60,000", "₹60,000", "₹0", "Paid", "2024-03-22", "-")
-);
-
-pageContext.setAttribute("feeRecords", feeRecords);
-
-// Calculate statistics
-int totalStudents = feeRecords.size();
-int paidCount = 0;
-int partialCount = 0;
-int pendingCount = 0;
-int overdueCount = 0;
-double totalCollected = 0;
-double totalPending = 0;
-
-for (FeeRecord record : feeRecords) {
-    if ("Paid".equals(record.status)) paidCount++;
-    else if ("Partial".equals(record.status)) partialCount++;
-    else if ("Pending".equals(record.status)) pendingCount++;
-    else if ("Overdue".equals(record.status)) overdueCount++;
     
-    String paidStr = record.paidAmount.replace("₹", "").replace(",", "");
-    String pendingStr = record.pendingAmount.replace("₹", "").replace(",", "");
-    if (!paidStr.isEmpty()) totalCollected += Double.parseDouble(paidStr);
-    if (!pendingStr.isEmpty()) totalPending += Double.parseDouble(pendingStr);
-}
-
-pageContext.setAttribute("totalStudents", totalStudents);
-pageContext.setAttribute("paidCount", paidCount);
-pageContext.setAttribute("partialCount", partialCount);
-pageContext.setAttribute("pendingCount", pendingCount);
-pageContext.setAttribute("overdueCount", overdueCount);
-pageContext.setAttribute("totalCollected", String.format("%.0f", totalCollected));
-pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
+    // Fetch data
+    List<Fee> feeRecords = feeDAO.getFeesByFilters(instituteId, courseFilter, statusFilter, searchQuery, currentPage, limit);
+    int totalFilteredRecords = feeDAO.getFeeCountByFilters(instituteId, courseFilter, statusFilter, searchQuery);
+    
+    // Fetch statistics
+    int paidCount = feeDAO.getPaidCount(instituteId);
+    int partialCount = feeDAO.getPartialCount(instituteId);
+    int pendingCount = feeDAO.getPendingCount(instituteId);
+    int overdueCount = feeDAO.getOverdueCount(instituteId);
+    double totalCollected = feeDAO.getTotalCollected(instituteId);
+    double totalPending = feeDAO.getTotalPending(instituteId);
+    
+    // Fetch courses for filter
+    List<Course> courses = studentDAO.getDistinctCourses(instituteId);
+    
+    int offset = (currentPage - 1) * limit;
+    boolean hasRecords = totalFilteredRecords > 0;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -90,6 +92,9 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/students/css/fees-management.css">
+    <script>
+        var contextPath = '${pageContext.request.contextPath}';
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -107,115 +112,114 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
                 <div class="page-header-wrapper mb-4">
                     <!-- Page Heading -->
                     <div class="page-title-container">
-                        <h2 class="mb-1">Fees Management</h2>
-                        <p class="text-muted mb-0">Track and manage student fee payments</p>
+                        <h2>Fees Management</h2>
+                        <p class="text-muted">Track and manage student fee payments</p>
                     </div>
                     
                     <!-- Action Buttons -->
                     <div class="back-button-container">
-                        <div class="d-flex gap-2 flex-wrap">
-                            <!-- Bulk Delete Button (hidden by default) -->
-                            <button class="btn btn-danger" id="bulkDeleteBtn" style="display: none;">
-                                <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedCount">0</span>)
+                        <div class="d-flex gap-2">
+                            <button id="bulkDeleteBtn" class="btn btn-danger shadow-sm" style="display: none;">
+                                <i class="bi bi-trash"></i> Delete Selected (<span id="selectedCount">0</span>)
                             </button>
-                            <button class="btn btn-outline-primary" id="exportBtn">
-                                <i class="bi bi-download me-1"></i>Export
+                            <button class="btn btn-outline-primary shadow-sm" id="exportBtn">
+                                <i class="bi bi-download"></i> Export
                             </button>
-                            <button class="btn btn-outline-primary" id="sendReminderBtn">
-                                <i class="bi bi-envelope me-1"></i>Send Reminders
+                            <button class="btn btn-outline-primary shadow-sm" id="sendReminderBtn">
+                                <i class="bi bi-envelope"></i> Send Reminders
                             </button>
-                            <a href="${pageContext.request.contextPath}/dashboard/pages/students/record-payment.jsp" class="btn btn-primary">
+                            <a href="${pageContext.request.contextPath}/dashboard/pages/students/record-payment.jsp" class="btn btn-primary shadow-sm">
                                 <i class="bi bi-plus-circle"></i> Record Payment
                             </a>
                         </div>
                     </div>
                 </div>
 
-            <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stats-card stats-success">
-                    <div class="stats-icon">
-                        <i class="bi bi-check-circle-fill"></i>
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon total">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="paidCount"><%= paidCount %></h4>
+                            <p>Fully Paid</p>
+                            <span class="badge bg-success bg-opacity-10 text-success mt-1">₹<%= String.format("%.0f", totalCollected) %></span>
+                        </div>
                     </div>
-                    <div class="stats-info">
-                        <h3><%= paidCount %></h3>
-                        <p>Fully Paid</p>
-                        <span class="stats-badge success">₹<%= totalCollected %></span>
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="partialCount"><%= partialCount %></h4>
+                            <p>Partial Payment</p>
+                            <span class="badge bg-warning bg-opacity-10 text-warning mt-1">In Progress</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon placed">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="pendingCount"><%= pendingCount %></h4>
+                            <p>Pending Payment</p>
+                            <span class="badge bg-info bg-opacity-10 text-info mt-1">₹<%= String.format("%.0f", totalPending) %></span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon active" style="background: rgba(239, 68, 68, 0.1); color: #EF4444;">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4 id="overdueCount"><%= overdueCount %></h4>
+                            <p>Overdue</p>
+                            <span class="badge bg-danger bg-opacity-10 text-danger mt-1">Action Required</span>
+                        </div>
                     </div>
                 </div>
-                <div class="stats-card stats-warning">
-                    <div class="stats-icon">
-                        <i class="bi bi-clock-history"></i>
-                    </div>
-                    <div class="stats-info">
-                        <h3><%= partialCount %></h3>
-                        <p>Partial Payment</p>
-                        <span class="stats-badge warning">In Progress</span>
-                    </div>
-                </div>
-                <div class="stats-card stats-info">
-                    <div class="stats-icon">
-                        <i class="bi bi-hourglass-split"></i>
-                    </div>
-                    <div class="stats-info">
-                        <h3><%= pendingCount %></h3>
-                        <p>Pending Payment</p>
-                        <span class="stats-badge info">₹<%= totalPending %></span>
-                    </div>
-                </div>
-                <div class="stats-card stats-danger">
-                    <div class="stats-icon">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                    </div>
-                    <div class="stats-info">
-                        <h3><%= overdueCount %></h3>
-                        <p>Overdue</p>
-                        <span class="stats-badge danger">Action Required</span>
-                    </div>
-                </div>
-            </div>
 
-                <!-- Filters and Search -->
-                <div class="card-custom mb-4">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-lg-4 col-md-6">
-                            <label class="form-label">Search Student</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control" id="searchInput" placeholder="Search by name, email, or ID...">
+                <!-- Search and Filter Section -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Search Student</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" id="searchInput" 
+                                           placeholder="Search by name..." 
+                                           value="<%= searchQuery != null ? searchQuery : "" %>">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-2 col-md-6">
-                            <label class="form-label">Course</label>
-                            <select class="form-select" id="courseFilter">
-                                <option value="">All Courses</option>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Business Administration">Business Administration</option>
-                                <option value="Engineering">Engineering</option>
-                                <option value="Mathematics">Mathematics</option>
-                                <option value="Data Science">Data Science</option>
-                                <option value="Physics">Physics</option>
-                                <option value="Chemistry">Chemistry</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-6">
-                            <label class="form-label">Payment Status</label>
-                            <select class="form-select" id="statusFilter">
-                                <option value="">All Status</option>
-                                <option value="Paid">Paid</option>
-                                <option value="Partial">Partial</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Unpaid">Unpaid</option>
-                                <option value="Overdue">Overdue</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-12">
-                            <label class="form-label">&nbsp;</label>
-                            <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" 
-                                id="resetFilters" type="button" aria-label="Reset filters" style="height: 38px;">
-                                <i class="bi bi-arrow-clockwise me-2"></i>
-                                <span>Reset Filters</span>
-                            </button>
+                            <div class="col-md-3">
+                                <label class="form-label">Course</label>
+                                <select class="form-select" id="courseFilter">
+                                    <option value="">All Courses</option>
+                                    <% for(Course c : courses) { %>
+                                        <option value="<%= c.getCourseId() %>" <%= c.getCourseId().equals(courseFilter) ? "selected" : "" %>><%= c.getCourseName() %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Payment Status</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="Paid" <%= "Paid".equals(statusFilter) ? "selected" : "" %>>Paid</option>
+                                    <option value="Partial" <%= "Partial".equals(statusFilter) ? "selected" : "" %>>Partial</option>
+                                    <option value="Pending" <%= "Pending".equals(statusFilter) ? "selected" : "" %>>Pending</option>
+                                    <option value="Unpaid" <%= "Unpaid".equals(statusFilter) ? "selected" : "" %>>Unpaid</option>
+                                    <option value="Overdue" <%= "Overdue".equals(statusFilter) ? "selected" : "" %>>Overdue</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" 
+                                    id="resetFilters" type="button" aria-label="Reset filters" title="Reset Filters">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    <span>Reset Filters</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -223,133 +227,156 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
                 <!-- Fee Records Table -->
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="feesTable">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="col-checkbox">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="selectAll">
-                                        </div>
-                                    </th>
-                                    <th class="col-id">Student ID</th>
-                                    <th class="col-name">Student Name</th>
-                                    <th class="col-course">Course</th>
-                                    <th class="col-fee">Total Fee</th>
-                                    <th class="col-fee">Paid Amount</th>
-                                    <th class="col-fee">Pending</th>
-                                    <th class="col-status">Status</th>
-                                    <th class="col-date">Last Payment</th>
-                                    <th class="col-date">Due Date</th>
-                                    <th class="col-actions">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <%
-                                for (FeeRecord record : feeRecords) {
-                                    String statusClass = "";
-                                    if ("Paid".equals(record.status)) statusClass = "status-paid";
-                                    else if ("Partial".equals(record.status)) statusClass = "status-partial";
-                                    else if ("Pending".equals(record.status)) statusClass = "status-pending";
-                                    else if ("Unpaid".equals(record.status)) statusClass = "status-unpaid";
-                                    else if ("Overdue".equals(record.status)) statusClass = "status-overdue";
-                                %>
-                                <tr data-student-id="<%= record.studentId %>" data-course="<%= record.course %>" data-status="<%= record.status %>">
-                                    <td>
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input fee-checkbox" value="<%= record.studentId %>">
-                                        </div>
-                                    </td>
-                                    <td><strong><%= record.studentId %></strong></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="student-avatar"><%= record.studentName.substring(0, 2).toUpperCase() %></div>
-                                            <div class="ms-2">
-                                                <div class="student-name"><%= record.studentName %></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="course-badge"><%= record.course %></span></td>
-                                    <td class="text-end"><strong class="text-dark"><%= record.totalFee %></strong></td>
-                                    <td class="text-end text-success"><strong><%= record.paidAmount %></strong></td>
-                                    <td class="text-end text-danger"><strong><%= record.pendingAmount %></strong></td>
-                                    <td><span class="badge <%= statusClass %>"><%= record.status %></span></td>
-                                    <td>
-                                        <% if (!"-".equals(record.lastPaymentDate)) { %>
-                                            <div class="date-cell">
-                                                <i class="bi bi-calendar-check text-muted"></i>
-                                                <span><%= formatDate(record.lastPaymentDate) %></span>
-                                            </div>
-                                        <% } else { %>
-                                            <span class="text-muted">-</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <% if (!"-".equals(record.dueDate)) { %>
-                                            <div class="due-date-cell <%= "Overdue".equals(record.status) ? "overdue" : "upcoming" %>">
-                                                <i class="bi bi-calendar-event"></i>
-                                                <span><%= formatDate(record.dueDate) %></span>
-                                            </div>
-                                        <% } else { %>
-                                            <span class="text-muted">-</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-1">
-                                            <button type="button" class="btn btn-sm btn-outline-primary view-btn" 
-                                                    data-student-id="<%= record.studentId %>" 
-                                                    data-bs-toggle="tooltip" 
-                                                    data-bs-placement="top" 
-                                                    title="View Details">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                            <% if (!"Paid".equals(record.status)) { %>
-                                            <button type="button" class="btn btn-sm btn-outline-success payment-btn" 
-                                                    data-student-id="<%= record.studentId %>" 
-                                                    data-bs-toggle="tooltip" 
-                                                    data-bs-placement="top" 
-                                                    title="Record Payment">
-                                                <i class="bi bi-cash"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-warning reminder-btn" 
-                                                    data-student-id="<%= record.studentId %>" 
-                                                    data-bs-toggle="tooltip" 
-                                                    data-bs-placement="top" 
-                                                    title="Send Reminder">
-                                                <i class="bi bi-bell"></i>
-                                            </button>
-                                            <% } %>
-                                        </div>
-                                    </td>
-                                </tr>
+                        <!-- Empty State - Show when no data -->
+                        <div id="emptyState" class="empty-state-container" style="<%= hasRecords ? "display: none;" : "" %>">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="bi bi-cash-coin"></i>
+                                </div>
+                                <h4 class="empty-state-title">No Fee Records Found</h4>
+                                <p class="empty-state-text">No records match your current search or filter criteria</p>
+                                <% if (searchQuery != null || courseFilter != null || statusFilter != null) { %>
+                                    <button class="btn btn-outline-primary mt-3" onclick="window.location.href='fees-management.jsp'">
+                                        <i class="bi bi-arrow-clockwise me-2"></i>Clear Filters
+                                    </button>
+                                <% } else { %>
+                                    <a href="${pageContext.request.contextPath}/dashboard/pages/students/record-payment.jsp" class="btn btn-success mt-3">
+                                        <i class="bi bi-plus-lg me-2"></i>Record First Payment
+                                    </a>
                                 <% } %>
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+
+                        <!-- Table - Show when data exists -->
+                        <div class="table-responsive" id="feesTableContainer" style="<%= !hasRecords ? "display: none;" : "" %>">
+                            <table class="table table-hover mb-0" id="feesTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 40px;">
+                                            <div class="form-check">
+                                                <input type="checkbox" id="selectAll" class="form-check-input">
+                                            </div>
+                                        </th>
+                                        <th>Student Name</th>
+                                        <th>Batch ID</th>
+                                        <th class="text-end">Total Fee</th>
+                                        <th class="text-end">Paid Amount</th>
+                                        <th class="text-end">Pending</th>
+                                        <th>Status</th>
+                                        <th>Last Payment</th>
+                                        <th>Due Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="feesTableBody">
+                                    <%
+                                    if (hasRecords) {
+                                        for (Fee record : feeRecords) {
+                                            String statusClass = "";
+                                            String status = record.getStatus() != null ? record.getStatus() : "Pending";
+                                            if ("Paid".equals(status)) statusClass = "status-paid";
+                                            else if ("Partial".equals(status)) statusClass = "status-partial";
+                                            else if ("Pending".equals(status)) statusClass = "status-pending";
+                                            else if ("Unpaid".equals(status)) statusClass = "status-unpaid";
+                                            else if ("Overdue".equals(status)) statusClass = "status-overdue";
+                                            
+                                            String initials = getInitials(record.getStudentName());
+                                    %>
+                                    <tr data-student-id="<%= record.getStudentId() %>" data-status="<%= status %>">
+                                        <td>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input fee-checkbox" value="<%= record.getStudentId() %>">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="student-avatar">
+                                                    <% if (record.getProfilePhotoUrl() != null && !record.getProfilePhotoUrl().isEmpty()) { %>
+                                                        <img src="<%= record.getProfilePhotoUrl() %>" alt="<%= initials %>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                                                    <% } else { %>
+                                                        <%= initials %>
+                                                    <% } %>
+                                                </div>
+                                                <div class="student-name"><%= record.getStudentName() %></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="course-badge"><%= record.getBatchName() != null ? record.getBatchName() : "-" %></span></td>
+                                        <td class="text-end"><strong><%= formatCurrency(record.getTotalFee()) %></strong></td>
+                                        <td class="text-end text-success"><strong><%= formatCurrency(record.getPaidAmount()) %></strong></td>
+                                        <td class="text-end text-danger"><strong><%= formatCurrency(record.getPendingAmount()) %></strong></td>
+                                        <td><span class="badge <%= statusClass %>"><%= status %></span></td>
+                                        <td>
+                                            <% if (record.getLastPaymentDate() != null) { %>
+                                                <div class="date-cell">
+                                                    <i class="bi bi-calendar-check"></i>
+                                                    <span><%= formatDate(record.getLastPaymentDate()) %></span>
+                                                </div>
+                                            <% } else { %>
+                                                <span class="text-muted">-</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (record.getDueDate() != null) { %>
+                                                <div class="due-date-cell <%= "Overdue".equals(status) ? "overdue" : "upcoming" %>">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                    <span><%= formatDate(record.getDueDate()) %></span>
+                                                </div>
+                                            <% } else { %>
+                                                <span class="text-muted">-</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm view-btn" 
+                                                        data-student-id="<%= record.getStudentId() %>" title="View Details">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <% if (!"Paid".equals(status)) { %>
+                                                <button type="button" class="btn btn-sm payment-btn" 
+                                                        data-student-id="<%= record.getStudentId() %>" title="Record Payment">
+                                                    <i class="bi bi-cash"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm reminder-btn" 
+                                                        data-student-id="<%= record.getStudentId() %>" title="Send Reminder">
+                                                    <i class="bi bi-bell"></i>
+                                                </button>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% 
+                                        }
+                                    } 
+                                    %>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     
                     <!-- Pagination Footer -->
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                            <div class="d-flex align-items-center gap-3 flex-wrap">
-                                <div class="entries-info">
-                                    Showing <span id="showingStart">1</span> to <span id="showingEnd">10</span> of <span id="totalEntries"><%= totalStudents %></span> entries
-                                </div>
-                                <div class="entries-selector-wrapper">
-                                    <label>Show</label>
-                                    <select class="form-select" id="entriesPerPage">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
+                    <div class="card-footer py-3 bg-white" id="paginationFooter" style="<%= !hasRecords ? "display: none;" : "" %>">
+                        <div class="row align-items-center gy-3">
+                            <div class="col-sm-12 col-md-5">
+                                <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 text-muted small">
+                                    <span>Show</span>
+                                    <select class="form-select form-select-sm w-auto border-light bg-light" id="itemsPerPage" style="min-width: 70px;">
+                                        <option value="10" <%= limit == 10 ? "selected" : "" %>>10</option>
+                                        <option value="25" <%= limit == 25 ? "selected" : "" %>>25</option>
+                                        <option value="50" <%= limit == 50 ? "selected" : "" %>>50</option>
+                                        <option value="100" <%= limit == 100 ? "selected" : "" %>>100</option>
                                     </select>
+                                    <span>entries</span>
+                                    <div class="vr mx-2"></div>
+                                    <span class="entries-info">
+                                        Showing <span id="showingStart" class="fw-bold text-dark"><%= totalFilteredRecords > 0 ? offset + 1 : 0 %></span> - <span id="showingEnd" class="fw-bold text-dark"><%= Math.min(offset + limit, totalFilteredRecords) %></span> of <span id="totalEntries" class="fw-bold text-dark"><%= totalFilteredRecords %></span>
+                                    </span>
                                 </div>
                             </div>
-                            <nav>
-                                <ul class="pagination mb-0" id="pagination">
+                            <div class="col-sm-12 col-md-7">
+                                <div id="paginationContainer" class="d-flex justify-content-center justify-content-md-end">
                                     <!-- Pagination buttons will be generated by JavaScript -->
-                                </ul>
-                            </nav>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -361,13 +388,11 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
     <div class="modal fade" id="feeDetailsModal" tabindex="-1" aria-labelledby="feeDetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="feeDetailsModalLabel">
-                        <i class="bi bi-receipt-cutoff me-2"></i>Fee Details
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feeDetailsModalLabel">Fee Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4" id="feeDetailsContent">
+                <div class="modal-body" id="feeDetailsContent">
                     <!-- Details will be loaded here dynamically -->
                     <div class="text-center py-5">
                         <div class="spinner-border text-primary" role="status">
@@ -377,11 +402,9 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-1"></i>Close
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="window.print()">
-                        <i class="bi bi-printer me-1"></i>Print
+                        <i class="bi bi-printer me-1"></i> Print
                     </button>
                 </div>
             </div>
@@ -394,6 +417,40 @@ pageContext.setAttribute("totalPending", String.format("%.0f", totalPending));
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
-    <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/fees-management.js"></script>
+    <script>
+        // Server-side pagination data
+        var serverPagination = {
+            currentPage: <%= currentPage %>,
+            itemsPerPage: <%= limit %>,
+            totalItems: <%= totalFilteredRecords %>,
+            totalPages: <%= (int) Math.ceil((double) totalFilteredRecords / limit) %>
+        };
+    </script>
+    <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/fees-management.js?v=<%= System.currentTimeMillis() %>"></script>
+
+    <%-- Toast Notification Logic --%>
+    <%
+        String successMessage = (String) session.getAttribute("successMessage");
+        if (successMessage != null) {
+            session.removeAttribute("successMessage");
+    %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof toast !== 'undefined') toast.success("<%= successMessage %>");
+        });
+    </script>
+    <% } %>
+    
+    <%
+        String errorMessage = (String) session.getAttribute("errorMessage");
+        if (errorMessage != null) {
+            session.removeAttribute("errorMessage");
+    %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof toast !== 'undefined') toast.error("<%= errorMessage %>");
+        });
+    </script>
+    <% } %>
 </body>
 </html>

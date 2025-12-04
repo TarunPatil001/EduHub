@@ -352,12 +352,20 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="studentStatus" class="form-label">Student Status <span class="required-star">*</span></label>
-                                        <select class="form-select" id="studentStatus" name="studentStatus" required>
+                                        <select class="form-select" id="studentStatus" name="studentStatus" required onchange="updateFeesAllowed()">
                                             <option value="">Select Status</option>
                                             <% for(String item : DropdownData.STUDENT_STATUSES) { %>
                                                 <option value="<%=item%>" <%=item.equals("Pending") ? "selected" : ""%>><%=item%></option>
                                             <% } %>
                                         </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="feesAllowed" class="form-label">Fees Allowed <span class="required-star">*</span></label>
+                                        <select class="form-select" id="feesAllowed" name="feesAllowed" required>
+                                            <option value="NO">NO</option>
+                                            <option value="YES">YES</option>
+                                        </select>
+                                        <small class="text-muted">Auto-set based on status</small>
                                     </div>
                                 </div>
                             </div>
