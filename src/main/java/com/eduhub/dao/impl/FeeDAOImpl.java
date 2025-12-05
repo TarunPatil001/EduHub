@@ -58,12 +58,13 @@ public class FeeDAOImpl implements FeeDAO {
     }
 
     @Override
-    public List<Transaction> getTransactionsByStudentId(String studentId) {
+    public List<Transaction> getTransactionsByStudentId(String studentId, String instituteId) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE student_id = ? ORDER BY transaction_date DESC";
+        String sql = "SELECT * FROM transactions WHERE student_id = ? AND institute_id = ? ORDER BY transaction_date DESC";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, studentId);
+            pstmt.setString(2, instituteId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     Transaction t = new Transaction();
@@ -106,11 +107,12 @@ public class FeeDAOImpl implements FeeDAO {
     }
 
     @Override
-    public Fee getFeeByStudentId(String studentId) {
-        String sql = "SELECT * FROM fees WHERE student_id = ?";
+    public Fee getFeeByStudentId(String studentId, String instituteId) {
+        String sql = "SELECT * FROM fees WHERE student_id = ? AND institute_id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, studentId);
+            pstmt.setString(2, instituteId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToFee(rs);

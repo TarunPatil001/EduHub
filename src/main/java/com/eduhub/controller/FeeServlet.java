@@ -101,6 +101,8 @@ public class FeeServlet extends HttpServlet {
     
     private void handleGetTransactionHistory(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String studentId = request.getParameter("studentId");
+        String instituteId = (String) request.getSession().getAttribute("instituteId");
+        if (instituteId == null) instituteId = "INST001";
         
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -111,7 +113,7 @@ public class FeeServlet extends HttpServlet {
             return;
         }
 
-        List<Transaction> transactions = feeDAO.getTransactionsByStudentId(studentId);
+        List<Transaction> transactions = feeDAO.getTransactionsByStudentId(studentId, instituteId);
         out.print(gson.toJson(new ResponseMessage(true, "History fetched", transactions)));
     }
     
@@ -163,7 +165,7 @@ public class FeeServlet extends HttpServlet {
             if (instituteId == null) instituteId = "INST001";
 
             // Get existing fee record
-            Fee existingFee = feeDAO.getFeeByStudentId(studentId);
+            Fee existingFee = feeDAO.getFeeByStudentId(studentId, instituteId);
             
             boolean success;
             String feeId;

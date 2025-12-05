@@ -8,8 +8,8 @@ public interface FeeDAO {
     boolean addFee(Fee fee);
     boolean updateFee(Fee fee);
     boolean addTransaction(Transaction transaction);
-    List<Transaction> getTransactionsByStudentId(String studentId);
-    Fee getFeeByStudentId(String studentId);
+    List<Transaction> getTransactionsByStudentId(String studentId, String instituteId);
+    Fee getFeeByStudentId(String studentId, String instituteId);
     List<Fee> getAllFees(String instituteId);
     List<Fee> getFeesByFilters(String instituteId, String courseId, String status, String search, int page, int pageSize);
     int getFeeCountByFilters(String instituteId, String courseId, String status, String search);
