@@ -48,6 +48,24 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>QRCodeServlet</servlet-name>
+    <servlet-class>com.eduhub.controller.QRCodeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>QRCodeServlet</servlet-name>
+    <url-pattern>/QRCodeServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>VerifyIdServlet</servlet-name>
+    <servlet-class>com.eduhub.controller.VerifyIdServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>VerifyIdServlet</servlet-name>
+    <url-pattern>/verify-id/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>Dashboard</servlet-name>
     <jsp-file>/dashboard.jsp</jsp-file>
   </servlet>

@@ -1,4 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.eduhub.dao.impl.InstituteDAOImpl" %>
+<%@ page import="com.eduhub.dao.interfaces.InstituteDAO" %>
+<%@ page import="com.eduhub.model.Institute" %>
+<%
+    String instituteName = "EduHub"; // Default
+    String instituteId = (String) session.getAttribute("instituteId");
+    if (instituteId != null) {
+        try {
+            InstituteDAO instituteDAO = new InstituteDAOImpl();
+            Institute institute = instituteDAO.getInstituteById(instituteId);
+            if (institute != null && institute.getInstituteName() != null) {
+                instituteName = institute.getInstituteName();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +26,13 @@
     </jsp:include>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/css/dashboard.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/students/css/id-certificates.css">
+    <!-- html2canvas for image generation -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- JSZip for batch downloading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- Toast Notifications -->
+    <jsp:include page="/components/toast-dependencies.jsp" />
 </head>
 <body>
     <div class="dashboard-container">
@@ -22,15 +47,20 @@
             
             <div class="dashboard-content">
                 <!-- Page Header -->
-                <div class="page-header d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h2><i class="bi bi-card-heading"></i> ID Cards & Certificates</h2>
-                        <p class="text-muted mb-0">Generate and manage student ID cards and certificates</p>
+                <div class="page-header-wrapper mb-4">
+                    <div class="page-title-container">
+                        <h2>ID Cards & Certificates</h2>
+                        <p class="text-muted">Generate and manage student ID cards and certificates</p>
                     </div>
-                    <div class="d-flex gap-2">
+                    
+                    <div class="back-button-container d-flex gap-2">
                         <button class="btn btn-outline-primary" onclick="refreshData()">
                             <i class="bi bi-arrow-clockwise"></i> Refresh
                         </button>
+                        <jsp:include page="/dashboard/components/back-button.jsp">
+                            <jsp:param name="url" value="${pageContext.request.contextPath}/dashboard/pages/students/all-students.jsp"/>
+                            <jsp:param name="text" value="Back to Students"/>
+                        </jsp:include>
                     </div>
                 </div>
 
@@ -57,10 +87,10 @@
                 <div class="tab-content" id="documentTabsContent">
                     <!-- ID Cards Tab -->
                     <div class="tab-pane fade show active" id="id-cards" role="tabpanel">
-                        <div class="row">
+                        <div class="row" style="position: relative;">
                             <!-- Selection Panel -->
-                            <div class="col-lg-4">
-                                <div class="card-custom mb-4">
+                            <div class="col-lg-4" style="position: relative; z-index: 100;">
+                                <div class="card-custom mb-4" style="overflow: visible;">
                                     <h5 class="mb-3"><i class="bi bi-funnel"></i> Student Selection</h5>
                                     
                                     <!-- Selection Type -->
@@ -69,8 +99,6 @@
                                         <select class="form-select" id="idSelectionType" onchange="handleIdSelectionType()">
                                             <option value="single">Single Student</option>
                                             <option value="batch">Batch/Class</option>
-                                            <option value="department">Department</option>
-                                            <option value="all">All Students</option>
                                         </select>
                                     </div>
 
@@ -78,10 +106,13 @@
                                     <div id="singleIdSelection">
                                         <div class="mb-3">
                                             <label class="form-label">Search Student</label>
-                                            <input type="text" class="form-control" id="idStudentSearch" 
-                                                   placeholder="Enter Roll No or Name" onkeyup="searchStudentForId()">
+                                            <div class="search-input-wrapper">
+                                                <input type="text" class="form-control" id="idStudentSearch" 
+                                                       placeholder="Search by name or ID" onkeyup="searchStudentForId()" 
+                                                       onfocus="searchStudentForId()" autocomplete="off">
+                                                <div id="idStudentResults"></div>
+                                            </div>
                                         </div>
-                                        <div id="idStudentResults" class="list-group mb-3" style="max-height: 300px; overflow-y: auto;"></div>
                                     </div>
 
                                     <!-- Batch Selection -->
@@ -95,43 +126,6 @@
                                                 <option value="2022">2022-2023</option>
                                             </select>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Semester</label>
-                                            <select class="form-select" id="idSemesterSelect">
-                                                <option value="">-- All Semesters --</option>
-                                                <option value="1">Semester 1</option>
-                                                <option value="2">Semester 2</option>
-                                                <option value="3">Semester 3</option>
-                                                <option value="4">Semester 4</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Department Selection -->
-                                    <div id="deptIdSelection" style="display: none;">
-                                        <div class="mb-3">
-                                            <label class="form-label">Select Department</label>
-                                            <select class="form-select" id="idDepartmentSelect">
-                                                <option value="">-- Select Department --</option>
-                                                <option value="Computer Science">Computer Science</option>
-                                                <option value="Electronics">Electronics</option>
-                                                <option value="Mechanical">Mechanical</option>
-                                                <option value="Civil">Civil</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- ID Card Options -->
-                                    <div class="mt-4">
-                                        <h6 class="mb-3">ID Card Options</h6>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="includeBarcode" checked>
-                                            <label class="form-check-label" for="includeBarcode">Include Barcode</label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="includePhoto" checked>
-                                            <label class="form-check-label" for="includePhoto">Include Photo</label>
-                                        </div>
                                     </div>
 
                                     <!-- Generate Button -->
@@ -139,20 +133,21 @@
                                         <button class="btn btn-primary" onclick="generateIdCard()">
                                             <i class="bi bi-card-heading"></i> Generate ID Card
                                         </button>
-                                        <button class="btn btn-outline-secondary" onclick="previewIdCard()">
-                                            <i class="bi bi-eye"></i> Preview
-                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Preview Panel -->
                             <div class="col-lg-8">
-                                <div class="card-custom">
-                                    <h5 class="mb-3"><i class="bi bi-eye"></i> ID Card Preview</h5>
-                                    <div id="idCardPreview" class="text-center p-4">
+                                <div class="d-flex justify-content-end mb-3">
+                                    <button class="btn btn-success" id="downloadPreviewBtn" onclick="downloadCurrentPreview()" disabled>
+                                        <i class="bi bi-download"></i> Download
+                                    </button>
+                                </div>
+                                <div id="idCardPreview" class="d-flex justify-content-center align-items-center" style="min-height: 500px;">
+                                    <div class="text-center text-muted">
                                         <i class="bi bi-card-heading" style="font-size: 4rem; opacity: 0.2;"></i>
-                                        <p class="text-muted mt-3">Select a student and click "Preview" to see the ID card</p>
+                                        <p class="mt-3">Select a student or batch to view ID cards</p>
                                     </div>
                                 </div>
                             </div>
@@ -193,10 +188,13 @@
                                     <div id="singleCertSelection">
                                         <div class="mb-3">
                                             <label class="form-label">Search Student</label>
-                                            <input type="text" class="form-control" id="certStudentSearch" 
-                                                   placeholder="Enter Roll No or Name" onkeyup="searchStudentForCert()">
+                                            <div class="search-input-wrapper">
+                                                <input type="text" class="form-control" id="certStudentSearch" 
+                                                       placeholder="Search by name or ID" onkeyup="searchStudentForCert()" 
+                                                       onfocus="searchStudentForCert()" autocomplete="off">
+                                                <div id="certStudentResults"></div>
+                                            </div>
                                         </div>
-                                        <div id="certStudentResults" class="list-group mb-3" style="max-height: 250px; overflow-y: auto;"></div>
                                     </div>
 
                                     <!-- Certificate Details -->
@@ -301,6 +299,10 @@
     </div>
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
+    <script>
+        const contextPath = "${pageContext.request.contextPath}";
+        const instituteName = "<%= instituteName %>";
+    </script>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/id-certificates.js"></script>
 </body>

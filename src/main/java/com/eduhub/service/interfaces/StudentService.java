@@ -10,8 +10,8 @@ public interface StudentService {
     boolean deleteStudent(String studentId, String instituteId);
     Student getStudentById(String studentId);
     List<Student> getAllStudents(String instituteId);
-    List<Student> getStudentsByFilters(String instituteId, String courseId, String branchId, String status, String search, int page, int pageSize);
-    int getStudentCountByFilters(String instituteId, String courseId, String branchId, String status, String search);
+    List<Student> getStudentsByFilters(String instituteId, String courseId, String branchId, String batchId, String status, String search, int page, int pageSize);
+    int getStudentCountByFilters(String instituteId, String courseId, String branchId, String batchId, String status, String search);
     List<StudentDocument> getDocumentsByStudentId(String studentId);
     
     // Deprecated methods to keep backward compatibility if needed, or just remove them if I update all callers

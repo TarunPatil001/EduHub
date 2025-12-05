@@ -470,6 +470,7 @@ public class StudentServlet extends HttpServlet {
         try {
             String courseId = request.getParameter("courseId");
             String branchId = request.getParameter("branchId");
+            String batchId = request.getParameter("batchId");
             String status = request.getParameter("status");
             String search = request.getParameter("search");
             
@@ -490,8 +491,8 @@ public class StudentServlet extends HttpServlet {
                 logger.warn("Invalid page or pageSize format, using defaults");
             }
             
-            List<Student> students = studentService.getStudentsByFilters(instituteId, courseId, branchId, status, search, page, pageSize);
-            int totalCount = studentService.getStudentCountByFilters(instituteId, courseId, branchId, status, search);
+            List<Student> students = studentService.getStudentsByFilters(instituteId, courseId, branchId, batchId, status, search, page, pageSize);
+            int totalCount = studentService.getStudentCountByFilters(instituteId, courseId, branchId, batchId, status, search);
             
             String json = convertStudentsToJson(students, totalCount);
             

@@ -6,24 +6,95 @@
 (function() {
     'use strict';
 
-    // Sample student data (replace with actual API calls)
-    const sampleStudents = [
-        { rollNo: 'CS001', name: 'John Doe', department: 'Computer Science', semester: 3, batch: '2024', email: 'john.doe@eduhub.com', phone: '+1234567890', bloodGroup: 'O+', dob: '2005-05-15', address: '123 Main St, City' },
-        { rollNo: 'EC002', name: 'Jane Smith', department: 'Electronics', semester: 2, batch: '2024', email: 'jane.smith@eduhub.com', phone: '+1234567891', bloodGroup: 'A+', dob: '2005-08-20', address: '456 Oak Ave, City' },
-        { rollNo: 'ME003', name: 'Mike Johnson', department: 'Mechanical', semester: 4, batch: '2023', email: 'mike.j@eduhub.com', phone: '+1234567892', bloodGroup: 'B+', dob: '2004-12-10', address: '789 Pine Rd, City' },
-        { rollNo: 'CS004', name: 'Sarah Williams', department: 'Computer Science', semester: 1, batch: '2024', email: 'sarah.w@eduhub.com', phone: '+1234567893', bloodGroup: 'AB+', dob: '2006-03-25', address: '321 Elm St, City' },
-        { rollNo: 'CE005', name: 'David Brown', department: 'Civil', semester: 3, batch: '2023', email: 'david.b@eduhub.com', phone: '+1234567894', bloodGroup: 'O-', dob: '2004-07-18', address: '654 Maple Dr, City' },
-        { rollNo: 'EC006', name: 'Emily Davis', department: 'Electronics', semester: 2, batch: '2024', email: 'emily.d@eduhub.com', phone: '+1234567895', bloodGroup: 'A-', dob: '2005-11-30', address: '987 Cedar Ln, City' },
-    ];
+    // Polyfill for toast if not defined (prevents crashes if library fails to load)
+    if (typeof window.toast === 'undefined') {
+        window.toast = function(message, options) {
+            console.log('Toast:', message);
+            if (options && (options.icon === '⚠️' || options.icon === '❌')) {
+                alert(message);
+            }
+        };
+        window.toast.error = function(message) {
+            console.error(message);
+            alert(message);
+        };
+        window.toast.success = function(message) {
+            console.log('Success:', message);
+        };
+    }
 
+    // Global variables
     let selectedStudent = null;
     let generationHistory = [];
+    let allStudents = []; // To store fetched students
+    let allBatches = []; // To store fetched batches
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         loadHistory();
         initializeDatePicker();
+        fetchBatches(); // Fetch batches
+        fetchStudents(); // Fetch real data
+        
+        // Add event listeners for batch selection to auto-preview
+        const batchSelect = document.getElementById('idBatchSelect');
+        if (batchSelect) {
+            batchSelect.addEventListener('change', previewIdCard);
+        }
     });
+
+    /**
+     * Fetch students from backend
+     */
+    function fetchStudents() {
+        // Use the existing list API
+        fetch(`${contextPath}/api/students/list`)
+            .then(response => response.json())
+            .then(data => {
+                // The API returns { totalCount: ..., students: [...] }
+                if (data.students && Array.isArray(data.students)) {
+                    allStudents = data.students.map(s => ({
+                        studentId: s.studentId,
+                        name: `${s.studentName || ''} ${s.fatherName || ''} ${s.surname || ''}`.trim().replace(/\s+/g, ' '),
+                        department: s.branchId || s.courseId || 'General',
+                        batch: s.batchId || '2024',
+                        profilePhotoUrl: s.profilePhotoUrl
+                    }));
+                    
+                    // Batch dropdown is now populated separately via fetchBatches
+                } else {
+                    console.error('Unexpected API response format:', data);
+                    toast.error('Failed to load student data');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching students:', error);
+                toast.error('Error connecting to server');
+            });
+    }
+
+    /**
+     * Fetch batches from backend
+     */
+    function fetchBatches() {
+        fetch(`${contextPath}/api/batches/list`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.batches && Array.isArray(data.batches)) {
+                    allBatches = data.batches;
+                    populateBatchDropdown();
+                }
+            })
+            .catch(error => console.error('Error fetching batches:', error));
+    }
+
+    function populateBatchDropdown() {
+        const batchSelect = document.getElementById('idBatchSelect');
+        if (batchSelect && allBatches.length > 0) {
+            batchSelect.innerHTML = '<option value="">-- Select Batch --</option>' + 
+                allBatches.map(b => `<option value="${b.batchId}">${b.batchName} (${b.batchCode})</option>`).join('');
+        }
+    }
 
     /**
      * Initialize date picker with current date
@@ -43,20 +114,16 @@
         const selectionType = document.getElementById('idSelectionType').value;
         const singleSection = document.getElementById('singleIdSelection');
         const batchSection = document.getElementById('batchIdSelection');
-        const deptSection = document.getElementById('deptIdSelection');
 
         // Hide all sections
         singleSection.style.display = 'none';
         batchSection.style.display = 'none';
-        deptSection.style.display = 'none';
-
+        
         // Show relevant section
         if (selectionType === 'single') {
             singleSection.style.display = 'block';
         } else if (selectionType === 'batch') {
             batchSection.style.display = 'block';
-        } else if (selectionType === 'department') {
-            deptSection.style.display = 'block';
         }
     };
 
@@ -96,32 +163,39 @@
         const query = document.getElementById('idStudentSearch').value.toLowerCase().trim();
         const resultsDiv = document.getElementById('idStudentResults');
 
-        if (query.length < 2) {
+        if (query.length < 1) {
             resultsDiv.innerHTML = '';
+            resultsDiv.classList.remove('search-suggestions');
             return;
         }
 
-        const matches = sampleStudents.filter(s => 
+        const matches = allStudents.filter(s => 
             s.name.toLowerCase().includes(query) || 
-            s.rollNo.toLowerCase().includes(query)
-        );
+            s.studentId.toLowerCase().includes(query)
+        ).slice(0, 8); // Limit to 8 results like Google
 
         if (matches.length === 0) {
-            resultsDiv.innerHTML = '<div class="alert alert-info mb-0">No students found</div>';
+            resultsDiv.className = 'search-suggestions';
+            resultsDiv.innerHTML = `
+                <div class="no-results">
+                    <i class="bi bi-search"></i>
+                    <div>No students found</div>
+                </div>
+            `;
             return;
         }
 
+        resultsDiv.className = 'search-suggestions';
         resultsDiv.innerHTML = matches.map(student => `
-            <a href="#" class="list-group-item list-group-item-action" onclick="selectStudentForId('${student.rollNo}'); return false;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>${escapeHtml(student.name)}</strong>
-                        <br>
-                        <small class="text-muted">${escapeHtml(student.rollNo)} - ${escapeHtml(student.department)}</small>
-                    </div>
-                    <i class="bi bi-chevron-right"></i>
+            <div class="search-suggestion-item" onclick="selectStudentForId('${student.studentId}')">
+                <div class="suggestion-icon">
+                    <i class="bi bi-person-fill"></i>
                 </div>
-            </a>
+                <div class="suggestion-content">
+                    <div class="suggestion-name">${escapeHtml(student.name)}</div>
+                    <div class="suggestion-meta">${escapeHtml(student.studentId.substring(0, 10))} · ${escapeHtml(student.department)}</div>
+                </div>
+            </div>
         `).join('');
     };
 
@@ -132,188 +206,224 @@
         const query = document.getElementById('certStudentSearch').value.toLowerCase().trim();
         const resultsDiv = document.getElementById('certStudentResults');
 
-        if (query.length < 2) {
+        if (query.length < 1) {
             resultsDiv.innerHTML = '';
+            resultsDiv.classList.remove('search-suggestions');
             return;
         }
 
-        const matches = sampleStudents.filter(s => 
+        const matches = allStudents.filter(s => 
             s.name.toLowerCase().includes(query) || 
-            s.rollNo.toLowerCase().includes(query)
-        );
+            s.studentId.toLowerCase().includes(query)
+        ).slice(0, 8); // Limit to 8 results like Google
 
         if (matches.length === 0) {
-            resultsDiv.innerHTML = '<div class="alert alert-info mb-0">No students found</div>';
+            resultsDiv.className = 'search-suggestions';
+            resultsDiv.innerHTML = `
+                <div class="no-results">
+                    <i class="bi bi-search"></i>
+                    <div>No students found</div>
+                </div>
+            `;
             return;
         }
 
+        resultsDiv.className = 'search-suggestions';
         resultsDiv.innerHTML = matches.map(student => `
-            <a href="#" class="list-group-item list-group-item-action" onclick="selectStudentForCert('${student.rollNo}'); return false;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>${escapeHtml(student.name)}</strong>
-                        <br>
-                        <small class="text-muted">${escapeHtml(student.rollNo)} - ${escapeHtml(student.department)}</small>
-                    </div>
-                    <i class="bi bi-chevron-right"></i>
+            <div class="search-suggestion-item" onclick="selectStudentForCert('${student.studentId}')">
+                <div class="suggestion-icon">
+                    <i class="bi bi-person-fill"></i>
                 </div>
-            </a>
+                <div class="suggestion-content">
+                    <div class="suggestion-name">${escapeHtml(student.name)}</div>
+                    <div class="suggestion-meta">${escapeHtml(student.studentId.substring(0, 10))} · ${escapeHtml(student.department)}</div>
+                </div>
+            </div>
         `).join('');
     };
 
     /**
      * Select student for ID card
      */
-    window.selectStudentForId = function(rollNo) {
-        selectedStudent = sampleStudents.find(s => s.rollNo === rollNo);
+    window.selectStudentForId = function(studentId) {
+        selectedStudent = allStudents.find(s => s.studentId === studentId);
         if (selectedStudent) {
-            document.getElementById('idStudentSearch').value = `${selectedStudent.name} (${selectedStudent.rollNo})`;
-            document.getElementById('idStudentResults').innerHTML = `
-                <div class="alert alert-success mb-0">
-                    <i class="bi bi-check-circle"></i> Selected: ${escapeHtml(selectedStudent.name)}
-                </div>
-            `;
+            const searchInput = document.getElementById('idStudentSearch');
+            const resultsDiv = document.getElementById('idStudentResults');
+            
+            searchInput.value = `${selectedStudent.name}`;
+            resultsDiv.innerHTML = '';
+            resultsDiv.classList.remove('search-suggestions');
+            
+            // Auto-preview
+            previewIdCard();
         }
     };
 
     /**
      * Select student for certificate
      */
-    window.selectStudentForCert = function(rollNo) {
-        selectedStudent = sampleStudents.find(s => s.rollNo === rollNo);
+    window.selectStudentForCert = function(studentId) {
+        selectedStudent = allStudents.find(s => s.studentId === studentId);
         if (selectedStudent) {
-            document.getElementById('certStudentSearch').value = `${selectedStudent.name} (${selectedStudent.rollNo})`;
-            document.getElementById('certStudentResults').innerHTML = `
-                <div class="alert alert-success mb-0">
-                    <i class="bi bi-check-circle"></i> Selected: ${escapeHtml(selectedStudent.name)}
-                </div>
-            `;
+            const searchInput = document.getElementById('certStudentSearch');
+            const resultsDiv = document.getElementById('certStudentResults');
+            
+            searchInput.value = `${selectedStudent.name}`;
+            resultsDiv.innerHTML = '';
+            resultsDiv.classList.remove('search-suggestions');
         }
     };
 
     /**
      * Preview ID card
      */
-    window.previewCertificate = function() {
-        if (!selectedStudent && document.getElementById('certificateSelectionType').value === 'single') {
-            toast('Please select a student first', { icon: '⚠️' });
-            return;
-        }
-
-        const student = selectedStudent || sampleStudents[0]; // Use first student for batch preview
-        const includeBarcode = document.getElementById('includeBarcode').checked;
-        const includePhoto = document.getElementById('includePhoto').checked;
-
+    window.previewIdCard = function() {
+        const selectionType = document.getElementById('idSelectionType').value;
         const previewDiv = document.getElementById('idCardPreview');
-        previewDiv.innerHTML = generateIdCardHTML(student, includeBarcode, includePhoto);
+        const downloadBtn = document.getElementById('downloadPreviewBtn');
+        
+        if (selectionType === 'single') {
+            if (!selectedStudent) {
+                if (downloadBtn) downloadBtn.disabled = true;
+                return;
+            }
+            previewDiv.innerHTML = generateIdCardHTML(selectedStudent, true);
+            // Reset container class
+            const container = previewDiv.querySelector('.id-card-container');
+            if (container) container.classList.remove('batch-preview');
+            if (downloadBtn) downloadBtn.disabled = false;
+        } else if (selectionType === 'batch') {
+            const batchId = document.getElementById('idBatchSelect').value;
+            if (!batchId) {
+                if (downloadBtn) downloadBtn.disabled = true;
+                return;
+            }
+
+            const batchStudents = allStudents.filter(s => s.batch === batchId);
+            if (batchStudents.length === 0) {
+                previewDiv.innerHTML = '<div class="alert alert-info">No students in this batch</div>';
+                if (downloadBtn) downloadBtn.disabled = true;
+                return;
+            }
+
+            // Generate HTML for all students
+            let html = '<div class="id-card-container batch-preview">';
+            batchStudents.forEach(student => {
+                // We extract the inner HTML of the card to avoid nested containers
+                const cardHTML = generateIdCardHTML(student, true);
+                // Extract just the .id-card part
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = cardHTML;
+                const cardElement = tempDiv.querySelector('.id-card');
+                if (cardElement) {
+                    // Add data attribute for identification
+                    cardElement.setAttribute('data-student-id', student.studentId);
+                    html += cardElement.outerHTML;
+                }
+            });
+            html += '</div>';
+            previewDiv.innerHTML = html;
+            if (downloadBtn) downloadBtn.disabled = false;
+        }
+    };
+
+    /**
+     * Download Current Preview
+     */
+    window.downloadCurrentPreview = function() {
+        const selectionType = document.getElementById('idSelectionType').value;
+        
+        if (selectionType === 'single') {
+            if (!selectedStudent) {
+                toast('Please select a student first', { icon: '⚠️' });
+                return;
+            }
+            downloadIdCards([selectedStudent]);
+        } else if (selectionType === 'batch') {
+            const batchId = document.getElementById('idBatchSelect').value;
+            if (!batchId) {
+                toast('Please select a batch first', { icon: '⚠️' });
+                return;
+            }
+            const batchStudents = allStudents.filter(s => s.batch === batchId);
+            if (batchStudents.length === 0) {
+                toast('No students in this batch', { icon: '⚠️' });
+                return;
+            }
+            downloadBatchIdCards(batchStudents);
+        }
     };
 
     /**
      * Generate ID card HTML
      */
-    function generateIdCardHTML(student, includeBarcode, includePhoto) {
+    function generateIdCardHTML(student, includePhoto) {
         const validUntil = new Date();
         validUntil.setFullYear(validUntil.getFullYear() + 1);
         
+        const role = "STUDENT"; // Or derive from department e.g. "ENGINEER"
+
+        // Secure QR Code using backend Servlet (requires ZXing library)
+        // Use global contextPath defined in JSP, fallback to empty string if undefined
+        const ctx = (typeof contextPath !== 'undefined') ? contextPath : '';
+        
+        // Verification URL: (site-domain-url)/eduhub/verify-id/(id-code)
+        const verifyUrl = `${window.location.origin}${ctx}/verify-id/${student.studentId}`;
+        
+        // QR Code Generation - Check if servlet exists, otherwise use fallback API
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(verifyUrl)}`;
+        
+        // Get Institute Name and generate Google-style colored text
+        const instName = (typeof instituteName !== 'undefined' && instituteName) ? instituteName : 'EduHub';
+        const colors = ['g-blue', 'g-red', 'g-yellow', 'g-green'];
+        let logoHtml = '';
+        let colorIndex = 0;
+        for (let i = 0; i < instName.length; i++) {
+            const char = instName[i];
+            if (char === ' ') {
+                logoHtml += '&nbsp;';
+                continue;
+            }
+            logoHtml += `<span class="${colors[colorIndex]}">${char}</span>`;
+            colorIndex = (colorIndex + 1) % colors.length;
+        }
+
         return `
             <div class="id-card-container">
-                <!-- Front Side -->
-                <div class="id-card id-card-front">
-                    <div class="id-card-header">
-                        <div class="institution-logo">
-                            <i class="bi bi-mortarboard-fill"></i>
-                        </div>
-                        <div class="institution-info">
-                            <h4>EduHub Institute</h4>
-                            <p>Student Identity Card</p>
-                        </div>
-                    </div>
-                    
-                    <div class="id-card-body">
-                        ${includePhoto ? `
-                        <div class="student-photo-section">
-                            <div class="student-photo">
-                                <div class="photo-placeholder">
-                                    <i class="bi bi-person-circle"></i>
-                                </div>
-                            </div>
-                            ${includeBarcode ? `
-                            <div class="barcode">
-                                <div class="barcode-placeholder">*${escapeHtml(student.rollNo)}*</div>
-                                <small>${escapeHtml(student.rollNo)}</small>
-                            </div>
-                            ` : ''}
-                        </div>
-                        ` : ''}
-                        
-                        <div class="student-info">
-                            <h5>${escapeHtml(student.name)}</h5>
-                            <div class="info-row">
-                                <span class="label">Roll Number</span>
-                                <span class="value">${escapeHtml(student.rollNo)}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Department</span>
-                                <span class="value">${escapeHtml(student.department)}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Batch</span>
-                                <span class="value">${student.batch}-${parseInt(student.batch) + 1}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Blood Group</span>
-                                <span class="value">${escapeHtml(student.bloodGroup)}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Valid Until</span>
-                                <span class="value">${new Date(validUntil).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="id-card" id="idCardElement" data-student-id="${student.studentId}">
+                    <!-- Decorative Strip -->
+                    <div class="id-card-strip"></div>
 
-                <!-- Back Side -->
-                <div class="id-card id-card-back">
-                    <div class="id-card-header">
-                        <div class="institution-logo">
-                            <i class="bi bi-info-circle-fill"></i>
-                        </div>
-                        <div class="institution-info">
-                            <h4>Contact Information</h4>
-                            <p>Important Details</p>
-                        </div>
-                    </div>
-                    
-                    <div class="back-info">
-                        <div class="info-row">
-                            <span class="label">Email Address</span>
-                            <span class="value">${escapeHtml(student.email)}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Phone Number</span>
-                            <span class="value">${escapeHtml(student.phone)}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Date of Birth</span>
-                            <span class="value">${new Date(student.dob).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Address</span>
-                            <span class="value">${escapeHtml(student.address)}</span>
-                        </div>
+                    <!-- Google Style Logo -->
+                    <div class="google-logo">
+                        ${logoHtml}
                     </div>
 
-                    <div class="emergency-contact">
-                        <h6>Emergency Contact</h6>
-                        <p>EduHub Administration</p>
-                        <p>Phone: +1-800-EDUHUB</p>
-                        <p>Email: help@eduhub.com</p>
+                    <!-- Photo -->
+                    <div class="student-photo-container">
+                        ${includePhoto ? (student.profilePhotoUrl ? `
+                        <div class="student-photo-bg" style="background-image: url('${student.profilePhotoUrl}');"></div>
+                        <!-- Hidden img for preloading and error handling -->
+                        <img src="${student.profilePhotoUrl}" style="display:none;" crossorigin="anonymous" 
+                            onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><i class=\'bi bi-person-fill\'></i></div>'">
+                        ` : `
+                        <div class="photo-placeholder">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        `) : ''}
                     </div>
 
-                    <div class="signature-section">
-                        <div class="signature-line">
-                            <div class="signature">Authorized Signatory</div>
-                            <small>Director's Signature</small>
+                    <!-- Name & Role -->
+                    <div class="student-details-main">
+                        <h2 class="student-name-large">${student.name}</h2>
+                        <p class="student-role-large">${role}</p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="id-card-footer">
+                        <div class="qr-code-section">
+                            <img src="${qrCodeUrl}" class="qr-code-img" alt="QR Code" crossorigin="anonymous">
                         </div>
                     </div>
                 </div>
@@ -342,20 +452,9 @@
                 break;
             case 'batch':
                 const batch = document.getElementById('idBatchSelect').value;
-                const semester = document.getElementById('idSemesterSelect').value;
-                studentsToGenerate = sampleStudents.filter(s => {
-                    return (batch === '' || s.batch === batch) && 
-                           (semester === '' || s.semester === parseInt(semester));
+                studentsToGenerate = allStudents.filter(s => {
+                    return (batch === '' || s.batch === batch);
                 });
-                count = studentsToGenerate.length;
-                break;
-            case 'department':
-                const dept = document.getElementById('idDepartmentSelect').value;
-                studentsToGenerate = sampleStudents.filter(s => s.department === dept);
-                count = studentsToGenerate.length;
-                break;
-            case 'all':
-                studentsToGenerate = sampleStudents;
                 count = studentsToGenerate.length;
                 break;
         }
@@ -368,8 +467,8 @@
         // Show loading toast
         const loadingToastId = toast.loading(`Generating ${count} ID card${count > 1 ? 's' : ''}...`);
 
-        // Simulate generation
-        setTimeout(() => {
+        // Direct generation without delay
+        try {
             // Add to history
             const historyEntry = {
                 date: new Date().toISOString(),
@@ -387,26 +486,174 @@
 
             // Show success and download
             toast.success(`${count} ID card${count > 1 ? 's' : ''} generated successfully!`);
-            downloadIdCards(studentsToGenerate);
-        }, 1500);
+            
+            // Ensure preview exists for download
+            // For batch, we need to make sure the preview is showing the batch
+            if (selectionType === 'batch') {
+                previewIdCard();
+            } else if (!document.querySelector('.id-card')) {
+                previewIdCard();
+            }
+
+            // Small delay to ensure DOM is updated if preview was just called
+            setTimeout(() => {
+                downloadIdCards(studentsToGenerate);
+            }, 500); // Increased delay for batch rendering
+
+        } catch (error) {
+            console.error(error);
+            toast.error('Error generating ID cards');
+        }
     };
 
     /**
-     * Download ID cards (simulate PDF download)
+     * Download ID cards (using html2canvas)
      */
     function downloadIdCards(students) {
-        const fileName = students.length === 1 
-            ? `ID_Card_${students[0].rollNo}.pdf`
-            : `ID_Cards_Batch_${new Date().toISOString().split('T')[0]}.pdf`;
+        console.log('Starting downloadIdCards for', students.length, 'students');
+        const isBatch = students.length > 1;
         
-        toast('Downloading: ' + fileName, { icon: 'ℹ️' });
-        // In real implementation, this would generate and download actual PDF
+        if (isBatch) {
+            console.log('Delegating to downloadBatchIdCards');
+            downloadBatchIdCards(students);
+            return;
+        }
+
+        // Single Card Download
+        const element = document.querySelector('.id-card');
+        console.log('Found ID card element:', element);
+        
+        if (!element) {
+            console.warn('ID card element not found in DOM');
+            toast('Please preview the ID card first', { icon: '⚠️' });
+            return;
+        }
+
+        toast('Downloading HD Image...', { icon: '⬇️' });
+
+        // Wait for images to load (same logic as batch)
+        const images = Array.from(element.querySelectorAll('img'));
+        const imagePromises = images.map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        });
+
+        Promise.all(imagePromises).then(() => {
+            // Small delay to ensure rendering
+            return new Promise(resolve => setTimeout(resolve, 100));
+        }).then(() => {
+            console.log('Calling html2canvas...');
+            return html2canvas(element, {
+                scale: 4,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                logging: true
+            });
+        }).then(canvas => {
+            console.log('html2canvas success, creating download link');
+            const link = document.createElement('a');
+            link.download = `ID_Card_${students[0].studentId}.png`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            toast.success('Download started!');
+        }).catch(err => {
+            console.error('Error generating ID card image:', err);
+            toast.error('Failed to generate image. Please try again.');
+        });
+    }
+
+    /**
+     * Download Batch ID Cards as ZIP
+     */
+    function downloadBatchIdCards(students) {
+        console.log('Starting downloadBatchIdCards');
+        const elements = document.querySelectorAll('.id-card');
+        console.log('Found', elements.length, 'ID card elements');
+
+        if (elements.length === 0) {
+            console.warn('No ID card elements found for batch');
+            toast('No ID cards found to download', { icon: '⚠️' });
+            return;
+        }
+
+        toast('Generating ZIP file...', { icon: '⏳' });
+        const zip = new JSZip();
+        const folder = zip.folder("ID_Cards");
+        let processedCount = 0;
+
+        // Helper to process each card
+        const processCard = (element, index) => {
+            console.log('Processing card', index);
+
+            // 1. Wait for images to load
+            const images = Array.from(element.querySelectorAll('img'));
+            const imagePromises = images.map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve; // Proceed even if image fails
+                });
+            });
+
+            return Promise.all(imagePromises).then(() => {
+                // 2. Small delay to ensure rendering is complete
+                return new Promise(resolve => setTimeout(resolve, 100));
+            }).then(() => {
+                // 3. Capture
+                return html2canvas(element, {
+                    scale: 4,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+            }).then(canvas => {
+                // 4. Convert to blob and add to ZIP
+                return new Promise((resolve) => {
+                    canvas.toBlob(blob => {
+                        const studentId = element.getAttribute('data-student-id') || `student_${index}`;
+                        console.log('Card processed:', studentId);
+                        folder.file(`ID_Card_${studentId}.png`, blob);
+                        processedCount++;
+                        resolve();
+                    });
+                });
+            });
+        };
+
+        // Process all cards sequentially to avoid browser freeze
+        const processAll = async () => {
+            for (let i = 0; i < elements.length; i++) {
+                await processCard(elements[i], i);
+                // Optional: Update toast with progress
+            }
+            
+            console.log('All cards processed, generating zip');
+            // Generate ZIP
+            zip.generateAsync({type:"blob"}).then(function(content) {
+                console.log('Zip generated, saving...');
+                saveAs(content, "ID_Cards_Batch.zip");
+                toast.success('Batch download started!');
+            });
+        };
+
+        processAll().catch(err => {
+            console.error('Error generating batch zip:', err);
+            toast.error('Failed to generate batch zip.');
+        });
     }
 
     /**
      * Preview certificate
      */
-        
+    window.previewCertificate = function() {
         const selectionType = document.getElementById('certificateSelectionType').value;
         
         if (selectionType === 'single' && !selectedStudent) {
@@ -414,7 +661,7 @@
             return;
         }
 
-        const student = selectedStudent || sampleStudents[0];
+        const student = selectedStudent || allStudents[0];
         const certType = document.getElementById('certificateType').value;
         const courseName = document.getElementById('certCourseName').value;
         const issueDate = document.getElementById('certIssueDate').value;
@@ -496,7 +743,7 @@
 
                             <!-- Certificate ID -->
                             <div class="certificate-id">
-                                <small>Certificate ID: CERT-${student.rollNo}-${Date.now().toString().slice(-6)}</small>
+                                <small>Certificate ID: CERT-${student.studentId}-${Date.now().toString().slice(-6)}</small>
                             </div>
                         </div>
                     </div>
@@ -557,7 +804,7 @@
         if (selectionType === 'multiple') {
             count = 5; // Simulated
         } else if (selectionType === 'batch') {
-            count = sampleStudents.length;
+            count = allStudents.length;
         }
 
         // Show loading toast
@@ -593,7 +840,7 @@
     function downloadCertificate(count) {
         const certType = document.getElementById('certificateType').value;
         const fileName = count === 1 
-            ? `Certificate_${selectedStudent.rollNo}.pdf`
+            ? `Certificate_${selectedStudent.studentId}.pdf`
             : `Certificates_${certType}_${new Date().toISOString().split('T')[0]}.pdf`;
         
         toast('Downloading: ' + fileName, { icon: 'ℹ️' });

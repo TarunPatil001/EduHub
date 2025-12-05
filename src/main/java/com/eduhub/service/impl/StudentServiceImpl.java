@@ -80,13 +80,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentsByFilters(String instituteId, String courseId, String branchId, String status, String search, int page, int pageSize) {
-        return studentDAO.getStudentsByFilters(instituteId, courseId, branchId, status, search, page, pageSize);
+    public List<Student> getStudentsByFilters(String instituteId, String courseId, String branchId, String batchId, String status, String search, int page, int pageSize) {
+        return studentDAO.getStudentsByFilters(instituteId, courseId, branchId, batchId, status, search, page, pageSize);
     }
 
     @Override
-    public int getStudentCountByFilters(String instituteId, String courseId, String branchId, String status, String search) {
-        return studentDAO.getStudentCountByFilters(instituteId, courseId, branchId, status, search);
+    public int getStudentCountByFilters(String instituteId, String courseId, String branchId, String batchId, String status, String search) {
+        return studentDAO.getStudentCountByFilters(instituteId, courseId, branchId, batchId, status, search);
     }
 
     @Override

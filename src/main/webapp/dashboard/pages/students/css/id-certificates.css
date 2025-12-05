@@ -3,103 +3,417 @@
  * Google-style clean and modern design
  */
 
+/* Modern Card Styling (Matching Add Staff Page) */
+.card-custom {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    padding: 2rem;
+    transition: box-shadow 0.2s ease;
+    overflow: visible;
+}
+
+.card-custom:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+.card-custom h5 {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Add border to the flex container instead of h5 */
+.card-custom .d-flex.justify-content-between.align-items-center {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Card Header Icon Styling (Matching Add Staff Page) */
+.card-custom h5 i {
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--primary-color);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+[data-theme="dark"] .card-custom h5 i {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--primary-color);
+}
+
 /* ========================================
-   ID Card Styles - Google Inspired Design
+   Google-Style Search Suggestions
+   ======================================== */
+
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 9999;
+}
+
+[data-theme="dark"] .search-suggestions {
+    background: #2d2d2d;
+    border-color: #5f6368;
+}
+
+.search-suggestion-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-suggestion-item:hover {
+    background-color: #f1f3f4;
+}
+
+.search-suggestion-item .suggestion-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e8f0fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4285f4;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.search-suggestion-item .suggestion-content {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.search-suggestion-item .suggestion-name {
+    font-weight: 400;
+    color: #202124;
+    font-size: 0.875rem;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-suggestion-item .suggestion-meta {
+    font-size: 0.75rem;
+    color: #5f6368;
+    margin: 2px 0 0 0;
+}
+
+.search-suggestions .no-results {
+    padding: 24px;
+    text-align: center;
+    color: #5f6368;
+    font-size: 0.875rem;
+}
+
+.search-suggestions .no-results i {
+    font-size: 2rem;
+    opacity: 0.3;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    z-index: 1000;
+}
+
+.search-input-wrapper input:focus {
+    border-color: #4285f4;
+    outline: none;
+    box-shadow: none;
+    position: relative;
+    z-index: 1001;
+}
+
+[data-theme="dark"] .search-suggestion-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .search-suggestion-item .suggestion-icon {
+    background: rgba(66, 133, 244, 0.2);
+    color: #8ab4f8;
+}
+
+[data-theme="dark"] .search-suggestion-item .suggestion-name {
+    color: #e8eaed;
+}
+
+[data-theme="dark"] .search-suggestion-item .suggestion-meta {
+    color: #9aa0a6;
+}
+
+[data-theme="dark"] .search-suggestions {
+    border-color: #8ab4f8;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* ========================================
+   ID Card Styles - Google Material Design
    ======================================== */
 
 .id-card-container {
-    max-width: 420px;
-    margin: 30px auto;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    background: transparent;
+}
+
+.id-card-container.batch-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    justify-items: center;
+    max-height: 800px;
+    overflow-y: auto;
     padding: 10px;
 }
 
 .id-card {
-    width: 100%;
-    max-width: 400px;
-    background: #ffffff;
+    width: 320px;
+    height: 500px;
+    background-color: #ffffff !important;
+    /* Dotted Mesh Pattern - Using SVG Data URI for reliable html2canvas rendering */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='2' cy='2' r='2' fill='%23e8eaed'/%3E%3C/svg%3E") !important;
+    background-size: 20px 20px !important;
+    background-repeat: repeat !important;
     border-radius: 16px;
-    padding: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.08);
-    color: #202124;
     position: relative;
     overflow: hidden;
-    margin: 0 auto 30px;
-    border: 1px solid #e8eaed;
-}
-
-/* ID Card Header - Clean Minimal Design */
-.id-card-header {
-    background: #ffffff;
-    padding: 20px 24px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid #e8eaed;
-}
-
-.institution-logo {
-    font-size: 1.8rem;
-    color: #1967d2;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e8f0fe;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.institution-info h4 {
+    box-shadow: 
+        0 1px 3px rgba(0,0,0,0.12), 
+        0 1px 2px rgba(0,0,0,0.24);
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
     margin: 0;
-    font-size: 1rem;
+    color: #202124 !important;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    opacity: 1 !important;
+    z-index: 1;
+}
+
+/* .id-card:hover {
+    box-shadow: 
+        0 14px 28px rgba(0,0,0,0.25), 
+        0 10px 10px rgba(0,0,0,0.22);
+} */
+
+/* Google Color Strip */
+.id-card-strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, 
+        #4285F4 0%, #4285F4 25%, 
+        #DB4437 25%, #DB4437 50%, 
+        #F4B400 50%, #F4B400 75%, 
+        #0F9D58 75%, #0F9D58 100%);
+    z-index: 1;
+}
+
+/* Google Style Logo */
+.google-logo {
+    position: absolute;
+    top: 25px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
     font-weight: 500;
-    color: #202124;
-    line-height: 1.4;
-    letter-spacing: 0.2px;
+    letter-spacing: -0.5px;
+    z-index: 2;
 }
 
-.institution-info p {
-    margin: 2px 0 0 0;
-    font-size: 0.75rem;
-    color: #5f6368;
-    font-weight: 400;
-}
-
-/* ID Card Body - Grid Layout */
-.id-card-body {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 20px;
-    padding: 24px;
-    position: relative;
-}
+.g-blue { color: #4285F4 !important; }
+.g-red { color: #DB4437 !important; }
+.g-yellow { color: #F4B400 !important; }
+.g-green { color: #0F9D58 !important; }
 
 /* Photo Section */
-.student-photo-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+.student-photo-container {
+    position: absolute;
+    top: 85px;
+    left: 90px; /* (320px - 140px) / 2 = 90px. Fixed centering for html2canvas */
+    width: 140px;
+    height: 140px;
+    z-index: 2;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.student-photo {
-    position: relative;
+/* Use background-image for robust object-fit: cover support in html2canvas */
+.student-photo-bg {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 3;
 }
 
 .photo-placeholder {
-    width: 96px;
-    height: 96px;
-    background: #f1f3f4;
-    border: 2px solid #e8eaed;
-    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 132px;
+    height: 132px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
-    color: #5f6368;
-    transition: all 0.2s ease;
+    font-size: 4rem;
+    color: #dadce0;
+    background: #f1f3f4;
+    border-radius: 50%;
+    z-index: 3;
 }
+
+/* Student Info Section */
+.student-details-main {
+    position: absolute;
+    top: 250px;
+    width: 100%;
+    text-align: center;
+    z-index: 2;
+    padding: 0 24px;
+}
+
+.student-name-large {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #202124 !important;
+    margin: 0;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    letter-spacing: 0.2px;
+}
+
+.student-role-large {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #5f6368 !important;
+    background: #f1f3f4 !important;
+    padding: 6px 16px;
+    border-radius: 16px;
+    display: inline-block;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Bottom Section */
+.id-card-footer {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 11;
+}
+
+.qr-code-section {
+    width: 120px;
+    height: 120px;
+    background: transparent;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.qr-code-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 1 !important;
+    mix-blend-mode: normal !important;
+}
+
+.card-details-text {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #aaa;
+    line-height: 1.8;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.detail-label {
+    color: #a0a0a0;
+    font-weight: 600;
+    min-width: 40px;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.detail-value {
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.id-value {
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    font-family: 'Consolas', monospace;
+    letter-spacing: -0.5px;
+    color: #e0e0e0;
+}
+
+
+/* Back Side Specific Styles (Hidden for this design request but kept for compatibility) */
+.id-card-back {
+    display: none; /* Hiding back side for now as user focused on front design */
+}
+
 
 /* Student Info Section */
 .student-info {
@@ -139,33 +453,9 @@
     flex: 1;
 }
 
-/* Barcode - Below Photo */
-.student-photo-section .barcode {
-    text-align: center;
-    width: 100%;
-    margin-top: 4px;
-}
 
-.barcode-placeholder {
-    background: #f8f9fa;
-    color: #202124;
-    padding: 4px 8px;
-    border: 1px solid #e8eaed;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
-    font-weight: 600;
-    font-size: 0.65rem;
-    letter-spacing: 1px;
-    display: inline-block;
-}
 
-.barcode small {
-    display: block;
-    margin-top: 3px;
-    font-size: 0.65rem;
-    color: #5f6368;
-    font-weight: 500;
-}
+
 
 /* Back Side Specific Styles */
 .id-card-back {
@@ -686,13 +976,13 @@
 
 /* Hover effects - Subtle Google style */
 .id-card {
-    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
-.id-card:hover {
+/* .id-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 12px 32px rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
-}
+} */
 
 .photo-placeholder:hover {
     border-color: #1967d2;
@@ -707,12 +997,15 @@
    Dark Mode Support - Google Style
    ======================================== */
 
+/* ID Card should remain white in dark mode to represent physical card */
+/* 
 [data-theme="dark"] .id-card {
     background: #202124;
     border-color: #3c4043;
     color: #e8eaed;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
 }
+*/
 
 [data-theme="dark"] .id-card-header {
     background: #202124;
@@ -750,11 +1043,7 @@
     color: #e8eaed;
 }
 
-[data-theme="dark"] .barcode-placeholder {
-    background: #292a2d;
-    color: #e8eaed;
-    border-color: #3c4043;
-}
+
 
 [data-theme="dark"] .id-card-back {
     background: #202124;
@@ -1072,10 +1361,24 @@
    Responsive Design
    ======================================== */
 
-@media (max-width: 768px) {
+/* Scale down the ID card on small screens instead of reflowing content */
+@media (max-width: 450px) {
     .id-card {
-        font-size: 0.9rem;
+        transform: scale(0.85);
+        transform-origin: top center;
+        margin-bottom: -75px; /* Compensate for vertical space */
     }
+}
+
+@media (max-width: 360px) {
+    .id-card {
+        transform: scale(0.75);
+        margin-bottom: -125px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Removed .id-card font-size change to maintain fixed layout */
 
     .institution-info h4 {
         font-size: 1.2rem;
@@ -1177,10 +1480,10 @@
 }
 
 /* Hover effects */
-.id-card:hover {
+/* .id-card:hover {
     transform: translateY(-5px);
     transition: transform 0.3s ease;
-}
+} */
 
 .certificate:hover .student-name {
     color: #667eea;
