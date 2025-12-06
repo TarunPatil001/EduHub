@@ -29,3 +29,16 @@ prod.db.sslMode=${DB_SSL_MODE}
 cloudinary.cloud_name=${CLOUDINARY_CLOUD_NAME}
 cloudinary.api_key=${CLOUDINARY_API_KEY}
 cloudinary.api_secret=${CLOUDINARY_API_SECRET}
+
+# QR Code Security Configuration
+# Secret key for signing QR code tokens (REQUIRED in production - minimum 32 characters)
+# Generate a secure random key: openssl rand -base64 32
+qr.secret_key=${QR_SECRET_KEY:EduHub-QR-Secret-Key-Change-In-Production-2024}
+
+# Base URL for QR code verification links
+# Local: http://localhost:8080/eduhub
+# Production: https://your-app-name.onrender.com/eduhub
+app.base_url=${APP_BASE_URL:http://localhost:8080/eduhub}
+
+# QR Code token validity period in days (default: 365 days / 1 year)
+qr.token_validity_days=${QR_TOKEN_VALIDITY_DAYS:365}

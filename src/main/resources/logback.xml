@@ -37,8 +37,27 @@
         </encoder>
     </appender>
     
+    <!-- Security/Verification File Appender - QR code verification audit trail -->
+    <appender name="SECURITY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${catalina.base:-./logs}/eduhub-security.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${catalina.base:-./logs}/eduhub-security.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Keep 90 days for compliance/audit -->
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
     <!-- Set logging level for your application -->
     <logger name="com.eduhub" level="DEBUG" />
+    
+    <!-- Security logger - routes to separate file -->
+    <logger name="com.eduhub.util.VerificationLogger" level="INFO" additivity="false">
+        <appender-ref ref="SECURITY_FILE" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
     
     <!-- Set logging level for external libraries -->
     <logger name="org.apache" level="INFO" />

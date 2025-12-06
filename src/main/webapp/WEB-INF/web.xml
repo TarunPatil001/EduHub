@@ -57,6 +57,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>GenerateQRTokenServlet</servlet-name>
+    <servlet-class>com.eduhub.controller.GenerateQRTokenServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GenerateQRTokenServlet</servlet-name>
+    <url-pattern>/api/generate-qr-token</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>VerifyIdServlet</servlet-name>
     <servlet-class>com.eduhub.controller.VerifyIdServlet</servlet-class>
   </servlet>

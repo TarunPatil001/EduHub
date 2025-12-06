@@ -217,11 +217,15 @@
             
             <div class="student-details pt-5">
                 <p class="text-muted mb-4">
-                    The student ID provided could not be verified in our system.
+                    <%= request.getAttribute("errorMessage") != null 
+                        ? request.getAttribute("errorMessage") 
+                        : "The student ID provided could not be verified in our system." %>
                 </p>
                 <div class="alert alert-warning">
                     <i class="bi bi-exclamation-triangle me-2"></i>
-                    ID not found or expired
+                    <%= request.getAttribute("errorMessage") != null 
+                        ? "Verification Failed" 
+                        : "ID not found or expired" %>
                 </div>
                 <a href="<%= request.getContextPath() %>/" class="btn btn-outline-secondary mt-3">Go to Home</a>
             </div>

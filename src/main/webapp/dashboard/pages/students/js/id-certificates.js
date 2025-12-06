@@ -278,7 +278,7 @@
     /**
      * Preview ID card
      */
-    window.previewIdCard = function() {
+    window.previewIdCard = async function() {
         const selectionType = document.getElementById('idSelectionType').value;
         const previewDiv = document.getElementById('idCardPreview');
         const downloadBtn = document.getElementById('downloadPreviewBtn');
@@ -288,7 +288,7 @@
                 if (downloadBtn) downloadBtn.disabled = true;
                 return;
             }
-            previewDiv.innerHTML = generateIdCardHTML(selectedStudent, true);
+            previewDiv.innerHTML = await generateIdCardHTML(selectedStudent, true);
             // Reset container class
             const container = previewDiv.querySelector('.id-card-container');
             if (container) container.classList.remove('batch-preview');
@@ -309,9 +309,9 @@
 
             // Generate HTML for all students
             let html = '<div class="id-card-container batch-preview">';
-            batchStudents.forEach(student => {
+            for (const student of batchStudents) {
                 // We extract the inner HTML of the card to avoid nested containers
-                const cardHTML = generateIdCardHTML(student, true);
+                const cardHTML = await generateIdCardHTML(student, true);
                 // Extract just the .id-card part
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = cardHTML;
@@ -321,7 +321,7 @@
                     cardElement.setAttribute('data-student-id', student.studentId);
                     html += cardElement.outerHTML;
                 }
-            });
+            }
             html += '</div>';
             previewDiv.innerHTML = html;
             if (downloadBtn) downloadBtn.disabled = false;
@@ -356,22 +356,34 @@
     };
 
     /**
-     * Generate ID card HTML
+     * Generate ID card HTML with secure QR code
      */
-    function generateIdCardHTML(student, includePhoto) {
+    async function generateIdCardHTML(student, includePhoto) {
         const validUntil = new Date();
         validUntil.setFullYear(validUntil.getFullYear() + 1);
         
         const role = "STUDENT"; // Or derive from department e.g. "ENGINEER"
 
-        // Secure QR Code using backend Servlet (requires ZXing library)
         // Use global contextPath defined in JSP, fallback to empty string if undefined
         const ctx = (typeof contextPath !== 'undefined') ? contextPath : '';
         
-        // Verification URL: (site-domain-url)/eduhub/verify-id/(id-code)
-        const verifyUrl = `${window.location.origin}${ctx}/verify-id/${student.studentId}`;
+        // Generate secure token for QR code
+        let verifyUrl;
+        try {
+            const response = await fetch(`${ctx}/api/generate-qr-token?studentId=${encodeURIComponent(student.studentId)}`);
+            if (response.ok) {
+                verifyUrl = await response.text();
+            } else {
+                // Fallback to plain ID if token generation fails
+                console.warn('Token generation failed, using plain ID');
+                verifyUrl = `${window.location.origin}${ctx}/verify-id/${student.studentId}`;
+            }
+        } catch (error) {
+            console.error('Error generating secure token:', error);
+            verifyUrl = `${window.location.origin}${ctx}/verify-id/${student.studentId}`;
+        }
         
-        // QR Code Generation - Check if servlet exists, otherwise use fallback API
+        // QR Code Generation using external API
         const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(verifyUrl)}`;
         
         // Get Institute Name and generate Google-style colored text

@@ -22,17 +22,17 @@ RUN ant compile
 # ============ Stage 2: Runtime Stage ============
 FROM tomcat:9.0-jdk17-temurin
 
-# Remove default webapps to ensure clean ROOT deploy
+# Remove default webapps to ensure clean deploy
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Create ROOT directory structure
-RUN mkdir -p /usr/local/tomcat/webapps/ROOT/WEB-INF/classes
+# Create eduhub directory structure
+RUN mkdir -p /usr/local/tomcat/webapps/eduhub/WEB-INF/classes
 
 # Copy webapp files (JSPs, static files, WEB-INF/web.xml, etc.)
-COPY src/main/webapp/ /usr/local/tomcat/webapps/ROOT/
+COPY src/main/webapp/ /usr/local/tomcat/webapps/eduhub/
 
 # Copy compiled classes and resources from build stage
-COPY --from=builder /app/build/classes/ /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/
+COPY --from=builder /app/build/classes/ /usr/local/tomcat/webapps/eduhub/WEB-INF/classes/
 
 # Expose the default Tomcat port
 EXPOSE 8080
