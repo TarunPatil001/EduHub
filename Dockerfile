@@ -28,8 +28,14 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Create eduhub directory structure
 RUN mkdir -p /usr/local/tomcat/webapps/eduhub/WEB-INF/classes
 
+# Create ROOT directory for redirect
+RUN mkdir -p /usr/local/tomcat/webapps/ROOT
+
 # Copy webapp files (JSPs, static files, WEB-INF/web.xml, etc.)
 COPY src/main/webapp/ /usr/local/tomcat/webapps/eduhub/
+
+# Copy redirect index.jsp to ROOT
+COPY src/main/resources/ROOT_index.jsp /usr/local/tomcat/webapps/ROOT/index.jsp
 
 # Remove conflicting servlet-api jar from deployment (Tomcat provides this)
 RUN rm -f /usr/local/tomcat/webapps/eduhub/WEB-INF/lib/javax.servlet-api-*.jar
