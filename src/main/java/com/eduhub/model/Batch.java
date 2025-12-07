@@ -27,6 +27,9 @@ public class Batch {
     // Transient fields (not in batches table)
     private String branchName;
     private String courseName;
+    private String courseModules;
+    private int courseDurationValue;
+    private String courseDurationUnit;
 
     // Getters and Setters
     public String getBatchId() { return batchId; }
@@ -88,4 +91,13 @@ public class Batch {
 
     public String getCourseName() { return courseName; }
     public void setCourseName(String courseName) { this.courseName = courseName; }
+
+    public String getCourseModules() { return courseModules; }
+    public void setCourseModules(String courseModules) { this.courseModules = courseModules; }
+
+    public int getCourseDurationValue() { return courseDurationValue; }
+    public void setCourseDurationValue(int courseDurationValue) { this.courseDurationValue = courseDurationValue; }
+
+    public String getCourseDurationUnit() { return courseDurationUnit; }
+    public void setCourseDurationUnit(String courseDurationUnit) { this.courseDurationUnit = courseDurationUnit; }
 }

@@ -181,7 +181,7 @@ public class BatchDAOImpl implements BatchDAO {
     @Override
     public List<Batch> getBatchesByFilters(String instituteId, String courseId, String branchId, String status, String searchQuery, int offset, int limit) {
         List<Batch> batches = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT b.*, br.branch_name, c.course_name FROM batches b ");
+        StringBuilder sql = new StringBuilder("SELECT b.*, br.branch_name, c.course_name, c.modules AS course_modules, c.duration_value AS course_duration_value, c.duration_unit AS course_duration_unit FROM batches b ");
         sql.append("LEFT JOIN branches br ON b.branch_id = br.branch_id ");
         sql.append("LEFT JOIN courses c ON b.course_id = c.course_id ");
         sql.append("WHERE b.institute_id = ?");
@@ -228,6 +228,9 @@ public class BatchDAOImpl implements BatchDAO {
                     // Map joined fields
                     batch.setBranchName(rs.getString("branch_name"));
                     batch.setCourseName(rs.getString("course_name"));
+                    batch.setCourseModules(rs.getString("course_modules"));
+                    batch.setCourseDurationValue(rs.getInt("course_duration_value"));
+                    batch.setCourseDurationUnit(rs.getString("course_duration_unit"));
                     batches.add(batch);
                 }
             }

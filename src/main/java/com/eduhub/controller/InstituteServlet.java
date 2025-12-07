@@ -28,6 +28,82 @@ public class InstituteServlet extends HttpServlet {
     }
     
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String pathInfo = request.getPathInfo();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        
+        PrintWriter out = response.getWriter();
+        
+        if (pathInfo == null || pathInfo.equals("/")) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.print("{\"status\":\"error\",\"message\":\"Invalid endpoint\"}");
+            return;
+        }
+        
+        if (pathInfo.equals("/details")) {
+            handleGetInstituteDetails(request, response, out);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            out.print("{\"status\":\"error\",\"message\":\"Endpoint not found\"}");
+        }
+    }
+    
+    private void handleGetInstituteDetails(HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            out.print("{\"status\":\"error\",\"message\":\"Unauthorized access\"}");
+            return;
+        }
+        
+        String instituteId = (String) session.getAttribute("instituteId");
+        if (instituteId == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.print("{\"status\":\"error\",\"message\":\"Institute ID not found in session\"}");
+            return;
+        }
+        
+        try {
+            Institute institute = instituteDAO.getInstituteById(instituteId);
+            if (institute != null) {
+                // Build JSON response with all institute details
+                StringBuilder json = new StringBuilder("{");
+                json.append("\"instituteId\":\"").append(escapeJson(institute.getInstituteId())).append("\",");
+                json.append("\"instituteName\":\"").append(escapeJson(institute.getInstituteName())).append("\",");
+                json.append("\"instituteType\":\"").append(escapeJson(institute.getInstituteType())).append("\",");
+                json.append("\"instituteEmail\":\"").append(escapeJson(institute.getInstituteEmail())).append("\",");
+                json.append("\"institutePhone\":\"").append(escapeJson(institute.getInstitutePhone())).append("\",");
+                json.append("\"address\":\"").append(escapeJson(institute.getAddress())).append("\",");
+                json.append("\"city\":\"").append(escapeJson(institute.getCity())).append("\",");
+                json.append("\"state\":\"").append(escapeJson(institute.getState())).append("\",");
+                json.append("\"zipCode\":\"").append(escapeJson(institute.getZipCode())).append("\",");
+                json.append("\"country\":\"").append(escapeJson(institute.getCountry())).append("\"");
+                json.append("}");
+                
+                out.print(json.toString());
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.print("{\"status\":\"error\",\"message\":\"Institute not found\"}");
+            }
+        } catch (SQLException e) {
+            logger.error("Database error fetching institute details", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.print("{\"status\":\"error\",\"message\":\"Database error\"}");
+        }
+    }
+    
+    // Helper method to escape JSON strings
+    private String escapeJson(String value) {
+        if (value == null) return "";
+        return value.replace("\\", "\\\\")
+                   .replace("\"", "\\\"")
+                   .replace("\n", "\\n")
+                   .replace("\r", "\\r")
+                   .replace("\t", "\\t");
+    }
+    
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pathInfo = request.getPathInfo();
         response.setContentType("application/json");

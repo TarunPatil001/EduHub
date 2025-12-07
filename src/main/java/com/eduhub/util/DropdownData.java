@@ -86,7 +86,7 @@ public class DropdownData {
             "2025-26", "2024-25", "2023-24", "2022-23");
 
     public static final List<String> INSTITUTE_TYPES = Arrays.asList(
-            "School", "College", "University", "Coaching Institute", "Vocational Training", "Training");
+            "Coaching Institute", "IT Training Institute");
 
     public static final List<String> COUNTRIES = Arrays.asList(
             "India", "USA", "UK", "Canada", "Australia", "Germany", "France", "Japan", "Singapore", "UAE");

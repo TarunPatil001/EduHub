@@ -24,6 +24,9 @@
                 <fileset dir="${web.dir}/WEB-INF/lib">
                     <include name="**/*.jar"/>
                 </fileset>
+                <!-- Include Tomcat Servlet API for compilation only (provided at runtime) -->
+                <!-- This assumes we are building in an environment where we can download it or it's available -->
+                <!-- For Docker build, we need to ensure this JAR is available for compilation -->
             </classpath>
         </javac>
         <!-- Copy resources (like db.properties) to classes directory -->

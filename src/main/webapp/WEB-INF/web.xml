@@ -66,12 +66,40 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>GenerateCertTokenServlet</servlet-name>
+    <servlet-class>com.eduhub.controller.GenerateCertTokenServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GenerateCertTokenServlet</servlet-name>
+    <url-pattern>/api/generate-cert-token</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>VerifyIdServlet</servlet-name>
     <servlet-class>com.eduhub.controller.VerifyIdServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>VerifyIdServlet</servlet-name>
+    <url-pattern>/verify/id/*</url-pattern>
+  </servlet-mapping>
+  <!-- Backwards compatibility for old QR codes -->
+  <servlet-mapping>
+    <servlet-name>VerifyIdServlet</servlet-name>
     <url-pattern>/verify-id/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>VerifyCertificateServlet</servlet-name>
+    <servlet-class>com.eduhub.controller.VerifyCertificateServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>VerifyCertificateServlet</servlet-name>
+    <url-pattern>/verify/certificate/*</url-pattern>
+  </servlet-mapping>
+  <!-- Backwards compatibility for old QR codes -->
+  <servlet-mapping>
+    <servlet-name>VerifyCertificateServlet</servlet-name>
+    <url-pattern>/verify-certificate/*</url-pattern>
   </servlet-mapping>
 
   <servlet>

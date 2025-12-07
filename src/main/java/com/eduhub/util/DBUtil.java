@@ -171,6 +171,9 @@ public class DBUtil {
 					logger.warn("Courses table not found. Creating...");
 					createCoursesTable(conn);
 					logger.info("Courses table created successfully");
+				} else {
+					// Run migrations for existing courses table
+					addModulesColumnToCourses(conn);
 				}
 
 				// Check if staff table exists
@@ -262,6 +265,46 @@ public class DBUtil {
 					createTransactionsTable(conn);
 					logger.info("Transactions table created successfully");
 				}
+
+				// Check if certificates table exists
+				boolean certificatesExists = tableExists(conn, "certificates");
+				logger.info("Certificates table exists: {}", certificatesExists);
+				
+				if (!certificatesExists) {
+					logger.warn("Certificates table not found. Creating...");
+					createCertificatesTable(conn);
+					logger.info("Certificates table created successfully");
+				}
+
+				// Check if id_cards table exists
+				boolean idCardsExists = tableExists(conn, "id_cards");
+				logger.info("ID Cards table exists: {}", idCardsExists);
+				
+				if (!idCardsExists) {
+					logger.warn("ID Cards table not found. Creating...");
+					createIdCardsTable(conn);
+					logger.info("ID Cards table created successfully");
+				}
+
+				// Check if certificate_access_log table exists
+				boolean certAccessLogExists = tableExists(conn, "certificate_access_log");
+				logger.info("Certificate access log table exists: {}", certAccessLogExists);
+				
+				if (!certAccessLogExists) {
+					logger.warn("Certificate access log table not found. Creating...");
+					createCertificateAccessLogTable(conn);
+					logger.info("Certificate access log table created successfully");
+				}
+
+				// Check if id_card_access_log table exists
+				boolean idCardAccessLogExists = tableExists(conn, "id_card_access_log");
+				logger.info("ID Card access log table exists: {}", idCardAccessLogExists);
+				
+				if (!idCardAccessLogExists) {
+					logger.warn("ID Card access log table not found. Creating...");
+					createIdCardAccessLogTable(conn);
+					logger.info("ID Card access log table created successfully");
+				}
 			} else {
 				logger.error("Skipping users and courses table creation because institutes table does not exist.");
 			}
@@ -310,6 +353,38 @@ public class DBUtil {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Check if a column exists in a table
+	 */
+	private static boolean columnExists(Connection conn, String tableName, String columnName) throws SQLException {
+		String databaseName = conn.getCatalog();
+		try (var rs = conn.getMetaData().getColumns(databaseName, null, tableName, columnName)) {
+			if (rs.next()) {
+				return true;
+			}
+		}
+		// Also try with lowercase names
+		try (var rs = conn.getMetaData().getColumns(databaseName, null, tableName.toLowerCase(), columnName.toLowerCase())) {
+			if (rs.next()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Add modules column to courses table if it doesn't exist (migration)
+	 */
+	private static void addModulesColumnToCourses(Connection conn) throws SQLException {
+		if (!columnExists(conn, "courses", "modules")) {
+			String sql = "ALTER TABLE courses ADD COLUMN modules TEXT AFTER description";
+			try (var stmt = conn.createStatement()) {
+				stmt.executeUpdate(sql);
+				logger.info("Added 'modules' column to courses table");
+			}
+		}
 	}
 	
 	/**
@@ -388,6 +463,7 @@ public class DBUtil {
 				"category VARCHAR(50), " +
 				"level VARCHAR(20), " +
 				"description TEXT, " +
+				"modules TEXT, " +
 				"duration_value INT, " +
 				"duration_unit VARCHAR(20), " +
 				"fee DECIMAL(10, 2), " +
@@ -711,6 +787,134 @@ public class DBUtil {
 		try (var stmt = conn.createStatement()) {
 			stmt.executeUpdate(sql);
 			logger.info("Transactions table created successfully");
+		}
+	}
+
+	/**
+	 * Create certificates table for storing generated certificates
+	 */
+	private static void createCertificatesTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create certificates table...");
+		// Note: course_name and student_name are NOT stored - fetched fresh from related tables
+		String sql = "CREATE TABLE certificates (" +
+				"certificate_id VARCHAR(50) PRIMARY KEY, " +
+				"student_id VARCHAR(36) NOT NULL, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"batch_id VARCHAR(36), " +
+				"course_id VARCHAR(36), " +
+				"certificate_type VARCHAR(50) DEFAULT 'completion', " +
+				"description TEXT, " +
+				"issue_date DATE NOT NULL, " +
+				"expiry_date DATE, " +
+				"verification_token VARCHAR(128) UNIQUE NOT NULL, " +
+				"verification_url VARCHAR(500), " +
+				"is_revoked BOOLEAN DEFAULT FALSE, " +
+				"revoke_reason VARCHAR(500), " +
+				"revoked_at TIMESTAMP NULL, " +
+				"signatory_name VARCHAR(255), " +
+				"signatory_title VARCHAR(255), " +
+				"generated_by VARCHAR(36), " +
+				"download_count INT DEFAULT 0, " +
+				"pdf_storage_path VARCHAR(500), " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"INDEX idx_cert_student (student_id), " +
+				"INDEX idx_cert_institute (institute_id), " +
+				"INDEX idx_cert_batch (batch_id), " +
+				"INDEX idx_cert_token (verification_token), " +
+				"INDEX idx_cert_issue_date (issue_date)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Certificates table created successfully");
+		}
+	}
+
+	/**
+	 * Create id_cards table for storing generated ID cards
+	 */
+	private static void createIdCardsTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create id_cards table...");
+		// Note: student_name, department, batch_name, profile_photo_url are NOT stored
+		// They are fetched fresh from related tables (students, batches, branches)
+		String sql = "CREATE TABLE id_cards (" +
+				"id_card_id VARCHAR(36) PRIMARY KEY, " +
+				"student_id VARCHAR(36) NOT NULL, " +
+				"institute_id VARCHAR(36) NOT NULL, " +
+				"issue_date DATE NOT NULL, " +
+				"valid_until DATE NOT NULL, " +
+				"is_active BOOLEAN DEFAULT TRUE, " +
+				"deactivated_at TIMESTAMP NULL, " +
+				"deactivation_reason VARCHAR(500), " +
+				"verification_token VARCHAR(128) UNIQUE NOT NULL, " +
+				"qr_code_data TEXT, " +
+				"generated_by VARCHAR(36), " +
+				"regeneration_count INT DEFAULT 0, " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE, " +
+				"FOREIGN KEY (institute_id) REFERENCES institutes(institute_id) ON DELETE CASCADE, " +
+				"INDEX idx_idcard_student (student_id), " +
+				"INDEX idx_idcard_institute (institute_id), " +
+				"INDEX idx_idcard_token (verification_token), " +
+				"INDEX idx_idcard_active (is_active), " +
+				"INDEX idx_idcard_valid_until (valid_until)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("ID Cards table created successfully");
+		}
+	}
+
+	/**
+	 * Create certificate_access_log table for tracking certificate access
+	 */
+	private static void createCertificateAccessLogTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create certificate_access_log table...");
+		String sql = "CREATE TABLE certificate_access_log (" +
+				"log_id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+				"certificate_id VARCHAR(50) NOT NULL, " +
+				"access_type VARCHAR(20) NOT NULL, " +
+				"accessed_by VARCHAR(36), " +
+				"ip_address VARCHAR(45), " +
+				"user_agent VARCHAR(500), " +
+				"accessed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"INDEX idx_access_cert (certificate_id), " +
+				"INDEX idx_access_type (access_type), " +
+				"INDEX idx_access_date (accessed_at)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Certificate access log table created successfully");
+		}
+	}
+
+	/**
+	 * Create id_card_access_log table for tracking ID card access
+	 */
+	private static void createIdCardAccessLogTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create id_card_access_log table...");
+		String sql = "CREATE TABLE id_card_access_log (" +
+				"log_id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+				"id_card_id VARCHAR(36) NOT NULL, " +
+				"access_type VARCHAR(20) NOT NULL, " +
+				"accessed_by VARCHAR(36), " +
+				"ip_address VARCHAR(45), " +
+				"user_agent VARCHAR(500), " +
+				"accessed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"INDEX idx_idcard_access_id (id_card_id), " +
+				"INDEX idx_idcard_access_type (access_type), " +
+				"INDEX idx_idcard_access_date (accessed_at)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("ID Card access log table created successfully");
 		}
 	}
 

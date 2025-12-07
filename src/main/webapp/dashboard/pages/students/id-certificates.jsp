@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard/pages/students/css/id-certificates.css">
     <!-- html2canvas for image generation -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- JSZip for batch downloading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -131,8 +133,9 @@
                                     <!-- Generate Button -->
                                     <div class="mt-4 d-grid gap-2">
                                         <button class="btn btn-primary" onclick="generateIdCard()">
-                                            <i class="bi bi-card-heading"></i> Generate ID Card
+                                            <i class="bi bi-card-heading"></i> Generate & Save ID Card
                                         </button>
+                                        <small class="text-muted text-center">ID Card will be saved to database</small>
                                     </div>
                                 </div>
                             </div>
@@ -156,35 +159,33 @@
 
                     <!-- Certificates Tab -->
                     <div class="tab-pane fade" id="certificates" role="tabpanel">
-                        <div class="row">
-                            <!-- Certificate Configuration -->
-                            <div class="col-lg-4">
-                                <div class="card-custom mb-4">
-                                    <h5 class="mb-3"><i class="bi bi-gear"></i> Certificate Configuration</h5>
+                        <div class="row" style="position: relative;">
+                            <!-- Selection Panel -->
+                            <div class="col-lg-4" style="position: relative; z-index: 100;">
+                                <div class="card-custom mb-4" style="overflow: visible;">
+                                    <h5 class="mb-3"><i class="bi bi-funnel"></i> Student Selection</h5>
                                     
-                                    <!-- Certificate Type -->
-                                    <div class="mb-3">
-                                        <label class="form-label">Certificate Type</label>
-                                        <select class="form-select" id="certificateType" onchange="handleCertificateType()">
-                                            <option value="completion">Course Completion</option>
-                                            <option value="achievement">Achievement</option>
-                                            <option value="participation">Participation</option>
-                                            <option value="excellence">Academic Excellence</option>
-                                            <option value="custom">Custom Certificate</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Student Selection -->
+                                    <!-- Selection Type -->
                                     <div class="mb-3">
                                         <label class="form-label">Selection Type</label>
                                         <select class="form-select" id="certSelectionType" onchange="handleCertSelectionType()">
                                             <option value="single">Single Student</option>
-                                            <option value="multiple">Multiple Students</option>
                                             <option value="batch">Batch/Class</option>
                                         </select>
                                     </div>
 
-                                    <!-- Student Search -->
+                                    <!-- Certificate Type -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Certificate Type</label>
+                                        <select class="form-select" id="certType">
+                                            <option value="completion">Certificate of Completion</option>
+                                            <option value="excellence">Certificate of Excellence</option>
+                                            <option value="participation">Certificate of Participation</option>
+                                            <option value="achievement">Certificate of Achievement</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Single Student Selection -->
                                     <div id="singleCertSelection">
                                         <div class="mb-3">
                                             <label class="form-label">Search Student</label>
@@ -197,62 +198,45 @@
                                         </div>
                                     </div>
 
-                                    <!-- Certificate Details -->
-                                    <div id="certificateDetails">
+                                    <!-- Batch Selection -->
+                                    <div id="batchCertSelection" style="display: none;">
                                         <div class="mb-3">
-                                            <label class="form-label">Course/Event Name</label>
-                                            <input type="text" class="form-control" id="certCourseName" 
-                                                   placeholder="e.g., Web Development Course">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Issue Date</label>
-                                            <input type="date" class="form-control" id="certIssueDate" 
-                                                   value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>">
-                                        </div>
-
-                                        <div class="mb-3" id="gradeSection" style="display: none;">
-                                            <label class="form-label">Grade/Score</label>
-                                            <input type="text" class="form-control" id="certGrade" 
-                                                   placeholder="e.g., A+ or 95%">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Additional Notes (Optional)</label>
-                                            <textarea class="form-control" id="certNotes" rows="2" 
-                                                      placeholder="Special achievements or remarks"></textarea>
-                                        </div>
-
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="includeSignature" checked>
-                                            <label class="form-check-label" for="includeSignature">Include Authorized Signature</label>
-                                        </div>
-
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" id="includeSeal" checked>
-                                            <label class="form-check-label" for="includeSeal">Include Institution Seal</label>
+                                            <label class="form-label">Select Batch</label>
+                                            <select class="form-select" id="certBatchSelect" onchange="previewBatchCertificates()">
+                                                <option value="">-- Select Batch --</option>
+                                            </select>
                                         </div>
                                     </div>
 
-                                    <!-- Generate Buttons -->
-                                    <div class="d-grid gap-2">
+                                    <!-- Generate Button -->
+                                    <div class="mt-4 d-grid gap-2">
                                         <button class="btn btn-primary" onclick="generateCertificate()">
-                                            <i class="bi bi-award"></i> Generate Certificate
+                                            <i class="bi bi-award"></i> Generate & Save Certificate
                                         </button>
-                                        <button class="btn btn-outline-secondary" onclick="previewCertificate()">
-                                            <i class="bi bi-eye"></i> Preview
-                                        </button>
+                                        <small class="text-muted text-center">Certificate will be saved to database</small>
+                                    </div>
+                                </div>
+
+                                <!-- Selected Student Info -->
+                                <div class="card-custom" id="certStudentInfoCard" style="display: none;">
+                                    <h5 class="mb-3"><i class="bi bi-person-badge"></i> Student Details</h5>
+                                    <div id="certStudentInfo">
+                                        <!-- Populated dynamically -->
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Certificate Preview -->
+                            <!-- Preview Panel -->
                             <div class="col-lg-8">
-                                <div class="card-custom">
-                                    <h5 class="mb-3"><i class="bi bi-eye"></i> Certificate Preview</h5>
-                                    <div id="certificatePreview" class="text-center p-4">
+                                <div class="d-flex justify-content-end mb-3">
+                                    <button class="btn btn-success" id="downloadCertPreviewBtn" onclick="downloadCurrentCertificate()" disabled>
+                                        <i class="bi bi-download"></i> Download
+                                    </button>
+                                </div>
+                                <div id="certificatePreview" class="d-flex justify-content-center align-items-center" style="min-height: 600px; overflow: auto;">
+                                    <div class="text-center text-muted">
                                         <i class="bi bi-award" style="font-size: 4rem; opacity: 0.2;"></i>
-                                        <p class="text-muted mt-3">Configure certificate details and click "Preview" to see the certificate</p>
+                                        <p class="mt-3">Select a student or batch to generate certificates</p>
                                     </div>
                                 </div>
                             </div>
@@ -261,35 +245,66 @@
 
                     <!-- History Tab -->
                     <div class="tab-pane fade" id="history" role="tabpanel">
-                        <div class="card-custom">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Generation History</h5>
-                                <button class="btn btn-sm btn-outline-danger" onclick="clearHistory()">
-                                    <i class="bi bi-trash"></i> Clear History
-                                </button>
+                        <div class="card shadow-sm history-table-card">
+                            <div class="card-header bg-white py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0 d-flex align-items-center gap-2">
+                                        <div class="header-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </div>
+                                        Generation History
+                                    </h5>
+                                    <div class="d-flex gap-2">
+                                        <button id="bulkDeleteHistoryBtn" class="btn btn-danger btn-sm" style="display: none;" onclick="bulkDeleteHistory()">
+                                            <i class="bi bi-trash"></i> Delete Selected (<span id="selectedHistoryCount">0</span>)
+                                        </button>
+                                        <button class="btn btn-primary btn-sm" onclick="loadHistoryFromDatabase()">
+                                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-custom">
-                                    <thead>
-                                        <tr>
-                                            <th>Date & Time</th>
-                                            <th>Document Type</th>
-                                            <th>Student(s)</th>
-                                            <th>Count</th>
-                                            <th>Generated By</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="historyTableBody">
-                                        <tr>
-                                            <td colspan="6" class="text-center py-4">
-                                                <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
-                                                <p class="text-muted mt-2 mb-0">No generation history yet</p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="card-body p-0">
+                                <!-- Empty State -->
+                                <div id="historyEmptyState" class="empty-state-container" style="display: none;">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">
+                                            <i class="bi bi-inbox"></i>
+                                        </div>
+                                        <h4 class="empty-state-title">No Generation History</h4>
+                                        <p class="empty-state-text">Start generating certificates or ID cards to see them here</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Table -->
+                                <div class="table-responsive" id="historyTableContainer">
+                                    <table class="table table-hover mb-0" id="historyTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 40px;">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" id="selectAllHistory" class="form-check-input">
+                                                    </div>
+                                                </th>
+                                                <th>Date & Time</th>
+                                                <th>Type</th>
+                                                <th>Student</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="historyTableBody">
+                                            <tr>
+                                                <td colspan="6" class="text-center py-4">
+                                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p class="text-muted mt-2 mb-0">Loading history...</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -298,12 +313,15 @@
         </div>
     </div>
     
+    <!-- Include Modal Component -->
+    <jsp:include page="/dashboard/components/modal.jsp"/>
+    
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script>
         const contextPath = "${pageContext.request.contextPath}";
         const instituteName = "<%= instituteName %>";
     </script>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
-    <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/id-certificates.js"></script>
+    <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/id-certificates.js?v=<%= System.currentTimeMillis() %>"></script>
 </body>
 </html>

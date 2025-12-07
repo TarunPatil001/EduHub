@@ -348,6 +348,9 @@ public class BatchServlet extends HttpServlet {
         json.append("\"branchId\":\"").append(escapeJson(batch.getBranchId())).append("\",");
         json.append("\"branchName\":\"").append(escapeJson(batch.getBranchName())).append("\",");
         json.append("\"courseName\":\"").append(escapeJson(batch.getCourseName())).append("\",");
+        json.append("\"courseModules\":\"").append(escapeJson(batch.getCourseModules())).append("\",");
+        json.append("\"courseDurationValue\":").append(batch.getCourseDurationValue()).append(",");
+        json.append("\"courseDurationUnit\":\"").append(escapeJson(batch.getCourseDurationUnit())).append("\",");
         json.append("\"instructorId\":\"").append(escapeJson(batch.getInstructorId())).append("\",");
         json.append("\"startDate\":\"").append(batch.getStartDate() != null ? batch.getStartDate().toString() : "").append("\",");
         json.append("\"endDate\":\"").append(batch.getEndDate() != null ? batch.getEndDate().toString() : "").append("\",");

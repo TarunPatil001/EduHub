@@ -49,7 +49,7 @@ public class GenerateQRTokenServlet extends HttpServlet {
             }
             
             // Generate full verification URL
-            String verificationUrl = BASE_URL + "/verify-id/" + token;
+            String verificationUrl = BASE_URL + "/verify/id/" + token;
             
             // Return as JSON
             response.setContentType("application/json");
@@ -91,7 +91,7 @@ public class GenerateQRTokenServlet extends HttpServlet {
             }
             
             // Generate full verification URL
-            String verificationUrl = BASE_URL + "/verify-id/" + token;
+            String verificationUrl = BASE_URL + "/verify/id/" + token;
             
             // Return URL as plain text
             response.setContentType("text/plain");
@@ -101,6 +101,67 @@ public class GenerateQRTokenServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error occurred");
+        }
+    }
+    
+    /**
+     * Handle certificate token generation via POST to /api/generate-cert-token
+     */
+    protected void handleCertificateTokenRequest(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        String studentId = request.getParameter("studentId");
+        String certId = request.getParameter("certId");
+        String courseName = request.getParameter("courseName");
+        
+        if (studentId == null || studentId.trim().isEmpty()) {
+            logger.warn("Certificate token generation failed: Missing student ID");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Student ID is required\"}");
+            return;
+        }
+        
+        if (certId == null || certId.trim().isEmpty()) {
+            certId = "CERT-" + System.currentTimeMillis();
+        }
+        
+        if (courseName == null || courseName.trim().isEmpty()) {
+            courseName = "Course";
+        }
+        
+        logger.info("Generating certificate QR token for student: {}, cert: {}", 
+            studentId.substring(0, Math.min(8, studentId.length())) + "...", certId);
+        
+        try {
+            // Generate secure certificate token
+            String token = QRTokenUtil.generateCertificateToken(studentId, certId, courseName);
+            
+            if (token == null) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Failed to generate certificate token\"}");
+                return;
+            }
+            
+            // Generate full verification URL
+            String verificationUrl = BASE_URL + "/verify/certificate/" + token;
+            
+            // Return as JSON
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(String.format(
+                "{\"success\": true, \"token\": \"%s\", \"url\": \"%s\", \"certId\": \"%s\", \"validityDays\": 365}",
+                token,
+                verificationUrl,
+                certId
+            ));
+            
+        } catch (Exception e) {
+            logger.error("Error generating certificate token", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Server error occurred\"}");
         }
     }
 }
