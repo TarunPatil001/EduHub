@@ -550,7 +550,7 @@
             description: batch ? getDefaultCourseDescription(batch.courseName || batch.batchName, batch.courseModules || '') : '',
             durationText: durationText,
             issueDate: new Date().toISOString().split('T')[0],
-            signatoryName: 'Director',
+            signatoryName: 'Prajakt Patki',
             signatoryTitle: 'Director',
             streetAddress: streetAddress,
             cityStateCountry: cityStateCountry,
@@ -1348,6 +1348,9 @@
                 windowHeight: 540,
                 imageTimeout: 15000,  // Wait longer for images
                 onclone: function(clonedDoc) {
+                    // Force light mode for the capture
+                    clonedDoc.documentElement.removeAttribute('data-theme');
+                    
                     // Ensure background images are preserved in clone
                     const clonedElement = clonedDoc.querySelector('.id-card-modern');
                     if (clonedElement) {
@@ -1482,6 +1485,9 @@
                 windowHeight: 540,
                 imageTimeout: 15000,
                 onclone: function(clonedDoc) {
+                    // Force light mode for the capture
+                    clonedDoc.documentElement.removeAttribute('data-theme');
+
                     // Fix object-fit in the clone only
                     // Note: We need to find the specific card in the cloned document
                     // Since we are capturing 'element', clonedDoc.body will contain a clone of 'element'
@@ -1566,7 +1572,7 @@
             description = '',
             durationText = '',
             issueDate = new Date().toISOString().split('T')[0],
-            signatoryName = 'Director',
+            signatoryName = 'Prajakt Patki',
             signatoryTitle = 'Director',
             streetAddress = '',
             cityStateCountry = '',
@@ -2542,7 +2548,10 @@
                     x: 0,
                     y: 0,
                     scrollX: 0,
-                    scrollY: 0
+                    scrollY: 0,
+                    onclone: function(clonedDoc) {
+                        clonedDoc.documentElement.removeAttribute('data-theme');
+                    }
                 });
                 
                 // Calculate PDF dimensions from canvas to avoid gaps
@@ -2648,7 +2657,10 @@
                 x: 0,
                 y: 0,
                 scrollX: 0,
-                scrollY: 0
+                scrollY: 0,
+                onclone: function(clonedDoc) {
+                    clonedDoc.documentElement.removeAttribute('data-theme');
+                }
             }).then(canvas => {
                 // Remove download-mode class
                 element.classList.remove('download-mode');
@@ -3431,7 +3443,10 @@
                 width: certWidth,
                 height: certHeight,
                 windowWidth: certWidth,
-                windowHeight: certHeight
+                windowHeight: certHeight,
+                onclone: function(clonedDoc) {
+                    clonedDoc.documentElement.removeAttribute('data-theme');
+                }
             });
             
             // Remove download-mode class
@@ -3602,6 +3617,7 @@
                 windowHeight: 540,
                 imageTimeout: 15000,
                 onclone: function(clonedDoc) {
+                    clonedDoc.documentElement.removeAttribute('data-theme');
                     const clonedElement = clonedDoc.querySelector('.id-card-modern');
                     if (clonedElement) {
                         fixObjectFit(clonedElement, photoAspect);

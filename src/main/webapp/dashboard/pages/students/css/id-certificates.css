@@ -1307,6 +1307,13 @@
 }
 */
 
+/* 
+   DISABLED DARK MODE FOR ID CARDS AND CERTIFICATES
+   These documents should always look like the printed version (Light Mode)
+   regardless of the dashboard theme.
+*/
+
+/*
 [data-theme="dark"] .id-card-header {
     background: #202124;
     border-color: #3c4043;
@@ -1342,7 +1349,7 @@
 [data-theme="dark"] .info-row .value {
     color: #e8eaed;
 }
-
+*/
 
 
 [data-theme="dark"] .id-card-back {
@@ -1376,6 +1383,7 @@
     color: #9aa0a6;
 }
 
+/*
 [data-theme="dark"] .certificate {
     background: #1e2533;
     border-color: #3b82f6;
@@ -1398,6 +1406,11 @@
 [data-theme="dark"] .cert-text {
     color: #cbd5e1;
 }
+
+[data-theme="dark"] .certificate-footer {
+    border-color: #3e4a5e;
+}
+*/
 
 [data-theme="dark"] .certificate-footer {
     border-color: #3e4a5e;
@@ -2209,6 +2222,8 @@
 }
 
 /* Dark mode adjustments for certificate */
+/* DISABLED to ensure certificate always looks like printed version */
+/*
 [data-theme="dark"] .professional-cert-container {
     background: linear-gradient(135deg, #ffffff 0%, #fafafa 50%, #f5f5f5 100%);
 }
@@ -2216,6 +2231,7 @@
 [data-theme="dark"] .cert-title-group h1 {
     color: #1a1a1a;
 }
+*/
 
 /* Responsive for certificate */
 @media (max-width: 1200px) {
@@ -2236,3 +2252,68 @@
         margin-bottom: -300px;
     }
 }
+
+/* ==========================================================================
+   FORCE LIGHT THEME FOR PREVIEWS
+   Ensures ID cards and certificates always look like the printed version
+   regardless of the dashboard theme.
+   ========================================================================== */
+
+/* Certificate Preview Reset */
+.professional-cert-container {
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 50%, #f5f5f5 100%) !important;
+    color: #333333 !important;
+}
+
+.professional-cert-container h1,
+.professional-cert-container h2,
+.professional-cert-container h3,
+.professional-cert-container h4,
+.professional-cert-container h5,
+.professional-cert-container h6,
+.professional-cert-container p,
+.professional-cert-container div,
+.professional-cert-container span {
+    color: inherit;
+}
+
+/* Specific overrides to ensure correct colors in Dark Mode */
+.professional-cert-container .cert-title-group h1 { color: #1a1a1a !important; }
+.professional-cert-container .cert-title-group h2 { color: #0e2a47 !important; }
+.professional-cert-container .cert-recipient-name { color: #0e2a47 !important; }
+.professional-cert-container .cert-program-name { color: #0e2a47 !important; }
+.professional-cert-container .cert-detail-label { color: #0e2a47 !important; }
+.professional-cert-container .cert-detail-value { color: #333333 !important; }
+.professional-cert-container .cert-signer-name { color: #333333 !important; }
+.professional-cert-container .cert-signer-title { color: #777777 !important; }
+.professional-cert-container .signer-name { color: #333333 !important; }
+.professional-cert-container .signer-title { color: #777777 !important; }
+.professional-cert-container .signature-image { color: #0e2a47 !important; }
+.professional-cert-container .cert-address-section { color: #555555 !important; }
+.professional-cert-container .cert-address-section strong { color: #0e2a47 !important; }
+.professional-cert-container .address-section { color: #555555 !important; }
+.professional-cert-container .address-section strong { color: #0e2a47 !important; }
+.professional-cert-container .cert-description { color: #666666 !important; }
+.professional-cert-container .description { color: #666666 !important; }
+.professional-cert-container .cert-confirm-text,
+.professional-cert-container .cert-completed-text { color: #555555 !important; }
+.professional-cert-container .confirm-text,
+.professional-cert-container .completed-text { color: #555555 !important; }
+.professional-cert-container .recipient-name { color: #0e2a47 !important; }
+.professional-cert-container .program-name { color: #0e2a47 !important; }
+.professional-cert-container .detail-label { color: #0e2a47 !important; }
+.professional-cert-container .detail-value { color: #333333 !important; }
+.professional-cert-container .center-logo-text { color: #0e2a47 !important; }
+.professional-cert-container .certificate-id { color: #666666 !important; }
+
+
+/* Fix for ID Card text in dark mode */
+[data-theme="dark"] .id-card-modern .student-name-modern { color: #0f172a !important; }
+[data-theme="dark"] .id-card-modern .detail-value { color: #0f172a !important; }
+[data-theme="dark"] .id-card-modern .detail-label { color: #64748b !important; }
+[data-theme="dark"] .id-card-modern .validity-date { color: #0f172a !important; }
+[data-theme="dark"] .id-card-modern .validity-label { color: #64748b !important; }
+[data-theme="dark"] .id-card-modern .qr-label { color: #64748b !important; }
+[data-theme="dark"] .id-card-modern .institute-name-header h1 { color: #ffffff !important; }
+[data-theme="dark"] .id-card-modern .institute-name-header p { color: rgba(255, 255, 255, 0.7) !important; }
+
