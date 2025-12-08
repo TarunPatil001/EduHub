@@ -2795,12 +2795,21 @@
             
             if (certData.certificates && Array.isArray(certData.certificates)) {
                 certData.certificates.forEach(cert => {
+                    // Look up student name from allStudents if not in certificate data
+                    let studentName = cert.studentName;
+                    if (!studentName && cert.studentId) {
+                        const student = allStudents.find(s => s.studentId === cert.studentId);
+                        if (student) {
+                            studentName = student.name || student.studentName;
+                        }
+                    }
+                    
                     generationHistory.push({
                         date: cert.generatedAt || cert.issueDate,
                         type: 'Certificate',
                         subType: cert.certificateType || 'completion',
                         studentId: cert.studentId,
-                        studentName: cert.studentName,
+                        studentName: studentName,
                         certificateId: cert.certificateId,
                         verificationToken: cert.verificationToken,
                         isRevoked: cert.isRevoked || cert.revoked || false,
@@ -2811,11 +2820,20 @@
             
             if (idCardData.idCards && Array.isArray(idCardData.idCards)) {
                 idCardData.idCards.forEach(card => {
+                    // Look up student name from allStudents if not in ID card data
+                    let studentName = card.studentName;
+                    if (!studentName && card.studentId) {
+                        const student = allStudents.find(s => s.studentId === card.studentId);
+                        if (student) {
+                            studentName = student.name || student.studentName;
+                        }
+                    }
+                    
                     generationHistory.push({
                         date: card.generatedAt || card.issueDate,
                         type: 'ID Card',
                         studentId: card.studentId,
-                        studentName: card.studentName,
+                        studentName: studentName,
                         idCardId: card.idCardId,
                         verificationToken: card.verificationToken,
                         isActive: card.isActive !== undefined ? card.isActive : (card.active !== undefined ? card.active : true),
@@ -2974,7 +2992,7 @@
                     </td>
                     <td>
                         <div class="student-info">
-                            <span class="student-name-text">${escapeHtml(entry.studentName || '-')}</span>
+                            <span class="student-name-text">${escapeHtml(entry.studentName || (entry.studentId ? 'ID: ' + entry.studentId.substring(0, 8) + '...' : '-'))}</span>
                         </div>
                     </td>
                     <td>${statusBadge}</td>

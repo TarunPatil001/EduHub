@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.eduhub.util.QRTokenUtil;
+import com.eduhub.util.AESTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +39,8 @@ public class GenerateQRTokenServlet extends HttpServlet {
         logger.info("Generating QR token for student: {}", studentId.substring(0, Math.min(8, studentId.length())) + "...");
         
         try {
-            // Generate secure token
-            String token = QRTokenUtil.generateToken(studentId);
+            // Generate secure AES-256-GCM encrypted token
+            String token = AESTokenUtil.generateIdToken(studentId);
             
             if (token == null) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -82,8 +82,8 @@ public class GenerateQRTokenServlet extends HttpServlet {
         logger.info("Generating QR token (GET) for student: {}", studentId.substring(0, Math.min(8, studentId.length())) + "...");
         
         try {
-            // Generate secure token
-            String token = QRTokenUtil.generateToken(studentId);
+            // Generate secure AES-256-GCM encrypted token
+            String token = AESTokenUtil.generateIdToken(studentId);
             
             if (token == null) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to generate token");
@@ -134,8 +134,8 @@ public class GenerateQRTokenServlet extends HttpServlet {
             studentId.substring(0, Math.min(8, studentId.length())) + "...", certId);
         
         try {
-            // Generate secure certificate token
-            String token = QRTokenUtil.generateCertificateToken(studentId, certId, courseName);
+            // Generate secure AES-256-GCM encrypted certificate token
+            String token = AESTokenUtil.generateCertificateToken(studentId, certId, courseName);
             
             if (token == null) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

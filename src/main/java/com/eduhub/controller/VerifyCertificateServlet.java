@@ -24,7 +24,7 @@ import com.eduhub.service.interfaces.BatchService;
 import com.eduhub.service.interfaces.BranchService;
 import com.eduhub.service.interfaces.CourseService;
 import com.eduhub.dao.interfaces.InstituteDAO;
-import com.eduhub.util.QRTokenUtil;
+import com.eduhub.util.AESTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.format.DateTimeFormatter;
@@ -32,8 +32,8 @@ import java.time.format.DateTimeFormatter;
 /**
  * Servlet to verify certificate authenticity via QR code scan
  * Supports two token types:
- * 1. QRTokenUtil tokens (time-limited, decodable) - from GenerateCertTokenServlet
- * 2. Database tokens (simple HMAC) - from CertificateServiceImpl
+ * 1. AES-256-GCM encrypted tokens (time-limited, secure) - from GenerateCertTokenServlet
+ * 2. Database tokens (HMAC hash) - from CertificateServiceImpl
  */
 public class VerifyCertificateServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -75,21 +75,21 @@ public class VerifyCertificateServlet extends HttpServlet {
         logger.info("=== CERTIFICATE VERIFICATION DEBUG ===");
         logger.info("Token received: {} (length: {})", token, token.length());
         
-        // Try method 1: Decode QRTokenUtil token (time-limited, self-contained)
-        logger.info("Attempting QRTokenUtil validation...");
-        String[] certDetails = QRTokenUtil.validateCertificateToken(token);
+        // Try method 1: Decode AES-256-GCM encrypted token (time-limited, self-contained)
+        logger.info("Attempting AES-256-GCM token validation...");
+        String[] certDetails = AESTokenUtil.validateCertificateToken(token);
         
         if (certDetails != null) {
-            // Token is valid QRTokenUtil format - extract details and verify
+            // Token is valid AES encrypted format - extract details and verify
             String studentId = certDetails[0];
             String certId = certDetails[1];
             String courseName = certDetails[2];
             
-            logger.info("QRTokenUtil SUCCESS - studentId: {}, certId: {}", studentId, certId);
+            logger.info("AES Token SUCCESS - studentId: {}, certId: {}", studentId, certId);
             handleQRTokenVerification(request, response, studentId, certId, courseName, token);
             return;
         }
-        logger.info("QRTokenUtil validation failed - trying database lookup");
+        logger.info("AES token validation failed - trying database lookup");
         
         // Method 1 failed - Try method 2: Look up in database by token
         logger.info("Attempting database token lookup...");
@@ -110,7 +110,7 @@ public class VerifyCertificateServlet extends HttpServlet {
     }
     
     /**
-     * Handle verification for QRTokenUtil tokens (from GenerateCertTokenServlet)
+     * Handle verification for AES encrypted tokens (from GenerateCertTokenServlet)
      */
     private void handleQRTokenVerification(HttpServletRequest request, HttpServletResponse response,
                                             String studentId, String certId, String courseName, String token) 
@@ -127,7 +127,32 @@ public class VerifyCertificateServlet extends HttpServlet {
                 return;
             }
             
-            logger.info("Certificate verified successfully via QRToken: {} for student: {}", certId, studentId);
+            // Check if student is still active (makes AES tokens revocable)
+            String status = student.getStudentStatus();
+            if (status != null && (status.equalsIgnoreCase("Inactive") || 
+                                   status.equalsIgnoreCase("Expelled") || 
+                                   status.equalsIgnoreCase("Suspended") ||
+                                   status.equalsIgnoreCase("Withdrawn"))) {
+                logger.warn("Certificate verification failed: Student {} is {}", studentId, status);
+                request.setAttribute("isValid", false);
+                request.setAttribute("student", student);
+                request.setAttribute("errorMessage", "This certificate has been revoked. Student status: " + status);
+                request.getRequestDispatcher("/public/verify-certificate.jsp").forward(request, response);
+                return;
+            }
+            
+            // Check if certificate exists in DB and is revoked
+            Certificate dbCert = certificateService.getCertificate(certId);
+            if (dbCert != null && dbCert.isRevoked()) {
+                logger.warn("Certificate verification failed: Certificate {} is revoked", certId);
+                request.setAttribute("isValid", false);
+                request.setAttribute("certificate", dbCert);
+                request.setAttribute("errorMessage", "This certificate has been revoked.");
+                request.getRequestDispatcher("/public/verify-certificate.jsp").forward(request, response);
+                return;
+            }
+            
+            logger.info("Certificate verified successfully via AES Token: {} for student: {}", certId, studentId);
             
             // Build full student name
             StringBuilder fullName = new StringBuilder();
@@ -209,7 +234,7 @@ public class VerifyCertificateServlet extends HttpServlet {
             }
             
             // Add remaining validity info
-            long remainingDays = QRTokenUtil.getRemainingDays(token);
+            long remainingDays = AESTokenUtil.getRemainingDays(token);
             request.setAttribute("remainingDays", remainingDays);
             request.setAttribute("verificationTime", new java.util.Date());
             
@@ -247,6 +272,21 @@ public class VerifyCertificateServlet extends HttpServlet {
                 logger.warn("Certificate verification failed: Student not found for ID: {}", cert.getStudentId());
                 request.setAttribute("isValid", false);
                 request.setAttribute("errorMessage", "The student associated with this certificate was not found.");
+                request.getRequestDispatcher("/public/verify-certificate.jsp").forward(request, response);
+                return;
+            }
+            
+            // Check if student is still active
+            String status = student.getStudentStatus();
+            if (status != null && (status.equalsIgnoreCase("Inactive") || 
+                                   status.equalsIgnoreCase("Expelled") || 
+                                   status.equalsIgnoreCase("Suspended") ||
+                                   status.equalsIgnoreCase("Withdrawn"))) {
+                logger.warn("Certificate verification failed: Student {} is {}", cert.getStudentId(), status);
+                request.setAttribute("isValid", false);
+                request.setAttribute("student", student);
+                request.setAttribute("certificate", cert);
+                request.setAttribute("errorMessage", "This certificate has been revoked. Student status: " + status);
                 request.getRequestDispatcher("/public/verify-certificate.jsp").forward(request, response);
                 return;
             }

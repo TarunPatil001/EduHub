@@ -10,27 +10,24 @@ import com.eduhub.model.Certificate;
 import com.eduhub.model.Student;
 import com.eduhub.model.Batch;
 import com.eduhub.service.interfaces.CertificateService;
+import com.eduhub.util.AESTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
  * Implementation of CertificateService interface.
+ * Uses AES-256-GCM encryption for secure verification tokens.
  */
 public class CertificateServiceImpl implements CertificateService {
     
     private static final Logger logger = LoggerFactory.getLogger(CertificateServiceImpl.class);
-    private static final String SECRET_KEY = "EduHub-Certificate-Secret-2025"; // In production, use environment variable
     
     private final CertificateDAO certificateDAO;
     private final StudentDAO studentDAO;
@@ -198,18 +195,15 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public String generateVerificationToken(String certificateId, String studentId) {
-        try {
-            String data = certificateId + ":" + studentId + ":" + System.currentTimeMillis();
-            Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-            mac.init(secretKeySpec);
-            byte[] hmac = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(hmac).substring(0, 32);
-        } catch (Exception e) {
-            logger.error("Error generating verification token: {}", e.getMessage());
-            // Fallback to UUID
-            return UUID.randomUUID().toString().replace("-", "").substring(0, 32);
+        // Use AES-256-GCM encryption for secure token generation
+        String token = AESTokenUtil.generateCertificateToken(studentId, certificateId, null);
+        if (token != null) {
+            return token;
         }
+        
+        // Fallback to UUID if AES fails (should rarely happen)
+        logger.error("AES token generation failed, using UUID fallback");
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 32);
     }
 
     @Override

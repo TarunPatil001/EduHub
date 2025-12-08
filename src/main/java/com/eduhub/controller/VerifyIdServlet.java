@@ -25,7 +25,7 @@ import com.eduhub.service.interfaces.BatchService;
 import com.eduhub.service.interfaces.BranchService;
 import com.eduhub.service.interfaces.CourseService;
 import com.eduhub.dao.interfaces.InstituteDAO;
-import com.eduhub.util.QRTokenUtil;
+import com.eduhub.util.AESTokenUtil;
 import com.eduhub.util.VerificationLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +35,8 @@ import java.time.format.DateTimeFormatter;
 /**
  * Servlet to verify ID card authenticity via QR code scan
  * Supports two token types:
- * 1. QRTokenUtil tokens (time-limited, decodable) - from GenerateQRTokenServlet
- * 2. Database tokens (simple HMAC) - from IdCardServiceImpl
+ * 1. AES-256-GCM encrypted tokens (time-limited, secure) - from GenerateQRTokenServlet
+ * 2. Database tokens (HMAC hash) - from IdCardServiceImpl
  */
 public class VerifyIdServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -76,17 +76,17 @@ public class VerifyIdServlet extends HttpServlet {
         logger.info("=== ID CARD VERIFICATION DEBUG ===");
         logger.info("Token received: {} (length: {})", token, token.length());
         
-        // Try method 1: Decode QRTokenUtil token (time-limited, self-contained)
-        logger.info("Attempting QRTokenUtil validation...");
-        String studentId = QRTokenUtil.validateToken(token);
+        // Try method 1: Decode AES-256-GCM encrypted token (time-limited, self-contained)
+        logger.info("Attempting AES-256-GCM token validation...");
+        String studentId = AESTokenUtil.validateIdToken(token);
         
         if (studentId != null) {
-            // Token is valid QRTokenUtil format
-            logger.info("QRTokenUtil SUCCESS - studentId: {}", studentId);
+            // Token is valid AES encrypted format
+            logger.info("AES Token SUCCESS - studentId: {}", studentId);
             handleQRTokenVerification(request, response, studentId, token);
             return;
         }
-        logger.info("QRTokenUtil validation failed - trying database lookup");
+        logger.info("AES token validation failed - trying database lookup");
         
         // Method 1 failed - Try method 2: Look up ID card by token in database
         logger.info("Attempting database token lookup...");
@@ -108,7 +108,7 @@ public class VerifyIdServlet extends HttpServlet {
     }
     
     /**
-     * Handle verification for QRTokenUtil tokens (from GenerateQRTokenServlet)
+     * Handle verification for AES encrypted tokens (from GenerateQRTokenServlet)
      */
     private void handleQRTokenVerification(HttpServletRequest request, HttpServletResponse response,
                                             String studentId, String token) 
@@ -121,6 +121,32 @@ public class VerifyIdServlet extends HttpServlet {
                 VerificationLogger.logFailure(request, token, "Student not found");
                 request.setAttribute("isValid", false);
                 request.setAttribute("errorMessage", "Student record not found");
+                request.getRequestDispatcher("/public/verify-id.jsp").forward(request, response);
+                return;
+            }
+            
+            // Check if student is still active (makes AES tokens revocable)
+            String status = student.getStudentStatus();
+            if (status != null && (status.equalsIgnoreCase("Inactive") || 
+                                   status.equalsIgnoreCase("Expelled") || 
+                                   status.equalsIgnoreCase("Suspended") ||
+                                   status.equalsIgnoreCase("Withdrawn"))) {
+                logger.warn("ID verification failed: Student {} is {}", studentId, status);
+                request.setAttribute("isValid", false);
+                request.setAttribute("student", student);
+                request.setAttribute("errorMessage", "This student's ID card has been revoked. Status: " + status);
+                request.getRequestDispatcher("/public/verify-id.jsp").forward(request, response);
+                return;
+            }
+            
+            // Check if ID card is active (deactivated from admin panel)
+            IdCard activeIdCard = idCardService.getActiveIdCard(studentId, student.getInstituteId());
+            if (activeIdCard == null) {
+                // No active ID card found - check if any ID card exists but is deactivated
+                logger.warn("ID verification failed: No active ID card for student {}", studentId);
+                request.setAttribute("isValid", false);
+                request.setAttribute("student", student);
+                request.setAttribute("errorMessage", "This ID card has been deactivated.");
                 request.getRequestDispatcher("/public/verify-id.jsp").forward(request, response);
                 return;
             }
@@ -184,7 +210,7 @@ public class VerifyIdServlet extends HttpServlet {
             virtualIdCard.setActive(true);
             
             // Set dates based on token validity
-            long remainingDays = QRTokenUtil.getRemainingDays(token);
+            long remainingDays = AESTokenUtil.getRemainingDays(token);
             LocalDate validUntil = LocalDate.now().plusDays(remainingDays);
             LocalDate issueDate = validUntil.minusYears(1);
             virtualIdCard.setIssueDate(java.sql.Date.valueOf(issueDate));
@@ -244,6 +270,21 @@ public class VerifyIdServlet extends HttpServlet {
                 VerificationLogger.logFailure(request, token, "Student not found in database");
                 request.setAttribute("isValid", false);
                 request.setAttribute("errorMessage", "Student record not found");
+                request.getRequestDispatcher("/public/verify-id.jsp").forward(request, response);
+                return;
+            }
+            
+            // Check if student is still active
+            String status = student.getStudentStatus();
+            if (status != null && (status.equalsIgnoreCase("Inactive") || 
+                                   status.equalsIgnoreCase("Expelled") || 
+                                   status.equalsIgnoreCase("Suspended") ||
+                                   status.equalsIgnoreCase("Withdrawn"))) {
+                logger.warn("ID verification failed: Student {} is {}", idCard.getStudentId(), status);
+                request.setAttribute("isValid", false);
+                request.setAttribute("student", student);
+                request.setAttribute("idCard", idCard);
+                request.setAttribute("errorMessage", "This student's ID card has been revoked. Status: " + status);
                 request.getRequestDispatcher("/public/verify-id.jsp").forward(request, response);
                 return;
             }
