@@ -115,23 +115,160 @@
                                 
                                 <!-- Profile Photo Upload -->
                                 <div class="text-center mb-4">
-                                    <div class="position-relative d-inline-block">
-                                        <div class="photo-preview-container rounded-circle shadow-sm mx-auto" onclick="document.getElementById('adminPhoto').click()" style="width: 120px; height: 120px; overflow: hidden; cursor: pointer; position: relative; border: 3px solid #fff; outline: 1px solid #dee2e6; background-color: #f8f9fa;">
-                                            <div class="photo-placeholder d-flex flex-column align-items-center justify-content-center h-100 text-secondary" id="photoPlaceholder">
-                                                <i class="fas fa-camera fa-2x mb-1"></i>
-                                                <small style="font-size: 10px;">Upload</small>
+                                    <div class="profile-upload-container mx-auto">
+                                        <div class="photo-preview-wrapper" onclick="document.getElementById('adminPhoto').click()">
+                                            <div class="photo-placeholder" id="photoPlaceholder">
+                                                <i class="fas fa-camera"></i>
+                                                <span>Upload</span>
                                             </div>
-                                            <img id="photoPreview" src="" class="w-100 h-100 object-fit-cover" style="display: none; object-fit: cover;" alt="Admin Photo">
+                                            <img id="photoPreview" src="" alt="Profile Preview">
                                         </div>
-                                        <div class="position-absolute bottom-0 end-0">
-                                            <button type="button" class="btn btn-sm btn-primary rounded-circle shadow-sm" onclick="document.getElementById('adminPhoto').click()" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-plus fa-xs"></i>
-                                            </button>
-                                        </div>
+                                        <button type="button" class="photo-add-btn" onclick="document.getElementById('adminPhoto').click()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
                                     </div>
-                                    <input type="file" id="adminPhoto" name="adminPhoto" accept="image/*" class="d-none">
-                                    <div class="form-text small mt-2">Profile Photo (Optional)</div>
+                                    <input type="file" id="adminPhoto" name="adminPhoto" accept="image/*" class="d-none" onchange="previewPhoto(this)">
+                                    <p class="photo-label">Profile Photo (Optional)</p>
                                 </div>
+
+                                <style>
+                                    /* Profile Photo Upload Styles */
+                                    .profile-upload-container {
+                                        position: relative;
+                                        display: inline-block;
+                                        margin-bottom: 0.5rem;
+                                    }
+                                    
+                                    .photo-preview-wrapper {
+                                        width: 130px;
+                                        height: 130px;
+                                        border-radius: 50%;
+                                        overflow: hidden;
+                                        cursor: pointer;
+                                        position: relative;
+                                        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                                        border: 3px solid #fff;
+                                        box-shadow: 0 4px 15px rgba(91, 79, 255, 0.15), 0 0 0 1px rgba(91, 79, 255, 0.1);
+                                        transition: all 0.3s ease;
+                                    }
+                                    
+                                    .photo-preview-wrapper:hover {
+                                        transform: scale(1.02);
+                                        box-shadow: 0 6px 20px rgba(91, 79, 255, 0.25), 0 0 0 2px rgba(91, 79, 255, 0.2);
+                                    }
+                                    
+                                    .photo-placeholder {
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: center;
+                                        justify-content: center;
+                                        height: 100%;
+                                        width: 100%;
+                                        color: #6c757d;
+                                        transition: all 0.3s ease;
+                                    }
+                                    
+                                    .photo-placeholder i {
+                                        font-size: 2rem;
+                                        margin-bottom: 0.3rem;
+                                        color: #adb5bd;
+                                        transition: all 0.3s ease;
+                                    }
+                                    
+                                    .photo-placeholder span {
+                                        font-size: 0.75rem;
+                                        font-weight: 500;
+                                        color: #6c757d;
+                                    }
+                                    
+                                    .photo-preview-wrapper:hover .photo-placeholder i {
+                                        color: #5B4FFF;
+                                        transform: scale(1.1);
+                                    }
+                                    
+                                    .photo-preview-wrapper:hover .photo-placeholder span {
+                                        color: #5B4FFF;
+                                    }
+                                    
+                                    #photoPreview {
+                                        width: 100%;
+                                        height: 100%;
+                                        object-fit: cover;
+                                        display: none;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                    }
+                                    
+                                    #photoPreview.active {
+                                        display: block;
+                                    }
+                                    
+                                    .photo-add-btn {
+                                        position: absolute;
+                                        bottom: 5px;
+                                        right: 5px;
+                                        width: 36px;
+                                        height: 36px;
+                                        border-radius: 50%;
+                                        background: linear-gradient(135deg, #5B4FFF 0%, #7B6FFF 100%);
+                                        border: 3px solid #fff;
+                                        color: #fff;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        cursor: pointer;
+                                        box-shadow: 0 2px 8px rgba(91, 79, 255, 0.4);
+                                        transition: all 0.3s ease;
+                                        font-size: 0.85rem;
+                                    }
+                                    
+                                    .photo-add-btn:hover {
+                                        transform: scale(1.1) rotate(90deg);
+                                        background: linear-gradient(135deg, #4839E0 0%, #6B5FFF 100%);
+                                    }
+                                    
+                                    .photo-label {
+                                        font-size: 0.85rem;
+                                        color: #6c757d;
+                                        margin-top: 0.75rem;
+                                        margin-bottom: 0;
+                                    }
+                                    
+                                    /* Image loaded state */
+                                    .photo-preview-wrapper.has-image .photo-placeholder {
+                                        display: none;
+                                    }
+                                    
+                                    .photo-preview-wrapper.has-image:hover::after {
+                                        content: '';
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        right: 0;
+                                        bottom: 0;
+                                        background: rgba(0, 0, 0, 0.3);
+                                        border-radius: 50%;
+                                    }
+                                    
+                                    .photo-preview-wrapper.has-image:hover::before {
+                                        content: '\f030';
+                                        font-family: 'Font Awesome 6 Free';
+                                        font-weight: 900;
+                                        position: absolute;
+                                        top: 50%;
+                                        left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        color: #fff;
+                                        font-size: 1.5rem;
+                                        z-index: 1;
+                                    }
+                                </style>
+                                
+                                
+                                <script>
+                                    // Moved to bottom of file
+                                </script>
 
                                 <!-- Full Name -->
                                 <div class="mb-3">
@@ -248,31 +385,53 @@
     <jsp:include page="/components/toast-dependencies.jsp"/>
     
     <script>
+        // Global function for photo preview
+        window.previewPhoto = function(input) {
+            const file = input.files[0];
+            const preview = document.getElementById('photoPreview');
+            const placeholder = document.getElementById('photoPlaceholder');
+            const wrapper = document.querySelector('.photo-preview-wrapper');
+            
+            if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    if (typeof toast !== 'undefined') toast.error('Please select an image file');
+                    else alert('Please select an image file');
+                    input.value = '';
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    if (typeof toast !== 'undefined') toast.error('Image size should be less than 5MB');
+                    else alert('Image size should be less than 5MB');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.classList.add('active');
+                        preview.style.display = 'block'; // Force display
+                    }
+                    if (wrapper) wrapper.classList.add('has-image');
+                    if (placeholder) placeholder.style.display = 'none';
+                    
+                    if (typeof toast !== 'undefined') {
+                        toast.success('Photo selected successfully!');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
             <% 
             String error = (String) request.getAttribute("error");
             boolean hasError = (error != null && !error.isEmpty());
             %>
-
-            // Photo preview functionality
-            const adminPhotoInput = document.getElementById('adminPhoto');
-            const photoPreview = document.getElementById('photoPreview');
-            const photoPlaceholder = document.getElementById('photoPlaceholder');
-
-            if (adminPhotoInput && photoPreview && photoPlaceholder) {
-                adminPhotoInput.addEventListener('change', function(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            photoPreview.src = e.target.result;
-                            photoPreview.style.display = 'block';
-                            photoPlaceholder.style.display = 'none';
-                        }
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
             
             // Password toggle functionality
             const togglePassword = document.getElementById('togglePassword');

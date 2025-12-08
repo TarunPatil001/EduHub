@@ -1,6 +1,6 @@
 # ID Card & Certificate QR Verification System
 
-> **Version:** 2.0  
+> **Version:** 2.1  
 > **Last Updated:** December 8, 2025  
 > **Author:** EduHub Development Team
 
@@ -15,9 +15,10 @@
 5. [URL Structure](#5-url-structure)
 6. [Verification Flow](#6-verification-flow)
 7. [Security Features](#7-security-features)
-8. [API Endpoints](#8-api-endpoints)
-9. [Database Schema](#9-database-schema)
-10. [Troubleshooting](#10-troubleshooting)
+8. [Revocation & Deactivation](#8-revocation--deactivation)
+9. [API Endpoints](#9-api-endpoints)
+10. [Database Schema](#10-database-schema)
+11. [Troubleshooting](#11-troubleshooting)
 
 ---
 
@@ -35,6 +36,7 @@ The EduHub QR Verification System provides secure, tamper-proof verification of 
 | 🛡️ Tamper-Proof | GCM authentication tag prevents modification |
 | 📱 Mobile-Friendly | Verification pages work on all devices |
 | 🔄 Dual Token Support | Supports both AES tokens and legacy database tokens |
+| ❌ Revocable | ID cards can be deactivated, certificates can be revoked |
 
 ---
 
@@ -72,6 +74,8 @@ The EduHub QR Verification System provides secure, tamper-proof verification of 
 | Component | File | Purpose |
 |-----------|------|---------|
 | Token Utility | `AESTokenUtil.java` | AES-256-GCM encrypt & decrypt tokens |
+| ID Card Service | `IdCardServiceImpl.java` | Generate ID cards with AES tokens |
+| Certificate Service | `CertificateServiceImpl.java` | Generate certificates with AES tokens |
 | ID Token API | `GenerateQRTokenServlet.java` | Generate ID card tokens |
 | Cert Token API | `GenerateCertTokenServlet.java` | Generate certificate tokens |
 | ID Verifier | `VerifyIdServlet.java` | Verify ID card tokens |
@@ -348,7 +352,49 @@ Verification URLs are **public** (no login required):
 
 ---
 
-## 8. API Endpoints
+## 8. Revocation & Deactivation
+
+### 8.1 How Revocation Works
+
+Even though AES tokens contain encrypted data, they are **revocable** at verification time:
+
+```
+QR Scan → Decrypt Token → Extract IDs → Check Database Status → Show Result
+```
+
+### 8.2 ID Card Deactivation
+
+When an admin deactivates an ID card:
+1. `is_active` is set to `false` in database
+2. On QR scan, `VerifyIdServlet` checks:
+   - Token validity (AES decryption)
+   - Student status (Active, Inactive, Expelled, Suspended, Withdrawn)
+   - ID card `is_active` status
+3. Deactivated cards show "ID Card Deactivated" error
+
+### 8.3 Certificate Revocation
+
+When an admin revokes a certificate:
+1. `is_revoked` is set to `true` in database
+2. On QR scan, `VerifyCertificateServlet` checks:
+   - Token validity (AES decryption)
+   - Student status
+   - Certificate `is_revoked` status
+3. Revoked certificates show "Certificate Revoked" error
+
+### 8.4 Student Status Impact
+
+| Student Status | QR Scan Result |
+|----------------|----------------|
+| Active | ✅ Shows valid verification |
+| Inactive | ❌ Shows "Student Status Changed" error |
+| Expelled | ❌ Shows "Student Status Changed" error |
+| Suspended | ❌ Shows "Student Status Changed" error |
+| Withdrawn | ❌ Shows "Student Status Changed" error |
+
+---
+
+## 9. API Endpoints
 
 ### 8.1 Generate ID Card Token
 
@@ -391,9 +437,9 @@ GET /api/generate-cert-token?studentId={studentId}&certId={certId}&courseName={c
 
 ---
 
-## 9. Database Schema
+## 10. Database Schema
 
-### 9.1 ID Cards Table
+### 10.1 ID Cards Table
 
 ```sql
 CREATE TABLE id_cards (
@@ -401,15 +447,16 @@ CREATE TABLE id_cards (
     student_id VARCHAR(50) NOT NULL,
     institute_id VARCHAR(50) NOT NULL,
     issue_date DATE NOT NULL,
-    expiry_date DATE NOT NULL,
-    status VARCHAR(20) DEFAULT 'Active',
-    verification_token VARCHAR(64),  -- Database token (HMAC hash)
+    valid_until DATE NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    verification_token VARCHAR(255),  -- AES-256-GCM token (longer than HMAC)
+    qr_code_data VARCHAR(300),        -- Verification URL with token
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-### 9.2 Certificates Table
+### 10.2 Certificates Table
 
 ```sql
 CREATE TABLE certificates (
@@ -419,28 +466,45 @@ CREATE TABLE certificates (
     course_id VARCHAR(50),
     course_name VARCHAR(200),
     issue_date DATE NOT NULL,
-    verification_token VARCHAR(64),  -- Database token (HMAC hash)
+    verification_token VARCHAR(255),  -- AES-256-GCM token (longer than HMAC)
+    verification_url VARCHAR(300),    -- Full verification URL
     is_revoked BOOLEAN DEFAULT FALSE,
     revocation_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
+### 10.3 Column Size Migration
+
+If upgrading from HMAC tokens to AES-256-GCM, run:
+
+```sql
+-- Increase column sizes for longer AES tokens
+ALTER TABLE certificates MODIFY COLUMN verification_token VARCHAR(255);
+ALTER TABLE certificates MODIFY COLUMN verification_url VARCHAR(300);
+ALTER TABLE id_cards MODIFY COLUMN verification_token VARCHAR(255);
+ALTER TABLE id_cards MODIFY COLUMN qr_code_data VARCHAR(300);
+```
+
 ---
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
-### 10.1 Common Issues
+### 11.1 Common Issues
 
 | Issue | Cause | Solution |
 |-------|-------|----------|
-| "Invalid or expired" | Token expired (>24hrs) | Generate new QR code |
+| "Invalid or expired" | Token expired (>1 year) | Generate new QR code |
 | "Invalid or expired" | Token tampered | Use original QR code |
 | "Student not found" | Student deleted | Check student exists |
+| "ID Card Deactivated" | Admin deactivated card | Reactivate from admin panel |
+| "Certificate Revoked" | Admin revoked cert | Un-revoke from admin panel |
+| "Student Status Changed" | Student inactive/expelled | Update student status |
+| "Data too long" error | Old DB column size | Run column size migration SQL |
 | QR code not generating | API error | Check network/API status |
 | N/A for duration | Course not linked | Ensure batch has courseId |
 
-### 10.2 Debug Logging
+### 11.2 Debug Logging
 
 Enable debug logging by checking server logs for:
 
@@ -451,7 +515,7 @@ Attempting QRTokenUtil validation...
 QRTokenUtil SUCCESS - studentId: STU001
 ```
 
-### 10.3 Testing Verification
+### 11.3 Testing Verification
 
 1. Generate an ID card/certificate from admin panel
 2. Scan the QR code or copy the URL
