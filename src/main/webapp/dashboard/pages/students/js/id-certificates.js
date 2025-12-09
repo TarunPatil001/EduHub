@@ -716,8 +716,8 @@
             verifyUrl = `${window.location.origin}${ctx}/verify/id/TOKEN_GENERATION_FAILED`;
         }
         
-        // QR Code Generation
-        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verifyUrl)}&color=0e2a47&bgcolor=ffffff`;
+        // QR Code Generation using local ZXing-based QRCodeServlet (core-3.5.4)
+        const qrCodeUrl = `${ctx}/QRCodeServlet?text=${encodeURIComponent(verifyUrl)}&width=200&height=200&color=0e2a47&bgcolor=ffffff&margin=0`;
         
         // Student ID short format
         const shortId = student.studentId ? student.studentId.substring(0, 12).toUpperCase() : 'N/A';
@@ -976,17 +976,20 @@
                 }
                 
                 .qr-code-modern {
-                    width: 70px;
-                    height: 70px;
-                    border: 2px solid #0e2a47;
-                    border-radius: 8px;
-                    padding: 4px;
+                    width: 90px;
+                    height: 90px;
+                    padding: 0;
                     background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
                 }
                 
                 .qr-code-modern img {
                     width: 100%;
                     height: 100%;
+                    object-fit: contain;
                 }
                 
                 .qr-label {
@@ -1613,7 +1616,8 @@
         // If verification token is provided (from backend), use it directly
         if (verificationToken) {
             verifyUrl = `${window.location.origin}${ctx}/verify/certificate/${verificationToken}`;
-            qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verifyUrl)}&color=0e2a47&bgcolor=ffffff`;
+            // Use local ZXing-based QRCodeServlet (core-3.5.4) with transparent background
+            qrCodeUrl = `${ctx}/QRCodeServlet?text=${encodeURIComponent(verifyUrl)}&width=300&height=300&color=0e2a47&transparent=true&margin=0`;
         } else {
             // Generate QR code for preview - ALWAYS use encrypted token
             try {
@@ -1622,7 +1626,8 @@
                     const data = await response.json();
                     if (data.success && data.url) {
                         verifyUrl = data.url;
-                        qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verifyUrl)}&color=0e2a47&bgcolor=ffffff`;
+                        // Use local ZXing-based QRCodeServlet (core-3.5.4) with transparent background
+                        qrCodeUrl = `${ctx}/QRCodeServlet?text=${encodeURIComponent(verifyUrl)}&width=300&height=300&color=0e2a47&transparent=true&margin=0`;
                         console.log('Secure certificate QR generated:', data.certId);
                     } else {
                         throw new Error('Invalid response from token API');
@@ -1634,7 +1639,8 @@
                 console.error('Could not generate secure QR token:', error);
                 // Use a placeholder that indicates error - this won't verify but shows QR generation failed
                 verifyUrl = `${window.location.origin}${ctx}/verify/certificate/TOKEN_GENERATION_FAILED`;
-                qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verifyUrl)}&color=0e2a47&bgcolor=ffffff`;
+                // Use local ZXing-based QRCodeServlet (core-3.5.4) with transparent background
+                qrCodeUrl = `${ctx}/QRCodeServlet?text=${encodeURIComponent(verifyUrl)}&width=300&height=300&color=0e2a47&transparent=true&margin=0`;
             }
         }
 
@@ -2014,17 +2020,19 @@
                 }
 
                 .center-qr {
-                    width: 100px;
-                    height: 100px;
-                    border: 2px solid #0e2a47;
-                    padding: 3px;
-                    background: white;
+                    width: 120px;
+                    height: 120px;
+                    padding: 0;
+                    background: transparent;
                     overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
 
                 .center-qr img {
-                    width: 100%;
-                    height: 100%;
+                    width: 135%;
+                    height: 135%;
                     object-fit: contain;
                 }
 
