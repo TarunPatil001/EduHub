@@ -1708,12 +1708,6 @@
                     transform-origin: top left !important;
                 }
 
-                /* html2canvas in production can mis-render SVG masks as solid rectangles.
-                   The background watermark uses an SVG mask, so disable it only for downloads. */
-                .certificate-container.download-mode .bg-pattern {
-                    display: none !important;
-                }
-
                 .certificate-container * {
                     box-sizing: border-box;
                 }
@@ -1730,7 +1724,7 @@
                     z-index: 0;
                 }
 
-                .border-frame {
+                .certificate-container .border-frame {
                     position: absolute;
                     top: 20px;
                     left: 20px;
@@ -1741,7 +1735,7 @@
                     pointer-events: none;
                 }
                 
-                .border-frame::after {
+                .certificate-container .border-frame::after {
                     content: '';
                     position: absolute;
                     top: 4px;
@@ -1751,19 +1745,19 @@
                     border: 1px solid #d4af37;
                 }
 
-                .corner-ornament {
+                .certificate-container .corner-ornament {
                     position: absolute;
                     width: 40px;
                     height: 40px;
                     border: 2px solid #d4af37;
                     z-index: 3;
                 }
-                .corner-tl { top: 25px; left: 25px; border-right: none; border-bottom: none; }
-                .corner-tr { top: 25px; right: 25px; border-left: none; border-bottom: none; }
-                .corner-bl { bottom: 25px; left: 25px; border-right: none; border-top: none; }
-                .corner-br { bottom: 25px; right: 25px; border-left: none; border-top: none; }
+                .certificate-container .corner-tl { top: 25px; left: 25px; border-right: none; border-bottom: none; }
+                .certificate-container .corner-tr { top: 25px; right: 25px; border-left: none; border-bottom: none; }
+                .certificate-container .corner-bl { bottom: 25px; left: 25px; border-right: none; border-top: none; }
+                .certificate-container .corner-br { bottom: 25px; right: 25px; border-left: none; border-top: none; }
 
-                .ribbon {
+                .certificate-container .ribbon {
                     position: absolute;
                     top: 0;
                     left: 60px;
@@ -1773,7 +1767,7 @@
                     overflow: visible;
                 }
                 
-                .ribbon-svg {
+                .certificate-container .ribbon-svg {
                     position: absolute;
                     top: 0;
                     left: 0;
@@ -1781,7 +1775,7 @@
                     height: 714px;
                 }
                 
-                .ribbon-content {
+                .certificate-container .ribbon-content {
                     position: absolute;
                     top: 0;
                     left: 15px;
@@ -1795,18 +1789,18 @@
                     z-index: 3;
                 }
 
-                .ribbon-logo {
+                .certificate-container .ribbon-logo {
                     width: 110px;
                     max-height: 400px;
                     object-fit: contain;
                 }
 
-                .ribbon-logo i {
+                .certificate-container .ribbon-logo i {
                     font-size: 50px;
                     color: #d4af37;
                 }
 
-                .content {
+                .certificate-container .content {
                     flex: 1;
                     margin-left: 180px;
                     padding: 20px 30px 15px 15px;
@@ -1816,25 +1810,25 @@
                     height: 100%;
                 }
 
-                .main-content-area {
+                .certificate-container .main-content-area {
                     flex: 1;
                     display: flex;
                     flex-direction: column;
                 }
 
-                .footer-area {
+                .certificate-container .footer-area {
                     flex-shrink: 0;
                     margin-top: auto;
                 }
 
-                .header {
+                .certificate-container .header {
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-start;
                     margin-bottom: 10px;
                 }
 
-                .title-group h1 {
+                .certificate-container .title-group h1 {
                     font-family: 'Montserrat', sans-serif;
                     font-size: 52px;
                     font-weight: 700;
@@ -1844,7 +1838,7 @@
                     letter-spacing: -1px;
                 }
 
-                .title-group h2 {
+                .certificate-container .title-group h2 {
                     font-family: 'Montserrat', sans-serif;
                     font-size: 30px;
                     font-weight: 400;
@@ -1854,13 +1848,13 @@
                     font-style: italic;
                 }
 
-                .org-logo-top {
+                .certificate-container .org-logo-top {
                     display: flex;
                     flex-direction: column;
                     align-items: flex-end;
                 }
                 
-                .org-logo-placeholder {
+                .certificate-container .org-logo-placeholder {
                     min-width: 60px;
                     max-width: 500px;
                     min-height: 50px;
@@ -1873,7 +1867,7 @@
                     margin-bottom: 8px;
                 }
 
-                .org-logo-placeholder img {
+                .certificate-container .org-logo-placeholder img {
                     max-width: 100%;
                     max-height: 70px;
                     width: auto;
@@ -1881,12 +1875,12 @@
                     object-fit: contain;
                 }
 
-                .body-text {
+                .certificate-container .body-text {
                     margin-bottom: 10px;
                     flex-shrink: 0;
                 }
 
-                .confirm-text {
+                .certificate-container .confirm-text {
                     font-size: 14px;
                     color: #555;
                     margin-bottom: 5px;
@@ -1894,7 +1888,7 @@
                     letter-spacing: 0.3px;
                 }
 
-                .recipient-name {
+                .certificate-container .recipient-name {
                     font-family: 'Great Vibes', cursive;
                     font-size: 44px;
                     font-weight: 400;
@@ -1902,7 +1896,7 @@
                     margin: 0 0 3px 0;
                 }
 
-                .completed-text {
+                .certificate-container .completed-text {
                     font-size: 14px;
                     color: #555;
                     margin-bottom: 5px;
@@ -1910,7 +1904,7 @@
                     letter-spacing: 0.3px;
                 }
 
-                .program-name {
+                .certificate-container .program-name {
                     font-family: 'Montserrat', sans-serif;
                     font-size: 19px;
                     font-weight: 700;
@@ -1919,7 +1913,7 @@
                     letter-spacing: 1px;
                 }
 
-                .description {
+                .certificate-container .description {
                     font-size: 12.5px;
                     color: #555;
                     line-height: 1.55;
@@ -1928,14 +1922,14 @@
                     font-weight: 500;
                 }
 
-                .details-grid {
+                .certificate-container .details-grid {
                     display: flex;
                     gap: 20px;
                     margin-bottom: 0;
                     padding: 10px 0 0 0;
                 }
 
-                .detail-card {
+                .certificate-container .detail-card {
                     display: flex;
                     align-items: center;
                     gap: 8px;
@@ -1946,7 +1940,7 @@
                     border-radius: 0 6px 6px 0;
                 }
 
-                .detail-icon {
+                .certificate-container .detail-icon {
                     width: 32px;
                     height: 32px;
                     background: linear-gradient(135deg, #0e2a47 0%, #1a3d5c 100%);
@@ -1957,18 +1951,18 @@
                     flex-shrink: 0;
                 }
 
-                .detail-icon svg {
+                .certificate-container .detail-icon svg {
                     width: 16px;
                     height: 16px;
                     fill: #d4af37;
                 }
 
-                .detail-content {
+                .certificate-container .detail-content {
                     display: flex;
                     flex-direction: column;
                 }
 
-                .detail-label {
+                .certificate-container .detail-label {
                     font-weight: 600;
                     color: #0e2a47;
                     font-size: 10px;
@@ -1977,46 +1971,47 @@
                     margin-bottom: 1px;
                 }
 
-                .detail-value {
+                .certificate-container .detail-value {
                     color: #333;
                     font-size: 14px;
                     font-weight: 600;
                 }
 
-                .footer {
+                .certificate-container .footer {
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-end;
                     padding-top: 10px;
+                    background: transparent;
                 }
 
-                .signature-section {
+                .certificate-container .signature-section {
                     flex: 1.5;
                     text-align: left;
                     min-width: 200px;
                 }
 
-                .signature-image {
+                .certificate-container .signature-image {
                     font-family: 'Great Vibes', cursive;
                     font-size: 34px;
                     color: #0e2a47 !important;
                     margin-bottom: 3px;
                 }
 
-                .signer-name {
+                .certificate-container .signer-name {
                     font-weight: 700;
                     color: #333 !important;
                     font-size: 14px;
                     margin: 0;
                 }
 
-                .signer-title {
+                .certificate-container .signer-title {
                     color: #777 !important;
                     font-size: 11px;
                     margin: 2px 0 0 0;
                 }
 
-                .center-logo {
+                .certificate-container .center-logo {
                     flex: 1;
                     display: flex;
                     flex-direction: column;
@@ -2025,7 +2020,7 @@
                     gap: 4px;
                 }
 
-                .center-qr {
+                .certificate-container .center-qr {
                     width: 120px;
                     height: 120px;
                     padding: 0;
@@ -2036,18 +2031,18 @@
                     justify-content: center;
                 }
 
-                .center-qr img {
+                .certificate-container .center-qr img {
                     width: 135%;
                     height: 135%;
                     object-fit: contain;
                 }
 
-                .center-qr svg {
+                .certificate-container .center-qr svg {
                     width: 100%;
                     height: 100%;
                 }
 
-                .center-logo-text {
+                .certificate-container .center-logo-text {
                     font-family: 'Montserrat', sans-serif;
                     font-weight: 600;
                     font-size: 10px;
@@ -2058,7 +2053,7 @@
                     letter-spacing: 0.5px;
                 }
 
-                .certificate-id {
+                .certificate-container .certificate-id {
                     font-family: 'Montserrat', sans-serif;
                     font-size: 9px;
                     color: #666;
@@ -2066,7 +2061,7 @@
                     margin-top: 3px;
                 }
 
-                .address-section {
+                .certificate-container .address-section {
                     flex: 1.5;
                     text-align: right;
                     font-size: 11px;
@@ -2075,12 +2070,12 @@
                     min-width: 250px;
                 }
 
-                .address-section strong {
+                .certificate-container .address-section strong {
                     color: #0e2a47;
                     font-size: 12px;
                 }
 
-                .bg-pattern {
+                .certificate-container .bg-pattern {
                     position: absolute;
                     top: 50%;
                     left: 60%;
@@ -2092,7 +2087,7 @@
                     pointer-events: none;
                 }
                 
-                .bg-pattern svg {
+                .certificate-container .bg-pattern svg {
                     width: 100%;
                     height: 100%;
                     fill: #0e2a47;
