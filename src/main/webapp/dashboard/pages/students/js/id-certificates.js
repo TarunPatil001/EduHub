@@ -505,7 +505,22 @@
      */
     function buildCertificateData(student, batch, certType = null) {
         const inst = instituteDetails || {};
-        const instName = inst.instituteName || (typeof instituteName !== 'undefined' ? instituteName : 'EduHub Institute');
+        const isBlank = (v) => v == null || String(v).trim() === '';
+
+        // Defaults (used only when institute details are missing/blank)
+        const defaultInstitute = {
+            instituteName: 'Envision Computer Trainning Institute',
+            streetAddress: 'FC Road',
+            city: 'Pune',
+            state: 'Maharashtra',
+            country: 'India',
+            zipCode: '411038',
+            instituteEmail: 'en@gmail.com'
+        };
+
+        const instName = !isBlank(inst.instituteName)
+            ? inst.instituteName
+            : (!isBlank(typeof instituteName !== 'undefined' ? instituteName : '') ? instituteName : defaultInstitute.instituteName);
         
         // Get certificate type from dropdown if not provided
         const certificateType = certType || document.getElementById('certType')?.value || 'completion';
@@ -528,17 +543,23 @@
         }
         
         // Build street address
-        const streetAddress = inst.address || inst.streetAddress || '';
+        const streetAddress = !isBlank(inst.address)
+            ? inst.address
+            : (!isBlank(inst.streetAddress) ? inst.streetAddress : defaultInstitute.streetAddress);
         
         // Build city, state, zipcode line
         let cityLine = [];
-        if (inst.city) cityLine.push(inst.city);
-        if (inst.state) cityLine.push(inst.state);
-        if (inst.country) cityLine.push(inst.country);
+        const cityVal = !isBlank(inst.city) ? inst.city : defaultInstitute.city;
+        const stateVal = !isBlank(inst.state) ? inst.state : defaultInstitute.state;
+        const countryVal = !isBlank(inst.country) ? inst.country : defaultInstitute.country;
+        if (!isBlank(cityVal)) cityLine.push(cityVal);
+        if (!isBlank(stateVal)) cityLine.push(stateVal);
+        if (!isBlank(countryVal)) cityLine.push(countryVal);
         const cityStateCountry = cityLine.join(', ') || '';
         
         // zipCode from Java model (camelCase)
-        const zipcode = inst.zipCode || inst.zipcode || inst.pincode || inst.postalCode || '';
+        const zipcodeRaw = inst.zipCode || inst.zipcode || inst.pincode || inst.postalCode;
+        const zipcode = !isBlank(zipcodeRaw) ? String(zipcodeRaw).trim() : defaultInstitute.zipCode;
         
         // Debug: log institute details to console
         console.log('Institute details for certificate:', inst);
@@ -555,7 +576,9 @@
             streetAddress: streetAddress,
             cityStateCountry: cityStateCountry,
             zipcode: zipcode,
-            instituteEmail: inst.instituteEmail || inst.email || '',
+            instituteEmail: !isBlank(inst.instituteEmail)
+                ? inst.instituteEmail
+                : (!isBlank(inst.email) ? inst.email : defaultInstitute.instituteEmail),
             instName: instName,
             includeSignature: true,
             includeQRCode: true
