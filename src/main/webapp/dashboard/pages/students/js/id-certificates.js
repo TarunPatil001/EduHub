@@ -1993,19 +1993,19 @@
                 .signature-image {
                     font-family: 'Great Vibes', cursive;
                     font-size: 34px;
-                    color: #0e2a47;
+                    color: #0e2a47 !important;
                     margin-bottom: 3px;
                 }
 
                 .signer-name {
                     font-weight: 700;
-                    color: #333;
+                    color: #333 !important;
                     font-size: 14px;
                     margin: 0;
                 }
 
                 .signer-title {
-                    color: #777;
+                    color: #777 !important;
                     font-size: 11px;
                     margin: 2px 0 0 0;
                 }
@@ -2547,7 +2547,9 @@
                     scale: 2,
                     useCORS: true,
                     allowTaint: true,
-                    backgroundColor: null,
+                    // Never use a transparent canvas background for JPEG/PDF exports.
+                    // Transparent areas often render as black, and dark mode makes it more noticeable.
+                    backgroundColor: '#ffffff',
                     logging: false,
                     width: 1123,
                     height: 794,
@@ -2656,7 +2658,9 @@
                 scale: 3,
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: null, // Transparent background - certificate has its own
+                // Use a solid background so the exported JPEG/PDF never goes dark.
+                // (JPEG doesn't support alpha; transparent pixels commonly become black.)
+                backgroundColor: '#ffffff',
                 logging: false,
                 width: 1123,
                 height: 794,

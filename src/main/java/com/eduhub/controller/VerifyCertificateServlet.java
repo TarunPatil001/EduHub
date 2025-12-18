@@ -151,6 +151,22 @@ public class VerifyCertificateServlet extends HttpServlet {
                 request.getRequestDispatcher("/public/verify-certificate.jsp").forward(request, response);
                 return;
             }
+
+            // Token may omit courseName; prefer DB certificate values when available
+            if (courseName == null || courseName.trim().isEmpty()) {
+                if (dbCert != null && dbCert.getCourseName() != null && !dbCert.getCourseName().trim().isEmpty()) {
+                    courseName = dbCert.getCourseName().trim();
+                } else if (dbCert != null && dbCert.getCourseId() != null && !dbCert.getCourseId().trim().isEmpty()) {
+                    try {
+                        Course dbCourse = courseService.getCourseById(dbCert.getCourseId(), student.getInstituteId());
+                        if (dbCourse != null && dbCourse.getCourseName() != null) {
+                            courseName = dbCourse.getCourseName();
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Could not fetch course details from DB certificate", e);
+                    }
+                }
+            }
             
             logger.info("Certificate verified successfully via AES Token: {} for student: {}", certId, studentId);
             
@@ -166,7 +182,6 @@ public class VerifyCertificateServlet extends HttpServlet {
             virtualCert.setCertificateId(certId);
             virtualCert.setStudentId(studentId);
             virtualCert.setStudentName(studentFullName);
-            virtualCert.setCourseName(courseName);
             virtualCert.setInstituteId(student.getInstituteId());
             virtualCert.setIssueDate(java.sql.Date.valueOf(java.time.LocalDate.now())); // Use current date as approximate
             virtualCert.setRevoked(false);
@@ -176,7 +191,6 @@ public class VerifyCertificateServlet extends HttpServlet {
             request.setAttribute("student", student);
             request.setAttribute("certificate", virtualCert); // Use "certificate" to match JSP
             request.setAttribute("certId", certId);
-            request.setAttribute("courseName", courseName);
             request.setAttribute("studentName", studentFullName);
             
             // Fetch batch details and course duration
@@ -187,12 +201,22 @@ public class VerifyCertificateServlet extends HttpServlet {
                         request.setAttribute("batchName", batch.getBatchName());
                         request.setAttribute("startDate", batch.getStartDate());
                         request.setAttribute("endDate", batch.getEndDate());
+
+                        // Fallback: derive course name from batch/course if still missing
+                        if (courseName == null || courseName.trim().isEmpty()) {
+                            if (batch.getCourseName() != null && !batch.getCourseName().trim().isEmpty()) {
+                                courseName = batch.getCourseName().trim();
+                            }
+                        }
                         
                         // Fetch course details for duration
                         if (batch.getCourseId() != null && !batch.getCourseId().isEmpty()) {
                             try {
                                 Course course = courseService.getCourseById(batch.getCourseId(), student.getInstituteId());
                                 if (course != null) {
+                                    if (courseName == null || courseName.trim().isEmpty()) {
+                                        courseName = course.getCourseName();
+                                    }
                                     request.setAttribute("courseDurationValue", course.getDurationValue());
                                     request.setAttribute("courseDurationUnit", course.getDurationUnit());
                                 }
@@ -216,6 +240,15 @@ public class VerifyCertificateServlet extends HttpServlet {
                 } catch (Exception e) {
                     logger.warn("Could not fetch batch details", e);
                 }
+            }
+
+            // Finalize courseName for JSP display
+            if (courseName != null && courseName.trim().isEmpty()) {
+                courseName = null;
+            }
+            request.setAttribute("courseName", courseName);
+            if (courseName != null) {
+                virtualCert.setCourseName(courseName);
             }
             
             // Fetch institute details
@@ -317,7 +350,7 @@ public class VerifyCertificateServlet extends HttpServlet {
                     logger.warn("Could not fetch course details", e);
                 }
             }
-            request.setAttribute("courseName", courseName);
+            // Note: courseName might still be null if certificate record doesn't include courseId/courseName.
             
             // Build full student name
             StringBuilder fullName = new StringBuilder();
@@ -334,6 +367,32 @@ public class VerifyCertificateServlet extends HttpServlet {
                         request.setAttribute("batchName", batch.getBatchName());
                         request.setAttribute("startDate", batch.getStartDate());
                         request.setAttribute("endDate", batch.getEndDate());
+
+                        // Fallback: derive course name (and duration if still missing) from batch/course
+                        if (courseName == null || courseName.trim().isEmpty()) {
+                            if (batch.getCourseName() != null && !batch.getCourseName().trim().isEmpty()) {
+                                courseName = batch.getCourseName().trim();
+                            } else if (batch.getCourseId() != null && !batch.getCourseId().trim().isEmpty()) {
+                                try {
+                                    Course batchCourse = courseService.getCourseById(batch.getCourseId(), student.getInstituteId());
+                                    if (batchCourse != null) {
+                                        courseName = batchCourse.getCourseName();
+                                        // Only set duration from batchCourse if not already set
+                                        if (request.getAttribute("courseDurationValue") == null) {
+                                            request.setAttribute("courseDurationValue", batchCourse.getDurationValue());
+                                        }
+                                        if (request.getAttribute("courseDurationUnit") == null) {
+                                            request.setAttribute("courseDurationUnit", batchCourse.getDurationUnit());
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    logger.warn("Could not fetch course details from batch", e);
+                                }
+                            } else if (batch.getBatchName() != null && !batch.getBatchName().trim().isEmpty()) {
+                                // Last resort: show batch name as the program name
+                                courseName = batch.getBatchName().trim();
+                            }
+                        }
                         
                         if (batch.getBranchId() != null && !batch.getBranchId().isEmpty()) {
                             try {
@@ -349,6 +408,15 @@ public class VerifyCertificateServlet extends HttpServlet {
                 } catch (Exception e) {
                     logger.warn("Could not fetch batch details", e);
                 }
+            }
+
+            // Finalize courseName for JSP display
+            if (courseName != null && courseName.trim().isEmpty()) {
+                courseName = null;
+            }
+            request.setAttribute("courseName", courseName);
+            if (courseName != null && (cert.getCourseName() == null || cert.getCourseName().trim().isEmpty())) {
+                cert.setCourseName(courseName);
             }
             
             // Fetch institute details
