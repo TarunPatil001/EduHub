@@ -6,6 +6,88 @@
 (function() {
     'use strict';
 
+    function hideOverlaysForCanvas(clonedDoc) {
+        try {
+            clonedDoc.documentElement.removeAttribute('data-theme');
+            const selectorsToHide = [
+                '.toast',
+                '.toast-container',
+                '.toastify',
+                '.toasts',
+                '.modal',
+                '.modal-backdrop',
+                '.offcanvas',
+                '.offcanvas-backdrop',
+                '.sidebar-overlay',
+                '.dashboard-sidebar',
+                '.dashboard-header',
+                '.navbar',
+                'header',
+                'footer'
+            ];
+            clonedDoc.querySelectorAll(selectorsToHide.join(',')).forEach(el => {
+                el.style.setProperty('display', 'none', 'important');
+                el.style.setProperty('visibility', 'hidden', 'important');
+                el.style.setProperty('opacity', '0', 'important');
+            });
+        } catch (e) {
+            // Ignore clone-time issues
+        }
+    }
+
+    function createIsolatedCertificateExportTarget() {
+        const previewDiv = document.getElementById('certificatePreview');
+        const styleTag = previewDiv ? previewDiv.querySelector('style') : null;
+        const wrapper = previewDiv ? previewDiv.querySelector('.certificate-wrapper') : null;
+        if (!wrapper) return null;
+
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'fixed';
+        tempContainer.style.left = '-100000px';
+        tempContainer.style.top = '0';
+        tempContainer.style.width = '0';
+        tempContainer.style.height = '0';
+        tempContainer.style.overflow = 'hidden';
+        tempContainer.style.pointerEvents = 'none';
+        tempContainer.style.opacity = '0';
+        tempContainer.style.background = '#ffffff';
+        tempContainer.setAttribute('aria-hidden', 'true');
+
+        // Avoid duplicate IDs affecting other code while the temp container exists.
+        const wrapperHtml = wrapper.outerHTML.replace(/id=(["'])certificateElement\1/g, 'id="$1certificateElementExport$1"');
+        tempContainer.innerHTML = `${styleTag ? styleTag.outerHTML : ''}${wrapperHtml}`;
+        document.body.appendChild(tempContainer);
+
+        const certElement = tempContainer.querySelector('.certificate-container');
+        if (certElement) {
+            certElement.classList.add('download-mode');
+        }
+
+        return { tempContainer, certElement };
+    }
+
+    function waitForImages(root) {
+        const images = Array.from(root.querySelectorAll('img'));
+        return Promise.all(images.map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        }));
+    }
+
+    function waitForFonts() {
+        try {
+            if (document.fonts && document.fonts.ready) {
+                return document.fonts.ready.catch(() => undefined);
+            }
+        } catch (e) {
+            // Ignore
+        }
+        return Promise.resolve();
+    }
+
     // Polyfill for toast if not defined (prevents crashes if library fails to load)
     if (typeof window.toast === 'undefined') {
         window.toast = function(message, options) {
@@ -2662,47 +2744,50 @@
 
         toast('Generating HD certificate PDF...', { icon: '⬇️' });
 
-        // Wait for images to load
-        const images = Array.from(element.querySelectorAll('img'));
-        const imagePromises = images.map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve;
-            });
-        });
+        const exportTarget = createIsolatedCertificateExportTarget();
+        const captureRoot = exportTarget && exportTarget.certElement ? exportTarget.certElement : element;
 
-        Promise.all(imagePromises).then(() => {
-            return new Promise(resolve => setTimeout(resolve, 200));
-        }).then(() => {
-            // Add download-mode class to force full size rendering (overrides media queries)
-            element.classList.add('download-mode');
-            
-            return html2canvas(element, {
-                scale: 3,
-                useCORS: true,
-                allowTaint: true,
-                // Use a solid background so the exported JPEG/PDF never goes dark.
-                // (JPEG doesn't support alpha; transparent pixels commonly become black.)
-                backgroundColor: '#ffffff',
-                logging: false,
-                width: 1123,
-                height: 794,
-                windowWidth: 1123,
-                windowHeight: 794,
-                x: 0,
-                y: 0,
-                scrollX: 0,
-                scrollY: 0,
-                onclone: function(clonedDoc) {
-                    clonedDoc.documentElement.removeAttribute('data-theme');
+        Promise.resolve()
+            .then(() => waitForFonts())
+            .then(() => waitForImages(captureRoot))
+            .then(() => new Promise(resolve => setTimeout(resolve, 250)))
+            .then(() => {
+                if (!exportTarget) {
+                    // Fallback: capture the in-page element
+                    element.classList.add('download-mode');
                 }
-            }).then(canvas => {
-                // Remove download-mode class
-                element.classList.remove('download-mode');
+                return html2canvas(captureRoot, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: 1123,
+                    height: 794,
+                    windowWidth: 1123,
+                    windowHeight: 794,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0,
+                    onclone: function(clonedDoc) {
+                        hideOverlaysForCanvas(clonedDoc);
+                    }
+                });
+            })
+            .then(canvas => {
+                if (!exportTarget) {
+                    element.classList.remove('download-mode');
+                } else {
+                    try {
+                        document.body.removeChild(exportTarget.tempContainer);
+                    } catch (e) {
+                        // Ignore
+                    }
+                }
                 return canvas;
-            });
-        }).then(canvas => {
+            })
+            .then(canvas => {
             const { jsPDF } = window.jspdf;
             
             // Create PDF with custom dimensions matching certificate aspect ratio
