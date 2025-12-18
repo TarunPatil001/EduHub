@@ -1708,6 +1708,12 @@
                     transform-origin: top left !important;
                 }
 
+                /* html2canvas in production can mis-render SVG masks as solid rectangles.
+                   The background watermark uses an SVG mask, so disable it only for downloads. */
+                .certificate-container.download-mode .bg-pattern {
+                    display: none !important;
+                }
+
                 .certificate-container * {
                     box-sizing: border-box;
                 }
