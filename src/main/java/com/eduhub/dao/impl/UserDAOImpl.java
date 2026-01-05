@@ -258,21 +258,4 @@ public class UserDAOImpl implements UserDAO {
         user.setLastLogin(rs.getTimestamp("last_login"));
         return user;
     }
-
-    @Override
-    public void updatePassword(String userId, String passwordHash) throws SQLException {
-        String sql = "UPDATE users SET password_hash = ? WHERE user_id = ?";
-        
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, passwordHash);
-            pstmt.setString(2, userId);
-            
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Updating password failed, user not found.");
-            }
-        }
-    }
 }

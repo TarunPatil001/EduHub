@@ -89,11 +89,4 @@ public interface UserDAO {
      * @throws SQLException if database error occurs
      */
     boolean updatePassword(String userId, String newPasswordHash) throws SQLException;
-    /**
-     * Update user password
-     * @param userId User ID
-     * @param passwordHash New hashed password
-     * @throws SQLException if database error occurs
-     */
-    void updatePassword(String userId, String passwordHash) throws SQLException;
 }

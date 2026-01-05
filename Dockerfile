@@ -49,5 +49,6 @@ EXPOSE 8080
 # Default PORT value (can be overridden by Render)
 ENV PORT=8080
 
-# Start Tomcat with port configuration
+# Start Tomcat with port configuration and IPv4 preference
+ENV CATALINA_OPTS="-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
 CMD ["sh", "-c", "sed -i \"s/port=\\\"8080\\\"/port=\\\"${PORT}\\\"/g\" /usr/local/tomcat/conf/server.xml && catalina.sh run"]

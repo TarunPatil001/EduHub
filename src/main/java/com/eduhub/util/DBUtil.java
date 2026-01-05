@@ -305,6 +305,26 @@ public class DBUtil {
 					createIdCardAccessLogTable(conn);
 					logger.info("ID Card access log table created successfully");
 				}
+
+				// Check if remember_me_tokens table exists
+				boolean rememberMeTokensExists = tableExists(conn, "remember_me_tokens");
+				logger.info("Remember Me tokens table exists: {}", rememberMeTokensExists);
+				
+				if (!rememberMeTokensExists) {
+					logger.warn("Remember Me tokens table not found. Creating...");
+					createRememberMeTokensTable(conn);
+					logger.info("Remember Me tokens table created successfully");
+				}
+
+				// Check if password_reset_tokens table exists
+				boolean passwordResetTokensExists = tableExists(conn, "password_reset_tokens");
+				logger.info("Password Reset tokens table exists: {}", passwordResetTokensExists);
+				
+				if (!passwordResetTokensExists) {
+					logger.warn("Password Reset tokens table not found. Creating...");
+					createPasswordResetTokensTable(conn);
+					logger.info("Password Reset tokens table created successfully");
+				}
 			} else {
 				logger.error("Skipping users and courses table creation because institutes table does not exist.");
 			}
@@ -915,6 +935,51 @@ public class DBUtil {
 		try (var stmt = conn.createStatement()) {
 			stmt.executeUpdate(sql);
 			logger.info("ID Card access log table created successfully");
+		}
+	}
+
+	/**
+	 * Create remember_me_tokens table for persistent login
+	 */
+	private static void createRememberMeTokensTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create remember_me_tokens table...");
+		String sql = "CREATE TABLE remember_me_tokens (" +
+				"series_id VARCHAR(64) PRIMARY KEY, " +
+				"user_id VARCHAR(36) NOT NULL, " +
+				"token_hash VARCHAR(64) NOT NULL, " +
+				"last_used TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"expiry_time TIMESTAMP NOT NULL, " +
+				"FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE, " +
+				"INDEX idx_remember_me_expiry (expiry_time)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Remember Me tokens table created successfully");
+		}
+	}
+
+	/**
+	 * Create password_reset_tokens table for password reset functionality
+	 */
+	private static void createPasswordResetTokensTable(Connection conn) throws SQLException {
+		logger.info("Attempting to create password_reset_tokens table...");
+		String sql = "CREATE TABLE password_reset_tokens (" +
+				"id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+				"user_id VARCHAR(36) NOT NULL, " +
+				"otp VARCHAR(10) NOT NULL, " +
+				"expiry_date TIMESTAMP NOT NULL, " +
+				"ref_id VARCHAR(64), " +
+				"is_used BOOLEAN DEFAULT FALSE, " +
+				"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+				"FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE, " +
+				"INDEX idx_reset_user (user_id), " +
+				"INDEX idx_reset_otp (otp)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+		
+		try (var stmt = conn.createStatement()) {
+			stmt.executeUpdate(sql);
+			logger.info("Password Reset tokens table created successfully");
 		}
 	}
 

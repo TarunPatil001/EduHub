@@ -1,6 +1,15 @@
 package com.eduhub.service.impl;
 
 import com.eduhub.service.interfaces.EmailService;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +17,7 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public class EmailServiceImpl implements EmailService {
@@ -16,26 +26,98 @@ public class EmailServiceImpl implements EmailService {
     private Properties mailProps;
     private String username;
     private String password;
+    
+    // Brevo Config
+    private boolean useBrevo = false;
+    private String brevoApiKey;
+    private String brevoSenderEmail;
 
     public EmailServiceImpl() {
+        // Force IPv4 to avoid IPv6 timeout issues in some container environments
+        System.setProperty("java.net.preferIPv4Stack", "true");
         loadConfig();
     }
 
     private void loadConfig() {
+        Properties props = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("db.properties")) {
-            Properties props = new Properties();
             if (input != null) {
                 props.load(input);
             }
+        } catch (Exception e) {
+            logger.warn("Could not load db.properties (this is expected in production if using Env Vars)", e);
+        }
 
-            // Load mail properties
+        try {
+            // 1. Check for Brevo Configuration (Preferred for Cloud/Render)
+            this.brevoApiKey = System.getenv("BREVO_API_KEY");
+            if (this.brevoApiKey == null) {
+                this.brevoApiKey = props.getProperty("brevo.api.key");
+            }
+
+            this.brevoSenderEmail = System.getenv("BREVO_SENDER_EMAIL");
+            if (this.brevoSenderEmail == null) {
+                this.brevoSenderEmail = props.getProperty("brevo.sender.email");
+            }
+
+            if (this.brevoApiKey != null && !this.brevoApiKey.isEmpty()) {
+                this.useBrevo = true;
+                if (this.brevoSenderEmail == null) {
+                    this.brevoSenderEmail = System.getenv("MAIL_USERNAME"); // Fallback to SMTP user
+                }
+                logger.info("Email Service configured to use Brevo API (HTTP)");
+                return;
+            }
+
+            // 2. Fallback to SMTP Configuration
             mailProps = new Properties();
-            mailProps.put("mail.smtp.auth", props.getProperty("mail.smtp.auth", "true"));
-            mailProps.put("mail.smtp.starttls.enable", props.getProperty("mail.smtp.starttls.enable", "true"));
-            mailProps.put("mail.smtp.host", props.getProperty("mail.smtp.host", "smtp.gmail.com"));
-            mailProps.put("mail.smtp.port", props.getProperty("mail.smtp.port", "587"));
+            
+            // Host
+            String host = System.getenv("MAIL_SMTP_HOST");
+            if (host == null) host = props.getProperty("mail.smtp.host", "smtp.gmail.com");
+            mailProps.put("mail.smtp.host", host);
 
-            // Get credentials (prefer env vars, fallback to properties)
+            // Port
+            String port = System.getenv("MAIL_SMTP_PORT");
+            if (port == null) port = props.getProperty("mail.smtp.port", "587");
+            mailProps.put("mail.smtp.port", port);
+
+            // Auth
+            String auth = System.getenv("MAIL_SMTP_AUTH");
+            if (auth == null) auth = props.getProperty("mail.smtp.auth", "true");
+            mailProps.put("mail.smtp.auth", auth);
+
+            // Configure SSL/TLS based on port
+            if ("465".equals(port)) {
+                // SMTPS (SSL)
+                mailProps.put("mail.smtp.ssl.enable", "true");
+                mailProps.put("mail.smtp.socketFactory.port", "465");
+                mailProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                mailProps.put("mail.smtp.socketFactory.fallback", "false");
+                mailProps.put("mail.smtp.starttls.enable", "false");
+            } else {
+                // STARTTLS (usually port 587)
+                String starttls = System.getenv("MAIL_SMTP_STARTTLS");
+                if (starttls == null) starttls = props.getProperty("mail.smtp.starttls.enable", "true");
+                mailProps.put("mail.smtp.starttls.enable", starttls);
+                mailProps.put("mail.smtp.starttls.required", "true");
+            }
+            
+            // Trust all certificates (Critical for cloud environments)
+            mailProps.put("mail.smtp.ssl.trust", "*");
+
+            // Improved Gmail/SMTP compatibility
+            mailProps.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            mailProps.put("mail.smtp.ssl.trust", "*"); // Trust all certs (fixes some handshake issues)
+            // Increase timeout to 30s for slower cloud connections
+            mailProps.put("mail.smtp.connectiontimeout", "30000"); 
+            mailProps.put("mail.smtp.timeout", "30000");
+            mailProps.put("mail.smtp.writetimeout", "30000");
+            
+            // Debugging
+            mailProps.put("mail.debug", "true");
+
+            // Credentials (prefer env vars, fallback to properties)
             this.username = System.getenv("MAIL_USERNAME");
             if (this.username == null) {
                 this.username = props.getProperty("mail.username");
@@ -45,14 +127,77 @@ public class EmailServiceImpl implements EmailService {
             if (this.password == null) {
                 this.password = props.getProperty("mail.password");
             }
+            
+            if (this.username == null || this.password == null) {
+                logger.error("Email credentials are missing! Set MAIL_USERNAME and MAIL_PASSWORD environment variables.");
+            } else {
+                logger.info("Email service configured for SMTP user: {}", this.username);
+            }
 
         } catch (Exception e) {
-            logger.error("Failed to load email configuration", e);
+            logger.error("Failed to configure email service", e);
         }
     }
 
     @Override
     public boolean sendEmail(String to, String subject, String content) {
+        if (useBrevo) {
+            return sendViaBrevo(to, subject, content);
+        } else {
+            return sendViaSmtp(to, subject, content);
+        }
+    }
+
+    private boolean sendViaBrevo(String to, String subject, String content) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost("https://api.brevo.com/v3/smtp/email");
+            httpPost.setHeader("api-key", this.brevoApiKey);
+            httpPost.setHeader("Content-Type", "application/json");
+
+            // Construct JSON Payload using Gson
+            JsonObject json = new JsonObject();
+            
+            // Sender
+            JsonObject sender = new JsonObject();
+            sender.addProperty("name", "EduHub");
+            sender.addProperty("email", this.brevoSenderEmail);
+            json.add("sender", sender);
+
+            // To
+            JsonArray toArray = new JsonArray();
+            JsonObject toObj = new JsonObject();
+            toObj.addProperty("email", to);
+            toArray.add(toObj);
+            json.add("to", toArray);
+
+            // Subject
+            json.addProperty("subject", subject);
+
+            // Content
+            json.addProperty("htmlContent", content);
+
+            StringEntity entity = new StringEntity(json.toString(), StandardCharsets.UTF_8);
+            httpPost.setEntity(entity);
+
+            try (CloseableHttpResponse response = client.execute(httpPost)) {
+                int statusCode = response.getStatusLine().getStatusCode();
+                String responseBody = EntityUtils.toString(response.getEntity());
+                
+                if (statusCode >= 200 && statusCode < 300) {
+                    logger.info("Email sent successfully via Brevo to: {}", to);
+                    return true;
+                } else {
+                    logger.error("Failed to send email via Brevo. Status: {}, Response: {}", statusCode, responseBody);
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Exception sending email via Brevo to: {}", to, e);
+            return false;
+        }
+    }
+
+    private boolean sendViaSmtp(String to, String subject, String content) {
         if (username == null || password == null) {
             logger.error("Email credentials not configured. Cannot send email to: {}", to);
             return false;
@@ -73,11 +218,11 @@ public class EmailServiceImpl implements EmailService {
             message.setContent(content, "text/html; charset=utf-8");
 
             Transport.send(message);
-            logger.info("Email sent successfully to: {}", to);
+            logger.info("Email sent successfully via SMTP to: {}", to);
             return true;
 
         } catch (MessagingException e) {
-            logger.error("Failed to send email to: {}", to, e);
+            logger.error("Failed to send email via SMTP to: {}", to, e);
             return false;
         }
     }

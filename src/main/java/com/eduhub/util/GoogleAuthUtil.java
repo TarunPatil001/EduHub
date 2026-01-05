@@ -27,22 +27,24 @@ public class GoogleAuthUtil {
     
     static {
         // Load from properties or env
+        Properties props = new Properties();
         try {
-            Properties props = new Properties();
-            props.load(GoogleAuthUtil.class.getClassLoader().getResourceAsStream("db.properties"));
-            
-            CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
-            if (CLIENT_ID == null) CLIENT_ID = props.getProperty("google.client.id");
-            
-            CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
-            if (CLIENT_SECRET == null) CLIENT_SECRET = props.getProperty("google.client.secret");
-            
-            REDIRECT_URI = System.getenv("GOOGLE_REDIRECT_URI");
-            if (REDIRECT_URI == null) REDIRECT_URI = props.getProperty("google.redirect.uri", "http://localhost:8080/auth/google/callback");
-            
+            java.io.InputStream stream = GoogleAuthUtil.class.getClassLoader().getResourceAsStream("db.properties");
+            if (stream != null) {
+                props.load(stream);
+            }
         } catch (Exception e) {
-            logger.error("Failed to load Google Auth config", e);
+            logger.error("Failed to load Google Auth config from properties file", e);
         }
+
+        CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+        if (CLIENT_ID == null) CLIENT_ID = props.getProperty("google.client.id");
+        
+        CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
+        if (CLIENT_SECRET == null) CLIENT_SECRET = props.getProperty("google.client.secret");
+        
+        REDIRECT_URI = System.getenv("GOOGLE_REDIRECT_URI");
+        if (REDIRECT_URI == null) REDIRECT_URI = props.getProperty("google.redirect.uri", "http://localhost:8080/auth/google/callback");
     }
 
     public static String getAuthorizationUrl() {
