@@ -680,18 +680,34 @@
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="settings-group">
-                                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Change Password</h6>
-                                        <form id="changePasswordForm" action="${pageContext.request.contextPath}/api/users/changePassword" method="POST">
-                                            <input type="hidden" name="userId" value="<%= currentUserId %>">
-                                            
-                                            <div class="mb-3">
-                                                <label for="currentPassword" class="form-label">Current Password</label>
-                                                <div class="input-group flex-nowrap">
-                                                    <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
-                                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
-                                                    <button class="btn btn-outline-secondary password-toggle-btn" type="button" onclick="togglePassword('currentPassword')"><i class="bi bi-eye"></i></button>
-                                                </div>
+                                        <% 
+                                        boolean isGoogleAuth = "GOOGLE_AUTH".equals(currentUser.getPasswordHash());
+                                        if (isGoogleAuth) {
+                                        %>
+                                            <h6 class="text-uppercase text-muted small fw-bold mb-3">Set Password</h6>
+                                            <div class="alert alert-info mb-4">
+                                                <i class="bi bi-info-circle-fill me-2"></i>
+                                                You are currently using Google Sign-In. You can set a password to enable email/password login as well.
                                             </div>
+                                            <form id="changePasswordForm" action="${pageContext.request.contextPath}/api/user/update-password" method="POST">
+                                                <input type="hidden" name="userId" value="<%= currentUserId %>">
+                                                <input type="hidden" name="isGoogleAuth" value="true">
+                                                
+                                                <!-- No Current Password field for Google Auth users -->
+                                        <% } else { %>
+                                            <h6 class="text-uppercase text-muted small fw-bold mb-3">Change Password</h6>
+                                            <form id="changePasswordForm" action="${pageContext.request.contextPath}/api/user/update-password" method="POST">
+                                                <input type="hidden" name="userId" value="<%= currentUserId %>">
+                                                
+                                                <div class="mb-3">
+                                                    <label for="currentPassword" class="form-label">Current Password</label>
+                                                    <div class="input-group flex-nowrap">
+                                                        <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                                                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
+                                                        <button class="btn btn-outline-secondary password-toggle-btn" type="button" onclick="togglePassword('currentPassword')"><i class="bi bi-eye"></i></button>
+                                                    </div>
+                                                </div>
+                                        <% } %>
                                             
                                             <div class="mb-3">
                                                 <label for="newPassword" class="form-label">New Password</label>
@@ -1193,6 +1209,24 @@
                 const cleanUrl = window.location.pathname + "?section=<%= activeSection %>";
                 window.history.replaceState({}, document.title, cleanUrl);
             <% } %>
+
+            // Check for setup_required message
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('message') === 'setup_required') {
+                // Show a persistent warning
+                toast.warning("Please complete your Institute Profile to access the dashboard.", 10000);
+                
+                // Highlight the profile section
+                const profileSection = document.getElementById('profile-section');
+                if (profileSection) {
+                    profileSection.scrollIntoView({ behavior: 'smooth' });
+                    // Add a visual cue
+                    profileSection.classList.add('border', 'border-warning');
+                    setTimeout(() => {
+                        profileSection.classList.remove('border', 'border-warning');
+                    }, 3000);
+                }
+            }
         });
     </script>
     <script src="${pageContext.request.contextPath}/public/js/theme-switcher.js"></script>

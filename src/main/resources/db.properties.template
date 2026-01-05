@@ -18,6 +18,15 @@ local.db.sslMode=false
 # Production Database Configuration (TiDB Cloud / Render)
 # These values are typically overridden by environment variables in production
 prod.db.host=${DB_HOST}
+
+# Email Configuration (SMTP)
+mail.smtp.host=smtp.gmail.com
+mail.smtp.port=587
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+# Use App Password for Gmail
+mail.username=your-email@gmail.com
+mail.password=your-app-password
 prod.db.port=${DB_PORT}
 prod.db.name=${DB_NAME}
 prod.db.username=${DB_USER}
