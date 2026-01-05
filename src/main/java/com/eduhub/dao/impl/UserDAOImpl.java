@@ -21,7 +21,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public String createUser(User user) throws SQLException {
         String sql = "INSERT INTO users (user_id, institute_id, full_name, email, password_hash, " +
-                    "phone, role, status, profile_photo_url) VALUES (?, ?, ?, ?, ?, ?, ?, 'active', ?)";
+                    "phone, role, status, profile_photo_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -34,10 +34,17 @@ public class UserDAOImpl implements UserDAO {
             pstmt.setString(6, user.getPhone());
             pstmt.setString(7, user.getRole());
             
-            if (user.getProfilePhotoUrl() != null) {
-                pstmt.setString(8, user.getProfilePhotoUrl());
+            // Use provided status or default to 'active'
+            if (user.getStatus() != null) {
+                pstmt.setString(8, user.getStatus());
             } else {
-                pstmt.setNull(8, java.sql.Types.VARCHAR);
+                pstmt.setString(8, "active");
+            }
+            
+            if (user.getProfilePhotoUrl() != null) {
+                pstmt.setString(9, user.getProfilePhotoUrl());
+            } else {
+                pstmt.setNull(9, java.sql.Types.VARCHAR);
             }
             
             int affectedRows = pstmt.executeUpdate();
@@ -193,7 +200,7 @@ public class UserDAOImpl implements UserDAO {
     
     @Override
     public boolean updateUser(User user) throws SQLException {
-        String sql = "UPDATE users SET full_name = ?, phone = ?, profile_photo_url = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET full_name = ?, phone = ?, profile_photo_url = ?, status = ? WHERE user_id = ?";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -201,7 +208,14 @@ public class UserDAOImpl implements UserDAO {
             pstmt.setString(1, user.getFullName());
             pstmt.setString(2, user.getPhone());
             pstmt.setString(3, user.getProfilePhotoUrl());
-            pstmt.setString(4, user.getUserId());
+            
+            if (user.getStatus() != null) {
+                pstmt.setString(4, user.getStatus());
+            } else {
+                pstmt.setString(4, "active");
+            }
+            
+            pstmt.setString(5, user.getUserId());
             
             int affectedRows = pstmt.executeUpdate();
             logger.info("User update attempted for user ID: {}. Rows affected: {}", user.getUserId(), affectedRows);
@@ -243,5 +257,22 @@ public class UserDAOImpl implements UserDAO {
         user.setUpdatedAt(rs.getTimestamp("updated_at"));
         user.setLastLogin(rs.getTimestamp("last_login"));
         return user;
+    }
+
+    @Override
+    public void updatePassword(String userId, String passwordHash) throws SQLException {
+        String sql = "UPDATE users SET password_hash = ? WHERE user_id = ?";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, passwordHash);
+            pstmt.setString(2, userId);
+            
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Updating password failed, user not found.");
+            }
+        }
     }
 }

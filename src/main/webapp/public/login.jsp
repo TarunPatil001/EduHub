@@ -110,13 +110,22 @@
                                             Remember me
                                         </label>
                                     </div>
-                                    <a href="#" class="text-decoration-none small">Forgot Password?</a>
+                                    <a href="${pageContext.request.contextPath}/auth/forgot-password" class="text-decoration-none small">Forgot Password?</a>
                                 </div>
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
                                     <i class="fas fa-sign-in-alt me-2"></i> Sign In
                                 </button>
+
+                                <!-- Google Sign In -->
+                                <div class="text-center mb-3">
+                                    <span class="text-muted small">OR</span>
+                                </div>
+                                <a href="${pageContext.request.contextPath}/auth/google/login" class="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center gap-2">
+                                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
+                                    <span>Sign in with Google</span>
+                                </a>
 
                                 <!-- Divider -->
                                 <div class="text-center my-4">

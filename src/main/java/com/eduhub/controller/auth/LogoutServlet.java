@@ -1,10 +1,13 @@
 package com.eduhub.controller.auth;
 
+import com.eduhub.dao.impl.RememberMeDAOImpl;
+import com.eduhub.dao.interfaces.RememberMeDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +21,13 @@ import java.io.IOException;
 public class LogoutServlet extends HttpServlet {
     
     private static final Logger logger = LoggerFactory.getLogger(LogoutServlet.class);
+    private RememberMeDAO rememberMeDAO;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        rememberMeDAO = new RememberMeDAOImpl();
+    }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -50,6 +60,30 @@ public class LogoutServlet extends HttpServlet {
             logger.info("User logout - Email: {}, ID: {}, Institute: {}", 
                 userEmail, userId, instituteId);
             
+            // Clear Remember Me cookie and token
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("remember_me".equals(cookie.getName())) {
+                        try {
+                            String[] parts = cookie.getValue().split(":");
+                            if (parts.length == 2) {
+                                String seriesId = parts[0];
+                                rememberMeDAO.deleteToken(seriesId);
+                            }
+                        } catch (Exception e) {
+                            logger.error("Error deleting Remember Me token", e);
+                        }
+                        
+                        Cookie deleteCookie = new Cookie("remember_me", "");
+                        deleteCookie.setMaxAge(0);
+                        deleteCookie.setPath("/");
+                        response.addCookie(deleteCookie);
+                        break;
+                    }
+                }
+            }
+
             // Clear all session attributes first
             session.removeAttribute("user");
             session.removeAttribute("userId");

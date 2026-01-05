@@ -1,8 +1,11 @@
 package com.eduhub.controller;
 
 import com.eduhub.dao.impl.InstituteDAOImpl;
+import com.eduhub.dao.impl.UserDAOImpl;
 import com.eduhub.dao.interfaces.InstituteDAO;
+import com.eduhub.dao.interfaces.UserDAO;
 import com.eduhub.model.Institute;
+import com.eduhub.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +24,12 @@ public class InstituteServlet extends HttpServlet {
     
     private static final Logger logger = LoggerFactory.getLogger(InstituteServlet.class);
     private InstituteDAO instituteDAO;
+    private UserDAO userDAO;
     
     @Override
     public void init() throws ServletException {
         instituteDAO = new InstituteDAOImpl();
+        userDAO = new UserDAOImpl();
     }
     
     @Override
@@ -174,6 +179,27 @@ public class InstituteServlet extends HttpServlet {
             
             if (success) {
                 logger.info("Institute profile updated successfully for ID: {}", instituteId);
+                
+                // Check if user was in pending_setup state
+                String userStatus = (String) session.getAttribute("userStatus");
+                if ("pending_setup".equalsIgnoreCase(userStatus)) {
+                    // Update user status to active
+                    String userId = (String) session.getAttribute("userId");
+                    User user = userDAO.getUserById(userId);
+                    if (user != null) {
+                        user.setStatus("active");
+                        userDAO.updateUser(user);
+                        
+                        // Update session
+                        session.setAttribute("userStatus", "active");
+                        
+                        // Redirect to dashboard with welcome message
+                        redirectUrl = request.getContextPath() + "/dashboard.jsp?welcome=true";
+                        response.sendRedirect(redirectUrl);
+                        return;
+                    }
+                }
+                
                 redirectUrl = request.getContextPath() + "/dashboard/pages/settings.jsp?status=success&message=Institute+profile+updated+successfully";
             } else {
                 logger.error("Failed to update institute profile for ID: {}", instituteId);
