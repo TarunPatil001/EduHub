@@ -38,19 +38,5 @@ logs/
 # Exception: Allow dependency JARs in WEB-INF/lib
 !src/main/webapp/WEB-INF/lib/*.jar
 
-# Virtual machine crash logs
-hs_err_pid*
-replay_pid*
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Database config (if containing passwords)
-src/main/resources/db.properties
-
-# User uploads
-src/main/webapp/uploads/
-
-# Properties files
-*.properties
+# Configuration files
+db.properties
