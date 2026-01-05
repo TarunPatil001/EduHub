@@ -1,6 +1,7 @@
 # EduHub 🎓
 
 A comprehensive web-based educational management system designed to streamline the management of students, faculty, attendance, courses, and communication — all in one centralized hub.
+<<<<<<< HEAD
 
 🚀 **Live Demo:**  
 https://eduhub-z165.onrender.com/
@@ -56,3 +57,5 @@ EduHub is a full-stack web application built to manage end-to-end college/campus
 - Java (JDK 8+ recommended)  
 - Apache Tomcat (9+ recommended)  
 - MySQL  
+=======
+>>>>>>> 5a8e055e29db82f00658f1ab22082fd4a9f0855b
