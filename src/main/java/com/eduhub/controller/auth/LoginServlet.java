@@ -186,7 +186,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect(redirectAfterLogin);
             } else {
                 // Default redirect to dashboard
-                response.sendRedirect(request.getContextPath() + "/dashboard.jsp?success=login");
+                response.sendRedirect(request.getContextPath() + "/dashboard?success=login");
             }
             
         } catch (Exception e) {

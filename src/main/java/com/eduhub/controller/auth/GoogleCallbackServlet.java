@@ -74,7 +74,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                 if ("pending_setup".equalsIgnoreCase(user.getStatus())) {
                     response.sendRedirect(request.getContextPath() + "/dashboard/pages/settings.jsp?message=setup_required");
                 } else {
-                    response.sendRedirect(request.getContextPath() + "/dashboard.jsp");
+                    response.sendRedirect(request.getContextPath() + "/dashboard");
                 }
                 
             } else {

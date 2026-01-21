@@ -517,6 +517,30 @@ public String getInitials(String firstName, String lastName) {
     
     <jsp:include page="/dashboard/components/scripts.jsp"/>
     <script src="${pageContext.request.contextPath}/dashboard/js/dashboard.js"></script>
+    <script>
+        // Inject maps for JS usage
+        var courseMap = {
+            <% for(Map.Entry<String, String> entry : courseMap.entrySet()) { %>
+            "<%= entry.getKey() %>": "<%= entry.getValue().replace("\"", "\\\"") %>",
+            <% } %>
+        };
+        var branchMap = {
+            <% for(Map.Entry<String, String> entry : branchMap.entrySet()) { %>
+            "<%= entry.getKey() %>": "<%= entry.getValue().replace("\"", "\\\"") %>",
+            <% } %>
+        };
+        var batchMap = {
+            <% for(Map.Entry<String, Batch> entry : batchMap.entrySet()) { 
+               Batch b = entry.getValue(); %>
+               "<%= entry.getKey() %>": {
+                   "name": "<%= b.getBatchName().replace("\"", "\\\"") %>",
+                   "code": "<%= b.getBatchCode().replace("\"", "\\\"") %>",
+                   "courseId": "<%= b.getCourseId() %>",
+                   "branchId": "<%= b.getBranchId() %>"
+               },
+            <% } %>
+        };
+    </script>
     <script src="${pageContext.request.contextPath}/dashboard/pages/students/js/all-students.js?v=<%=System.currentTimeMillis()%>"></script>
     <script>
         // Server-side pagination data

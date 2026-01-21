@@ -101,13 +101,4 @@
     <servlet-name>VerifyCertificateServlet</servlet-name>
     <url-pattern>/verify-certificate/*</url-pattern>
   </servlet-mapping>
-
-  <servlet>
-    <servlet-name>Dashboard</servlet-name>
-    <jsp-file>/dashboard.jsp</jsp-file>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Dashboard</servlet-name>
-    <url-pattern>/dashboard</url-pattern>
-  </servlet-mapping>
 </web-app>
